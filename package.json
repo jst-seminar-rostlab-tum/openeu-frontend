@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
+    "format": "prettier --write .",
+    "format:fix": "prettier .",
+    "prepare": "husky"
   },
   "dependencies": {
     "react": "^19.0.0",
