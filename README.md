@@ -84,9 +84,55 @@ Besides the usual guidlines, we're following these as per the customer's request
 
 Linting and styling is based on [Airbnb's React style guide](https://airbnb.io/javascript/react/). A pre-commit hook will make sure that only well-formatted code is commited to the repo, but a GitHub Actions workflow will also check this on each PR.
 
+### Code Best Practices
+
+To maintain a clean and consistent codebase, follow these best practices:
+
+1. **Component Structure**:
+
+   - Each React component should be defined in its own file.
+   - Use the `PascalCase` naming convention for component files (e.g., `MyComponent.tsx`).
+   - Keep related styles, tests, and utilities in the same folder as the component (e.g., `MyComponent/MyComponent.tsx`, `MyComponent/MyComponent.test.tsx`, `MyComponent/MyComponent.module.css`).
+
+2. **Reusable Components**:
+
+   - Avoid duplicating code. Extract reusable logic into shared components or utility functions.
+
+3. **TypeScript**:
+
+   - Always use TypeScript for type safety.
+   - Define `Props` and `State` interfaces/types for components.
+
+4. **Folder Structure**:
+
+   - Follow a modular folder structure to keep the project organized. For example:
+     ```
+     src/
+       app/
+       components/
+       config/
+       domain/
+       infrastructure/
+       operations/
+       utils/
+       styles/
+     ```
+
+5. **Code Comments**:
+
+   - Add comments to explain complex logic, but avoid over-commenting obvious code.
+
+6. **Error Handling**:
+
+   - Always handle errors gracefully, especially in API calls or asynchronous operations.
+
+7. **Testing**:
+   - Write unit tests for all components and utility functions.
+   - Use integration tests for critical workflows.
+
 ### Git and GitHub
 
-Always work on a separate branch, never commit to main! When you're creating a branch, you should use the branchname provided by Linear. Click the branch icon in the upper right corner of issue's page on Linear to copy the branchname. It should have the following format: `feature/<issue no.>-<concise description of issue>`.
+Always work on a separate branch, never commit to main! When you're creating a branch, you should use the branchname provided by Github (you can create branch right from the ticket which you was assigned to and add `feature/` as prefix). It should have the following format: `feature/<issue no.>-fe-<concise description of issue>`.
 
 Commit messages are also linted using husky and commitlint, so make sure to start each commit message with `feat:`, `fix:` or `docs:` depending on the type of work implemented in that commit.
 
