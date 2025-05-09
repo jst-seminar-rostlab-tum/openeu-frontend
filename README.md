@@ -10,6 +10,23 @@
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+### Node.js Version
+
+This project requires the LTS **Node.js v22.15.0**. Please ensure you are using the correct version.
+
+We recommend using a version manager like [`nvm`](https://github.com/nvm-sh/nvm) to manage your Node.js versions. To install and use the required version:
+
+```bash
+nvm install 22.15.0
+nvm use 22.15.0
+```
+
+You can verify your Node.js version with:
+
+```bash
+node --version
+```
+
 **Make sure to use yarn instead of npm!**
 To install `yarn`, follow [this guide](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable).
 
