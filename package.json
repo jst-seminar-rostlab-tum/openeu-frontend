@@ -10,18 +10,22 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:fix": "prettier .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postbuild": "node ./node_modules/@netlify/next/dist/index.js"
   },
   "dependencies": {
-    "next": "15.3.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "@eslint/eslintrc": "^3.3.1",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-config-prettier": "^10.1.5"
+    "next": "15.3.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@netlify/next": "^1.4.9",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
