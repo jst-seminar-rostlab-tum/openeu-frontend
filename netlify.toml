@@ -4,7 +4,3 @@
 
 [functions]
   node_bundler = "esbuild"
-
-[dev]
-  command = "yarn dev"
-  port = 8888
