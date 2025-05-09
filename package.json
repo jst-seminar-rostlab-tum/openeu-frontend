@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "lint:fix": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:fix": "prettier .",
     "prepare": "husky"
