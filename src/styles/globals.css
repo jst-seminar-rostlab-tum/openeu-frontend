@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .text-content {
+    @apply max-w-screen-lg mx-auto;
+  }
+
+  .text-content h1 {
+    @apply text-4xl sm:text-5xl lg:text-7xl font-black mb-8;
+  }
+
+  .text-content section > h2 {
+    @apply text-2xl lg:text-3xl mb-3;
+  }
+
+  .text-content p,
+  .text-content ol,
+  .text-content ul {
+    @apply text-large leading-relaxed pb-6;
+  }
+
+  .text-content p:last-child {
+    @apply pb-0;
+  }
+
+  .text-content ol,
+  .text-content ul {
+    @apply pl-4 md:pl-8;
+  }
+
+  .text-content ol {
+    @apply list-decimal;
+  }
+
+  .text-content ul {
+    @apply list-disc;
+  }
+}
+
+/* PdfViewer.css */
+canvas.react-pdf__Page__canvas {
+  margin-bottom: 50px;
+}
+
+/* Define custom classes for animation delay */
+.dot-delay-1 {
+  animation-delay: 0s;
+}
+
+.dot-delay-2 {
+  animation-delay: 0.3s;
+}
+
+.dot-delay-3 {
+  animation-delay: 0.6s;
+}
+
+.leaflet-tooltip {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* remove rectangle when focus over the country/global */
+path.leaflet-interactive:focus {
+  outline: none;
+}
+
+/* mapbox-popup showing country name - styling similar to 'CountryHoverPopover' */
+.mapbox-popup-transparent .mapboxgl-popup-content {
+  z-index: 2000 !important;
+  background-color: hsl(var(--nextui-background)) !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: var(--nextui-radius-medium) !important;
+  padding: 0.5rem !important;
+  margin-right: 6px !important;
+
+  color: hsl(var(--nextui-foreground));
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+/* shrink mapbox-popup tip triangle */
+.mapbox-popup-transparent .mapboxgl-popup-tip {
+  width: 6px !important;
+  height: 12px !important;
+  background: transparent !important;
+  border-top: 6px solid transparent !important;
+  border-bottom: 6px solid transparent !important;
+  border-left: 6px solid white !important;
+}
+
+/* .svg color */
+.svg-icon path {
+  fill: black;
+}
+
+:root.dark .svg-icon path {
+  fill: white;
+}
+
+/* Custom Scrollbar for Safari */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: theme('colors.content3');
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.content4');
+}
+
+/* Custom Scrollbar for Chrome and Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.content3') transparent;
+}
+
+.leaflet-container .leaflet-interactive {
+  cursor: default;
+}
+
+.leaflet-container.interactive .leaflet-interactive {
+  cursor: pointer;
+}
+
+/* for hazards marker icon */
+.leaflet-marker-icon.leaflet-interactive {
+  cursor: pointer;
+}
+
+.map-marker-with-margin {
+  margin: 1px !important;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
