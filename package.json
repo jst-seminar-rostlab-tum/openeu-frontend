@@ -10,8 +10,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:fix": "prettier .",
-    "prepare": "husky",
-    "postbuild": "node ./node_modules/@netlify/next/dist/index.js"
+    "prepare": "husky"
   },
   "dependencies": {
     "@eslint/eslintrc": "^3.3.1",
