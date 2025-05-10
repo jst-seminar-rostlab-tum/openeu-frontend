@@ -12,7 +12,7 @@ function SampleComponent({ title, description }: SampleComponentProps) {
       <p className="text-gray-600 leading-relaxed">{description}</p>
       <button
         type="button"
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300"
+        className="mt-4 px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300"
       >
         Learn More
       </button>
