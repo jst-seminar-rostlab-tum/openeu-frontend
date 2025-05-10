@@ -70,15 +70,11 @@ yarn lint:fix
 
 ## Deployment
 
-n/a
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Website is deployed at: https://openeu.netlify.app/
 
 ## Development guidelines
 
-Besides the usual guidlines, we're following these as per the customer's request:
+Besides the usual guidelines, we're following:
 
 ### Styling
 
@@ -88,22 +84,16 @@ Linting and styling is based on [Airbnb's React style guide](https://airbnb.io/j
 
 To maintain a clean and consistent codebase, follow these best practices:
 
-1. **Component Structure**:
-
-   - Each React component should be defined in its own file.
-   - Use the `PascalCase` naming convention for component files (e.g., `MyComponent.tsx`).
-   - Keep related styles, tests, and utilities in the same folder as the component (e.g., `MyComponent/MyComponent.tsx`, `MyComponent/MyComponent.test.tsx`, `MyComponent/MyComponent.module.css`).
-
-2. **Reusable Components**:
+1. **Reusable Components**:
 
    - Avoid duplicating code. Extract reusable logic into shared components or utility functions.
 
-3. **TypeScript**:
+2. **TypeScript**:
 
    - Always use TypeScript for type safety.
    - Define `Props` and `State` interfaces/types for components.
 
-4. **Folder Structure**:
+3. **Folder Structure**:
 
    - Follow a modular folder structure to keep the project organized. For example:
      ```
@@ -118,15 +108,15 @@ To maintain a clean and consistent codebase, follow these best practices:
        styles/
      ```
 
-5. **Code Comments**:
+4. **Code Comments**:
 
    - Add comments to explain complex logic, but avoid over-commenting obvious code.
 
-6. **Error Handling**:
+5. **Error Handling**:
 
    - Always handle errors gracefully, especially in API calls or asynchronous operations.
 
-7. **Testing**:
+6. **Testing**:
    - Write unit tests for all components and utility functions.
    - Use integration tests for critical workflows.
 
@@ -136,7 +126,7 @@ Always work on a separate branch, never commit to main! When you're creating a b
 
 Commit messages are also linted using husky and commitlint, so make sure to start each commit message with `feat:`, `fix:` or `docs:` depending on the type of work implemented in that commit.
 
-After you're done with your task, create a Pull Request and share it with your teammates, ask your team lead and/or TPL for a review. Use squash merge when the PR is approved.
+After you're done with your task, create a Pull Request and share it with your teammates, ask your team lead and TPL for a review. Use squash merge when the PR is approved.
 
 ### Project Structure
 
@@ -152,38 +142,3 @@ What this means for a React application, is that instead of using one global sta
 - The infrastructure folder contains the implementations of the interfaces. (API calls, etc.)
 - The operations folder contains the business logic that is not related to a specific entity.
 - Bigger files and functions should be placed in the operations folder
-
-### Dependency Injection
-
-The point of DI is that the dependencies of services should not be hardcoded, instead they should receive them as parameters, where the type of the parameter is an interface. This makes testing easier and the code more reusable, since the same service can be used with different implementations of the same interface (for example mock implementations for testing).
-
-- Example of how to use the container to resolve a dependency can be found in `src/app/elements/page.tsx`.
-- A list of all dependencies and their implementations can be found in `src/container.tsx`.
-
-### Accessibility score
-
-#### Form elements must have labels
-
-Programmatically associate labels with all form controls. The recommended method for most circumstances is to use the label element and an explicit association using the for and id attributes. The examples here are ordered from the most common acceptable solution to the least common acceptable solution. For more information, please check: https://dequeuniversity.com/rules/axe/4.9/label
-
-#### list HTML structure
-
-Ensure all ordered and unordered lists (defined by ul or ol elements) contain only li content elements.
-
-For more information, please check: https://dequeuniversity.com/rules/axe/4.9/list
-
-#### Color contrast
-
-Ensure all text elements have sufficient color contrast between the text in the foreground and background color behind it.
-
-Success Criterion: Ensure color contrast of at least 4.5:1 for small text or 3:1 for large text, even if text is part of an image. Large text has been defined in the requirements as 18pt (24 CSS pixels) or 14pt bold (19 CSS pixels). Note: Elements found to have a 1:1 ratio are considered "incomplete" and require a manual review.
-
-For more information, please check: https://dequeuniversity.com/rules/axe/4.9/color-contrast
-
-#### Aira-label
-
-For more information, please check: https://dequeuniversity.com/rules/axe/4.9/aria-command-name
-
-#### Target size
-
-For more information, please check:https://dequeuniversity.com/rules/axe/4.9/target-size
