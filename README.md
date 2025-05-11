@@ -1,2 +1,144 @@
-# openeu-frontend
-AI-powerded platform that automatically detects, aggregates, and notifies companies to relevant political and regulatory developments across the EU
+# ProjectEurope - OpenEU - FrontEnd
+
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
+[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors-)
+
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
+## Local development
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+### Node.js Version
+
+This project requires the LTS **Node.js v22.15.0**. Please ensure you are using the correct version.
+
+We recommend using a version manager like [`nvm`](https://github.com/nvm-sh/nvm) to manage your Node.js versions. To install and use the required version:
+
+```bash
+nvm install 22.15.0
+nvm use 22.15.0
+```
+
+You can verify your Node.js version with:
+
+```bash
+node --version
+```
+
+**Make sure to use yarn instead of npm!**
+To install `yarn`, follow [this guide](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable).
+
+### Install dependencies
+
+```bash
+yarn install
+```
+
+### Set up `.env` file
+
+Create a file called `.env` in the root of the project and populate it with the following values:
+
+```
+for now, ignore this part
+```
+
+### Run the development server
+
+```bash
+yarn dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+### Lint your code
+
+To check if there are any lint errors, run
+
+```bash
+yarn lint
+```
+
+To fix any lint errors, run
+
+```bash
+yarn lint:fix
+```
+
+## Deployment
+
+Website is deployed at: https://openeu.netlify.app/
+
+## Development guidelines
+
+Besides the usual guidelines, we're following:
+
+### Styling
+
+Linting and styling is based on [Airbnb's React style guide](https://airbnb.io/javascript/react/). A pre-commit hook will make sure that only well-formatted code is commited to the repo, but a GitHub Actions workflow will also check this on each PR.
+
+### Code Best Practices
+
+To maintain a clean and consistent codebase, follow these best practices:
+
+1. **Reusable Components**:
+
+   - Avoid duplicating code. Extract reusable logic into shared components or utility functions.
+
+2. **TypeScript**:
+
+   - Always use TypeScript for type safety.
+   - Define `Props` and `State` interfaces/types for components.
+
+3. **Folder Structure**:
+
+   - Follow a modular folder structure to keep the project organized. For example:
+     ```
+     src/
+       app/
+       components/
+       config/
+       domain/
+       infrastructure/
+       operations/
+       utils/
+       styles/
+     ```
+
+4. **Code Comments**:
+
+   - Add comments to explain complex logic, but avoid over-commenting obvious code.
+
+5. **Error Handling**:
+
+   - Always handle errors gracefully, especially in API calls or asynchronous operations.
+
+6. **Testing**:
+   - Write unit tests for all components and utility functions.
+   - Use integration tests for critical workflows.
+
+### Git and GitHub
+
+Always work on a separate branch, never commit to main! When you're creating a branch, you should use the branchname provided by Github (you can create branch right from the ticket which you was assigned to and add `feature/` as prefix). It should have the following format: `feature/<issue no.>-fe-<concise description of issue>`.
+
+Commit messages are also linted using husky and commitlint, so make sure to start each commit message with `feat:`, `fix:` or `docs:` depending on the type of work implemented in that commit.
+
+After you're done with your task, create a Pull Request and share it with your teammates, ask your team lead and TPL for a review. Use squash merge when the PR is approved.
+
+### Project Structure
+
+Each component should have their own file, where the file name is the name of the component. The app directory is for pages and layouts, all other components should go to the components directory. Try to group components to sub-directories based on their function. Code that doesn't belong to a specific component should be placed in a different file, in directories like utils, config, types, etc.
+
+### Domain Driven Design
+
+DDD is a software design approach that is against the idea of having a single unified model; instead it divides a large system into bounded contexts, each of which have their own model.
+
+What this means for a React application, is that instead of using one global state with, for example Redux, we will have a React context for each of our entities that will store all the data and offer all the methods related to that domain.
+
+- The domain folder contains all the entities and repositories. (Types, Interfaces, etc.)
+- The infrastructure folder contains the implementations of the interfaces. (API calls, etc.)
+- The operations folder contains the business logic that is not related to a specific entity.
+- Bigger files and functions should be placed in the operations folder
