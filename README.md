@@ -122,9 +122,39 @@ To maintain a clean and consistent codebase, follow these best practices:
 
 ### Git and GitHub
 
-Always work on a separate branch, never commit to main! When you're creating a branch, you should use the branchname provided by Github (you can create branch right from the ticket which you was assigned to and add `feature/` as prefix). It should have the following format: `feature/<issue no.>-fe-<concise description of issue>`.
+🚨 **Direct commits to `main` are strictly prohibited!**
 
-Commit messages are also linted using husky and commitlint, so make sure to start each commit message with `feat:`, `fix:` or `docs:` depending on the type of work implemented in that commit.
+Always work on a separate branch.
+
+When you're creating a branch, you should use the branchname provided by Github (you can create branch right from the ticket which you was assigned to and add `feature/` as prefix). It should have the following format: `feature/<issue no.>-fe-<concise description of issue>`.
+
+Other branch type:
+
+- **`bugfix`**: For fixing bugs or issues.
+- **`hotfix`**: For urgent fixes that need to be applied directly to production.
+- **`feature`**: For feature development, usually taken from predefined backlog items.
+
+#### Common Commit Message Types
+
+- **`feat`**: A new feature.
+- **`fix`**: A bug fix.
+- **`docs`**: Documentation changes.
+- **`style`**: Code style changes (e.g., formatting, missing semicolons).
+- **`refactor`**: Code refactoring without changing functionality.
+- **`test`**: Adding or updating tests.
+- **`chore`**: Maintenance tasks (e.g., dependency updates).
+
+Make sure your commit messages follow this format:
+
+```plaintext
+<type>: <short description>
+```
+
+#### Example:
+
+```plaintext
+feat: add user authentication flow
+```
 
 After you're done with your task, create a Pull Request and share it with your teammates, ask your team lead and TPL for a review. Use squash merge when the PR is approved.
 
