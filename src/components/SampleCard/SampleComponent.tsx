@@ -17,9 +17,9 @@ interface SampleComponentProps {
 
 function SampleComponent({ title, description }: SampleComponentProps) {
   return (
-    <Card className="w-full max-w-md border border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Card className="w-full max-w-md border border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800 dark:border-gray-700">
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-gray-800">
+        <CardTitle className="text-xl font-bold text-gray-800 dark:text-gray-100">
           {title}
         </CardTitle>
         <CardDescription className="text-gray-600">
@@ -27,13 +27,16 @@ function SampleComponent({ title, description }: SampleComponentProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-gray-600 leading-relaxed">
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
           This is additional content inside the card. You can customize it
           further.
         </p>
       </CardContent>
       <CardFooter>
-        <Button variant="default" className="mt-4">
+        <Button
+          variant="default"
+          className="mt-4 bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
+        >
           Learn More
         </Button>
       </CardFooter>
