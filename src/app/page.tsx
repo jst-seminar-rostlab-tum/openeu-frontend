@@ -1,5 +1,5 @@
 import SampleComponent from '@/components/SampleCard/SampleComponent';
-import { Button } from '@/components/ui/button';
+
 export default function HomePage() {
   return (
     <main className="flex flex-col items-center justify-center h-screen bg-gray-50">
