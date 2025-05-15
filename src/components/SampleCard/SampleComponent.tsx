@@ -1,5 +1,15 @@
 import React from 'react';
 
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
 interface SampleComponentProps {
   title: string;
   description: string;
@@ -7,16 +17,31 @@ interface SampleComponentProps {
 
 function SampleComponent({ title, description }: SampleComponentProps) {
   return (
-    <div className="border border-gray-300 p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300">
-      <h2 className="text-xl font-bold text-gray-800 mb-2">{title}</h2>
-      <p className="text-gray-600 leading-relaxed">{description}</p>
-      <button
-        type="button"
-        className="mt-4 px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-300"
-      >
-        Learn More
-      </button>
-    </div>
+    <Card className="w-full max-w-md border border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800 dark:border-gray-700">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold text-gray-800 dark:text-gray-100">
+          {title}
+        </CardTitle>
+        <CardDescription className="text-gray-600">
+          {description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+          This is additional content inside the card. You can customize it
+          further.
+        </p>
+      </CardContent>
+      <CardFooter>
+        <Button
+          variant="default"
+          className="mt-4 bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
+        >
+          Learn More
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
+
 export default SampleComponent;
