@@ -15,12 +15,9 @@ export default async function HomePage() {
   return (
     <main className="flex flex-col items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
       <h1 className="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-300">
-        Welcome to OpenEU, {email} 👋
+        Welcome to OpenEU 👋
       </h1>
-      <SampleComponent
-        title="Sample Card Title"
-        description="This is a description for the sample card."
-      />
+      <SampleComponent email={email} data={data} />
       <ThemeToggle />
     </main>
   );
