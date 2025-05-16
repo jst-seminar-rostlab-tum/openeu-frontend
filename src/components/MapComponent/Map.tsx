@@ -2,7 +2,7 @@ import 'leaflet-defaulticon-compatibility';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet/dist/leaflet.css';
 
-import { GeoJsonObject } from '@types/geojson';
+import { GeoJsonObject } from 'geojson';
 import { LatLngExpression } from 'leaflet';
 import { GeoJSON, MapContainer, Pane, SVGOverlay } from 'react-leaflet';
 
