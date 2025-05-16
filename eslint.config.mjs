@@ -31,6 +31,7 @@ export default [
       'react/jsx-no-bind': 'off',
       'import/prefer-default-export': 'off',
       'react/jsx-one-expression-per-line': 'off',
+      'object-curly-newline': 'off',
       'no-underscore-dangle': ['error', { allow: ['__filename', '__dirname'] }],
       'react/jsx-filename-extension': [
         'warn',
@@ -73,13 +74,20 @@ export default [
   },
   {
     ignores: [
-      'node_modules',
       '.next',
-      'dist',
-      'build',
       '*.css',
       '*.config.js',
       '.DS_Store',
+      '.next/**',
+      'out/**',
+      'build/**',
+      'dist/**',
+      'node_modules/**',
+      '*.generated.*',
+      '*.min.js',
+      '**/*.test.*',
+      '**/*.spec.*',
+      'src/components/ui/**',
     ],
   },
 ];
