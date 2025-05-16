@@ -3,7 +3,7 @@
 import { GeoJsonObject } from 'geojson';
 import dynamic from 'next/dynamic';
 
-import MapData from './data/map.geo.json';
+import MapData from '../../../public/map.geo.json';
 
 export default function MapLoader() {
   const MapComponent = dynamic(() => import('@/components/MapComponent/Map'), {
