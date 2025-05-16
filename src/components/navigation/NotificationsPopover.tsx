@@ -24,7 +24,7 @@ const notifications: Notification[] = [
     id: String(i),
     title: `Test notification ${i}`,
     isRead: i % 2 === 0,
-    type: (i % 3 === 0 ? 'warning' : 'info') as 'info' | 'warning',
+    type: Math.random() > 0.5 ? 'info' : ('warning' as 'info' | 'warning'),
   })),
 ];
 
@@ -38,7 +38,7 @@ export function NotificationsPopover() {
           <span className="sr-only">Notifications</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80">
+      <PopoverContent className="w-70">
         <Tabs defaultValue="inbox" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="inbox">Inbox</TabsTrigger>
@@ -46,7 +46,7 @@ export function NotificationsPopover() {
           </TabsList>
           <TabsContent value="inbox" className="mt-0">
             <ScrollArea className="h-[300px]">
-              <div className="flex flex-col gap-2 p-4">
+              <div className="flex flex-col gap-1.5 p-2">
                 {notifications.map((notification) => (
                   <div key={notification.id}>
                     <div className="flex items-center justify-between py-2">
