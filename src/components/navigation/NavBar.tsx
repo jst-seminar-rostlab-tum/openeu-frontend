@@ -1,6 +1,8 @@
 import { ChevronsUpDown, Menu } from 'lucide-react';
 import Link from 'next/link';
 
+import { cn } from '@/lib/utils';
+
 import { Button, buttonVariants } from '../ui/button';
 import {
   Collapsible,
@@ -26,7 +28,6 @@ import {
 import { NotificationsPopover } from './NotificationsPopover';
 import { ProfilePopover } from './ProfilePopover';
 import { SettingsPopover } from './SettingsPopover';
-import { cn } from '@/lib/utils';
 
 interface NavItemContent {
   title: string;
@@ -132,17 +133,19 @@ function NavItem({ item }: { item: NavItem }) {
   );
 }
 
-const MobileNavLink = ({ item }: { item: NavItem }) => (
-  <Link
-    href={item.href}
-    className={cn(
-      'w-full !justify-start',
-      buttonVariants({ variant: 'ghost' }),
-    )}
-  >
-    <span>{item.title}</span>
-  </Link>
-);
+function MobileNavLink({ item }: { item: NavItem }) {
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        'w-full !justify-start',
+        buttonVariants({ variant: 'ghost' }),
+      )}
+    >
+      <span>{item.title}</span>
+    </Link>
+  );
+}
 
 function MobileNavItem({ item }: { item: NavItem }) {
   if ('items' in item && item.items) {
