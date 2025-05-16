@@ -1,3 +1,7 @@
+'use client';
+
+import { User } from '@supabase/supabase-js';
+import Link from 'next/link';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -9,21 +13,29 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { createClient } from '@/lib/supabase/client';
 
 interface SampleComponentProps {
-  title: string;
-  description: string;
+  email: string;
+  data: { user: User } | { user: null };
 }
 
-function SampleComponent({ title, description }: SampleComponentProps) {
+function SampleComponent({ email, data }: SampleComponentProps) {
+  const supabase = createClient();
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    window.location.reload();
+  };
+
   return (
-    <Card className="w-full max-w-md border border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800 dark:border-gray-700">
+    <Card className="w-full mb-8 max-w-md border border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800 dark:border-gray-700">
       <CardHeader>
         <CardTitle className="text-xl font-bold text-gray-800 dark:text-gray-100">
-          {title}
+          You are logged in as {email}
         </CardTitle>
         <CardDescription className="text-gray-600">
-          {description}
+          Use the link or button below to login/logout
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -33,12 +45,8 @@ function SampleComponent({ title, description }: SampleComponentProps) {
         </p>
       </CardContent>
       <CardFooter>
-        <Button
-          variant="default"
-          className="mt-4 bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
-        >
-          Learn More
-        </Button>
+        {!data?.user && <Link href="/login">Login</Link>}
+        {data?.user && <Button onClick={() => signOut()}>Logout</Button>}
       </CardFooter>
     </Card>
   );
