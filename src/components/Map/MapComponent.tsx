@@ -10,7 +10,7 @@ import {
   countryBaseStyle,
   countryBorderStyle,
   oceanBounds,
-} from '@/components/MapComponent/constants';
+} from '@/components/Map/constants';
 
 interface MapProps {
   mapData: GeoJsonObject;
@@ -20,7 +20,7 @@ interface MapProps {
   maxZoom?: number;
 }
 
-export default function Map({
+export default function MapComponent({
   mapData,
   center,
   zoom,
@@ -33,9 +33,10 @@ export default function Map({
       center={center}
       zoom={zoom}
       maxBounds={[
-        [35, -10],
-        [71, 60],
+        [20, -30],
+        [80, 80],
       ]}
+      maxBoundsViscosity={1.0}
       minZoom={minZoom}
       maxZoom={maxZoom}
     >

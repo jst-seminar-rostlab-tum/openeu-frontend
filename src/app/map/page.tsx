@@ -1,11 +1,11 @@
 'use client';
 
-import MapLoader from '@/components/MapComponent/MapLoader';
+import Map from '@/components/Map/Map';
 
 export default function MapPage() {
   return (
     <div className="h-dvh overflow-hidden">
-      <MapLoader />
+      <Map />
     </div>
   );
 }

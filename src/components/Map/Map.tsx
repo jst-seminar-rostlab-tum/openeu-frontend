@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic';
 
 import MapData from '../../../public/map.geo.json';
 
-export default function MapLoader() {
-  const MapComponent = dynamic(() => import('@/components/MapComponent/Map'), {
+export default function Map() {
+  const MapComponent = dynamic(() => import('@/components/Map/MapComponent'), {
     ssr: false,
   });
 
