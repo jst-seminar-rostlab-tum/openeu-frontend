@@ -9,9 +9,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-
-import { Separator } from '../ui/separator';
 
 export function SettingsPopover() {
   const { theme, setTheme } = useTheme();
