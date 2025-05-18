@@ -3,8 +3,8 @@ import '../styles/globals.css';
 import type { Metadata } from 'next';
 import React from 'react';
 
+import NavBar from '@/components/navigation/NavBar';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { cn } from '@/lib/utils';
 
 import ReactQueryProvider from './ReactQueryProvider';
 
@@ -20,21 +20,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        suppressHydrationWarning
-        className={cn('min-h-screen bg-background font-sans antialiased')}
-      >
+
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans antialiased">
         <ReactQueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </ReactQueryProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NavBar />
+          <main className="pt-12">{children}</main>
+        </ThemeProvider>
+          </ReactQueryProvider>
       </body>
     </html>
   );
