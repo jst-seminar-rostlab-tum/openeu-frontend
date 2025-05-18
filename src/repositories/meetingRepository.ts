@@ -1,6 +1,6 @@
 import { MeetingData } from '@/domain/entities/MeetingData';
 
-const API_URL = '/api/meetings'; // Supabase REST endpoint
+const API_URL = 'https://openeu-backend.onrender.com/meetings';
 
 const DUMMY_MEETINGS: MeetingData[] = [
   {
