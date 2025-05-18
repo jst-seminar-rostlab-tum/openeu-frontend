@@ -21,7 +21,7 @@ export interface SectionProps
   extends React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof sectionVariants> {}
 
-const Section = React.forwardRef<HTMLInputElement, SectionProps>(
+const Section = React.forwardRef<HTMLElement, SectionProps>(
   ({ children, variant, className }) => (
     <section className={sectionVariants({ variant, className })}>
       {children}
