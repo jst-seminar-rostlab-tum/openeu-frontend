@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { navItems } from '@/data/navbar';
+import { navItems } from '@/operations/navbar/nav-items';
 
 export default function NavBar() {
   return (

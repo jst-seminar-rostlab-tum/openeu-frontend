@@ -1,4 +1,4 @@
-import { NavItemType } from '@/types/navbar';
+import { NavItemType } from '@/domain/entities/navbar/NavItemType';
 
 export const navItems: NavItemType[] = [
   {

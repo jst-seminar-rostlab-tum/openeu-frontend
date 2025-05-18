@@ -7,8 +7,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { NavItemType } from '@/domain/entities/navbar/NavItemType';
 import { cn } from '@/lib/utils';
-import { NavItemType } from '@/types/navbar';
 
 function MobileNavLink({ item }: { item: NavItemType }) {
   return (

@@ -1,9 +1,9 @@
 import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
-import { Section } from '@/components/section';
 import { Button } from '@/components/ui/button';
-import { europeanQuotes } from '@/data/not-found';
+import { europeanQuotes } from '@/operations/not-found/eu-quotes';
+import { Section } from '@/components/Section';
 
 function getRandomQuote() {
   return europeanQuotes[Math.floor(Math.random() * europeanQuotes.length)];
