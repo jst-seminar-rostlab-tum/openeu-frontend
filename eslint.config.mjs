@@ -38,6 +38,7 @@ export default [
         { extensions: ['.tsx', '.jsx'] },
       ],
       'class-methods-use-this': 'off',
+      'implicit-arrow-linebreak': 'off',
       'import/extensions': [
         'error',
         'ignorePackages',
