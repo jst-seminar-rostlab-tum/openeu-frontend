@@ -41,8 +41,8 @@ yarn install
 Create a file called `.env` in the root of the project and populate it with the following values:
 
 ```
-NEXT_PUBLIC_SUPABASE_URL="https://uimvmemdcmbjrqpqfijb.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="xxx"
+NEXT_PUBLIC_SUPABASE_URL="YOUR_SUPABASE_URL"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
 ```
 
 Get the API Key from Notion
