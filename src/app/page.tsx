@@ -1,3 +1,4 @@
+import MeetingList from '@/components/MeetingList.tsx/MeetingList';
 import SampleComponent from '@/components/SampleCard/SampleComponent';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
@@ -12,6 +13,7 @@ export default function HomePage() {
         description="This is a description for the sample card."
       />
       <ThemeToggle />
+      <MeetingList />
     </main>
   );
 }

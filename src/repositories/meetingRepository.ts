@@ -2,6 +2,7 @@ import { MeetingData } from '@/domain/entities/MeetingData';
 
 const API_URL = 'https://openeu-backend.onrender.com/meetings';
 
+// const API_URL = 'http://127.0.0.1:8000/meetings';
 const DUMMY_MEETINGS: MeetingData[] = [
   {
     date: 'today',
