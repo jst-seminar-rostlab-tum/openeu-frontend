@@ -1,5 +1,6 @@
 'use client';
 
+// This is just a dummy component to test data fetching
 import React from 'react';
 
 import { useMeetings } from '@/domain/hooks/meetingHooks';
