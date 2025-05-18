@@ -6,6 +6,8 @@ import React from 'react';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { cn } from '@/lib/utils';
 
+import ReactQueryProvider from './ReactQueryProvider';
+
 export const metadata: Metadata = {
   title: 'OpenEU',
   description:
@@ -23,14 +25,16 @@ export default function RootLayout({
         suppressHydrationWarning
         className={cn('min-h-screen bg-background font-sans antialiased')}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <ReactQueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
