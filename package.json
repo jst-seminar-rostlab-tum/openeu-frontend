@@ -17,6 +17,7 @@
     "@nextui-org/react": "^2.6.11",
     "@radix-ui/react-slot": "^1.2.2",
     "@tailwindcss/forms": "^0.5.10",
+    "@tanstack/react-query": "^5.76.1",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -31,7 +32,8 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "tailwind-merge": "^3.3.0",
-    "tailwind-variants": "^1.0.0"
+    "tailwind-variants": "^1.0.0",
+    "tanstack": "^1.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

@@ -3091,6 +3091,18 @@
     postcss "^8.4.41"
     tailwindcss "4.1.5"
 
+"@tanstack/query-core@5.76.0":
+  version "5.76.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.76.0.tgz#3b4d5d34ce307ba0cf7d1a3e90d7adcdc6c46be0"
+  integrity sha512-FN375hb8ctzfNAlex5gHI6+WDXTNpe0nbxp/d2YJtnP+IBM6OUm7zcaoCW6T63BawGOYZBbKC0iPvr41TteNVg==
+
+"@tanstack/react-query@^5.76.1":
+  version "5.76.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.76.1.tgz#ac8a19f99dfec1452a44fe22d46680c396c21152"
+  integrity sha512-YxdLZVGN4QkT5YT1HKZQWiIlcgauIXEIsMOTSjvyD5wLYK8YVvKZUPAysMqossFJJfDpJW3pFn7WNZuPOqq+fw==
+  dependencies:
+    "@tanstack/query-core" "5.76.0"
+
 "@tanstack/react-virtual@3.11.2":
   version "3.11.2"
   resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.11.2.tgz#d6b9bd999c181f0a2edce270c87a2febead04322"
@@ -5920,11 +5932,6 @@ react-dom@^19.0.0:
   dependencies:
     scheduler "^0.26.0"
 
-react-icon@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-icon/-/react-icon-1.0.0.tgz#6038598eb07fb3e64b3e7865d271f79f3559de0b"
-  integrity sha512-VzSlpBHnLanVw79mOxyq98hWDi6DlxK9qPiZ1bAK6bLurMBCaxO/jjyYUrRx9+JGLc/NbnwOmyE/W5Qglbb2QA==
-
 react-icons@^5.5.0:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-5.5.0.tgz#8aa25d3543ff84231685d3331164c00299cdfaf2"
@@ -6497,6 +6504,11 @@ tailwindcss@4.1.5, tailwindcss@^4.1.5:
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-4.1.5.tgz#d35607f1a351051bd29cda7e59ab2c222ca8deb6"
   integrity sha512-nYtSPfWGDiWgCkwQG/m+aX83XCwf62sBgg3bIlNiiOcggnS1x3uVRDAuyelBFL+vJdOPPCGElxv9DjHJjRHiVA==
+
+tanstack@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/tanstack/-/tanstack-1.0.0.tgz#7eeb4d2d196696e8e10fc0e346d440140fd2161e"
+  integrity sha512-BUpDmwGlWHk2F183Uu1+k85biSLrpSh/zA9ephJwmZ9ze+XDEw3JOyN9vhcbFqrQFrf5yuWImt+0Kn4fUNgzTg==
 
 tapable@^2.2.0:
   version "2.2.1"
