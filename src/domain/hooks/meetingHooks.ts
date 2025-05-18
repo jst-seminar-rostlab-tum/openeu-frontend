@@ -5,7 +5,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { meetingRepository } from '@/repositories/meetingRepository';
-import { MeetingData } from '../entities/MeetingData';
+import { MeetingData } from '@/domain/entities/MeetingData';
 
 export const useMeetings = (enabled = true) =>
   useQuery<MeetingData[]>({
