@@ -7,7 +7,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import type { NavItemType } from '@/types/navbar';
+import type { NavItemType } from '@/domain/entities/navbar/NavItemType';
 
 export default function NavItem({ item }: { item: NavItemType }) {
   if ('items' in item && item.items) {
