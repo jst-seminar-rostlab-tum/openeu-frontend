@@ -1,4 +1,4 @@
-export const europeanQuotes = [
+const europeanQuotes = [
   'Unity in diversity. — Motto of the European Union',
   'Europe will not be made all at once, or according to a single plan. It will be built through concrete achievements which first create a de facto solidarity. — Robert Schuman',
   "The European Union is the world's most successful invention for advancing peace. — John Bruton",
@@ -25,3 +25,10 @@ export const europeanQuotes = [
   'The richness of European culture is based on dialogue across borders. — Umberto Eco',
   'We must build a kind of United States of Europe. — Winston Churchill',
 ];
+
+export default class NotFoundOperations {
+  static getRandomQuote(): string {
+    const randomIndex = Math.floor(Math.random() * europeanQuotes.length);
+    return europeanQuotes[randomIndex];
+  }
+}

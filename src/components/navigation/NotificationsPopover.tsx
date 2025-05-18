@@ -11,22 +11,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-interface Notification {
-  id: string;
-  title: string;
-  isRead: boolean;
-  type: 'info' | 'warning';
-}
-
-const notifications: Notification[] = [
-  ...Array.from({ length: 10 }, (_, i) => ({
-    id: String(i),
-    title: `Test notification ${i}`,
-    isRead: i % 2 === 0,
-    type: Math.random() > 0.5 ? 'info' : ('warning' as 'info' | 'warning'),
-  })),
-];
+import NotificationsPopoverOperations from '@/operations/notifications/NotificationsPopoverOperations';
 
 export function NotificationsPopover() {
   return (
@@ -47,23 +32,25 @@ export function NotificationsPopover() {
           <TabsContent value="inbox" className="mt-0">
             <ScrollArea className="h-[300px]">
               <div className="flex flex-col gap-1.5 p-2">
-                {notifications.map((notification) => (
-                  <div key={notification.id}>
-                    <div className="flex items-center justify-between py-2">
-                      <span className="text-sm">{notification.title}</span>
-                      {!notification.isRead && (
-                        <span
-                          className={`h-2 w-2 mr-2 rounded-full ${
-                            notification.type === 'info'
-                              ? 'bg-blue-500'
-                              : 'bg-orange-500'
-                          }`}
-                        />
-                      )}
+                {NotificationsPopoverOperations.getMockNotifications().map(
+                  (notification) => (
+                    <div key={notification.id}>
+                      <div className="flex items-center justify-between py-2">
+                        <span className="text-sm">{notification.title}</span>
+                        {!notification.isRead && (
+                          <span
+                            className={`h-2 w-2 mr-2 rounded-full ${
+                              notification.type === 'info'
+                                ? 'bg-blue-500'
+                                : 'bg-orange-500'
+                            }`}
+                          />
+                        )}
+                      </div>
+                      <Separator />
                     </div>
-                    <Separator />
-                  </div>
-                ))}
+                  ),
+                )}
               </div>
             </ScrollArea>
           </TabsContent>

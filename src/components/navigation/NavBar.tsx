@@ -18,9 +18,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { navItems } from '@/operations/navbar/nav-items';
+import NavbarOperations from '@/operations/navbar/NavbarOperations';
 
 export default function NavBar() {
+  const navItems = NavbarOperations.getNavItems();
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b h-12">
       <div className="px-4 lg:px-8 h-full flex items-center justify-between">

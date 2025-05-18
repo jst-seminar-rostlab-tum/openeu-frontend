@@ -3,14 +3,10 @@ import Link from 'next/link';
 
 import { Section } from '@/components/section';
 import { Button } from '@/components/ui/button';
-import { europeanQuotes } from '@/operations/not-found/eu-quotes';
-
-function getRandomQuote() {
-  return europeanQuotes[Math.floor(Math.random() * europeanQuotes.length)];
-}
+import NotFoundOperations from '@/operations/not-found/NotFoundOperations';
 
 export default function NotFound() {
-  const quote = getRandomQuote();
+  const quote = NotFoundOperations.getRandomQuote();
 
   return (
     <Section variant="screenCentered" className="flex-col text-center gap-6">
