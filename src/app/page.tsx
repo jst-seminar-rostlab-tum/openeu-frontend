@@ -13,7 +13,6 @@ export default function HomePage() {
       />
 
       <MeetingList />
-
     </main>
   );
 }
