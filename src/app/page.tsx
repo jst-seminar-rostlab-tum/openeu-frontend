@@ -1,3 +1,4 @@
+import MeetingList from '@/components/MeetingList.tsx/MeetingList';
 import SampleComponent from '@/components/SampleCard/SampleComponent';
 
 export default function HomePage() {
@@ -10,6 +11,8 @@ export default function HomePage() {
         title="Sample Card Title"
         description="This is a description for the sample card."
       />
+
+      <MeetingList />
     </main>
   );
 }
