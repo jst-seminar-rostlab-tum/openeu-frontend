@@ -1,6 +1,5 @@
 'use client';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Radio, RadioGroup } from '@headlessui/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -102,14 +101,6 @@ export function RegisterForm({
         </div>
         <Button type="submit" className="w-full">
           Sign up
-        </Button>
-        <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-          <span className="bg-muted text-muted-foreground relative z-10 px-2">
-            or
-          </span>
-        </div>
-        <Button variant="outline" type="button" className="w-full">
-          Sign up with Google
         </Button>
       </div>
       <div className="text-center text-sm">
