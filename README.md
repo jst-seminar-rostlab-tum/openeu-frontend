@@ -41,8 +41,11 @@ yarn install
 Create a file called `.env` in the root of the project and populate it with the following values:
 
 ```
-for now, ignore this part
+NEXT_PUBLIC_SUPABASE_URL="YOUR_SUPABASE_URL"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
 ```
+
+Get the API Key from Notion
 
 ### Run the development server
 
