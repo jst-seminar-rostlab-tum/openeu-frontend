@@ -1,5 +1,4 @@
 import SampleComponent from '@/components/SampleCard/SampleComponent';
-import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function HomePage() {
@@ -18,7 +17,6 @@ export default async function HomePage() {
         Welcome to OpenEU 👋
       </h1>
       <SampleComponent email={email} data={data} />
-      <ThemeToggle />
     </main>
   );
 }
