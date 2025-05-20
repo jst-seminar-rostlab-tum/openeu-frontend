@@ -32,6 +32,7 @@ export default [
       'import/prefer-default-export': 'off',
       'react/jsx-one-expression-per-line': 'off',
       'object-curly-newline': 'off',
+      'operator-linebreak': 'off',
       'no-underscore-dangle': ['error', { allow: ['__filename', '__dirname'] }],
       'react/jsx-filename-extension': [
         'warn',
