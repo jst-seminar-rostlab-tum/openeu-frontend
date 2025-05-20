@@ -1,3 +1,4 @@
+import MeetingList from '@/components/MeetingList.tsx/MeetingList';
 import SampleComponent from '@/components/SampleCard/SampleComponent';
 import { createClient } from '@/lib/supabase/server';
 
@@ -17,6 +18,7 @@ export default async function HomePage() {
         Welcome to OpenEU 👋
       </h1>
       <SampleComponent email={email} data={data} />
+      <MeetingList />
     </main>
   );
 }
