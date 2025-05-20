@@ -39,8 +39,9 @@ export default function MapComponent({
       maxBoundsViscosity={1.0}
       minZoom={minZoom}
       maxZoom={maxZoom}
+      style={{ zIndex: 0 }}
     >
-      <Pane name="ocean" style={{ zIndex: -1 }}>
+      <Pane name="ocean" style={{ zIndex: 1 }}>
         <SVGOverlay bounds={oceanBounds}>
           <rect height="100%" width="100%" fill="#004494" />
         </SVGOverlay>
