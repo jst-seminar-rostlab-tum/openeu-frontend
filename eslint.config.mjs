@@ -33,6 +33,16 @@ export default [
       'react/jsx-one-expression-per-line': 'off',
       'object-curly-newline': 'off',
       'operator-linebreak': 'off',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          args: 'after-used',
+          ignoreRestSiblings: true,
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       'no-underscore-dangle': ['error', { allow: ['__filename', '__dirname'] }],
       'react/jsx-filename-extension': [
         'warn',
