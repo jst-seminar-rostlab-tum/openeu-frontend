@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FiFilter } from 'react-icons/fi';
 
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { MultiSelect } from '@/components/ui/multi-select';
 import {
   Select,
   SelectContent,
@@ -22,17 +23,21 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
-interface FilterModalStateProps {
+interface MultiSelectRef {
+  clearHandler: () => void;
+}
+
+export interface FilterModalStateProps {
   startDate: Date;
   endDate: Date;
   country: string;
-  topic: string;
+  topics: string[];
 }
 
 interface FilterModalProps {
   topics: string[];
   filterState: FilterModalStateProps;
-  setFilterState: () => void;
+  setFilterState: (newState: FilterModalStateProps) => void;
 }
 
 const countries = [
@@ -74,36 +79,50 @@ export default function FilterModal({
   const [localState, setLocalState] =
     useState<FilterModalStateProps>(filterState);
 
+  const multiSelectRef = useRef<MultiSelectRef>(null);
+
+  useEffect(() => {
+    if (!dialogOpen) {
+      return;
+    }
+    setLocalState(filterState);
+  }, [dialogOpen, filterState]);
+
   const handleApply = () => {
     setFilterState(localState);
     setDialogOpen(false);
   };
 
-  const handleTopicChange = (newTopic: string) => {
-    const updatedState = { ...localState, topic: newTopic };
-    setLocalState(updatedState);
+  const topicOptions = topics.map((topic) => ({
+    label: topic,
+    value: topic,
+  }));
+
+  const handleTopicChange = (updatedTopics: string[]) => {
+    setLocalState({ ...localState, topics: updatedTopics });
   };
 
   const handleCountryChange = (newCountry: string) => {
-    const updatedState = { ...localState, country: newCountry };
-    setLocalState(updatedState);
+    setLocalState({ ...localState, country: newCountry });
   };
 
   const handleCancel = () => {
-    setLocalState(filterState);
     setDialogOpen(false);
   };
 
-  const clearFilter = () => {
-    const clearedState = {
+  const handleClear = () => {
+    const clearedState: FilterModalStateProps = {
       startDate: new Date(),
       endDate: new Date(),
       country: '',
-      topic: '',
+      topics: [],
     };
 
+    if (multiSelectRef.current) {
+      multiSelectRef.current.clearHandler();
+    }
+
     setLocalState(clearedState);
-    setFilterState(clearedState);
   };
 
   const handleStartDateChange = (newStartDate: Date) => {
@@ -123,9 +142,6 @@ export default function FilterModal({
     setLocalState((prevState) => ({ ...prevState, endDate: newEndDate }));
   };
 
-  useEffect(() => {
-    setLocalState(filterState);
-  }, [filterState]);
   return (
     <div className={cn('flex flex-col gap-6')}>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -149,7 +165,7 @@ export default function FilterModal({
               >
                 <DatePicker
                   date={localState.startDate}
-                  onChange={handleStartDateChange}
+                  onSelect={handleStartDateChange}
                 />
               </div>
               <div
@@ -158,20 +174,20 @@ export default function FilterModal({
               >
                 <DatePicker
                   date={localState.endDate}
-                  onChange={handleEndDateChange}
+                  onSelect={handleEndDateChange}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div
-                className="w-[280px] rounded-md dark:bg-black dark:text-white"
+                className="w-[280px] h-[40px] rounded-md dark:bg-black dark:text-white"
                 style={{ boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.1)' }}
               >
                 <Select
                   onValueChange={handleCountryChange}
                   value={localState.country}
                 >
-                  <SelectTrigger className="w-[280px] dark:bg-black dark:text-white">
+                  <SelectTrigger className="w-[280px] !h-[40px] dark:bg-black dark:text-white py-0">
                     <SelectValue placeholder="Country" />
                   </SelectTrigger>
                   <SelectContent className="dark:bg-black dark:text-white">
@@ -187,25 +203,21 @@ export default function FilterModal({
                 className="w-[280px] rounded-md dark:bg-black dark:text-white"
                 style={{ boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.1)' }}
               >
-                <Select
+                <MultiSelect
+                  ref={multiSelectRef}
+                  className="w-[280px]"
+                  options={topicOptions}
+                  value={localState.topics}
+                  defaultValue={localState.topics}
                   onValueChange={handleTopicChange}
-                  value={localState.topic}
-                >
-                  <SelectTrigger className="w-[280px] dark:bg-black dark:text-white">
-                    <SelectValue placeholder="Topic" />
-                  </SelectTrigger>
-                  <SelectContent className="dark:bg-black dark:text-white">
-                    {topics.map((topic) => (
-                      <SelectItem key={topic} value={topic}>
-                        {topic}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  placeholder="Topics"
+                  variant="inverted"
+                  maxCount={1}
+                />
               </div>
             </div>
             <div className="flex justify-between">
-              <Button className="w-[80px]" variant="link" onClick={clearFilter}>
+              <Button className="w-[80px]" variant="link" onClick={handleClear}>
                 Clear Filter
               </Button>
               <div className="flex flex-row gap-2">

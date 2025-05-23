@@ -2,21 +2,22 @@
 
 import React, { useState } from 'react';
 
-import FilterModal from '@/components/FilterModal/FilterModal';
+import FilterModal, {
+  type FilterModalStateProps,
+} from '@/components/FilterModal/FilterModal';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function CalendarPage() {
-  const [filterState, setFilterState] = useState({
+  const [filterState, setFilterState] = useState<FilterModalStateProps>({
     startDate: new Date(),
     endDate: new Date(),
     country: '',
-    topic: '',
+    topics: [],
   });
 
   const handleFilterStateChange = (newState: typeof filterState) => {
     setFilterState(newState);
-    console.log('Updated Filter State:', newState);
   };
 
   return (
