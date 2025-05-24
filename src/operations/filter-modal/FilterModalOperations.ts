@@ -1,3 +1,5 @@
+import { FilterModalState } from '@/domain/entities/FilterModalState';
+
 export default class FilterModalOperations {
   static getCountries(): string[] {
     return [
@@ -29,5 +31,18 @@ export default class FilterModalOperations {
       'Spain',
       'Sweden',
     ];
+  }
+
+  static getDefaultState(): FilterModalState {
+    return {
+      startDate: new Date(),
+      endDate: new Date(),
+      country: '',
+      topics: [],
+    };
+  }
+
+  static validateDateRange(startDate: Date, endDate: Date): boolean {
+    return endDate > startDate;
   }
 }

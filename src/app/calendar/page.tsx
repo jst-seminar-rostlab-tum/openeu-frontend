@@ -2,14 +2,13 @@
 
 import React, { useState } from 'react';
 
-import FilterModal, {
-  type FilterModalStateProps,
-} from '@/components/FilterModal/FilterModal';
+import FilterModal from '@/components/FilterModal/FilterModal';
+import { FilterModalState } from '@/domain/entities/FilterModalState';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function CalendarPage() {
-  const [filterState, setFilterState] = useState<FilterModalStateProps>({
+  const [filterState, setFilterState] = useState<FilterModalState>({
     startDate: new Date(),
     endDate: new Date(),
     country: '',
