@@ -1,7 +1,7 @@
 'use client';
 
+import { Funnel } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { FiFilter } from 'react-icons/fi';
 
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { MultiSelect } from '@/components/ui/multi-select';
+import { MultiSelect, MultiSelectRef } from '@/components/ui/multi-select';
 import {
   Select,
   SelectContent,
@@ -22,10 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-
-interface MultiSelectRef {
-  clearHandler: () => void;
-}
+import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 
 export interface FilterModalStateProps {
   startDate: Date;
@@ -40,36 +37,6 @@ interface FilterModalProps {
   setFilterState: (newState: FilterModalStateProps) => void;
 }
 
-const countries = [
-  'Austria',
-  'Belgium',
-  'Bulgaria',
-  'Croatia',
-  'Cyprus',
-  'Czech Republic',
-  'Denmark',
-  'Estonia',
-  'Finland',
-  'France',
-  'Germany',
-  'Greece',
-  'Hungary',
-  'Ireland',
-  'Italy',
-  'Latvia',
-  'Lithuania',
-  'Luxembourg',
-  'Malta',
-  'Netherlands',
-  'Poland',
-  'Portugal',
-  'Romania',
-  'Slovakia',
-  'Slovenia',
-  'Spain',
-  'Sweden',
-];
-
 export default function FilterModal({
   topics,
   filterState,
@@ -80,6 +47,7 @@ export default function FilterModal({
     useState<FilterModalStateProps>(filterState);
 
   const multiSelectRef = useRef<MultiSelectRef>(null);
+  const countries = FilterModalOperations.getCountries();
 
   useEffect(() => {
     if (!dialogOpen) {
@@ -147,18 +115,18 @@ export default function FilterModal({
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <Button className="w-[36px]">
-            <FiFilter />
+            <Funnel />
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-full sm:max-w-[38vw] min-w-lg">
-          <DialogHeader>
+        <DialogContent className="max-w-[450px] sm:max-w-[450px] md:max-w-[630px]">
+          <DialogHeader className="text-left">
             <DialogTitle>Filter events</DialogTitle>
             <DialogDescription>
               Filter all events and meetings by your preference profile.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4 pb-[0px]">
-            <div className="grid grid-cols-1 sm:grid-cols-2 items-center gap-2">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 items-center gap-2 justify-items-center">
               <div
                 className="w-[280px] rounded-md dark:bg-black dark:text-white"
                 style={{ boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.1)' }}
@@ -178,7 +146,7 @@ export default function FilterModal({
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 items-center gap-2 justify-items-center">
               <div
                 className="w-[280px] h-[40px] rounded-md dark:bg-black dark:text-white"
                 style={{ boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.1)' }}
@@ -231,7 +199,7 @@ export default function FilterModal({
                   className="w-[85px] font-normal dark:bg-white dark:text-black"
                   onClick={handleApply}
                 >
-                  <FiFilter />
+                  <Funnel />
                   Apply
                 </Button>
               </div>

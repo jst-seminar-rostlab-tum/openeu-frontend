@@ -147,6 +147,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);
+    const internalButtonRef = React.useRef<HTMLButtonElement>(null);
 
     useImperativeHandle(ref, () => ({
       clearHandler: handleClear,
@@ -208,7 +209,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       >
         <PopoverTrigger asChild>
           <Button
-            ref={ref}
+            ref={internalButtonRef}
             {...props}
             onClick={handleTogglePopover}
             className={cn(
@@ -235,13 +236,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                           <IconComponent className="h-4 w-4 mr-2" />
                         )}
                         {option?.label}
-                        <XCircle
-                          className="ml-2 h-4 w-4 cursor-pointer"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            toggleOption(value);
-                          }}
-                        />
                       </Badge>
                     );
                   })}
@@ -255,13 +249,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                       style={{ animationDuration: `${animation}s` }}
                     >
                       {`+ ${selectedValues.length - maxCount} more`}
-                      <XCircle
-                        className="ml-2 h-4 w-4 cursor-pointer"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          clearExtraOptions();
-                        }}
-                      />
                     </Badge>
                   )}
                 </div>
@@ -389,3 +376,5 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 );
 
 MultiSelect.displayName = 'MultiSelect';
+
+export type { MultiSelectRef };
