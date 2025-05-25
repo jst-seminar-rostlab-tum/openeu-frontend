@@ -20,7 +20,7 @@ export default function ChatLayout({
 }>) {
   return (
     <SidebarProvider className="h-[calc(100vh-3rem)] !min-h-0">
-      <ChatSidebar variant="inset" className="mt-10" />
+      <ChatSidebar variant="inset" className="mt-12 h-[calc(100vh-3rem)]" />
       <SidebarInset className="p-4">
         <TooltipProvider>
           <Tooltip>

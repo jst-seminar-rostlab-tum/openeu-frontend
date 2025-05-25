@@ -46,7 +46,7 @@ export default function ChatSidebar({
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className="mb-10">
+      <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
