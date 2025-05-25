@@ -22,8 +22,8 @@ export interface SectionProps
     VariantProps<typeof sectionVariants> {}
 
 const Section = React.forwardRef<HTMLElement, SectionProps>(
-  ({ children, variant, className }) => (
-    <section className={sectionVariants({ variant, className })}>
+  ({ children, variant, className }, ref) => (
+    <section className={sectionVariants({ variant, className })} ref={ref}>
       {children}
     </section>
   ),
