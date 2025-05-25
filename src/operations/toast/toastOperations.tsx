@@ -1,34 +1,36 @@
 import { toast } from 'sonner';
 
-export default class ToastOperations {
-  private static show(
-    type: 'info' | 'warning',
-    title: string,
-    message: string,
-    className: string,
-  ) {
+enum ToastType {
+  INFO = 'info',
+  WARNING = 'warning',
+}
+
+interface ToastConfig {
+  title: string;
+  message: string;
+}
+
+const TOAST_STYLES: Record<ToastType, string> = {
+  [ToastType.INFO]:
+    '!bg-sky-50 !text-sky-800 border !border-sky-200 dark:!bg-sky-950 dark:!text-sky-50 dark:!border-sky-800',
+  [ToastType.WARNING]:
+    '!bg-yellow-50 !text-yellow-700 border !border-yellow-400 dark:!bg-yellow-950 dark:!text-yellow-100 dark:!border-yellow-800',
+};
+
+export class ToastOperations {
+  private static show(type: ToastType, { title, message }: ToastConfig): void {
     toast[type](title, {
       description: message,
-      className: `!items-start [&>div:first-child]:!mt-[2px] !font-bold ${className}`,
+      className: `!items-start [&>div:first-child]:!mt-[2px] !font-bold ${TOAST_STYLES[type]}`,
       descriptionClassName: '!text-inherit',
     });
   }
 
-  static showInfo(title: string, message: string) {
-    this.show(
-      'info',
-      title,
-      message,
-      '!bg-sky-100 !text-sky-800 border !border-sky-200 dark:!bg-[#053048] dark:!text-sky-100 dark:!border-sky-800',
-    );
+  static showInfo({ title, message }: ToastConfig): void {
+    this.show(ToastType.INFO, { title, message });
   }
 
-  static showWarning(title: string, message: string) {
-    this.show(
-      'warning',
-      title,
-      message,
-      '!bg-amber-100 !text-amber-700 border !border-yellow-400 dark:!bg-[#502305] dark:!text-yellow-100 dark:!border-yellow-800',
-    );
+  static showWarning({ title, message }: ToastConfig): void {
+    this.show(ToastType.WARNING, { title, message });
   }
 }
