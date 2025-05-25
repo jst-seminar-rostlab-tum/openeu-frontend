@@ -1,5 +1,6 @@
-import { SidebarGroupData } from '@/domain/entities/chat/Sidebar';
 import { Search, SquarePen } from 'lucide-react';
+
+import { SidebarGroupData } from '@/domain/entities/chat/Sidebar';
 
 export default class ChatSidebarOperations {
   static getSidebarGroups(): SidebarGroupData[] {
@@ -14,7 +15,7 @@ export default class ChatSidebarOperations {
           },
           {
             icon: Search,
-            title: 'Search through all existing chat histories and templates',
+            title: 'Search',
             onClick: () => {},
           },
         ],
