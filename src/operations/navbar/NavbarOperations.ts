@@ -4,34 +4,20 @@ export default class NavbarOperations {
   static getNavItems(): NavItemType[] {
     return [
       {
-        title: 'Calendar',
-        href: '/calendar',
+        title: 'About',
+        href: '/about',
       },
       {
         title: 'Map',
         href: '/map',
       },
       {
-        title: 'About',
-        href: '/about',
+        title: 'Calendar',
+        href: '/calendar',
       },
       {
-        title: 'Test',
-        href: '/',
-        items: [
-          {
-            title: 'TestItem1',
-            href: '/test1',
-            description:
-              'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam',
-          },
-          {
-            title: 'TestItem2',
-            href: '/test2',
-            description:
-              'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam',
-          },
-        ],
+        title: 'Chat',
+        href: '/chat',
       },
     ];
   }
