@@ -118,7 +118,6 @@ export function getMonthCellEvents(
     events: MeetingData[],
     eventPositions: Record<string, number>
 ): MeetingData[] {
-    console.log("Getting month cell events for date:", date);
     const dayStart = startOfDay(date);
     const eventsForDate: MeetingData[] = events.filter((event) => {
         const eventStart = parseISO(event.meeting_start_datetime);
@@ -133,7 +132,6 @@ export function getMonthCellEvents(
 }
 
 export function getCalendarCells(selectedDate: Date): CalendarCell[] {
-    console.log("Generating calendar cells for date:", selectedDate);
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
 

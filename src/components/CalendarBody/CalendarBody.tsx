@@ -22,8 +22,6 @@ export function CalendarBody() {
         const endDate = parseISO(event.meeting_end_datetime);
         return !isSameDay(startDate, endDate);
     });
-    console.log("DEBUG: Single Day Events:", singleDayEvents);
-    console.log("DEBUG: Multi Day Events:", multiDayEvents);
 
     return (
             <div className='h-[80vh] w-full overflow-scroll relative]'>

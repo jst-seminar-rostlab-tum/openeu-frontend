@@ -77,6 +77,5 @@ export function useCalendar(): ICalendarContext {
     const context = useContext(CalendarContext);
     if (context === undefined)
         throw new Error("useCalendar must be used within a CalendarProvider.");
-    console.log("Vracam novi selectedDate:", context.selectedDate);
     return context;
 }

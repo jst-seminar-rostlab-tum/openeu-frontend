@@ -48,17 +48,13 @@ export function DayCell({cell, events, eventPositions}: IProps) {
 
     const cellEvents = useMemo(
         () => {
-             console.log("Calculating cell events for date:", date)
             const result = getMonthCellEvents(date, events, eventPositions);
-              console.log("CellEvents for date",date," are: ",result);
             return Array.isArray(result) ? result : [];
         },
       
         [date, events, eventPositions]
     );
-    // const cellEventsResult = getMonthCellEvents(date, events, eventPositions);
-    // const cellEvents = Array.isArray(cellEventsResult) ? cellEventsResult : [];
-    // const isSunday = date.getDay() === 0;
+    
     const isSunday = date.getDay() === 0;
     return (
         <motion.div
@@ -112,6 +108,7 @@ export function DayCell({cell, events, eventPositions}: IProps) {
                                             className="hidden lg:flex"
                                             event={event}
                                             cellDate={startOfDay(date)}
+                                           
                                         />
                                     </>
                                 )}

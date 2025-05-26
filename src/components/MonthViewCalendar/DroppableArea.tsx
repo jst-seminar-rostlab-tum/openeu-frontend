@@ -9,7 +9,6 @@ interface DroppableAreaProps {
 }
 
 export function DroppableArea({ date, hour, minute, children, className }: DroppableAreaProps) {
-
   
   return (
     <div
@@ -22,7 +21,6 @@ export function DroppableArea({ date, hour, minute, children, className }: Dropp
       onDragLeave={(e) => {
         e.currentTarget.classList.remove('bg-primary/10');
       }}
-    
     >
       {children}
     </div>

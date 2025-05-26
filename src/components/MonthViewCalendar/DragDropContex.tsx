@@ -46,7 +46,6 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
       newStart.setMinutes(originalStart.getMinutes());
     }
 
-    // Create new end date based on the same duration
     const newEnd = new Date(newStart.getTime() + duration);
 
     // Check if the event is being dropped in the same position

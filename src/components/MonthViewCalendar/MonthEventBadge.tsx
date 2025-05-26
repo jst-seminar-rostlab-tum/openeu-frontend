@@ -8,10 +8,9 @@ import {cn} from "@/lib/utils";
 import { EventDetailsDialog } from "./EventDetailDialog";
 
 import { formatTime } from "@/domain/hooks/calendarHelpers";
-import { DraggableEvent } from "./DraggableEvent";
 
 const eventBadgeVariants = cva(
-    "mx-1 flex size-auto h-6.5 select-none items-center justify-between gap-1.5 truncate whitespace-nowrap rounded-md border px-2 text-xs",
+    "mx-1 flex size-auto h-6.5 sselect-none items-center gap-1.5  whitespace-nowrap truncate justify-between rounded-md border px-2 text-xs",
     {
         variants: {
             color: {
@@ -63,11 +62,9 @@ export function MonthEventBadge({
                                 }: IProps) {
     
 
-    console.log("DEBUG: Ispisivanje za event:", event.title);
     const itemStart = startOfDay(parseISO(event.meeting_start_datetime));
  
-    const itemEnd = endOfDay(parseISO(event.meeting_end_datetime));
-    
+    const itemEnd = endOfDay(parseISO(event.meeting_end_datetime));    
                                     
     if (cellDate < itemStart || cellDate > itemEnd) return null;
   
@@ -88,7 +85,6 @@ export function MonthEventBadge({
     }
 
     const renderBadgeText = ["first", "none"].includes(position);
-    console.log("Event color : "    , event.color);
    
     const color = event.color  as VariantProps<typeof eventBadgeVariants>["color"];
 
@@ -97,8 +93,8 @@ export function MonthEventBadge({
     return (
         <EventDetailsDialog event={event}>
            
-                <div role="button" tabIndex={0} className={eventBadgeClasses}>
-                    <div className="flex items-center gap-1.5 truncate">
+                <div role="button" tabIndex={0} className={eventBadgeClasses} >
+                    <div className="flex items-center  truncate flex-1">
                         {!["middle", "last"].includes(position)  && (
                             <svg width="8" height="8" viewBox="0 0 8 8" className="shrink-0" >
                                 <circle cx="4" cy="4" r="4"/>
@@ -106,12 +102,7 @@ export function MonthEventBadge({
                         )}
 
                         {renderBadgeText && (
-                            <p className="flex-1 truncate font-semibold">
-                                {eventCurrentDay && (
-                                    <span className="text-xs">
-                                     Day {eventCurrentDay} of {eventTotalDays} •{" "}
-                                 </span>
-                                )}
+                            <p className="truncate font-semibold text-ellipsis flex-1">
                                 {event.title}
                             </p>
                         )}

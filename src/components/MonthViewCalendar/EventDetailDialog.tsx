@@ -28,10 +28,7 @@ interface IProps {
 export function EventDetailsDialog({event, children}: IProps) {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
-    console.log("DEBUG: Event Details Dialog", event);
    
-
-
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
@@ -45,9 +42,15 @@ export function EventDetailsDialog({event, children}: IProps) {
                         <div className="flex items-start gap-2">
                             <User className="mt-1 size-4 shrink-0 text-muted-foreground"/>
                             <div>
-                                <p className="text-sm font-medium">Responsible</p>
+                                <p className="text-sm font-medium">Topics</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {event.description ?? "Unknown"}
+                                    {event.tags?.map(event=>{
+                                        return(
+                                            <span key={event} className="inline-block mr-1 px-2 py-0.3 m-2 bg-gray-500 text-white rounded">
+                                                {event}
+                                            </span>
+                                        )
+                                    }) ?? "Unknown"}
                                 </p>
                             </div>
                         </div>

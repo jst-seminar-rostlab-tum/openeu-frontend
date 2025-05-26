@@ -23,7 +23,6 @@ const MotionButton = motion.create(Button);
 const MotionBadge = motion.create(Badge);
 
 export function DateNavigator({ view, event }: IProps) {
-   console.log("DateNavigator rendered with view:", event[0]?.title, "and time: ", event[0]?.meeting_start_datetime);
   const { selectedDate, setSelectedDate } = useCalendar();
  
   const month = format(selectedDate, "MMMM");
