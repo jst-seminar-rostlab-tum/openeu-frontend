@@ -116,6 +116,10 @@ export default function FilterModal({
             date={localState.endDate}
             onSelect={handleEndDateChange}
           />
+        </div>
+        <div
+          className={`grid gap-4 ${showCountryDropdown ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}
+        >
           {showCountryDropdown && (
             <Select
               onValueChange={(value) => updateLocalState({ country: value })}
