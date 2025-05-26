@@ -5,6 +5,7 @@ import React from 'react';
 
 import NavBar from '@/components/navigation/NavBar';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { Toaster } from '@/components/ui/sonner';
 
 import ReactQueryProvider from './ReactQueryProvider';
 
@@ -33,6 +34,7 @@ export default function RootLayout({
             <main className="pt-12">{children}</main>
           </ThemeProvider>
         </ReactQueryProvider>
+        <Toaster />
       </body>
     </html>
   );
