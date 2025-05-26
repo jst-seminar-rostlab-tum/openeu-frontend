@@ -24,7 +24,7 @@ export default function ChatSidebar({
 
   return (
     <Sidebar {...props}>
-      <SidebarContent>
+      <SidebarContent className="scrollbar-custom">
         {sidebarGroups.map((group) => (
           <SidebarGroup key={group.label}>
             <SidebarGroupLabel>{group.label}</SidebarGroupLabel>

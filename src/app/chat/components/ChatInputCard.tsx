@@ -43,7 +43,7 @@ export default function ChatInputCard({
       <CardContent className="flex flex-col p-0">
         <Textarea
           placeholder="Ask a question"
-          className="max-h-[200px] resize-none border-0 bg-transparent dark:bg-transparent p-0 focus-visible:ring-0 shadow-none min-h-0 px-2 !text-base"
+          className="max-h-[200px] resize-none border-0 bg-transparent dark:bg-transparent p-0 focus-visible:ring-0 shadow-none min-h-0 px-2 !text-base scrollbar-custom"
           rows={1}
           value={input}
           onChange={(e) => setInput(e.target.value)}
