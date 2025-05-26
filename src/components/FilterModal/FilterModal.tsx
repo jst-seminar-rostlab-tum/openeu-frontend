@@ -29,12 +29,14 @@ interface FilterModalProps {
   topics: string[];
   filterState: FilterModalState;
   setFilterState: (newState: FilterModalState) => void;
+  showCountryDropdown?: boolean;
 }
 
 export default function FilterModal({
   topics,
   filterState,
   setFilterState,
+  showCountryDropdown = true,
 }: FilterModalProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>(filterState);
@@ -114,21 +116,24 @@ export default function FilterModal({
             date={localState.endDate}
             onSelect={handleEndDateChange}
           />
-          <Select
-            onValueChange={(value) => updateLocalState({ country: value })}
-            value={localState.country}
-          >
-            <SelectTrigger className="w-full !h-full">
-              <SelectValue placeholder="Country" />
-            </SelectTrigger>
-            <SelectContent className="dark:bg-black dark:text-white">
-              {countries.map((country) => (
-                <SelectItem key={country} value={country}>
-                  {country}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {showCountryDropdown && (
+            <Select
+              onValueChange={(value) => updateLocalState({ country: value })}
+              value={localState.country ?? ''}
+            >
+              <SelectTrigger className="w-full !h-full">
+                <SelectValue placeholder="Country" />
+              </SelectTrigger>
+              <SelectContent className="dark:bg-black dark:text-white">
+                {countries.map((country) => (
+                  <SelectItem key={country} value={country}>
+                    {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+
           <MultiSelect
             ref={multiSelectRef}
             options={topicOptions}
@@ -138,6 +143,7 @@ export default function FilterModal({
             placeholder="Topics"
             variant="inverted"
             maxCount={1}
+            className={showCountryDropdown ? '' : '!w-full'}
           />
         </div>
         <DialogFooter className="!flex-row !justify-between">
