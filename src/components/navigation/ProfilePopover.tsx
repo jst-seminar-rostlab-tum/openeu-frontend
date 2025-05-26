@@ -24,10 +24,12 @@ export function ProfilePopover() {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
-          <Avatar>
-            <AvatarImage src={userImage} alt={userName} />
-            <AvatarFallback>{userInitials}</AvatarFallback>
-          </Avatar>
+         {userImage != null && (
+            <Avatar>
+              <AvatarImage src={userImage} alt={userName} />
+              <AvatarFallback>{userInitials}</AvatarFallback>
+            </Avatar>
+         )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-56 flex flex-col gap-2">

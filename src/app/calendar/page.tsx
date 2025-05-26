@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import FilterModal from '@/components/FilterModal/FilterModal';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
+import { CalendarHeader } from '@/components/CalendarHeader/CalendarHeader';
+import { getEvents } from '@/domain/hooks/calendarHelpers';
+import { CalendarProvider } from '@/components/CalendarHeader/calendarContext';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalendar';
+import { CalendarBody } from '@/components/CalendarBody/CalendarBody';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
@@ -15,9 +21,31 @@ export default function CalendarPage() {
     topics: [],
   });
 
+  const [events, setEvents] = useState<MeetingData[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    async function fetchData() {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 20));
+      const eventsData = await getEvents();
+      setEvents(eventsData);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  }
+  fetchData();
+}, []);
+
   const handleFilterStateChange = (newState: typeof filterState) => {
     setFilterState(newState);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -27,9 +55,13 @@ export default function CalendarPage() {
         filterState={filterState}
         setFilterState={handleFilterStateChange}
       />
-      <div>
-        <h2>Current Filter State:</h2>
-        <pre>{JSON.stringify(filterState, null, 2)}</pre>
+      <div className="m-4">
+      <CalendarProvider events={events} view="month"  >
+           <div className="w-full border rounded-xl ">
+         <CalendarHeader/>
+         <CalendarBody/>
+      </div>
+      </CalendarProvider>
       </div>
     </div>
   );

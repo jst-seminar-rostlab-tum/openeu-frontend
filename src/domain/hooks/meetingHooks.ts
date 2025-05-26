@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { MeetingData } from '@/domain/entities/MeetingData';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
 export const useMeetings = (enabled = true) =>
