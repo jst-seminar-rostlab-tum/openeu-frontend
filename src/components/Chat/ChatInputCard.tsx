@@ -2,7 +2,7 @@
 
 import { KeyboardEvent, useState } from 'react';
 
-import { ChatToolbar } from '@/app/chat/components/ChatToolbar';
+import { ChatToolbar } from '@/components/Chat/ChatToolbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 

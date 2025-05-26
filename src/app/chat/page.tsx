@@ -3,98 +3,23 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
-import ChatInputCard from '@/app/chat/components/ChatInputCard';
-import { ChatMessage } from '@/app/chat/components/ChatMessage';
-
-interface Message {
-  id: string;
-  content: string;
-  isUser: boolean;
-  timestamp: Date;
-}
+import ChatInputCard from '@/components/Chat/ChatInputCard';
+import { ChatMessage } from '@/components/Chat/ChatMessage';
+import ChatOperations, { type Message } from '@/operations/chat/ChatOperations';
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [streamingMessage, setStreamingMessage] = useState('');
 
-  // TODO: Replace with actual user ID from auth
-  const userId = 'user-123';
-
-  const createSession = async (title: string): Promise<string> => {
-    // TODO: Replace with actual API call to POST /chat/start
-    console.log('Creating session:', { userId, title });
-    const mockSessionId = `session-${Date.now()}`;
-    return mockSessionId;
-  };
-
-  const sendMessageToAPI = async (sessionId: string, message: string) => {
-    // TODO: Replace with actual API call to POST /chat with streaming
-    console.log('Sending message:', { sessionId, message });
-
-    // Mock streaming response
-    const mockResponse =
-      "I'm OpenEU, your AI assistant for EU regulations and compliance. How can I help you understand upcoming EU laws, directives, or compliance requirements?";
-
-    // Simulate streaming using array methods and Promise.all
-    const words = mockResponse.split(' ');
-    let accumulated = '';
-
-    await Promise.all(
-      words.map(
-        (word, index) =>
-          new Promise<void>((resolve) => {
-            setTimeout(() => {
-              accumulated += `${word} `;
-              setStreamingMessage(accumulated);
-              resolve();
-            }, index * 100);
-          }),
-      ),
-    );
-
-    return accumulated.trim();
-  };
-
-  const handleAddFile = () => {
-    console.log('Add file functionality - to be implemented');
-  };
-
-  const handleSettings = () => {
-    console.log('Settings functionality - to be implemented');
-  };
-
   const handleSendMessage = async (content: string) => {
-    try {
-      let sessionId = currentSessionId;
-      if (!sessionId) {
-        const title = content.slice(0, 50) + (content.length > 50 ? '...' : '');
-        sessionId = await createSession(title);
-        setCurrentSessionId(sessionId);
-      }
-
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        content,
-        isUser: true,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, userMessage]);
-
-      setStreamingMessage('');
-      const aiResponse = await sendMessageToAPI(sessionId, content);
-
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: aiResponse,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiMessage]);
-      setStreamingMessage('');
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
+    await ChatOperations.handleSendMessage(
+      content,
+      currentSessionId,
+      setCurrentSessionId,
+      setMessages,
+      setStreamingMessage,
+    );
   };
 
   return (
@@ -136,8 +61,8 @@ export default function Chat() {
       <div className="sticky bottom-0 bg-background rounded-t-xl">
         <ChatInputCard
           onSendMessage={handleSendMessage}
-          onAddFile={handleAddFile}
-          onSettings={handleSettings}
+          onAddFile={ChatOperations.handleAddFile}
+          onSettings={ChatOperations.handleSettings}
         />
         <p className="text-xs text-muted-foreground text-center py-2">
           OpenEU may occasionally provide incomplete or outdated information.
