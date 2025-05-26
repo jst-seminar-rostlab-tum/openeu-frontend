@@ -99,7 +99,7 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col h-full max-w-4xl mx-auto">
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center gap-6">
             <Image
@@ -133,13 +133,13 @@ export default function Chat() {
         )}
       </div>
 
-      <div className="sticky bottom-0">
+      <div className="sticky bottom-0 bg-background rounded-t-xl">
         <ChatInputCard
           onSendMessage={handleSendMessage}
           onAddFile={handleAddFile}
           onSettings={handleSettings}
         />
-        <p className="text-xs text-muted-foreground text-center mt-2">
+        <p className="text-xs text-muted-foreground text-center py-2">
           OpenEU may occasionally provide incomplete or outdated information.
           Always verify critical details with official EU or national sources.
         </p>
