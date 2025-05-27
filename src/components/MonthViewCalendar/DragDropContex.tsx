@@ -13,7 +13,7 @@ interface DragDropContextType {
   setOnEventDropped: (callback: (event: MeetingData, newStartDate: Date, newEndDate: Date) => void) => void;
 }
 
-const DragDropContext = createContext<DragDropContextType | undefined>(undefined);
+export const DragDropContext = createContext<DragDropContextType | undefined>(undefined);
 
 export function DragDropProvider({ children }: { children: ReactNode }) {
   const [draggedEvent, setDraggedEvent] = useState<MeetingData | null>(null);
@@ -84,10 +84,3 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useDragDrop() {
-  const context = useContext(DragDropContext);
-  if (context === undefined) {
-    throw new Error('useDragDrop must be used within a DragDropProvider');
-  }
-  return context;
-}

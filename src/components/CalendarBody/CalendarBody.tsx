@@ -6,7 +6,7 @@ import {motion} from "framer-motion";
 import {transition, fadeIn} from "@/domain/animations";
 import { CalendarMonthView } from "../MonthViewCalendar/MonthViewCalendar";
 import {isSameDay, parseISO} from "date-fns";
-import { useFilteredEvents } from "@/domain/hooks/calendarHelpers";
+import { useFilteredEvents } from "@/operations/meeting/calendarHelpers";
 
 export function CalendarBody() {
     const {view} = useCalendar();

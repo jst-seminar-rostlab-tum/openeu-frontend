@@ -10,7 +10,7 @@ import { TodayButton } from "./TodayButton";
 import { Button } from "../ui/button";
 import { useCalendar } from "./calendarContext";
 import { DateNavigator } from "./DateNavigator";
-import { dummyMeetings } from "@/dummydata/dummyMeetings";
+import { dummyMeetings } from "@/operations/meeting/MeetingOperations";
 
 
 export const MotionButton = motion.create(Button);

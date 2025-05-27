@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { useDragDrop } from './DragDropContex';
+import { useDragDrop } from '@/domain/hooks/meetingHooks';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { EventDetailsDialog } from './EventDetailDialog';
 

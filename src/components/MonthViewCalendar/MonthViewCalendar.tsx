@@ -1,12 +1,12 @@
 import {motion} from "framer-motion";
-import { useCalendar } from "../CalendarHeader/calendarContext";
-import {staggerContainer, transition} from "../../domain/animations";
+import { useCalendar } from "@/components/CalendarHeader/calendarContext"
+import {staggerContainer, transition} from "@/domain/animations";
 
 import { DayCell } from "./DayCell";
 
 import {
     getCalendarCells,
-    calculateMonthEventPositions} from "@/domain/hooks/calendarHelpers";
+    calculateMonthEventPositions} from "@/operations/meeting/calendarHelpers";
 
 import type { MeetingData } from "@/domain/entities/calendar/MeetingData";
 

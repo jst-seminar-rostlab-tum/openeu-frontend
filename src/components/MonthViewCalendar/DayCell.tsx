@@ -5,7 +5,7 @@ import {isToday, startOfDay} from "date-fns";
 import {motion} from "framer-motion";
 ;
 
-import {getMonthCellEvents} from "@/domain/hooks/calendarHelpers";
+import {getMonthCellEvents} from "@/operations/meeting/calendarHelpers";
 import {staggerContainer, transition} from "@/domain/animations"
 import type { CalendarCell } from "@/domain/entities/calendar/CalendarCell";
 import {cn} from "@/lib/utils";

@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import FilterModal from '@/components/FilterModal/FilterModal';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { CalendarHeader } from '@/components/CalendarHeader/CalendarHeader';
-import { getEvents } from '@/domain/hooks/calendarHelpers';
+import { getEvents } from '@/operations/meeting/calendarHelpers';
 import { CalendarProvider } from '@/components/CalendarHeader/calendarContext';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalendar';

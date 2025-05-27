@@ -9,7 +9,7 @@ import { buttonHover, transition } from "../../domain/animations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { getEventsCount, navigateDate, rangeText} from "@/domain/hooks/calendarHelpers";
+import { getEventsCount, navigateDate, rangeText} from "@/operations/meeting/calendarHelpers";
 
 import type { MeetingData } from "@/domain/entities/calendar/MeetingData";
 import type { TCalendarView } from "@/domain/types/calendar/types";

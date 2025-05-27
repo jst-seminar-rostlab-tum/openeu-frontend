@@ -29,7 +29,7 @@ import {TCalendarView, TMeetingColor} from "@/domain/types/calendar/types";
 import type { CalendarCell } from "@/domain/entities/calendar/CalendarCell";
 import type { MeetingData } from "@/domain/entities/calendar/MeetingData";
 import { useCalendar } from "@/components/CalendarHeader/calendarContext";
-import { dummyMeetings } from "@/dummydata/dummyMeetings";
+import { dummyMeetings } from "@/operations/meeting/MeetingOperations";
 
 const FORMAT_STRING = "MMM d, yyyy";
 

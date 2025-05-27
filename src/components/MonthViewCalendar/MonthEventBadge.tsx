@@ -7,7 +7,7 @@ import { MeetingData } from "@/domain/entities/calendar/MeetingData";
 import {cn} from "@/lib/utils";
 import { EventDetailsDialog } from "./EventDetailDialog";
 
-import { formatTime } from "@/domain/hooks/calendarHelpers";
+import { formatTime } from "@/operations/meeting/calendarHelpers";
 
 const eventBadgeVariants = cva(
     "mx-1 flex size-auto h-6.5 sselect-none items-center gap-1.5  whitespace-nowrap truncate justify-between rounded-md border px-2 text-xs",

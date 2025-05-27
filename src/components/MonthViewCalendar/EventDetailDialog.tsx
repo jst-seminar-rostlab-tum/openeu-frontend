@@ -16,7 +16,7 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import type { MeetingData } from "@/domain/entities/calendar/MeetingData";
 import {ReactNode} from "react";
 import { useCalendar } from "../CalendarHeader/calendarContext";
-import { formatTime } from "@/domain/hooks/calendarHelpers";
+import { formatTime } from "@/operations/meeting/calendarHelpers";
 import {Button} from "@/components/ui/button";
 import {toast} from "sonner"
 
