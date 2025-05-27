@@ -29,9 +29,8 @@ export default function MapComponent({
   maxZoom,
 }: MapProps) {
   const { theme } = useTheme();
-
-  const countryFill = theme === 'dark' ? '#1E293B' : '#FFFFFF';
-  const countryBorder = theme === 'dark' ? '#334155' : '#E2E8F0';
+  const countryFill = theme === 'dark' ? '#1E293B' : '#E2E8F0';
+  const countryBorder = theme === 'dark' ? '#334155' : '#64748B';
 
   return (
     <MapContainer
