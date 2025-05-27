@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 
 import { GeoJsonObject } from 'geojson';
 import { LatLngExpression } from 'leaflet';
+import { useTheme } from 'next-themes';
 import { GeoJSON, MapContainer, Pane, SVGOverlay } from 'react-leaflet';
 
 import {
@@ -27,6 +28,11 @@ export default function MapComponent({
   minZoom,
   maxZoom,
 }: MapProps) {
+  const { theme } = useTheme();
+
+  const countryFill = theme === 'dark' ? '#1E293B' : '#FFFFFF';
+  const countryBorder = theme === 'dark' ? '#334155' : '#E2E8F0';
+
   return (
     <MapContainer
       className="w-full h-full"
@@ -46,9 +52,22 @@ export default function MapComponent({
           <rect height="100%" width="100%" fill="#004494" />
         </SVGOverlay>
       </Pane>
-
-      <GeoJSON interactive={false} data={mapData} style={countryBaseStyle} />
-      <GeoJSON interactive={false} data={mapData} style={countryBorderStyle} />
+      <GeoJSON
+        interactive={false}
+        data={mapData}
+        style={{
+          ...countryBaseStyle,
+          fillColor: countryFill,
+        }}
+      />
+      <GeoJSON
+        interactive={false}
+        data={mapData}
+        style={{
+          ...countryBorderStyle,
+          color: countryBorder,
+        }}
+      />
     </MapContainer>
   );
 }
