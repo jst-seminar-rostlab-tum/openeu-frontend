@@ -31,7 +31,7 @@ export default function MapPage() {
   return (
     <div className="relative h-dvh overflow-hidden">
       <Map />
-      <Card className="absolute flex flex-row right-0 top-0 gap-4 z-10 w-auto bg-white dark:bg-black rounded-md p-2 !m-4">
+      <Card className="absolute flex flex-row right-4 top-4 gap-2 z-10 p-2">
         <SearchBar
           value={searchValue}
           onValueChange={handleSearchChange}
