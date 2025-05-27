@@ -6,13 +6,13 @@ export const oceanBounds: LatLngBoundsExpression = [
 ];
 
 export const countryBaseStyle = {
-  fillColor: '#333333',
+  weight: 1,
+  opacity: 1,
   fillOpacity: 1,
-  weight: 0,
 };
 
 export const countryBorderStyle = {
-  color: '#868686',
   weight: 1,
+  opacity: 1,
   fillOpacity: 0,
 };
