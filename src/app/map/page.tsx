@@ -5,6 +5,7 @@ import { useState } from 'react';
 import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/Map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
+import { Card } from '@/components/ui/card';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
@@ -30,7 +31,7 @@ export default function MapPage() {
   return (
     <div className="relative h-dvh overflow-hidden">
       <Map />
-      <div className="absolute flex right-0 top-0 gap-4 z-10 w-auto bg-white rounded-md p-2 !m-4">
+      <Card className="absolute flex flex-row right-0 top-0 gap-4 z-10 w-auto bg-white dark:bg-black rounded-md p-2 !m-4">
         <SearchBar
           value={searchValue}
           onValueChange={handleSearchChange}
@@ -42,7 +43,7 @@ export default function MapPage() {
           setFilterState={handleFilterStateChange}
           showCountryDropdown={false}
         />
-      </div>
+      </Card>
     </div>
   );
 }
