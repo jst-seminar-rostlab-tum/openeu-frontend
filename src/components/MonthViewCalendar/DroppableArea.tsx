@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react';
+
 import { useDragDrop } from './DragDropContex';
+
 interface DroppableAreaProps {
   date: Date;
   hour?: number;
@@ -8,8 +10,13 @@ interface DroppableAreaProps {
   className?: string;
 }
 
-export function DroppableArea({ date, hour, minute, children, className }: DroppableAreaProps) {
-  
+export function DroppableArea({
+  date,
+  hour,
+  minute,
+  children,
+  className,
+}: DroppableAreaProps) {
   return (
     <div
       className={`${className || ''} `}

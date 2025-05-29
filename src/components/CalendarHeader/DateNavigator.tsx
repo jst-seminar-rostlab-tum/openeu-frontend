@@ -1,18 +1,20 @@
-import { useMemo } from "react";
-import { format } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { format } from 'date-fns';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useMemo } from 'react';
 
-import { useCalendar } from "./calendarContext";
-import { buttonHover, transition } from "../../domain/animations";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import type { TCalendarView } from '@/domain/types/calendar/types';
+import {
+  getEventsCount,
+  navigateDate,
+  rangeText,
+} from '@/operations/meeting/calendarHelpers';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-
-import { getEventsCount, navigateDate, rangeText} from "@/operations/meeting/calendarHelpers";
-
-import type { MeetingData } from "@/domain/entities/calendar/MeetingData";
-import type { TCalendarView } from "@/domain/types/calendar/types";
+import { buttonHover, transition } from '../../domain/animations';
+import { useCalendar } from './calendarContext';
 
 interface IProps {
   view: TCalendarView;
@@ -24,21 +26,19 @@ const MotionBadge = motion.create(Badge);
 
 export function DateNavigator({ view, event }: IProps) {
   const { selectedDate, setSelectedDate } = useCalendar();
- 
-  const month = format(selectedDate, "MMMM");
-  const year = selectedDate.getFullYear();
 
+  const month = format(selectedDate, 'MMMM');
+  const year = selectedDate.getFullYear();
 
   const eventCount = useMemo(
     () => getEventsCount(event, selectedDate, view),
-    [event, selectedDate, view]
-    
+    [event, selectedDate, view],
   );
 
   const handlePrevious = () =>
-    setSelectedDate(navigateDate(selectedDate, view, "previous"));
+    setSelectedDate(navigateDate(selectedDate, view, 'previous'));
   const handleNext = () =>
-    setSelectedDate(navigateDate(selectedDate, view, "next"));
+    setSelectedDate(navigateDate(selectedDate, view, 'next'));
 
   return (
     <div className="space-y-0.5">

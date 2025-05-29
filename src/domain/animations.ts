@@ -1,4 +1,4 @@
-import { Variants } from "framer-motion";
+import { Variants } from 'framer-motion';
 
 export const slideFromLeft: Variants = {
   initial: { x: -20, opacity: 0 },
@@ -6,7 +6,7 @@ export const slideFromLeft: Variants = {
   exit: { x: 20, opacity: 0 },
 };
 export const transition = {
-  type: "spring",
+  type: 'spring',
   stiffness: 200,
   damping: 20,
 };
