@@ -1,12 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useContext } from 'react';
 
-import {
-  DragDropContext
-} from '@/components/MonthViewCalendar/DragDropContex';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { MeetingData } from '@/domain/entities/MeetingData';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
 export const useMeetings = (enabled = true) =>
@@ -15,11 +11,3 @@ export const useMeetings = (enabled = true) =>
     queryFn: meetingRepository.getMeetings,
     enabled,
   });
-
-export function useDragDrop() {
-  const context = useContext(DragDropContext);
-  if (context === undefined) {
-    throw new Error('useDragDrop must be used within a DragDropProvider');
-  }
-  return context;
-}
