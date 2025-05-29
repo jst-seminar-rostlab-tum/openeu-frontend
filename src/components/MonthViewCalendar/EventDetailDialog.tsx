@@ -44,13 +44,16 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <div>
                 <p className="text-sm font-medium">Topics</p>
                 <p className="text-sm text-muted-foreground">
-                  {event.tags?.map((event) => (
-                    <span
-                      key={event}
-                      className="inline-block mr-1 px-2 py-0.3 m-2 bg-gray-500 text-white rounded"
-                      {event}
-                    </span>
-                  )) ?? 'Unknown'}
+                  {event.tags?.length
+                    ? event.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-block mr-1 px-2 py-0.5 m-2 bg-gray-500 text-white rounded"
+                        >
+                          {tag}
+                        </span>
+                      ))
+                    : 'Unknown'}
                 </p>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 
-import { useDragDrop } from './DragDropContex';
+import { useDragDrop } from '@/domain/hooks/meetingHooks';
 
 interface DroppableAreaProps {
   date: Date;

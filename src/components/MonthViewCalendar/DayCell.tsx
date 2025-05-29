@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { TMeetingColor } from "@/domain/types/calendar/types";
-import { DroppableArea } from "./DroppableArea";
+import { DroppableArea } from "@/components/MonthViewCalendar/DroppableArea";
 import { EventBullet } from "./EventBullet";
 import { MonthEventBadge } from "./MonthEventBadge";
 
@@ -95,7 +95,6 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: Number(event?.meeting_id) * 0.1, ...transition }}
-                }}
               >
                 {event && (
                   <>
