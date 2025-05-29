@@ -7,5 +7,8 @@ dist/
 # Dependencies
 node_modules/
 
+# Static assets
+public/
+
 # UI Components
 src/components/ui/**
