@@ -50,6 +50,8 @@ export default [
       ],
       'class-methods-use-this': 'off',
       'implicit-arrow-linebreak': 'off',
+      'comma-dangle': 'off',
+      'function-paren-newline': 'off',
       'import/extensions': [
         'error',
         'ignorePackages',
@@ -63,7 +65,13 @@ export default [
       camelcase: [
         'error',
         {
-          allow: ['Geist_Mono'],
+          allow: [
+            'Geist_Mono',
+            'app_metadata',
+            'user_metadata',
+            'avatar_url',
+            'created_at',
+          ],
         },
       ],
     },
@@ -72,10 +80,12 @@ export default [
         version: 'detect',
       },
       'import/resolver': {
-        typescript: {},
+        typescript: {
+          alwaysTryTypes: true,
+        },
         alias: {
-          map: [['@', './src/']],
-          extensions: ['.ts', '.tsx', ''],
+          map: [['@', './src']],
+          extensions: ['.ts', '.tsx', '.js', '.jsx'],
         },
       },
     },

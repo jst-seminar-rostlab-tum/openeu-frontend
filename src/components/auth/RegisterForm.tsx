@@ -4,7 +4,6 @@ import { Radio, RadioGroup } from '@headlessui/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
-import { signup } from '@/app/register/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { signup } from '@/domain/actions/register';
 import { cn } from '@/lib/utils';
 
 export function RegisterForm({

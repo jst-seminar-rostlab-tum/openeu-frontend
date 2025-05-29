@@ -1,13 +1,16 @@
-import '../styles/globals.css';
+import '@/styles/globals.css';
 
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import React from 'react';
 
+import ReactQueryProvider from '@/app/ReactQueryProvider';
 import NavBar from '@/components/navigation/NavBar';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from '@/domain/hooks/useAuth';
 
-import ReactQueryProvider from './ReactQueryProvider';
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'OpenEU',
@@ -17,24 +20,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-background font-sans antialiased">
-        <ReactQueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <NavBar />
-            <main className="pt-12">{children}</main>
-          </ThemeProvider>
-        </ReactQueryProvider>
-        <Toaster />
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ReactQueryProvider>
+            <AuthProvider>
+              <NavBar />
+              <main className="mt-12 min-h-[calc(100vh-3rem)]">{children}</main>
+              <Toaster />
+            </AuthProvider>
+          </ReactQueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
