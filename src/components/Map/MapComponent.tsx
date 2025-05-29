@@ -3,15 +3,24 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import 'leaflet/dist/leaflet.css';
 
 import { GeoJsonObject } from 'geojson';
-import { LatLngExpression } from 'leaflet';
+import * as geojson from 'geojson';
+import { LatLngExpression, Layer } from 'leaflet';
 import { useTheme } from 'next-themes';
+import { useState } from 'react';
 import { GeoJSON, MapContainer, Pane, SVGOverlay } from 'react-leaflet';
 
 import {
   countryBaseStyle,
   countryBorderStyle,
+  europeanCountries,
   oceanBounds,
 } from '@/components/Map/constants';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface MapProps {
   mapData: GeoJsonObject;
@@ -29,8 +38,41 @@ export default function MapComponent({
   maxZoom,
 }: MapProps) {
   const { theme } = useTheme();
-  const countryFill = theme === 'dark' ? '#1E293B' : '#E2E8F0';
-  const countryBorder = theme === 'dark' ? '#334155' : '#64748B';
+  const isDarkMode = theme === 'dark';
+  const countryFill = isDarkMode ? '#1E293B' : '#E2E8F0';
+  const countryBorder = isDarkMode ? '#334155' : '#64748B';
+
+  const [hoveredFeature, setHoveredFeature] = useState<geojson.Feature | null>(
+    null,
+  );
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
+  const onEachFeature = (feature: geojson.Feature, layer: Layer) => {
+    if (
+      !feature.properties ||
+      !europeanCountries.includes(feature.properties.name)
+    ) {
+      return;
+    }
+    layer.on({
+      mouseover: (e) => {
+        setHoveredFeature(feature);
+        setTooltipPosition({
+          x: e.originalEvent.clientX,
+          y: e.originalEvent.clientY,
+        });
+      },
+      mouseout: () => {
+        setHoveredFeature(null);
+      },
+      mousemove: (e) => {
+        setTooltipPosition({
+          x: e.originalEvent.clientX,
+          y: e.originalEvent.clientY,
+        });
+      },
+    });
+  };
 
   return (
     <MapContainer
@@ -59,6 +101,7 @@ export default function MapComponent({
           fillColor: countryFill,
         }}
       />
+      <GeoJSON data={mapData} onEachFeature={onEachFeature} />
       <GeoJSON
         interactive={false}
         data={mapData}
@@ -67,6 +110,24 @@ export default function MapComponent({
           color: countryBorder,
         }}
       />
+      {hoveredFeature && (
+        <TooltipProvider>
+          <Tooltip open>
+            <TooltipTrigger asChild />
+            <TooltipContent
+              className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit`}
+              style={{
+                position: 'fixed',
+                left: tooltipPosition.x + 10,
+                top: tooltipPosition.y - 30,
+                pointerEvents: 'none',
+              }}
+            >
+              <p>{hoveredFeature.properties?.name}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </MapContainer>
   );
 }
