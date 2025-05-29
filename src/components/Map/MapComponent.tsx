@@ -88,11 +88,14 @@ export default function MapComponent({
       maxZoom={maxZoom}
       style={{ zIndex: 0 }}
     >
+      {/* Ocean */}
       <Pane name="ocean" style={{ zIndex: 1 }}>
         <SVGOverlay bounds={oceanBounds}>
           <rect height="100%" width="100%" fill="#004494" />
         </SVGOverlay>
       </Pane>
+
+      {/* Country Area */}
       <GeoJSON
         interactive={false}
         data={mapData}
@@ -101,13 +104,24 @@ export default function MapComponent({
           fillColor: countryFill,
         }}
       />
-      <GeoJSON data={mapData} onEachFeature={onEachFeature} />
+
+      {/* Country Borders */}
       <GeoJSON
         interactive={false}
         data={mapData}
         style={{
           ...countryBorderStyle,
           color: countryBorder,
+        }}
+      />
+
+      {/* Tooltip */}
+      <GeoJSON
+        data={mapData}
+        onEachFeature={onEachFeature}
+        style={{
+          opacity: 0,
+          fillOpacity: 0,
         }}
       />
       {hoveredFeature && (
