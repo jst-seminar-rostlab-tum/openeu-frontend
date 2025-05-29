@@ -86,29 +86,11 @@ export default defineConfig([
       'no-console': 'warn',
 
       // Allow specific naming patterns for Next.js/Supabase
-      camelcase: [
+     camelcase: [
         'error',
         {
-          allow: [
-            // Next.js font patterns
-            'Geist_Mono',
-            // Supabase User type properties
-            'app_metadata',
-            'user_metadata',
-            'avatar_url',
-            'created_at',
-            'updated_at',
-            'phone_confirmed_at',
-            'email_confirmed_at',
-            'confirmation_sent_at',
-            'recovery_sent_at',
-            'email_change_sent_at',
-            'new_email',
-            'invited_at',
-            'action_link',
-            'email_change',
-            'phone_change',
-          ],
+          properties: 'never', // Don't check property names (allows user.app_metadata)
+          ignoreDestructuring: true, // Allow const { app_metadata } = user
         },
       ],
     },
