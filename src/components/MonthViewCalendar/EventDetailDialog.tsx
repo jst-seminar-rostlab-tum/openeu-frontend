@@ -3,7 +3,6 @@
 import { format, parseISO } from 'date-fns';
 import { Calendar, Clock, Text, User } from 'lucide-react';
 import { ReactNode } from 'react';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +17,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { formatTime } from '@/operations/meeting/calendarHelpers';
 
-import { useCalendar } from '../CalendarHeader/calendarContext';
 
 interface IProps {
   event: MeetingData;

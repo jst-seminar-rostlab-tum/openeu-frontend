@@ -1,16 +1,18 @@
 'use client';
 
+import { cva } from 'class-variance-authority';
 import {isToday, startOfDay} from "date-fns";
 import {motion} from "framer-motion";
 import {useMemo} from "react";
-import { getMonthCellEvents } from '@/operations/meeting/calendarHelpers';
+
+import { DroppableArea } from "@/components/MonthViewCalendar/DroppableArea";
 import { staggerContainer, transition } from '@/domain/animations'
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
-import { cn } from '@/lib/utils';
-import { cva } from 'class-variance-authority';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { TMeetingColor } from "@/domain/types/calendar/types";
-import { DroppableArea } from "@/components/MonthViewCalendar/DroppableArea";
+import { cn } from '@/lib/utils';
+import { getMonthCellEvents } from '@/operations/meeting/calendarHelpers';
+
 import { EventBullet } from "./EventBullet";
 import { MonthEventBadge } from "./MonthEventBadge";
 

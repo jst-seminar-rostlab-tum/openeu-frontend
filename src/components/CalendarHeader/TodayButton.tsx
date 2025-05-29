@@ -4,12 +4,10 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
 import { buttonHover, transition } from '../../domain/animations';
-import { useCalendar } from './calendarContext';
 
 const MotionButton = motion.create(Button);
 
 export function TodayButton() {
-  const { setSelectedDate } = useCalendar();
 
   const today = new Date();
 

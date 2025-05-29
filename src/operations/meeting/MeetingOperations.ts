@@ -1,5 +1,4 @@
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { TMeetingColor } from '@/domain/types/calendar/types';
 
 const now = new Date();
 const startRange = new Date(now);

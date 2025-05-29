@@ -6,7 +6,6 @@ import { CalendarBody } from '@/components/CalendarBody/CalendarBody';
 import { CalendarProvider } from '@/components/CalendarHeader/calendarContext';
 import { CalendarHeader } from '@/components/CalendarHeader/CalendarHeader';
 import FilterModal from '@/components/FilterModal/FilterModal';
-import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalendar';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { getEvents } from '@/operations/meeting/calendarHelpers';
@@ -30,7 +29,6 @@ export default function CalendarPage() {
         await new Promise((resolve) => setTimeout(resolve, 20));
         const eventsData = await getEvents();
         setEvents(eventsData);
-      } catch (error) {
       } finally {
         setLoading(false);
       }

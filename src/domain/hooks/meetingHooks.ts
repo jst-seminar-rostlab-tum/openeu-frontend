@@ -4,8 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 
 import {
-  DragDropContext,
-  DragDropProvider,
+  DragDropContext
 } from '@/components/MonthViewCalendar/DragDropContex';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingRepository } from '@/repositories/meetingRepository';

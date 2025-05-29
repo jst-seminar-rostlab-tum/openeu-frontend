@@ -6,7 +6,6 @@ import { MeetingData } from "@/domain/entities/calendar/MeetingData";
 import {cn} from "@/lib/utils";
 import { formatTime } from "@/operations/meeting/calendarHelpers";
 
-import { useCalendar } from "../CalendarHeader/calendarContext";
 import { EventDetailsDialog } from "./EventDetailDialog";
 
 const eventBadgeVariants = cva(
@@ -111,7 +110,7 @@ export function MonthEventBadge({
         </div>
 
                   {renderBadgeText && <span>{formatTime(new Date(event.meeting_start_datetime), true)}</span>}
-        )}
+        
       </div>
 
         </EventDetailsDialog>

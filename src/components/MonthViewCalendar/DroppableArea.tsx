@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 
-import { useDragDrop } from '@/domain/hooks/meetingHooks';
 
 interface DroppableAreaProps {
   date: Date;
@@ -11,9 +10,6 @@ interface DroppableAreaProps {
 }
 
 export function DroppableArea({
-  date,
-  hour,
-  minute,
   children,
   className,
 }: DroppableAreaProps) {

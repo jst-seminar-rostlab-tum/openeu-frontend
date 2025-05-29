@@ -4,7 +4,6 @@ import {
   addWeeks,
   addYears,
   differenceInDays,
-  differenceInMinutes,
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
@@ -29,7 +28,7 @@ import {
 import { useCalendar } from '@/components/CalendarHeader/calendarContext';
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
+import { TCalendarView} from '@/domain/types/calendar/types';
 import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
 
 const FORMAT_STRING = 'MMM d, yyyy';
@@ -125,7 +124,6 @@ export function getEventsCount(
 export function getMonthCellEvents(
   date: Date,
   events: MeetingData[],
-  eventPositions: Record<string, number>,
 ): MeetingData[] {
   const dayStart = startOfDay(date);
   const eventsForDate: MeetingData[] = events.filter((event) => {

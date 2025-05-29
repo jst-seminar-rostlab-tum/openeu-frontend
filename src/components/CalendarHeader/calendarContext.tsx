@@ -21,13 +21,6 @@ interface CalendarSettings {
   agendaModeGroupBy: 'date' | 'color';
 }
 
-const DEFAULT_SETTINGS: CalendarSettings = {
-  badgeVariant: 'colored',
-  view: 'day',
-  use24HourFormat: true,
-  agendaModeGroupBy: 'date',
-};
-
 const CalendarContext = createContext({} as ICalendarContext);
 
 export function CalendarProvider({
@@ -42,8 +35,8 @@ export function CalendarProvider({
   badge?: 'dot' | 'colored';
 }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedColors, setSelectedColors] = useState<TMeetingColor[]>([]);
-  const [data, setData] = useState(events || []);
+  const [selectedColors] = useState<TMeetingColor[]>([]);
+  const [data] = useState(events || []);
   const [currentView, setCurrentView] = useState<TCalendarView>(view);
   const setView = (newView: TCalendarView) => {
     setCurrentView(newView);
