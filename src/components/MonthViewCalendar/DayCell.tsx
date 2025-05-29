@@ -46,7 +46,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
 
   const cellEvents = useMemo(
     () => {
-    const result = getMonthCellEvents(date, events, eventPositions);
+    const result = getMonthCellEvents(date, events);
       return Array.isArray(result) ? result : [];
     },
 
