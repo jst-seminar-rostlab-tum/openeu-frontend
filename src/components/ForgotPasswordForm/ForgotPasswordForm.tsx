@@ -31,7 +31,7 @@ export function ForgotPasswordForm({
     });
 
     setEmail('');
-     
+
     alert('Password reset link sent.');
   };
 
