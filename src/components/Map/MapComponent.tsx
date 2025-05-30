@@ -2,8 +2,8 @@ import 'leaflet-defaulticon-compatibility';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet/dist/leaflet.css';
 
-import { GeoJsonObject } from 'geojson';
 import * as geojson from 'geojson';
+import { GeoJsonObject } from 'geojson';
 import { LatLngExpression, Layer } from 'leaflet';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
@@ -48,12 +48,6 @@ export default function MapComponent({
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   const onEachFeature = (feature: geojson.Feature, layer: Layer) => {
-    if (
-      !feature.properties ||
-      !europeanCountries.includes(feature.properties.name)
-    ) {
-      return;
-    }
     layer.on({
       mouseover: (e) => {
         setHoveredFeature(feature);
@@ -61,9 +55,12 @@ export default function MapComponent({
           x: e.originalEvent.clientX,
           y: e.originalEvent.clientY,
         });
+        e.target.setStyle({ fillOpacity: 1 });
+        e.target.bringToFront();
       },
-      mouseout: () => {
+      mouseout: (e) => {
         setHoveredFeature(null);
+        e.target.setStyle({ fillOpacity: 0.2 });
       },
       mousemove: (e) => {
         setTooltipPosition({
@@ -74,6 +71,13 @@ export default function MapComponent({
     });
   };
 
+  const filterNonEUCountries = (feature: geojson.Feature): boolean =>
+    !!feature.properties && europeanCountries.includes(feature.properties.name);
+  const styleFeatures = (feature?: geojson.Feature) => ({
+    opacity: 0,
+    fillOpacity:
+      feature?.properties?.name === hoveredFeature?.properties?.name ? 1 : 0.2,
+  });
   return (
     <MapContainer
       className="w-full h-full"
@@ -119,10 +123,8 @@ export default function MapComponent({
       <GeoJSON
         data={mapData}
         onEachFeature={onEachFeature}
-        style={{
-          opacity: 0,
-          fillOpacity: 0,
-        }}
+        filter={filterNonEUCountries}
+        style={styleFeatures}
       />
       {hoveredFeature && (
         <TooltipProvider>
