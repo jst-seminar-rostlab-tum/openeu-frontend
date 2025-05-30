@@ -55,12 +55,9 @@ export default function MapComponent({
           x: e.originalEvent.clientX,
           y: e.originalEvent.clientY,
         });
-        e.target.setStyle({ fillOpacity: 1 });
-        e.target.bringToFront();
       },
-      mouseout: (e) => {
+      mouseout: () => {
         setHoveredFeature(null);
-        e.target.setStyle({ fillOpacity: 0.2 });
       },
       mousemove: (e) => {
         setTooltipPosition({
