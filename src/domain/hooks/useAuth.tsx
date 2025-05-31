@@ -20,13 +20,19 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({
+  children,
+  initialUser,
+}: {
+  children: React.ReactNode;
+  initialUser: User | null;
+}) {
+  const [user, setUser] = useState<User | null>(initialUser);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
   // 🚨 DEV ONLY: Mock authenticated user for testing
-  const MOCK_AUTH = process.env.NODE_ENV === 'development' && true; // Set to true to enable
+  const MOCK_AUTH = process.env.NODE_ENV === 'development' && false; // Set to true to enable
 
   useEffect(() => {
     if (MOCK_AUTH) {
@@ -45,15 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return () => {};
     }
 
-    const getSession = async () => {
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser();
-      setUser(authUser);
-      setLoading(false);
-    };
-
-    getSession();
+    // Initialize with server-side user data
+    setUser(initialUser);
+    setLoading(false);
 
     // Listen for auth changes
     const {
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase, MOCK_AUTH]);
+  }, [supabase, MOCK_AUTH, initialUser]);
 
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();

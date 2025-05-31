@@ -9,6 +9,7 @@ import NavBar from '@/components/navigation/NavBar';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/domain/hooks/useAuth';
+import { getUser } from '@/lib/dal';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,11 +19,13 @@ export const metadata: Metadata = {
     'The Transparency Backbone for the European Union using Agentic AI',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getUser();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -33,7 +36,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReactQueryProvider>
-            <AuthProvider>
+            <AuthProvider initialUser={user}>
               <NavBar />
               <main className="mt-12 min-h-[calc(100vh-3rem)]">{children}</main>
               <Toaster />
