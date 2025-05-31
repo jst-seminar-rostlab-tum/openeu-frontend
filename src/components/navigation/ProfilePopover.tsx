@@ -38,10 +38,15 @@ export function ProfilePopover() {
 
   const userData = {
     email: user.email,
-    name:
-      (user.user_metadata?.name as string) ||
-      (user.user_metadata?.full_name as string) ||
-      user.email?.split('@')[0],
+    name: (() => {
+      const firstName = user.user_metadata?.first_name as string;
+      const lastName = user.user_metadata?.last_name as string;
+      if (firstName && lastName) {
+        return `${firstName.trim()} ${lastName.trim()}`;
+      }
+
+      return user.email?.split('@')[0];
+    })(),
     image: user.user_metadata?.avatar_url as string | undefined,
   };
 
