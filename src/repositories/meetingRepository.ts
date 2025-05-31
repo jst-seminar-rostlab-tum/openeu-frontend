@@ -1,4 +1,4 @@
-import { MeetingData } from '@/domain/entities/MeetingData';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 
 const API_URL = 'https://openeu-backend.onrender.com/meetings';
 

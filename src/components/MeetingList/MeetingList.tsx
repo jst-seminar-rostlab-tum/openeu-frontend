@@ -23,12 +23,12 @@ export default function MeetingList() {
         <ul className="space-y-2">
           {meetings.map((meeting) => (
             <li
-              key={meeting.date}
+              key={meeting.meeting_start_datetime}
               className="p-4 border rounded-md shadow-sm bg-gray-50 dark:bg-gray-800"
             >
-              <h3 className="text-lg font-semibold">{meeting.name}</h3>
+              <h3 className="text-lg font-semibold">{meeting.title}</h3>
               <p className="text-gray-600 dark:text-gray-400">{meeting.tags}</p>
-              <p className="text-gray-600 dark:text-gray-400">{meeting.date}</p>
+              <p className="text-gray-600 dark:text-gray-400">{meeting.meeting_start_datetime}</p>
             </li>
           ))}
         </ul>
