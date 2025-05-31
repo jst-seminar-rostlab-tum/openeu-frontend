@@ -2,6 +2,7 @@
 
 import { LogOut, User } from 'lucide-react';
 import Link from 'next/link';
+import React from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -11,29 +12,60 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/domain/hooks/useAuth';
 import { extractInitials } from '@/lib/utils';
 
 export function ProfilePopover() {
-  // These values will be replaced with session data later
-  const userName = 'Test User';
-  const userEmail = 'user@example.com';
-  const userImage = '/avatar.png';
-  const userInitials = extractInitials(userName);
+  const { user, loading, signOut } = useAuth();
+
+  if (loading) {
+    return (
+      <Button
+        variant="ghost"
+        className="relative h-9 w-9 rounded-full p-0"
+        disabled
+      >
+        <Avatar>
+          <AvatarFallback>...</AvatarFallback>
+        </Avatar>
+      </Button>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  const userData = {
+    email: user.email,
+    name: (() => {
+      const firstName = user.user_metadata?.first_name as string;
+      const lastName = user.user_metadata?.last_name as string;
+      if (firstName && lastName) {
+        return `${firstName.trim()} ${lastName.trim()}`;
+      }
+
+      return user.email?.split('@')[0];
+    })(),
+    image: user.user_metadata?.avatar_url as string | undefined,
+  };
+
+  const userInitials = extractInitials(userData.name);
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
           <Avatar>
-            <AvatarImage src={userImage} alt={userName} />
+            <AvatarImage src={userData.image} alt={userData.name} />
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-56 flex flex-col gap-2">
         <div className="flex flex-col">
-          <p className="font-semibold">{userName}</p>
-          <p className="text-sm text-muted-foreground">{userEmail}</p>
+          <p className="font-semibold">{userData.name}</p>
+          <p className="text-sm text-muted-foreground">{userData.email}</p>
         </div>
         <Separator />
         <div className="flex flex-col gap-1">
@@ -45,7 +77,7 @@ export function ProfilePopover() {
           </Button>
         </div>
         <Separator />
-        <Button size="sm">
+        <Button size="sm" onClick={signOut}>
           <LogOut className="h-4 w-4" />
           Log out
         </Button>

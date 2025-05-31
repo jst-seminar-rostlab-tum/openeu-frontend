@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
 
-import { login } from '@/app/login/actions';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -12,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { login } from '@/domain/actions/login';
 import { cn } from '@/lib/utils';
 
 export function LoginForm({
