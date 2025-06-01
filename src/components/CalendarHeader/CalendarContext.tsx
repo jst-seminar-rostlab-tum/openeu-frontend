@@ -11,26 +11,17 @@ interface ICalendarContext {
   setView: (view: TCalendarView) => void;
   setSelectedDate: (date: Date | undefined) => void;
   events: MeetingData[];
-  badgeVariant: 'dot' | 'colored';
 }
 
-interface CalendarSettings {
-  badgeVariant: 'dot' | 'colored';
-  view: TCalendarView;
-  use24HourFormat: boolean;
-  agendaModeGroupBy: 'date' | 'color';
-}
-
-const CalendarContext = createContext({} as ICalendarContext);
+const CalendarContext = createContext<ICalendarContext | undefined>(undefined);
 
 export function CalendarProvider({
   children,
   events,
-  badge = 'colored',
   view = 'day',
 }: {
   children: React.ReactNode;
-  events: MeetingData[] | null;
+  events: MeetingData[];
   view?: TCalendarView;
   badge?: 'dot' | 'colored';
 }) {
@@ -46,21 +37,13 @@ export function CalendarProvider({
     setSelectedDate(date);
   };
 
-  const DEFAULT_SETTINGS: CalendarSettings = {
-    badgeVariant: 'colored',
-    view: 'day',
-    use24HourFormat: true,
-    agendaModeGroupBy: 'date',
-  };
-
   const value = {
     selectedDate,
     view: currentView,
     setView,
     setSelectedDate: handleSelectDate,
     selectedColors,
-    events: data,
-    badgeVariant: badge || DEFAULT_SETTINGS.badgeVariant,
+    events: data   
   };
 
   return (

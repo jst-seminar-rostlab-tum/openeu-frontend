@@ -7,6 +7,7 @@ import {useMemo} from "react";
 
 import { DroppableArea } from "@/components/MonthViewCalendar/DroppableArea";
 import { EventBullet } from "@/components/MonthViewCalendar/EventBullet";
+import { EventListDialog } from "@/components/MonthViewCalendar/EventListDialog";
 import { MonthEventBadge } from "@/components/MonthViewCalendar/MonthEventBadge";
 import { staggerContainer, transition } from '@/domain/animations'
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
@@ -45,7 +46,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
 
   const cellEvents = useMemo(
     () => {
-    const result = getMonthCellEvents(date, events);
+    const result = getMonthCellEvents(date, events, eventPositions);
       return Array.isArray(result) ? result : [];
     },
 
@@ -121,8 +122,12 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
             )}
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 1, y: 0 }}
+                
                       transition={{ delay: 0.3, ...transition }}
-          ></motion.div>
+                      
+          >
+            <EventListDialog date={date} events={cellEvents} />
+          </motion.div>
         )}
       </DroppableArea>
     </motion.div>

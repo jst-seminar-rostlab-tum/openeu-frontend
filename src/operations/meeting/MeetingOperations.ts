@@ -13,8 +13,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '1',
     title: 'Nordic Digital Payments & FinTech Policy Roundtable',
     meeting_url: '',
-    meeting_start_datetime: '2025-05-21T14:30:00.000Z',
-    meeting_end_datetime: '2025-05-21T15:30:00.000Z',
+    meeting_start_datetime: '2025-06-02T14:30:00.000Z',
+    meeting_end_datetime: '2025-06-06T15:30:00.000Z',
     location: 'Swedish Parliament, Stockholm',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -25,8 +25,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '2',
     title: 'European Digital Markets & AI Regulation Forum',
     meeting_url: '',
-    meeting_start_datetime: '2025-05-19T14:30:00.000Z',
-    meeting_end_datetime: '2025-05-21T15:30:00.000Z',
+    meeting_start_datetime: '2025-06-03T14:30:00.000Z',
+    meeting_end_datetime: '2025-06-03T15:30:00.000Z',
     location: 'Bundestag Conference Center, Berlin',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -42,8 +42,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '3',
     title: 'Circular Economy & Packaging Reform Conference',
     meeting_url: '',
-    meeting_start_datetime: '2025-05-26T14:30:00.000Z',
-    meeting_end_datetime: '2025-05-26T15:30:00.000Z',
+    meeting_start_datetime: '2025-06-03T14:30:00.000Z',
+    meeting_end_datetime: '2025-06-03T15:30:00.000Z',
     location: 'RAI Amsterdam Convention Centre, Amsterdam, Netherlands',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -54,8 +54,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '4',
     title: 'Southern Europe Green Hydrogen Investment Dialogue',
     meeting_url: '',
-    meeting_start_datetime: '2025-05-12T16:00:00.000Z',
-    meeting_end_datetime: '2025-05-16T17:00:00.000Z',
+    meeting_start_datetime: '2025-06-04T16:00:00.000Z',
+    meeting_end_datetime: '2025-06-04T17:00:00.000Z',
     location: 'Palacio de Congresos, Madrid, Spain',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -71,8 +71,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '5',
     title: 'Packaging Innovation & Waste Reduction Workshop',
     meeting_url: 'https://zoom.us/j/987654321',
-    meeting_start_datetime: '2025-04-28T10:00:00.000Z',
-    meeting_end_datetime: '2025-05-02T11:00:00.000Z',
+    meeting_start_datetime: '2025-06-04T10:00:00.000Z',
+    meeting_end_datetime: '2025-06-04T11:00:00.000Z',
     location: 'Zoom',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -83,8 +83,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '6',
     title: 'European Fashion & Sustainability Dialogue',
     meeting_url: '',
-    meeting_start_datetime: '2025-05-26T09:00:00.000Z',
-    meeting_end_datetime: '2025-05-30T10:30:00.000Z',
+    meeting_start_datetime: '2025-06-05T09:00:00.000Z',
+    meeting_end_datetime: '2025-06-06T10:30:00.000Z',
     location: 'Palazzo delle Stelline, Milan, Italy',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -95,8 +95,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '7',
     title: 'Eastern European Energy Security & Grid Modernization Summit',
     meeting_url: 'https://meet.google.com/xyz-abc-def',
-    meeting_start_datetime: '2025-05-29T13:00:00.000Z',
-    meeting_end_datetime: '2025-05-29T14:00:00.000Z',
+    meeting_start_datetime: '2025-06-05T13:00:00.000Z',
+    meeting_end_datetime: '2025-06-05T14:00:00.000Z',
     location: 'Google Meet',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -112,8 +112,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '8',
     title: 'Arctic Energy Transition & Climate Impact Briefing',
     meeting_url: 'https://zoom.us/j/555555555',
-    meeting_start_datetime: '2025-05-30T15:00:00.000Z',
-    meeting_end_datetime: '2025-05-30T16:30:00.000Z',
+    meeting_start_datetime: '2025-06-05T15:00:00.000Z',
+    meeting_end_datetime: '2025-06-05T16:30:00.000Z',
     location: 'Zoom',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -129,8 +129,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '9',
     title: 'Baltic Digital Infrastructure & Cyber Resilience Forum',
     meeting_url: 'https://teams.microsoft.com/l/meetup-join/456',
-    meeting_start_datetime: '2025-05-31T11:00:00.000Z',
-    meeting_end_datetime: '2025-05-31T12:30:00.000Z',
+    meeting_start_datetime: '2025-06-31T11:00:00.000Z',
+    meeting_end_datetime: '2025-06-31T12:30:00.000Z',
     location: 'Microsoft Teams',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -141,8 +141,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '10',
     title: 'Alpine Biodiversity & Eco-Tourism Governance Dialogue',
     meeting_url: 'https://zoom.us/j/333333333',
-    meeting_start_datetime: '2025-05-19T14:00:00.000Z',
-    meeting_end_datetime: '2025-05-19T15:30:00.000Z',
+    meeting_start_datetime: '2025-06-19T14:00:00.000Z',
+    meeting_end_datetime: '2025-06-19T15:30:00.000Z',
     location: 'Zoom',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -158,8 +158,8 @@ export const dummyMeetings: MeetingData[] = [
     meeting_id: '11',
     title: 'Western Europe Smart Mobility & Urban Transport Summit',
     meeting_url: 'https://meet.google.com/def-ghi-jkl',
-    meeting_start_datetime: '2025-05-20T09:30:00.000Z',
-    meeting_end_datetime: '2025-05-20T10:30:00.000Z',
+    meeting_start_datetime: '2025-06-20T09:30:00.000Z',
+    meeting_end_datetime: '2025-06-20T10:30:00.000Z',
     location: 'Google Meet',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
@@ -172,4 +172,5 @@ export const dummyMeetings: MeetingData[] = [
       'CleanTech',
     ],
   },
+  
 ];

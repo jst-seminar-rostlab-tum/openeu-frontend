@@ -15,15 +15,13 @@ const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
   const { selectedDate } = useCalendar();
-
   const allEvents = [...multiDayEvents, ...singleDayEvents];
-
   const cells = getCalendarCells(selectedDate);
 
   const eventPositions = calculateMonthEventPositions(
     multiDayEvents,
     singleDayEvents,
-    selectedDate,
+    selectedDate
   );
 
   return (

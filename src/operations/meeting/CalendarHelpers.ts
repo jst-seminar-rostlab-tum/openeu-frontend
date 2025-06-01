@@ -122,20 +122,32 @@ export function getEventsCount(
 }
 
 export function getMonthCellEvents(
-  date: Date,
-  events: MeetingData[],
+    date: Date,
+    events: MeetingData[],
+    eventPositions: Record<string, number>
 ): MeetingData[] {
-  const dayStart = startOfDay(date);
-  const eventsForDate: MeetingData[] = events.filter((event) => {
-    const eventStart = parseISO(event.meeting_start_datetime);
-    const eventEnd = parseISO(event.meeting_end_datetime);
-    return (
-      (dayStart >= eventStart && dayStart <= eventEnd) ||
-      isSameDay(dayStart, eventStart) ||
-      isSameDay(dayStart, eventEnd)
-    );
-  });
-  return eventsForDate;
+    const dayStart = startOfDay(date);
+    const eventsForDate: MeetingData[] = events.filter((event) => {
+        const eventStart = parseISO(event.meeting_start_datetime);
+        const eventEnd = parseISO(event.meeting_end_datetime);
+        return (
+            (dayStart >= eventStart && dayStart <= eventEnd) ||
+            isSameDay(dayStart, eventStart) ||
+            isSameDay(dayStart, eventEnd)
+        );
+    });
+    return eventsForDate
+        .map((event) => ({
+            ...event,
+            position: eventPositions[Number(event.meeting_id)] ?? -1,
+           isMultiDay: !isSameDay(parseISO(event.meeting_start_datetime), parseISO(event.meeting_end_datetime))
+
+        }))
+        .sort((a, b) => {
+            if (a.isMultiDay && !b.isMultiDay) return -1;
+            if (!a.isMultiDay && b.isMultiDay) return 1;
+            return a.position - b.position;
+        });
 }
 
 export function getCalendarCells(selectedDate: Date): CalendarCell[] {
@@ -185,9 +197,9 @@ export function calculateMonthEventPositions(
   singleDayEvents: MeetingData[],
   selectedDate: Date,
 ): Record<string, number> {
+  try {
   const monthStart = startOfMonth(selectedDate);
   const monthEnd = endOfMonth(selectedDate);
-
   const eventPositions: Record<string, number> = {};
   const occupiedPositions: Record<string, boolean[]> = {};
 
@@ -195,61 +207,53 @@ export function calculateMonthEventPositions(
     occupiedPositions[day.toISOString()] = [false, false, false];
   });
 
-  const sortedEvents = [
-    ...multiDayEvents.sort((a, b) => {
-      const aDuration = differenceInDays(
-        parseISO(a.meeting_end_datetime),
-        parseISO(a.meeting_start_datetime),
-      );
-      const bDuration = differenceInDays(
-        parseISO(b.meeting_end_datetime),
-        parseISO(b.meeting_start_datetime),
-      );
-      return (
-        bDuration - aDuration ||
-        parseISO(a.meeting_end_datetime).getTime() -
-          parseISO(b.meeting_start_datetime).getTime()
-      );
-    }),
-    ...singleDayEvents.sort(
-      (a, b) =>
-        parseISO(a.meeting_start_datetime).getTime() -
-        parseISO(b.meeting_start_datetime).getTime(),
-    ),
-  ];
 
-  sortedEvents.forEach((event) => {
-    const eventStart = parseISO(event.meeting_start_datetime);
-    const eventEnd = parseISO(event.meeting_end_datetime);
-    const eventDays = eachDayOfInterval({
-      start: eventStart < monthStart ? monthStart : eventStart,
-      end: eventEnd > monthEnd ? monthEnd : eventEnd,
+  const sortedEvents = [
+        ...multiDayEvents.sort((a, b) => {
+            const aDuration = differenceInDays(parseISO(a.meeting_end_datetime), parseISO(a.meeting_start_datetime));
+            const bDuration = differenceInDays(parseISO(b.meeting_end_datetime), parseISO(b.meeting_start_datetime));
+            return bDuration - aDuration || parseISO(a.meeting_start_datetime).getTime() - parseISO(b.meeting_start_datetime).getTime();
+        }),
+        ...singleDayEvents.sort((a, b) => parseISO(a.meeting_start_datetime).getTime() - parseISO(b.meeting_start_datetime).getTime()),
+    ];
+
+    sortedEvents.forEach((event) => {
+        const eventStart = parseISO(event.meeting_start_datetime);
+        const eventEnd = parseISO(event.meeting_end_datetime);
+        const eventDays = eachDayOfInterval({
+            start: eventStart < monthStart ? monthStart : eventStart,
+            end: eventEnd > monthEnd ? monthEnd : eventEnd,
+        });
+
+        let position = -1;
+
+        for (let i = 0; i < 3; i++) {
+            if (
+                eventDays.every((day) => {
+                    const dayPositions = occupiedPositions[startOfDay(day).toISOString()];
+                    return dayPositions && !dayPositions[i];
+                })
+            ) {
+                position = i;
+                break;
+            }
+        }
+
+        if (position !== -1) {
+            eventDays.forEach((day) => {
+                const dayKey = startOfDay(day).toISOString();
+                occupiedPositions[dayKey][position] = true;
+            });
+            eventPositions[Number(event.meeting_id)] = position;
+        }
     });
 
-    let position = -1;
-
-    for (let i = 0; i < 3; i++) {
-      if (
-        eventDays.every((day) => {
-          const dayPositions = occupiedPositions[startOfDay(day).toISOString()];
-          return dayPositions && !dayPositions[i];
-        })
-      ) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position !== -1) {
-      eventDays.forEach((day) => {
-        const dayKey = startOfDay(day).toISOString();
-        occupiedPositions[dayKey][position] = true;
-      });
-      eventPositions[event.meeting_id] = position;
-    }
-  });
-
   return eventPositions;
+  }
+catch (error) {
+  console.error("Error calculating month event positions:", error);
+  return {};
+  }
 }
 
 export const getEvents = async () => dummyMeetings;
