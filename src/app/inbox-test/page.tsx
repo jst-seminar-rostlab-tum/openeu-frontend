@@ -92,12 +92,12 @@ export default function InboxTestPage() {
 
   // Action handlers
   const handleView = (itemId: string) => {
-    console.log(`Viewing item: ${itemId}`);
+    alert(`Viewing item: ${itemId}`);
     // Replace with your actual view logic
   };
 
   const handleArchive = (itemId: string) => {
-    console.log(`Archiving item: ${itemId}`);
+    alert(`Archiving item: ${itemId}`);
     // Replace with your actual archive logic
   };
 
@@ -108,7 +108,7 @@ export default function InboxTestPage() {
 
   // Bulk actions
   const handleBulkArchive = () => {
-    console.log(`Archiving ${selectedItems.length} items`);
+    alert(`Archiving ${selectedItems.length} items`);
     setSelectedItems([]);
   };
 
