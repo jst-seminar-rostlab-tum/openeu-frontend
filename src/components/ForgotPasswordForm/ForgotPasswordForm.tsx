@@ -31,7 +31,7 @@ export function ForgotPasswordForm({
     });
 
     setEmail('');
-    // eslint-disable-next-line no-alert
+     
     alert('Password reset link sent.');
   };
 
