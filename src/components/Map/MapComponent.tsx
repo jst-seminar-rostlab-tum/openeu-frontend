@@ -2,6 +2,7 @@ import 'leaflet-defaulticon-compatibility';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet/dist/leaflet.css';
 
+import * as turf from '@turf/turf';
 import * as geojson from 'geojson';
 import L, { LatLngExpression, Layer } from 'leaflet';
 import { useTheme } from 'next-themes';
@@ -75,6 +76,45 @@ export default function MapComponent({
     fillOpacity:
       feature?.properties?.name === hoveredFeature?.properties?.name ? 1 : 0.2,
   });
+
+  const getCapitalCoordinates = (
+    countryName: string,
+  ): [number, number] | null => {
+    const capitals: { [key: string]: [number, number] } = {
+      Germany: [51.1657, 10.4515], // Example for Germany
+      France: [48.8566, 2.3522], // Example for France
+      // Add more countries and their capitals as needed
+    };
+
+    return capitals[countryName] || null;
+  };
+
+  const getLargestPolygon = (feature: geojson.Feature) => {
+    let largestArea = 0;
+    let largestPolygon = null;
+
+    // Check if the geometry is MultiPolygon or Polygon
+    if (feature.geometry.type === 'MultiPolygon') {
+      feature.geometry.coordinates.forEach((polygonCoords) => {
+        const polygon = turf.polygon(polygonCoords);
+        const area = turf.area(polygon);
+        if (area > largestArea) {
+          largestArea = area;
+          largestPolygon = polygon;
+        }
+      });
+    } else if (feature.geometry.type === 'Polygon') {
+      const polygon = turf.polygon(feature.geometry.coordinates);
+      const area = turf.area(polygon);
+      if (area > largestArea) {
+        largestArea = area;
+        largestPolygon = polygon;
+      }
+    }
+
+    return largestPolygon;
+  };
+
   return (
     <MapContainer
       className="w-full h-full"
@@ -149,8 +189,25 @@ export default function MapComponent({
             f.properties && europeanCountries.includes(f.properties.name),
         )
         .map((feature: geojson.Feature, idx: number) => {
-          const layer = L.geoJSON(feature);
-          const centerPoint = layer.getBounds().getCenter();
+          const capitalCoords = getCapitalCoordinates(
+            feature.properties?.name || '',
+          );
+          let centerLatLng: LatLngExpression;
+
+          if (capitalCoords) {
+            centerLatLng = L.latLng(capitalCoords[0], capitalCoords[1]);
+          } else {
+            const largestPolygon = getLargestPolygon(feature);
+            if (largestPolygon) {
+              const center = turf.centerOfMass(largestPolygon);
+              centerLatLng = L.latLng(
+                center.geometry.coordinates[1],
+                center.geometry.coordinates[0],
+              );
+            } else {
+              centerLatLng = L.latLng(0, 0);
+            }
+          }
 
           const isHighlighted =
             hoveredFeature?.properties?.name === feature.properties?.name;
@@ -158,7 +215,7 @@ export default function MapComponent({
           return (
             <MapIndicator
               key={feature.properties?.name || idx}
-              position={centerPoint}
+              position={centerLatLng}
               count={idx + 1}
               baseZoom={zoom}
               isHighlighted={isHighlighted}
