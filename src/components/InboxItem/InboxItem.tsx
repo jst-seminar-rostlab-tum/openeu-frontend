@@ -1,5 +1,3 @@
-'use client';
-
 import { Bookmark, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
