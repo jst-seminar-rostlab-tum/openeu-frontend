@@ -3,8 +3,7 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import 'leaflet/dist/leaflet.css';
 
 import * as geojson from 'geojson';
-import { GeoJsonObject } from 'geojson';
-import { LatLngExpression, Layer } from 'leaflet';
+import L, { LatLngExpression, Layer } from 'leaflet';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { GeoJSON, MapContainer, Pane, SVGOverlay } from 'react-leaflet';
@@ -15,6 +14,7 @@ import {
   europeanCountries,
   oceanBounds,
 } from '@/components/Map/constants';
+import { MapIndicator } from '@/components/Map/MapIndicator';
 import {
   Tooltip,
   TooltipContent,
@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/tooltip';
 
 interface MapProps {
-  mapData: GeoJsonObject;
+  mapData: geojson.FeatureCollection;
   center?: LatLngExpression;
   zoom?: number;
   minZoom?: number;
@@ -141,6 +141,30 @@ export default function MapComponent({
           </Tooltip>
         </TooltipProvider>
       )}
+
+      {/* MapIndicators */}
+      {mapData.features
+        .filter(
+          (f: geojson.Feature) =>
+            f.properties && europeanCountries.includes(f.properties.name),
+        )
+        .map((feature: geojson.Feature, idx: number) => {
+          const layer = L.geoJSON(feature);
+          const centerPoint = layer.getBounds().getCenter();
+
+          const isHighlighted =
+            hoveredFeature?.properties?.name === feature.properties?.name;
+
+          return (
+            <MapIndicator
+              key={feature.properties?.name || idx}
+              position={centerPoint}
+              count={idx + 1}
+              baseZoom={zoom}
+              isHighlighted={isHighlighted}
+            />
+          );
+        })}
     </MapContainer>
   );
 }
