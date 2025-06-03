@@ -13,7 +13,7 @@ interface CalendarClientProps {
 
 export default function Calendar({ events }: CalendarClientProps) {
   return (
-    <div className="m-4">
+    <div className="p-4">
       <CalendarProvider events={events} view="month">
         <div className="w-full border rounded-xl ">
           <CalendarHeader />
