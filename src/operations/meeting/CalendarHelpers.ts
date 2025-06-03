@@ -10,9 +10,6 @@ import {
   endOfYear,
   format,
   isSameDay,
-  isSameMonth,
-  isSameWeek,
-  isSameYear,
   isValid,
   parseISO,
   startOfDay,
@@ -29,9 +26,10 @@ import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
-import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
+import { meetingRepository } from '@/repositories/meetingRepository';
 
 const FORMAT_STRING = 'MMM d, yyyy';
+export const COLORS = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
 
 export function rangeText(view: TCalendarView, date: Date): string {
   let start: Date;
@@ -81,11 +79,14 @@ export function navigateDate(
 
 export function useFilteredEvents() {
   const { events, selectedDate } = useCalendar();
-
   return events.filter((event) => {
     const itemStartDate = new Date(event.meeting_start_datetime);
-    const itemEndDate = new Date(event.meeting_end_datetime);
-
+    let itemEndDate: Date;
+    if (event.meeting_end_datetime === null) {
+      itemEndDate = itemStartDate;
+    } else {
+      itemEndDate = new Date(event.meeting_end_datetime);
+    }
     const monthStart = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth(),
@@ -102,24 +103,6 @@ export function useFilteredEvents() {
 
     return isInSelectedMonth;
   });
-}
-export function getEventsCount(
-  events: MeetingData[],
-  date: Date,
-  view: TCalendarView,
-): number {
-  const compareFns: Record<TCalendarView, (d1: Date, d2: Date) => boolean> = {
-    day: isSameDay,
-    week: isSameWeek,
-    month: isSameMonth,
-    year: isSameYear,
-    agenda: isSameMonth,
-  };
-
-  const compareFn = compareFns[view];
-  return events.filter((event) =>
-    compareFn(parseISO(event.meeting_start_datetime), date),
-  ).length;
 }
 
 export function getMonthCellEvents(
@@ -153,6 +136,14 @@ export function getMonthCellEvents(
     });
 }
 
+export function getColorFromId(meetingId: string) {
+  let hash = 0;
+  for (let i = 0; i < meetingId.length; i++) {
+    hash = meetingId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % COLORS.length;
+  return COLORS[index].toString();
+}
 export function getCalendarCells(selectedDate: Date): CalendarCell[] {
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
@@ -261,7 +252,7 @@ export function calculateMonthEventPositions(
           const dayKey = startOfDay(day).toISOString();
           occupiedPositions[dayKey][position] = true;
         });
-        eventPositions[Number(event.meeting_id)] = position;
+        eventPositions[event.meeting_id] = position;
       }
     });
 
@@ -272,4 +263,12 @@ export function calculateMonthEventPositions(
   }
 }
 
-export const getEvents = async () => dummyMeetings;
+export const getEvents = async (
+  startDate?: string,
+  endDate?: string,
+  query?: string,
+): Promise<MeetingData[]> => {
+  return await meetingRepository.getMeetings(startDate, endDate, query);
+};
+// Please leave this for testing.
+// export const getEvents = async () => dummyMeetings;

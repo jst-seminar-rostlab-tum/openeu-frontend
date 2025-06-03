@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import {
   CalendarRange,
   Columns,
-  Funnel,
   Grid2X2,
   Grid3X3,
   LayoutList,
@@ -26,15 +25,20 @@ import {
   transition,
 } from '@/domain/animations';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
-import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
+
+import FilterModal from '../FilterModal/FilterModal';
 
 export const MotionButton = motion.create(Button);
 
 export function CalendarHeader() {
-  const events = dummyMeetings;
+  const { view, setView, searchByTitle } = useCalendar();
+  const [searchText, setSearchText] = React.useState('');
 
-  const { view, setView } = useCalendar();
-
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setSearchText(newValue);
+    searchByTitle(newValue);
+  };
   return (
     <div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">
       <motion.div
@@ -45,7 +49,7 @@ export function CalendarHeader() {
         transition={transition}
       >
         <TodayButton />
-        <DateNavigator view={view} event={events} />
+        <DateNavigator view={view} />
       </motion.div>
 
       <motion.div
@@ -57,25 +61,16 @@ export function CalendarHeader() {
       >
         <div className="options flex-wrap flex items-center gap-4 md:gap-2">
           <div className="relative flex items-center">
-            <Input type="search" placeholder="Search" className="pl-8" />
+            <Input
+              type="search"
+              placeholder="Search"
+              className="pl-8"
+              value={searchText}
+              onChange={onChange}
+            />
             <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
           </div>
-          <MotionButton
-            variant="outline"
-            variants={buttonHover}
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <Funnel className="h-5 w-5 pointer-events-none" />
-          </MotionButton>
-          <MotionButton
-            variant="outline"
-            asChild
-            variants={buttonHover}
-            whileHover="hover"
-            whileTap="tap"
-          ></MotionButton>
-
+          <FilterModal />
           <MotionButton
             variant="outline"
             onClick={() => setView('agenda')}

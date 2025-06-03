@@ -22,35 +22,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
+import { useCalendar } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 
+import { MotionButton } from '../CalendarHeader/CalendarHeader';
 interface FilterModalProps {
-  topics: string[];
-  filterState: FilterModalState;
-  setFilterState: (newState: FilterModalState) => void;
+  topics?: string[];
+  filterState?: FilterModalState;
+  setFilterState?: (newState: FilterModalState) => void;
   showCountryDropdown?: boolean;
 }
 
 export default function FilterModal({
-  topics,
-  filterState,
-  setFilterState,
   showCountryDropdown = true,
 }: FilterModalProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [localState, setLocalState] = useState<FilterModalState>(filterState);
+  const [localState, setLocalState] = useState<FilterModalState>(
+    FilterModalOperations.getDefaultState(),
+  );
+  const [filterState, setFilterState] = useState<FilterModalState>({
+    startDate: new Date(),
+    endDate: new Date(),
+    country: '',
+    topics: [],
+  });
+  const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
   const multiSelectRef = useRef<MultiSelectRef>(null);
-
+  const { filterByCountry } = useCalendar();
   const countries = FilterModalOperations.getCountries();
-  const topicOptions = topics.map((topic) => ({
+  const topicOptions = topics!.map((topic) => ({
     label: topic,
     value: topic,
   }));
 
   useEffect(() => {
     if (dialogOpen) {
-      setLocalState(filterState);
+      setLocalState(filterState!);
     }
   }, [dialogOpen, filterState]);
 
@@ -90,15 +99,21 @@ export default function FilterModal({
 
   const handleApply = () => {
     setFilterState(localState);
+    filterByCountry(localState.country!);
     setDialogOpen(false);
   };
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button size="icon">
-          <Funnel />
-        </Button>
+        <MotionButton
+          variant="outline"
+          variants={buttonHover}
+          whileHover="hover"
+          whileTap="tap"
+        >
+          <Funnel className="h-5 w-5" />
+        </MotionButton>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="text-left">

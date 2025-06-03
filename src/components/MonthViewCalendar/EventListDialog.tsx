@@ -20,6 +20,15 @@ interface EventListDialogProps {
   MAX_VISIBLE_EVENTS?: number;
   children?: ReactNode;
 }
+const meetingColors: TMeetingColor[] = [
+  'blue',
+  'green',
+  'red',
+  'yellow',
+  'purple',
+  'orange',
+];
+
 export function EventListDialog({
   date,
   events,
@@ -28,6 +37,8 @@ export function EventListDialog({
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
+  const randomColor =
+    meetingColors[Math.floor(Math.random() * meetingColors.length)];
 
   const defaultTrigger = (
     <span className="cursor-pointer">
@@ -46,10 +57,7 @@ export function EventListDialog({
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-center gap-2">
-              <EventBullet
-                color={cellEvents[0]?.color as TMeetingColor}
-                className=""
-              />
+              <EventBullet color={randomColor} className="" />
               <p className="text-sm font-medium">
                 Events on {format(date, 'EEEE, MMMM d, yyyy')}
               </p>
@@ -63,12 +71,11 @@ export function EventListDialog({
               className={cn(
                 'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
                 {
-                  [dayCellVariants({ color: event.color as TMeetingColor })]:
-                    true,
+                  [dayCellVariants({ color: randomColor })]: true,
                 },
               )}
             >
-              <EventBullet color={event.color as TMeetingColor} className="" />
+              <EventBullet color={randomColor} className="" />
               <div className="flex-1">
                 <p className="text-sm font-medium">{event.title}</p>
                 <p>{format(event.meeting_start_datetime, 'EE dd MMMM')}</p>
