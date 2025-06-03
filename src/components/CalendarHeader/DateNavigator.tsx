@@ -3,13 +3,17 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { useCalendar } from '@/components/CalendarHeader/CalendarContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { buttonHover, transition } from '@/domain/animations';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { useCalendar } from '@/domain/hooks/meetingHooks';
 import type { TCalendarView } from '@/domain/types/calendar/types';
-import { getEventsCount, navigateDate, rangeText } from '@/operations/meeting/CalendarHelpers';
+import {
+  getEventsCount,
+  navigateDate,
+  rangeText,
+} from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
   view: TCalendarView;

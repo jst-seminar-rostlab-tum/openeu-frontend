@@ -1,11 +1,11 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState } from 'react';
 
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
 
-interface ICalendarContext {
+export interface ICalendarContext {
   selectedDate: Date;
   view: TCalendarView;
   setView: (view: TCalendarView) => void;
@@ -13,7 +13,9 @@ interface ICalendarContext {
   events: MeetingData[];
 }
 
-const CalendarContext = createContext<ICalendarContext | undefined>(undefined);
+export const CalendarContext = createContext<ICalendarContext | undefined>(
+  undefined,
+);
 
 export function CalendarProvider({
   children,
@@ -43,7 +45,7 @@ export function CalendarProvider({
     setView,
     setSelectedDate: handleSelectDate,
     selectedColors,
-    events: data   
+    events: data,
   };
 
   return (
@@ -51,11 +53,4 @@ export function CalendarProvider({
       {children}
     </CalendarContext.Provider>
   );
-}
-
-export function useCalendar(): ICalendarContext {
-  const context = useContext(CalendarContext);
-  if (context === undefined)
-    throw new Error('useCalendar must be used within a CalendarProvider.');
-  return context;
 }

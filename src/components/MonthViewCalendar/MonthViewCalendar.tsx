@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
 
-import { useCalendar } from '@/components/CalendarHeader/CalendarContext';
 import { DayCell } from '@/components/MonthViewCalendar/DayCell';
 import { staggerContainer, transition } from '@/domain/animations';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { calculateMonthEventPositions, getCalendarCells } from '@/operations/meeting/CalendarHelpers';
+import { useCalendar } from '@/domain/hooks/meetingHooks';
+import {
+  calculateMonthEventPositions,
+  getCalendarCells,
+} from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
   singleDayEvents: MeetingData[];
@@ -21,7 +24,7 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
   const eventPositions = calculateMonthEventPositions(
     multiDayEvents,
     singleDayEvents,
-    selectedDate
+    selectedDate,
   );
 
   return (

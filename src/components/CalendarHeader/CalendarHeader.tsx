@@ -11,13 +11,18 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 
-import {useCalendar } from '@/components/CalendarHeader/CalendarContext';
 import { DateNavigator } from '@/components/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/CalendarHeader/TodayButton';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Toggle } from '@/components/ui/toggle';
-import { buttonHover, slideFromLeft, slideFromRight, transition } from '@/domain/animations';
+import {
+  buttonHover,
+  slideFromLeft,
+  slideFromRight,
+  transition,
+} from '@/domain/animations';
+import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
 
 export const MotionButton = motion.create(Button);

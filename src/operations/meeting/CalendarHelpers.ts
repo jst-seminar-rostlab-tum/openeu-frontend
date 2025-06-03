@@ -25,10 +25,10 @@ import {
   subYears,
 } from 'date-fns';
 
-import { useCalendar } from '@/components/CalendarHeader/CalendarContext';
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { TCalendarView} from '@/domain/types/calendar/types';
+import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { TCalendarView } from '@/domain/types/calendar/types';
 import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
 
 const FORMAT_STRING = 'MMM d, yyyy';
@@ -118,36 +118,39 @@ export function getEventsCount(
 
   const compareFn = compareFns[view];
   return events.filter((event) =>
-    compareFn(parseISO(event.meeting_start_datetime), date)).length;
+    compareFn(parseISO(event.meeting_start_datetime), date),
+  ).length;
 }
 
 export function getMonthCellEvents(
-    date: Date,
-    events: MeetingData[],
-    eventPositions: Record<string, number>
+  date: Date,
+  events: MeetingData[],
+  eventPositions: Record<string, number>,
 ): MeetingData[] {
-    const dayStart = startOfDay(date);
-    const eventsForDate: MeetingData[] = events.filter((event) => {
-        const eventStart = parseISO(event.meeting_start_datetime);
-        const eventEnd = parseISO(event.meeting_end_datetime);
-        return (
-            (dayStart >= eventStart && dayStart <= eventEnd) ||
-            isSameDay(dayStart, eventStart) ||
-            isSameDay(dayStart, eventEnd)
-        );
+  const dayStart = startOfDay(date);
+  const eventsForDate: MeetingData[] = events.filter((event) => {
+    const eventStart = parseISO(event.meeting_start_datetime);
+    const eventEnd = parseISO(event.meeting_end_datetime);
+    return (
+      (dayStart >= eventStart && dayStart <= eventEnd) ||
+      isSameDay(dayStart, eventStart) ||
+      isSameDay(dayStart, eventEnd)
+    );
+  });
+  return eventsForDate
+    .map((event) => ({
+      ...event,
+      position: eventPositions[Number(event.meeting_id)] ?? -1,
+      isMultiDay: !isSameDay(
+        parseISO(event.meeting_start_datetime),
+        parseISO(event.meeting_end_datetime),
+      ),
+    }))
+    .sort((a, b) => {
+      if (a.isMultiDay && !b.isMultiDay) return -1;
+      if (!a.isMultiDay && b.isMultiDay) return 1;
+      return a.position - b.position;
     });
-    return eventsForDate
-        .map((event) => ({
-            ...event,
-            position: eventPositions[Number(event.meeting_id)] ?? -1,
-           isMultiDay: !isSameDay(parseISO(event.meeting_start_datetime), parseISO(event.meeting_end_datetime))
-
-        }))
-        .sort((a, b) => {
-            if (a.isMultiDay && !b.isMultiDay) return -1;
-            if (!a.isMultiDay && b.isMultiDay) return 1;
-            return a.position - b.position;
-        });
 }
 
 export function getCalendarCells(selectedDate: Date): CalendarCell[] {
@@ -198,61 +201,74 @@ export function calculateMonthEventPositions(
   selectedDate: Date,
 ): Record<string, number> {
   try {
-  const monthStart = startOfMonth(selectedDate);
-  const monthEnd = endOfMonth(selectedDate);
-  const eventPositions: Record<string, number> = {};
-  const occupiedPositions: Record<string, boolean[]> = {};
+    const monthStart = startOfMonth(selectedDate);
+    const monthEnd = endOfMonth(selectedDate);
+    const eventPositions: Record<string, number> = {};
+    const occupiedPositions: Record<string, boolean[]> = {};
 
-  eachDayOfInterval({ start: monthStart, end: monthEnd }).forEach((day) => {
-    occupiedPositions[day.toISOString()] = [false, false, false];
-  });
+    eachDayOfInterval({ start: monthStart, end: monthEnd }).forEach((day) => {
+      occupiedPositions[day.toISOString()] = [false, false, false];
+    });
 
-
-  const sortedEvents = [
-        ...multiDayEvents.sort((a, b) => {
-            const aDuration = differenceInDays(parseISO(a.meeting_end_datetime), parseISO(a.meeting_start_datetime));
-            const bDuration = differenceInDays(parseISO(b.meeting_end_datetime), parseISO(b.meeting_start_datetime));
-            return bDuration - aDuration || parseISO(a.meeting_start_datetime).getTime() - parseISO(b.meeting_start_datetime).getTime();
-        }),
-        ...singleDayEvents.sort((a, b) => parseISO(a.meeting_start_datetime).getTime() - parseISO(b.meeting_start_datetime).getTime()),
+    const sortedEvents = [
+      ...multiDayEvents.sort((a, b) => {
+        const aDuration = differenceInDays(
+          parseISO(a.meeting_end_datetime),
+          parseISO(a.meeting_start_datetime),
+        );
+        const bDuration = differenceInDays(
+          parseISO(b.meeting_end_datetime),
+          parseISO(b.meeting_start_datetime),
+        );
+        return (
+          bDuration - aDuration ||
+          parseISO(a.meeting_start_datetime).getTime() -
+            parseISO(b.meeting_start_datetime).getTime()
+        );
+      }),
+      ...singleDayEvents.sort(
+        (a, b) =>
+          parseISO(a.meeting_start_datetime).getTime() -
+          parseISO(b.meeting_start_datetime).getTime(),
+      ),
     ];
 
     sortedEvents.forEach((event) => {
-        const eventStart = parseISO(event.meeting_start_datetime);
-        const eventEnd = parseISO(event.meeting_end_datetime);
-        const eventDays = eachDayOfInterval({
-            start: eventStart < monthStart ? monthStart : eventStart,
-            end: eventEnd > monthEnd ? monthEnd : eventEnd,
+      const eventStart = parseISO(event.meeting_start_datetime);
+      const eventEnd = parseISO(event.meeting_end_datetime);
+      const eventDays = eachDayOfInterval({
+        start: eventStart < monthStart ? monthStart : eventStart,
+        end: eventEnd > monthEnd ? monthEnd : eventEnd,
+      });
+
+      let position = -1;
+
+      for (let i = 0; i < 3; i++) {
+        if (
+          eventDays.every((day) => {
+            const dayPositions =
+              occupiedPositions[startOfDay(day).toISOString()];
+            return dayPositions && !dayPositions[i];
+          })
+        ) {
+          position = i;
+          break;
+        }
+      }
+
+      if (position !== -1) {
+        eventDays.forEach((day) => {
+          const dayKey = startOfDay(day).toISOString();
+          occupiedPositions[dayKey][position] = true;
         });
-
-        let position = -1;
-
-        for (let i = 0; i < 3; i++) {
-            if (
-                eventDays.every((day) => {
-                    const dayPositions = occupiedPositions[startOfDay(day).toISOString()];
-                    return dayPositions && !dayPositions[i];
-                })
-            ) {
-                position = i;
-                break;
-            }
-        }
-
-        if (position !== -1) {
-            eventDays.forEach((day) => {
-                const dayKey = startOfDay(day).toISOString();
-                occupiedPositions[dayKey][position] = true;
-            });
-            eventPositions[Number(event.meeting_id)] = position;
-        }
+        eventPositions[Number(event.meeting_id)] = position;
+      }
     });
 
-  return eventPositions;
-  }
-catch (error) {
-  console.error("Error calculating month event positions:", error);
-  return {};
+    return eventPositions;
+  } catch (error) {
+    console.error('Error calculating month event positions:', error);
+    return {};
   }
 }
 
