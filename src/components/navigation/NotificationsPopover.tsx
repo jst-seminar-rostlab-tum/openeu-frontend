@@ -62,7 +62,7 @@ export function NotificationsPopover() {
               </div>
             </ScrollArea>
           </TabsContent>
-          <Link className="w-full mt-2" href="/inbox-test">
+          <Link className="w-full" href="/inbox">
             <Button variant="outline" className="w-full">
               Check Inbox
             </Button>
