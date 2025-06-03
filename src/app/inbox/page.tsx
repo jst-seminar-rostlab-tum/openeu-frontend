@@ -16,9 +16,10 @@ import { DataTablePagination } from '@/components/Inbox/data-table-pagination';
 import { DataTableToolbar } from '@/components/Inbox/data-table-toolbar';
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
+import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 import InboxOperations from '@/operations/inbox/InboxOperations';
 
-import { createColumns, InboxItem } from './columns';
+import { createColumns } from './columns';
 import { DataTable } from './data-table';
 
 export default function InboxPage() {

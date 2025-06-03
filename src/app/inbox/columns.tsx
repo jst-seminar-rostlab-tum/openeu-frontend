@@ -14,20 +14,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 
-export type InboxItem = {
-  id: string;
-  title: string;
-  date: string;
-  country: string;
-  relevanceScore: number;
-};
-
-type ActionsProps = {
+interface ActionsProps {
   onView: (itemId: string) => void;
   onArchive: (itemId: string) => void;
   onDelete: (itemId: string) => void;
-};
+}
 
 // Memoized color function to prevent recreation
 const getRelevanceColor = (score: number): string => {
