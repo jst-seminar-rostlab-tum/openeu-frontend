@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const { error } = await supabase.auth.verifyOtp({
       type,
-      // eslint-disable-next-line camelcase
+
       token_hash: tokenHash,
     });
     if (!error) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { GeoJsonObject } from 'geojson';
+import { GeoJSON } from 'geojson';
 import dynamic from 'next/dynamic';
 
 import MapData from '../../../public/map.geo.json';
@@ -12,7 +12,7 @@ export default function Map() {
 
   return (
     <MapComponent
-      mapData={MapData as GeoJsonObject}
+      mapData={MapData as GeoJSON.FeatureCollection}
       zoom={4.25}
       minZoom={4}
       center={[54.5452, 25.11912]}
