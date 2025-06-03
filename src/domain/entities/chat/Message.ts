@@ -3,4 +3,6 @@ export interface Message {
   content: string;
   isUser: boolean;
   timestamp: Date;
+  session_id?: number;
+  author?: 'user' | 'assistant';
 }

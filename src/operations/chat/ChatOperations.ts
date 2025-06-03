@@ -1,15 +1,11 @@
-// This file is deprecated - functionality moved to:
-// - Server Actions: src/domain/action/chatActions.ts
-// - TanStack Query Hooks: src/domain/hooks/chatHooks.ts
-// - Streaming Hook: src/domain/hooks/useStreamingChat.ts
+import { Message } from '@/domain/entities/chat/Message';
 
-// Keeping only utility functions
+// Re-export for backward compatibility
+export type { Message };
 
-export class ChatOperations {
-  static generateSessionTitle(content: string): string {
-    return content.slice(0, 50) + (content.length > 50 ? '...' : '');
-  }
-
+// Note: This class is now a compatibility layer.
+// For new code, use the hooks directly from @/domain/hooks/chat-hooks
+export default class ChatOperations {
   static handleAddFile(): void {
     console.log('Add file functionality - to be implemented');
   }
