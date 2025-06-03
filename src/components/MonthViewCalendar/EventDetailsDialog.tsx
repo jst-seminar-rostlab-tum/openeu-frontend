@@ -17,7 +17,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { formatTime } from '@/operations/meeting/CalendarHelpers';
 
-
 interface IProps {
   event: MeetingData;
   children: ReactNode;
@@ -37,7 +36,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
 
         <ScrollArea className="max-h-[80vh]">
           <div className="space-y-4 p-4">
-                <div className="flex items-start gap-2">
+            <div className="flex items-start gap-2">
               <User className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Topics</p>
@@ -56,19 +55,19 @@ export function EventDetailsDialog({ event, children }: IProps) {
               </div>
             </div>
 
-                <div className="flex items-start gap-2">
+            <div className="flex items-start gap-2">
               <Calendar className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Start Date</p>
                 <p className="text-sm text-muted-foreground">
-                            {format(startDate, 'EEEE dd MMMM')}
-                            <span className="mx-1">at</span>
-                            {formatTime(parseISO(event.meeting_start_datetime), true)}
-                          </p>
+                  {format(startDate, 'EEEE dd MMMM')}
+                  <span className="mx-1">at</span>
+                  {formatTime(parseISO(event.meeting_start_datetime), true)}
+                </p>
               </div>
             </div>
 
-                <div className="flex items-start gap-2">
+            <div className="flex items-start gap-2">
               <Clock className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">End Date</p>
@@ -80,7 +79,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
               </div>
             </div>
 
-                <div className="flex items-start gap-2">
+            <div className="flex items-start gap-2">
               <Text className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Description</p>
@@ -89,12 +88,12 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 </p>
               </div>
             </div>
-              </div>
+          </div>
         </ScrollArea>
         <DialogClose asChild>
           <Button variant="outline" className="mt-4 w-full">
             Close
-                    </Button>
+          </Button>
         </DialogClose>
       </DialogContent>
     </Dialog>

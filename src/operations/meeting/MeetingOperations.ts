@@ -172,5 +172,4 @@ export const dummyMeetings: MeetingData[] = [
       'CleanTech',
     ],
   },
-  
 ];

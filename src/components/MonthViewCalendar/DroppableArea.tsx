@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 
-
 interface DroppableAreaProps {
   date: Date;
   hour?: number;
@@ -9,10 +8,7 @@ interface DroppableAreaProps {
   className?: string;
 }
 
-export function DroppableArea({
-  children,
-  className,
-}: DroppableAreaProps) {
+export function DroppableArea({ children, className }: DroppableAreaProps) {
   return (
     <div
       className={`${className || ''} `}

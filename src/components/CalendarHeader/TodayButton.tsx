@@ -7,7 +7,6 @@ import { buttonHover, transition } from '@/domain/animations';
 const MotionButton = motion.create(Button);
 
 export function TodayButton() {
-
   const today = new Date();
 
   return (

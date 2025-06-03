@@ -86,7 +86,7 @@ export default defineConfig([
       'no-console': 'warn',
 
       // Allow specific naming patterns for Next.js/Supabase
-       camelcase: [
+      camelcase: [
         'error',
         {
           properties: 'never', // Don't check property names (allows user.app_metadata)

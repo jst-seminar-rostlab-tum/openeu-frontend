@@ -28,7 +28,9 @@ export default function MeetingList() {
             >
               <h3 className="text-lg font-semibold">{meeting.title}</h3>
               <p className="text-gray-600 dark:text-gray-400">{meeting.tags}</p>
-              <p className="text-gray-600 dark:text-gray-400">{meeting.meeting_start_datetime}</p>
+              <p className="text-gray-600 dark:text-gray-400">
+                {meeting.meeting_start_datetime}
+              </p>
             </li>
           ))}
         </ul>

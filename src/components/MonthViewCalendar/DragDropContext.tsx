@@ -32,9 +32,9 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
   const [draggedEvent, setDraggedEvent] = useState<MeetingData | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [onEventDropped, setOnEventDroppedCallback] = useState<
-    |((event: MeetingData, newStartDate: Date, newEndDate: Date) => void)
-      | undefined
-      >(undefined);
+    | ((event: MeetingData, newStartDate: Date, newEndDate: Date) => void)
+    | undefined
+  >(undefined);
 
   const startDrag = (event: MeetingData) => {
     setDraggedEvent(event);
