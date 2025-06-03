@@ -1,7 +1,9 @@
 import { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
+import { useMemo } from 'react';
 
 import { DataTableBulkActions } from '@/components/Inbox/data-table-bulk-actions';
+import { DataTableDateRangeFilter } from '@/components/Inbox/data-table-date-range-filter';
 import { DataTableFacetedFilter } from '@/components/Inbox/data-table-faceted-filter';
 import { DataTableViewOptions } from '@/components/Inbox/data-table-view-options';
 import { Button } from '@/components/ui/button';
@@ -24,23 +26,33 @@ export function DataTableToolbar<TData>({
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
 
+  // Memoize country options to prevent recreation
+  const countryOptions = useMemo(
+    () =>
+      uniqueCountries.map((country) => ({
+        label: country,
+        value: country,
+      })),
+    [uniqueCountries],
+  );
+
   // Show bulk actions when items are selected
   if (selectedCount > 0) {
     return (
-      <div className='flex h-10 items-center justify-between'>
+      <div className="flex h-10 items-center justify-between">
         <DataTableBulkActions
           selectedCount={selectedCount}
           onArchive={onBulkArchive!}
           onDelete={onBulkDelete!}
         />
         <Button
-          variant='ghost'
-          size='sm'
+          variant="ghost"
+          size="sm"
           onClick={() => table.toggleAllPageRowsSelected(false)}
-          className='h-8'
+          className="h-8"
         >
           Clear selection
-          <X className='ml-2 h-4 w-4' />
+          <X className="ml-2 h-4 w-4" />
         </Button>
       </div>
     );
@@ -48,32 +60,35 @@ export function DataTableToolbar<TData>({
 
   // Show normal toolbar when no items are selected
   return (
-    <div className='flex h-10 items-center justify-between'>
-      <div className='flex flex-1 items-center space-x-2'>
+    <div className="flex h-10 items-center justify-between">
+      <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder='Search all columns...'
+          placeholder="Search all columns..."
           value={table.getState().globalFilter ?? ''}
           onChange={(event) => table.setGlobalFilter(event.target.value)}
-          className='h-8 w-[150px] lg:w-[250px]'
+          className="h-8 w-[150px] lg:w-[250px]"
         />
         {table.getColumn('country') && (
           <DataTableFacetedFilter
             column={table.getColumn('country')}
-            title='Country'
-            options={uniqueCountries.map((country) => ({
-              label: country,
-              value: country,
-            }))}
+            title="Country"
+            options={countryOptions}
+          />
+        )}
+        {table.getColumn('date') && (
+          <DataTableDateRangeFilter
+            column={table.getColumn('date')}
+            title="Date Range"
           />
         )}
         {isFiltered && (
           <Button
-            variant='ghost'
+            variant="ghost"
             onClick={() => table.resetColumnFilters()}
-            className='h-8 px-2 lg:px-3'
+            className="h-8 px-2 lg:px-3"
           >
             Reset
-            <X className='ml-2 h-4 w-4' />
+            <X className="ml-2 h-4 w-4" />
           </Button>
         )}
       </div>
