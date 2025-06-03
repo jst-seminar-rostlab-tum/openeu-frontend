@@ -11,6 +11,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { DataTablePagination } from '@/components/Inbox/data-table-pagination';
 import { DataTableToolbar } from '@/components/Inbox/data-table-toolbar';
@@ -49,11 +50,11 @@ export default function InboxPage() {
 
   // Action handlers
   const handleView = useCallback((itemId: string) => {
-    alert(`Viewing item: ${itemId}`);
+    toast(`Viewing item: ${itemId}`);
   }, []);
 
   const handleArchive = useCallback((itemId: string) => {
-    alert(`Archiving item: ${itemId}`);
+    toast(`Archiving item: ${itemId}`);
   }, []);
 
   const handleDelete = useCallback((itemId: string) => {
@@ -91,7 +92,7 @@ export default function InboxPage() {
     const selectedItems = table
       .getFilteredSelectedRowModel()
       .rows.map((row) => row.original.id);
-    alert(`Archiving ${selectedItems.length} items`);
+    toast(`Archiving ${selectedItems.length} items`);
     setRowSelection({});
   }, [table]);
 
