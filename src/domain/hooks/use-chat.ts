@@ -2,21 +2,27 @@
 
 import { useState } from 'react';
 
-import { Message } from '../entities/chat/Message';
-import { useCreateChatSession, useSendMessage } from './chat-hooks';
+import { Message } from '@/domain/entities/chat/Message';
+import { useAuth } from '@/domain/hooks/useAuth';
 
-// TODO: Replace with actual user ID from auth
-const USER_ID = 'user-123';
+import { useCreateChatSession, useSendMessage } from './chat-hooks';
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
   const [streamingMessage, setStreamingMessage] = useState('');
 
+  const { user } = useAuth();
   const createSession = useCreateChatSession();
   const sendMessage = useSendMessage();
 
   const handleSendMessage = async (content: string) => {
+    // Check if user is authenticated
+    if (!user) {
+      console.error('User not authenticated');
+      return;
+    }
+
     try {
       let sessionId = currentSessionId;
 
@@ -25,7 +31,6 @@ export function useChat() {
         const title = content.slice(0, 50) + (content.length > 50 ? '...' : '');
         const session = await createSession.mutateAsync({
           title,
-          user_id: USER_ID,
         });
         sessionId = session.id;
         setCurrentSessionId(sessionId);
@@ -90,5 +95,7 @@ export function useChat() {
     // Helper computed states
     isLoading: createSession.isPending || sendMessage.isPending,
     hasError: !!createSession.error || !!sendMessage.error,
+
+    user,
   };
 }

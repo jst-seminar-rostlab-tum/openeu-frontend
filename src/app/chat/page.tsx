@@ -16,6 +16,7 @@ export default function Chat() {
     hasError,
     sessionError,
     messageError,
+    user,
   } = useChat();
 
   return (
@@ -32,7 +33,11 @@ export default function Chat() {
               className="dark:invert"
             />
             <p className="max-w-xl text-center text-muted-foreground">
-              OpenEU helps companies track and understand upcoming EU laws and
+              Welcome{' '}
+              {user?.user_metadata?.first_name ||
+                user?.email?.split('@')[0] ||
+                'there'}
+              ! OpenEU helps companies track and understand upcoming EU laws and
               national implementations. Ask anything about regulations,
               directives, or compliance, from sustainability reporting to AI
               governance.

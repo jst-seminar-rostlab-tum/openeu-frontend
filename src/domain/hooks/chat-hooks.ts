@@ -2,9 +2,14 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { createChatSession } from '../actions/chat-actions';
-import { ChatSession, SendMessageRequest } from '../entities/chat/ChatSession';
-import { Message } from '../entities/chat/Message';
+import { createChatSession } from '@/domain/actions/chat-actions';
+import {
+  ChatSession,
+  CreateSessionRequest,
+  SendMessageRequest,
+} from '@/domain/entities/chat/ChatSession';
+import { Message } from '@/domain/entities/chat/Message';
+import { useAuth } from '@/domain/hooks/useAuth';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend.onrender.com';
@@ -94,10 +99,13 @@ async function sendStreamingMessage(
 }
 
 // Query Hooks
-export function useChatSessions(userId: string) {
+export function useChatSessions() {
+  const { user } = useAuth();
+
   return useQuery({
-    queryKey: chatQueryKeys.sessions(userId),
-    queryFn: () => fetchChatSessions(userId),
+    queryKey: chatQueryKeys.sessions(user?.id || ''),
+    queryFn: () => fetchChatSessions(user!.id),
+    enabled: !!user, // Only fetch if user is authenticated
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
@@ -114,14 +122,18 @@ export function useChatMessages(sessionId: number | null) {
 // Mutation Hooks using Server Actions + TanStack Query
 export function useCreateChatSession() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
-    mutationFn: createChatSession,
-    onSuccess: (session, variables) => {
+    mutationFn: (data: Omit<CreateSessionRequest, 'user_id'>) =>
+      createChatSession(data),
+    onSuccess: (_) => {
       // Invalidate and refetch sessions
-      queryClient.invalidateQueries({
-        queryKey: chatQueryKeys.sessions(variables.user_id),
-      });
+      if (user) {
+        queryClient.invalidateQueries({
+          queryKey: chatQueryKeys.sessions(user.id),
+        });
+      }
     },
     onError: (error) => {
       console.error('Failed to create chat session:', error);

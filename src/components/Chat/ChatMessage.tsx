@@ -1,9 +1,4 @@
-interface Message {
-  id: string;
-  content: string;
-  isUser: boolean;
-  timestamp: Date;
-}
+import { Message } from '@/domain/entities/chat/Message';
 
 interface ChatMessageProps {
   message: Message;
