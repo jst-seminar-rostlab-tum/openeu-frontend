@@ -1,44 +1,35 @@
 'use client';
+
 import {
-  ColumnFiltersState,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import BulkActions from '@/components/BulkActions/BulkActions';
-import SearchAndFilters from '@/components/SearchAndFilters/SearchAndFilters';
+import { DataTableToolbar } from '@/components/Inbox/data-table-toolbar';
+import { Section } from '@/components/section';
 import InboxOperations from '@/operations/inbox/InboxOperations';
 
-import { createColumns,InboxItem } from './columns';
-import InboxTable from './data-table';
+import { createColumns, InboxItem } from './columns';
+import { DataTable } from './data-table';
 
 export default function InboxPage() {
   const [data, setData] = useState<InboxItem[]>([]);
   const [rowSelection, setRowSelection] = useState({});
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState({
-    countries: [] as string[],
-    relevanceRange: { min: 0, max: 100 },
-    dateRange: { start: '', end: '' },
-  });
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
-  // Initialize data in useEffect to avoid render-time side effects
+  // Initialize data
   useEffect(() => {
     setData(InboxOperations.getInboxItems());
   }, []);
 
   // Get unique countries for filter options
   const uniqueCountries = Array.from(new Set(data.map((item) => item.country)));
-
-  // Check if any filters are active
-  const hasActiveFilters = filters.countries.length > 0 || filters.relevanceRange.min > 0;
 
   // Action handlers
   const handleView = useCallback((itemId: string) => {
@@ -53,45 +44,36 @@ export default function InboxPage() {
     setData((prev) => prev.filter((item) => item.id !== itemId));
   }, []);
 
-  // Create columns with action handlers
-  const columns = useMemo(() => createColumns({
-    onView: handleView,
-    onArchive: handleArchive,
-    onDelete: handleDelete,
-  }), [handleView, handleArchive, handleDelete]);
-
-  // Filter data based on custom filters
-  const filteredData = useMemo(() => {
-    return data.filter((item) => {
-      const matchesCountry = filters.countries.length === 0 || filters.countries.includes(item.country);
-      const matchesRelevance = item.relevanceScore >= filters.relevanceRange.min && item.relevanceScore <= filters.relevanceRange.max;
-      return matchesCountry && matchesRelevance;
-    });
-  }, [data, filters]);
+  const columns = useMemo(
+    () =>
+      createColumns({
+        onView: handleView,
+        onArchive: handleArchive,
+        onDelete: handleDelete,
+      }),
+    [handleView, handleArchive, handleDelete]
+  );
 
   const table = useReactTable({
-    data: filteredData,
+    data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: 'includesString',
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
-      sorting,
-      columnFilters,
       rowSelection,
-      globalFilter,
+      columnVisibility,
     },
   });
 
-  // Get selected items
-  const selectedItems = table.getFilteredSelectedRowModel().rows.map(row => row.original.id);
+  const selectedItems = table
+    .getFilteredSelectedRowModel()
+    .rows.map((row) => row.original.id);
 
-  // Bulk actions
   const handleBulkArchive = () => {
     alert(`Archiving ${selectedItems.length} items`);
     setRowSelection({});
@@ -104,34 +86,17 @@ export default function InboxPage() {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Inbox Items</h1>
-
-      <SearchAndFilters
-        globalFilter={globalFilter}
-        setGlobalFilter={setGlobalFilter}
-        showFilters={showFilters}
-        setShowFilters={setShowFilters}
-        filters={filters}
-        setFilters={setFilters}
-        uniqueCountries={uniqueCountries}
-        hasActiveFilters={hasActiveFilters}
-        totalItems={data.length}
-        filteredItems={table.getFilteredRowModel().rows.length}
-      />
-
-      <BulkActions
-        selectedCount={selectedItems.length}
-        onBulkArchive={handleBulkArchive}
-        onBulkDelete={handleBulkDelete}
-      />
-
-      <InboxTable
-        table={table}
-        onView={handleView}
-        onArchive={handleArchive}
-        onDelete={handleDelete}
-      />
-    </div>
+    <Section>
+      <h1 className='text-2xl font-bold'>Inbox</h1>
+      <div className='space-y-4'>
+        <DataTableToolbar
+          table={table}
+          uniqueCountries={uniqueCountries}
+          onBulkArchive={handleBulkArchive}
+          onBulkDelete={handleBulkDelete}
+        />
+        <DataTable table={table} columns={columns} />
+      </div>
+    </Section>
   );
 }
