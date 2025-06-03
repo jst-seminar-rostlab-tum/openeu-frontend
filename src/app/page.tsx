@@ -1,4 +1,4 @@
-import MeetingList from '@/components/MeetingList.tsx/MeetingList';
+import MeetingList from '@/components/MeetingList/MeetingList';
 import SampleComponent from '@/components/SampleCard/SampleComponent';
 import { createClient } from '@/lib/supabase/server';
 
