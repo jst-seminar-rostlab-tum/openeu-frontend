@@ -1,6 +1,7 @@
 'use client';
 
 import { Bell } from 'lucide-react';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -61,6 +62,11 @@ export function NotificationsPopover() {
               </div>
             </ScrollArea>
           </TabsContent>
+          <Link className="w-full" href="/inbox">
+            <Button variant="outline" className="w-full">
+              Check Inbox
+            </Button>
+          </Link>
         </Tabs>
       </PopoverContent>
     </Popover>
