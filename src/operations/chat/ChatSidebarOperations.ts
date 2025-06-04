@@ -1,46 +1,54 @@
 import { SquarePen } from 'lucide-react';
 
-import { SidebarGroupData } from '@/domain/entities/chat/Sidebar';
+interface SidebarItem {
+  title: string;
+  onClick: () => void;
+  icon?: React.ComponentType;
+}
 
-export default class ChatSidebarOperations {
-  static getSidebarGroups(): SidebarGroupData[] {
+interface SidebarGroup {
+  label: string;
+  items: SidebarItem[];
+}
+
+interface ChatSidebarOperationsConfig {
+  handleNewChat: () => void;
+  handleTemplateClick: (message: string) => void;
+}
+
+const TEMPLATES = [
+  {
+    title: 'Last 3 Meetings',
+    message: 'Show me the last 3 meetings',
+  },
+];
+
+class ChatSidebarOperations {
+  static getTemplates() {
+    return TEMPLATES;
+  }
+
+  static getSidebarGroups(config: ChatSidebarOperationsConfig): SidebarGroup[] {
     return [
       {
         label: 'Actions',
         items: [
           {
-            icon: SquarePen,
             title: 'New Chat',
-            onClick: () => {
-              console.log('New chat clicked');
-            },
+            onClick: config.handleNewChat,
+            icon: SquarePen,
           },
         ],
       },
       {
-        label: 'Templates',
-        items: [
-          {
-            title: 'EU Legislation Analysis',
-            onClick: () => {
-              // TODO: Implement template functionality
-              console.log('Template clicked: EU Legislation Analysis');
-            },
-          },
-          {
-            title: 'Policy Impact Assessment',
-            onClick: () => {
-              console.log('Template clicked: Policy Impact Assessment');
-            },
-          },
-          {
-            title: 'Regulatory Compliance',
-            onClick: () => {
-              console.log('Template clicked: Regulatory Compliance');
-            },
-          },
-        ],
+        label: 'Quick Questions',
+        items: TEMPLATES.map((template) => ({
+          title: template.title,
+          onClick: () => config.handleTemplateClick(template.message),
+        })),
       },
     ];
   }
 }
+
+export default ChatSidebarOperations;

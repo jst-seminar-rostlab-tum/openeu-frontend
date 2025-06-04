@@ -3,6 +3,7 @@
 import { Trash } from 'lucide-react';
 import { type ComponentProps, useMemo, useState } from 'react';
 
+import { useChatContext } from '@/app/chat/ChatContext';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import {
   Sidebar,
@@ -18,15 +19,17 @@ import {
 } from '@/components/ui/sidebar';
 import { useChatSessions } from '@/domain/hooks/chat-hooks';
 import { useAuth } from '@/domain/hooks/useAuth';
+import { cn } from '@/lib/utils';
 import ChatSidebarOperations from '@/operations/chat/ChatSidebarOperations';
 
 export default function ChatSidebar({
   ...props
 }: ComponentProps<typeof Sidebar>) {
   const [searchQuery, setSearchQuery] = useState('');
-  const staticGroups = ChatSidebarOperations.getSidebarGroups();
   const { user } = useAuth();
   const { data: chatSessions, isLoading, error } = useChatSessions();
+  const { createNewChat, sendTemplate, switchToSession, currentSessionId } =
+    useChatContext();
 
   // Memoized filtered chat sessions for optimal performance
   const filteredChatSessions = useMemo(() => {
@@ -38,6 +41,12 @@ export default function ChatSidebar({
       session.title.toLowerCase().includes(searchQuery.toLowerCase().trim()),
     );
   }, [chatSessions, searchQuery]);
+
+  // Get sidebar groups from operations
+  const staticGroups = ChatSidebarOperations.getSidebarGroups({
+    handleNewChat: createNewChat,
+    handleTemplateClick: sendTemplate,
+  });
 
   return (
     <Sidebar {...props}>
@@ -52,9 +61,9 @@ export default function ChatSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       onClick={item.onClick}
-                      className="truncate"
+                      className="truncate text-left"
                     >
-                      {item.icon && <item.icon />}
+                      {'icon' in item && item.icon && <item.icon />}
                       {item.title}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -64,6 +73,7 @@ export default function ChatSidebar({
           </SidebarGroup>
         ))}
 
+        {/* Chat Sessions */}
         {user && (
           <SidebarGroup>
             <SidebarGroupLabel>Chat Sessions</SidebarGroupLabel>
@@ -100,26 +110,14 @@ export default function ChatSidebar({
                   </SidebarMenuItem>
                 )}
 
-                {!isLoading &&
-                  filteredChatSessions &&
-                  filteredChatSessions.length === 0 &&
-                  chatSessions &&
-                  chatSessions.length > 0 && (
-                    <SidebarMenuItem>
-                      <SidebarMenuButton disabled>
-                        No chats match your search
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
-
                 {filteredChatSessions?.map((session) => (
                   <SidebarMenuItem key={session.id}>
                     <SidebarMenuButton
-                      onClick={() => {
-                        // TODO: Navigate to specific chat session
-                        console.log('Navigate to session:', session.id);
-                      }}
-                      className="truncate"
+                      onClick={() => switchToSession(session.id)}
+                      className={cn(
+                        'truncate',
+                        currentSessionId === session.id && 'bg-accent',
+                      )}
                     >
                       {session.title}
                     </SidebarMenuButton>
