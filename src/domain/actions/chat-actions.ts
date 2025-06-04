@@ -2,11 +2,12 @@
 
 import { revalidateTag } from 'next/cache';
 
+import { requireAuth } from '@/lib/dal';
+
 import {
   CreateSessionRequest,
   CreateSessionResponse,
-} from '@/domain/entities/chat/ChatSession';
-import { requireAuth } from '@/lib/dal';
+} from '../entities/chat/generated-types';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend.onrender.com';

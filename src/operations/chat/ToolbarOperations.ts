@@ -1,8 +1,3 @@
-import { Message } from '@/domain/entities/chat/Message';
-
-// Re-export for backward compatibility
-export type { Message };
-
 // Note: This class is now a compatibility layer.
 // For new code, use the hooks directly from @/domain/hooks/chat-hooks
 export default class ChatOperations {
