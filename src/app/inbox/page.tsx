@@ -18,6 +18,7 @@ import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 import InboxOperations from '@/operations/inbox/InboxOperations';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 import { createColumns } from './columns';
 import { DataTable } from './data-table';
@@ -49,11 +50,17 @@ export default function InboxPage() {
 
   // Action handlers
   const handleView = useCallback((itemId: string) => {
-    alert(`Viewing item: ${itemId}`);
+    ToastOperations.showInfo({
+      title: 'Info',
+      message: `Viewing item: ${itemId}`,
+    });
   }, []);
 
   const handleArchive = useCallback((itemId: string) => {
-    alert(`Archiving item: ${itemId}`);
+    ToastOperations.showInfo({
+      title: 'Info',
+      message: `Archiving item: ${itemId}`,
+    });
   }, []);
 
   const handleDelete = useCallback((itemId: string) => {
@@ -91,7 +98,10 @@ export default function InboxPage() {
     const selectedItems = table
       .getFilteredSelectedRowModel()
       .rows.map((row) => row.original.id);
-    alert(`Archiving ${selectedItems.length} items`);
+    ToastOperations.showInfo({
+      title: 'Info',
+      message: `Archiving ${selectedItems.length} items`,
+    });
     setRowSelection({});
   }, [table]);
 
