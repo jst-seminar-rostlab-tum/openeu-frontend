@@ -1,8 +1,9 @@
 'use client';
 
 import { Trash } from 'lucide-react';
-import { type ComponentProps } from 'react';
+import { type ComponentProps, useMemo, useState } from 'react';
 
+import { SearchBar } from '@/components/SearchBar/SearchBar';
 import {
   Sidebar,
   SidebarContent,
@@ -22,9 +23,21 @@ import ChatSidebarOperations from '@/operations/chat/ChatSidebarOperations';
 export default function ChatSidebar({
   ...props
 }: ComponentProps<typeof Sidebar>) {
+  const [searchQuery, setSearchQuery] = useState('');
   const staticGroups = ChatSidebarOperations.getSidebarGroups();
   const { user } = useAuth();
   const { data: chatSessions, isLoading, error } = useChatSessions();
+
+  // Memoized filtered chat sessions for optimal performance
+  const filteredChatSessions = useMemo(() => {
+    if (!chatSessions || !searchQuery.trim()) {
+      return chatSessions;
+    }
+
+    return chatSessions.filter((session) =>
+      session.title.toLowerCase().includes(searchQuery.toLowerCase().trim()),
+    );
+  }, [chatSessions, searchQuery]);
 
   return (
     <Sidebar {...props}>
@@ -51,11 +64,17 @@ export default function ChatSidebar({
           </SidebarGroup>
         ))}
 
-        {/* Dynamic chat sessions */}
         {user && (
           <SidebarGroup>
             <SidebarGroupLabel>Chat Sessions</SidebarGroupLabel>
             <SidebarGroupContent>
+              <div className="px-1 mb-2">
+                <SearchBar
+                  value={searchQuery}
+                  onValueChange={setSearchQuery}
+                  placeholder="Search chats..."
+                />
+              </div>
               <SidebarMenu>
                 {isLoading && (
                   <SidebarMenuItem>
@@ -73,7 +92,7 @@ export default function ChatSidebar({
                   </SidebarMenuItem>
                 )}
 
-                {chatSessions && chatSessions.length === 0 && !isLoading && (
+                {!isLoading && chatSessions && chatSessions.length === 0 && (
                   <SidebarMenuItem>
                     <SidebarMenuButton disabled>
                       No chat sessions yet
@@ -81,7 +100,19 @@ export default function ChatSidebar({
                   </SidebarMenuItem>
                 )}
 
-                {chatSessions?.map((session) => (
+                {!isLoading &&
+                  filteredChatSessions &&
+                  filteredChatSessions.length === 0 &&
+                  chatSessions &&
+                  chatSessions.length > 0 && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton disabled>
+                        No chats match your search
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
+
+                {filteredChatSessions?.map((session) => (
                   <SidebarMenuItem key={session.id}>
                     <SidebarMenuButton
                       onClick={() => {

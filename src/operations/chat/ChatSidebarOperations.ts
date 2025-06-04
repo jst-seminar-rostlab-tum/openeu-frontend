@@ -1,4 +1,4 @@
-import { Search, SquarePen } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 
 import { SidebarGroupData } from '@/domain/entities/chat/Sidebar';
 
@@ -12,16 +12,7 @@ export default class ChatSidebarOperations {
             icon: SquarePen,
             title: 'New Chat',
             onClick: () => {
-              // TODO: Implement new chat functionality
               console.log('New chat clicked');
-            },
-          },
-          {
-            icon: Search,
-            title: 'Search',
-            onClick: () => {
-              // TODO: Implement search functionality
-              console.log('Search clicked');
             },
           },
         ],
