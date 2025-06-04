@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 
-import { Message } from '@/domain/entities/chat/Message';
+import { Message } from '@/domain/entities/chat/generated-types';
 import {
   useChatMessages,
   useCreateChatSession,
@@ -72,6 +72,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
         // Navigate to new session
         router.push(`/chat/${targetSessionId}`);
+      }
+
+      // Ensure we have a valid session ID
+      if (!targetSessionId) {
+        throw new Error('Failed to create or get session ID');
       }
 
       // Optimistic update

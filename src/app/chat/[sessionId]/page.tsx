@@ -4,14 +4,16 @@ import ChatSkeleton from '@/components/Chat/ChatSkeleton';
 
 import ChatSessionClient from './ChatSessionClient';
 
-export default function ChatSessionPage({
+export default async function ChatSessionPage({
   params,
 }: {
-  params: { sessionId: string };
+  params: Promise<{ sessionId: string }>;
 }) {
+  const { sessionId } = await params;
+
   return (
     <Suspense fallback={<ChatSkeleton />}>
-      <ChatSessionClient sessionId={params.sessionId} />
+      <ChatSessionClient sessionId={sessionId} />
     </Suspense>
   );
 }

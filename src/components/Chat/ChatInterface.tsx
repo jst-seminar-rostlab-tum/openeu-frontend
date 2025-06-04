@@ -1,6 +1,6 @@
 'use client';
 
-import { Message } from '@/domain/entities/chat/Message';
+import { Message } from '@/domain/entities/chat/generated-types';
 
 import { ChatMessage } from './ChatMessage';
 
