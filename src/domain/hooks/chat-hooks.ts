@@ -4,11 +4,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { createChatSession } from '@/domain/actions/chat-actions';
 import {
-  ChatSession,
-  CreateSessionRequest,
-  SendMessageRequest,
-} from '@/domain/entities/chat/ChatSession';
-import { Message } from '@/domain/entities/chat/Message';
+  type ChatSession,
+  type CreateSessionRequest,
+  type Message,
+  type SendMessageRequest,
+} from '@/domain/entities/chat/generated-types';
 import { useAuth } from '@/domain/hooks/useAuth';
 
 const API_BASE_URL =
@@ -17,10 +17,10 @@ const API_BASE_URL =
 // Query Keys
 export const chatQueryKeys = {
   sessions: (userId: string) => ['chat-sessions', userId] as const,
-  messages: (sessionId: number) => ['chat-messages', sessionId] as const,
+  messages: (sessionId: string) => ['chat-messages', sessionId] as const,
 } as const;
 
-// Fetch functions
+// Fetch functions using generated types directly
 async function fetchChatSessions(userId: string): Promise<ChatSession[]> {
   const response = await fetch(
     `${API_BASE_URL}/chat/sessions?user_id=${userId}`,
@@ -31,7 +31,7 @@ async function fetchChatSessions(userId: string): Promise<ChatSession[]> {
   return response.json();
 }
 
-async function fetchChatMessages(sessionId: number): Promise<Message[]> {
+async function fetchChatMessages(sessionId: string): Promise<Message[]> {
   const response = await fetch(`${API_BASE_URL}/chat/sessions/${sessionId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch chat messages');
@@ -110,7 +110,7 @@ export function useChatSessions() {
   });
 }
 
-export function useChatMessages(sessionId: number | null) {
+export function useChatMessages(sessionId: string | null) {
   return useQuery({
     queryKey: chatQueryKeys.messages(sessionId!),
     queryFn: () => fetchChatMessages(sessionId!),

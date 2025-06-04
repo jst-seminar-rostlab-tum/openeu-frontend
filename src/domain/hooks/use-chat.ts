@@ -9,7 +9,7 @@ import { useCreateChatSession, useSendMessage } from './chat-hooks';
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [streamingMessage, setStreamingMessage] = useState('');
 
   const { user } = useAuth();
@@ -29,10 +29,12 @@ export function useChat() {
       // Create session if none exists
       if (!sessionId) {
         const title = content.slice(0, 50) + (content.length > 50 ? '...' : '');
+
         const session = await createSession.mutateAsync({
           title,
         });
-        sessionId = session.id;
+
+        sessionId = session.session_id;
         setCurrentSessionId(sessionId);
       }
 
@@ -40,10 +42,9 @@ export function useChat() {
       const userMessage: Message = {
         id: Date.now().toString(),
         content,
-        isUser: true,
-        timestamp: new Date(),
-        session_id: sessionId,
+        chat_session: sessionId!,
         author: 'user',
+        date: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, userMessage]);
 
@@ -51,7 +52,7 @@ export function useChat() {
       setStreamingMessage('');
       const aiResponse = await sendMessage.mutateAsync({
         request: {
-          session_id: sessionId,
+          session_id: sessionId!,
           message: content,
         },
         onStreamUpdate: setStreamingMessage,
@@ -61,10 +62,9 @@ export function useChat() {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: aiResponse,
-        isUser: false,
-        timestamp: new Date(),
-        session_id: sessionId,
+        chat_session: sessionId!,
         author: 'assistant',
+        date: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, aiMessage]);
       setStreamingMessage('');

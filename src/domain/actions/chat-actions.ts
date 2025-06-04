@@ -3,8 +3,8 @@
 import { revalidateTag } from 'next/cache';
 
 import {
-  ChatSession,
   CreateSessionRequest,
+  CreateSessionResponse,
 } from '@/domain/entities/chat/ChatSession';
 import { requireAuth } from '@/lib/dal';
 
@@ -13,7 +13,7 @@ const API_BASE_URL =
 
 export async function createChatSession(
   data: Omit<CreateSessionRequest, 'user_id'>,
-): Promise<ChatSession> {
+): Promise<CreateSessionResponse> {
   try {
     // Require authentication and get user
     const { user } = await requireAuth();
@@ -23,12 +23,6 @@ export async function createChatSession(
       user_id: user.id, // Use real authenticated user ID
     };
 
-    console.log('Creating chat session with data:', {
-      ...requestData,
-      user_id: '[REDACTED]', // Don't log actual user ID
-    });
-    console.log('API endpoint:', `${API_BASE_URL}/chat/start`);
-
     const response = await fetch(`${API_BASE_URL}/chat/start`, {
       method: 'POST',
       headers: {
@@ -36,12 +30,6 @@ export async function createChatSession(
       },
       body: JSON.stringify(requestData),
     });
-
-    console.log('Response status:', response.status);
-    console.log(
-      'Response headers:',
-      Object.fromEntries(response.headers.entries()),
-    );
 
     if (!response.ok) {
       // Get the response text for better error debugging
@@ -58,7 +46,6 @@ export async function createChatSession(
     }
 
     const session = await response.json();
-    console.log('Session created successfully:', session);
 
     // Revalidate the sessions cache
     revalidateTag(`chat-sessions-${user.id}`);
