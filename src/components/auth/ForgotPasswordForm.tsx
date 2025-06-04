@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ChangeEvent, FormEvent, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -32,7 +33,7 @@ export function ForgotPasswordForm({
 
     setEmail('');
 
-    alert('Password reset link sent.');
+    toast('Password reset link has been sent to your E-Mail address.');
   };
 
   return (

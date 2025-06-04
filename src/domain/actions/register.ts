@@ -46,8 +46,7 @@ export async function signup(formData: FormData) {
   });
 
   if (error) {
-    console.error('Signup error:', error.message);
-    redirect('/register?error=Registration failed');
+    redirect('/register?error=' + error.message);
   }
 
   revalidatePath('/', 'layout');
