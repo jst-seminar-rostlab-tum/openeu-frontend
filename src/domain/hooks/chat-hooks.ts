@@ -44,7 +44,7 @@ async function sendStreamingMessage(
   request: SendMessageRequest,
   onStreamUpdate?: (content: string) => void,
 ): Promise<string> {
-  const response = await fetch(`${API_BASE_URL}/chat`, {
+  const response = await fetch(`${API_BASE_URL}/chat/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -79,14 +79,9 @@ async function sendStreamingMessage(
             return accumulated;
           }
 
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.content) {
-              accumulated += parsed.content;
-              onStreamUpdate?.(accumulated);
-            }
-          } catch {
-            continue;
+          if (data.trim()) {
+            accumulated += data;
+            onStreamUpdate?.(accumulated);
           }
         }
       }
