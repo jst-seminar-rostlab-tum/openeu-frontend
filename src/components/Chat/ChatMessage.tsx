@@ -1,4 +1,4 @@
-import { Message } from '@/domain/entities/chat/Message';
+import { Message } from '@/domain/entities/chat/generated-types';
 
 interface ChatMessageProps {
   message: Message;
