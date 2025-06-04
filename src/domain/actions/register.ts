@@ -27,9 +27,11 @@ export async function signup(formData: FormData) {
   const name = formData.get('name') as string;
   const surname = formData.get('surname') as string;
   const company = formData.get('company') as string;
+  const companyDescription = formData.get('company-description') as string;
   const country = formData.get('country') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
+  const topics = formData.get('topics') as string;
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -49,6 +51,21 @@ export async function signup(formData: FormData) {
     redirect('/register?error=' + error.message);
   }
 
+  const values = JSON.stringify({
+    name: name,
+    surname: surname,
+    company_name: company,
+    company_description: companyDescription,
+    topic_list: topics.split(','),
+  });
+  await fetch('https://openeu-backend.onrender.com/profile/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: values,
+  });
+
   revalidatePath('/', 'layout');
-  redirect('/');
+  redirect('/login?confirm=1');
 }

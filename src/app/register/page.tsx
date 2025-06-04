@@ -4,11 +4,10 @@ import Image from 'next/image';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-export default function Page({
-  searchParams,
-}: {
-  searchParams?: { error?: string };
+export default async function Page(props: {
+  searchParams?: Promise<{ error?: string }>;
 }) {
+  const searchParams = await props.searchParams;
   const error = decodeURIComponent(searchParams?.error || '');
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -35,7 +34,7 @@ export default function Page({
                   <AlertCircleIcon />
                   <AlertTitle>Sign up failed, please try again.</AlertTitle>
                   <AlertDescription>
-                    <p>{decodeURIComponent(error)}</p>
+                    <p>{error}</p>
                   </AlertDescription>
                 </Alert>
               </div>

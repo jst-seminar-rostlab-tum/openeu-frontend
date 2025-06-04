@@ -75,6 +75,16 @@ export function RegisterForm({
           />
         </div>
         <div className="grid gap-3">
+          <Label htmlFor="company">Company Description</Label>
+          <Input
+            id="company-description"
+            type="text"
+            name="company-description"
+            required
+            disabled={loading}
+          />
+        </div>
+        <div className="grid gap-3">
           <Label>Country</Label>
           <Select name="country" disabled={loading}>
             <SelectTrigger className="w-full">
@@ -89,6 +99,7 @@ export function RegisterForm({
         </div>
         <div className="grid gap-3">
           <Label>Topics</Label>
+          <input type="hidden" value={selectedTopics.join(',')} name="topics" />
           <RadioGroup
             disabled={loading}
             value={selectedTopics}
