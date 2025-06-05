@@ -11,7 +11,7 @@ export default function Elements() {
       className="text-3xl font-bold flex flex-col items-center gap-6"
     >
       Paste and test you components here. ✌️
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-wrap justify-center">
         <Button
           variant="outline"
           onClick={() => {
@@ -34,6 +34,28 @@ export default function Elements() {
           }}
         >
           Show Warning Toast
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            ToastOperations.showError({
+              title: 'Error',
+              message: 'This is an error toast!',
+            });
+          }}
+        >
+          Show Error Toast
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            ToastOperations.showSuccess({
+              title: 'Success',
+              message: 'This is a success toast!',
+            });
+          }}
+        >
+          Show Success Toast
         </Button>
       </div>
     </Section>

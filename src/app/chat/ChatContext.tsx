@@ -16,6 +16,7 @@ import {
   useSendMessage,
 } from '@/domain/hooks/chat-hooks';
 import { useAuth } from '@/domain/hooks/useAuth';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface ChatContextType {
   // State
@@ -109,9 +110,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       };
       setMessages((prev) => [...prev, aiMessage]);
       setStreamingMessage('');
-    } catch (error) {
-      console.error('Error sending message:', error);
-      // Remove optimistic update on error
+    } catch {
+      ToastOperations.showError({
+        title: 'Message Failed',
+        message: 'Failed to send your message. Please try again.',
+      });
       setMessages((prev) => prev.slice(0, -1));
       setStreamingMessage('');
     }

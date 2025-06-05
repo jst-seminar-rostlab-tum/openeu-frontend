@@ -21,6 +21,7 @@ import { useChatSessions } from '@/domain/hooks/chat-hooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import ChatSidebarOperations from '@/operations/chat/ChatSidebarOperations';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function ChatSidebar({
   ...props
@@ -135,7 +136,10 @@ export default function ChatSidebar({
             <SidebarMenuButton
               onClick={() => {
                 // TODO: Implement clear conversations
-                console.log('Clear conversations clicked');
+                ToastOperations.showInfo({
+                  title: 'Clear Conversations',
+                  message: 'This feature is coming soon!',
+                });
               }}
             >
               <Trash />

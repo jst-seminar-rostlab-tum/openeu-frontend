@@ -10,6 +10,7 @@ import {
   type SendMessageRequest,
 } from '@/domain/entities/chat/generated-types';
 import { useAuth } from '@/domain/hooks/useAuth';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend.onrender.com';
@@ -130,10 +131,11 @@ export function useCreateChatSession() {
         });
       }
     },
-    onError: (error) => {
-      console.error('Failed to create chat session:', error);
-      // You can add toast notifications here
-    },
+    onError: () =>
+      ToastOperations.showError({
+        title: 'Session Creation Failed',
+        message: 'Failed to create a new chat session. Please try again.',
+      }),
   });
 }
 
@@ -154,9 +156,10 @@ export function useSendMessage() {
         queryKey: chatQueryKeys.messages(variables.request.session_id),
       });
     },
-    onError: (error) => {
-      console.error('Failed to send message:', error);
-      // You can add toast notifications here
-    },
+    onError: () =>
+      ToastOperations.showError({
+        title: 'Message Failed',
+        message: 'Failed to send your message. Please try again.',
+      }),
   });
 }
