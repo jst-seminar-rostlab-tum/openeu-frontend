@@ -10,19 +10,13 @@ export default class ChatOperations {
     return [
       {
         id: 1,
-        text: "Hello! I'm OpenEU AI. How can I help you with EU regulations today?",
-        isUser: false,
-        timestamp: '10:30 AM',
-      },
-      {
-        id: 2,
         text: 'What are the key changes in the Digital Services Act?',
         isUser: true,
         timestamp: '10:31 AM',
       },
       {
-        id: 3,
-        text: 'The DSA introduces enhanced content moderation, algorithm transparency, stricter rules for large platforms, and new risk assessments. Need details on any aspect?',
+        id: 2,
+        text: 'DSA introduces content moderation, algorithm transparency, and new platform rules.',
         isUser: false,
         timestamp: '10:31 AM',
       },
@@ -30,7 +24,7 @@ export default class ChatOperations {
   }
 
   static generateMockAIResponse(): string {
-    return "I'd be happy to help you understand that regulation. Let me provide you with the most up-to-date information and relevant implementation details for your specific situation.";
+    return 'I can help with that regulation. Let me provide details for your situation.';
   }
 
   static createChatMessage(

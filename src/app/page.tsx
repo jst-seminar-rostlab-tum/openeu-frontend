@@ -1,6 +1,6 @@
-import FeaturesSection from '@/components/FeaturesSection/FeaturesSection';
-import HeroSection from '@/components/HeroSection/HeroSection';
-import MissionSection from '@/components/MissionSection/MissionSection';
+import FeaturesSection from '@/components/home/FeaturesSection';
+import HeroSection from '@/components/home/HeroSection';
+import MissionSection from '@/components/home/MissionSection';
 
 export default async function HomePage() {
   return (

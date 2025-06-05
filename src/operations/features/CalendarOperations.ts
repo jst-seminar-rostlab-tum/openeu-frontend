@@ -7,10 +7,10 @@ interface CalendarEvent {
 export default class CalendarOperations {
   static getCalendarEvents(): CalendarEvent[] {
     return [
-      { date: 15, title: 'EU AI Act Review', type: 'urgent' },
-      { date: 18, title: 'GDPR Compliance Audit', type: 'normal' },
-      { date: 22, title: 'Digital Services Act', type: 'urgent' },
-      { date: 28, title: 'Green Deal Update', type: 'normal' },
+      { date: 2, title: 'GDPR Amendment Review', type: 'normal' },
+      { date: 3, title: 'Digital Markets Act Update', type: 'urgent' },
+      { date: 5, title: 'AI Ethics Guidelines', type: 'normal' },
+      { date: 7, title: 'Data Protection Summit', type: 'urgent' },
     ];
   }
 
