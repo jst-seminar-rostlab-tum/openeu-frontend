@@ -2,12 +2,12 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { MeetingData } from '@/domain/entities/MeetingData';
+import { Meeting } from '@/domain/entities/MeetingData';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
-export const useMeetings = (enabled = true) =>
-  useQuery<MeetingData[]>({
-    queryKey: ['meetings'],
-    queryFn: meetingRepository.getMeetings,
+export const useMeetings = (startDate?: Date, endDate?: Date, enabled = true) =>
+  useQuery<Meeting[]>({
+    queryKey: ['meetings', startDate, endDate],
+    queryFn: () => meetingRepository.getMeetings(startDate, endDate),
     enabled,
   });
