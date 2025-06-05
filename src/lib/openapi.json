@@ -339,6 +339,55 @@
         }
       }
     },
+    "/notifications/{user_id}": {
+      "get": {
+        "tags": ["notifications"],
+        "summary": "Get Notifications For User",
+        "description": "Retrieve all notifications for a specific user by their ID.",
+        "operationId": "get_notifications_for_user_notifications__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "User Id" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Notification" },
+                  "title": "Response Get Notifications For User Notifications  User Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "summary": "Root",
@@ -387,6 +436,7 @@
       "Meeting": {
         "properties": {
           "meeting_id": { "type": "string", "title": "Meeting Id" },
+          "source_table": { "type": "string", "title": "Source Table" },
           "title": { "type": "string", "title": "Title" },
           "status": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
@@ -412,6 +462,10 @@
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Location"
           },
+          "exact_location": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Exact Location"
+          },
           "description": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Description"
@@ -429,7 +483,12 @@
           }
         },
         "type": "object",
-        "required": ["meeting_id", "title", "meeting_start_datetime"],
+        "required": [
+          "meeting_id",
+          "source_table",
+          "title",
+          "meeting_start_datetime"
+        ],
         "title": "Meeting"
       },
       "MessagesResponseModel": {
@@ -460,6 +519,25 @@
         "type": "object",
         "required": ["title", "user_id"],
         "title": "NewSessionItem"
+      },
+      "Notification": {
+        "properties": {
+          "id": { "type": "integer", "title": "Id" },
+          "user_id": { "type": "string", "format": "uuid", "title": "User Id" },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Sent At"
+          },
+          "type": { "type": "string", "title": "Type" },
+          "message": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": ["id", "user_id", "sent_at", "type", "message"],
+        "title": "Notification"
       },
       "ProfileCreate": {
         "properties": {

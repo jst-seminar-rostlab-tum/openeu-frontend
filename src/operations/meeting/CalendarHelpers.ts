@@ -273,3 +273,36 @@ export function calculateMonthEventPositions(
 }
 
 export const getEvents = async () => dummyMeetings;
+
+// Tag color utilities
+const TAG_COLORS = [
+  'bg-blue-100 text-blue-800 border-blue-200',
+  'bg-green-100 text-green-800 border-green-200',
+  'bg-purple-100 text-purple-800 border-purple-200',
+  'bg-yellow-100 text-yellow-800 border-yellow-200',
+  'bg-red-100 text-red-800 border-red-200',
+  'bg-indigo-100 text-indigo-800 border-indigo-200',
+  'bg-pink-100 text-pink-800 border-pink-200',
+  'bg-orange-100 text-orange-800 border-orange-200',
+  'bg-teal-100 text-teal-800 border-teal-200',
+  'bg-cyan-100 text-cyan-800 border-cyan-200',
+];
+
+function hashString(str: string): number {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i);
+    hash +=
+      (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+  return hash >>> 0;
+}
+
+/**
+ * Maps a tag to a consistent color using hashing
+ */
+export function getTagColor(tag: string): string {
+  const hash = hashString(tag);
+  const colorIndex = hash % TAG_COLORS.length;
+  return TAG_COLORS[colorIndex];
+}

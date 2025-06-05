@@ -161,6 +161,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/notifications/{user_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Notifications For User
+     * @description Retrieve all notifications for a specific user by their ID.
+     */
+    get: operations['get_notifications_for_user_notifications__user_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/': {
     parameters: {
       query?: never;
@@ -198,6 +218,8 @@ export interface components {
     Meeting: {
       /** Meeting Id */
       meeting_id: string;
+      /** Source Table */
+      source_table: string;
       /** Title */
       title: string;
       /** Status */
@@ -213,6 +235,8 @@ export interface components {
       meeting_end_datetime?: string | null;
       /** Location */
       location?: string | null;
+      /** Exact Location */
+      exact_location?: string | null;
       /** Description */
       description?: string | null;
       /** Tags */
@@ -247,6 +271,25 @@ export interface components {
       title: string;
       /** User Id */
       user_id: string;
+    };
+    /** Notification */
+    Notification: {
+      /** Id */
+      id: number;
+      /**
+       * User Id
+       * Format: uuid
+       */
+      user_id: string;
+      /**
+       * Sent At
+       * Format: date-time
+       */
+      sent_at: string;
+      /** Type */
+      type: string;
+      /** Message */
+      message: string | null;
     };
     /** ProfileCreate */
     ProfileCreate: {
@@ -571,6 +614,39 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['SessionsResponseModel'][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_notifications_for_user_notifications__user_id__get: {
+    parameters: {
+      query?: {
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Notification'][];
         };
       };
       /** @description Validation Error */
