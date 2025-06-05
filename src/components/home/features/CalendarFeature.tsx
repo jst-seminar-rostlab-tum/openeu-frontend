@@ -1,0 +1,112 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+
+import FeatureCard from '@/components/home/features/FeatureCard';
+import FeaturesOperations from '@/operations/features/FeaturesOperations';
+
+export default function CalendarFeature() {
+  const [currentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(3);
+
+  const getFirstWeekDays = () => {
+    // Only show first 7 days of the month
+    const days = [];
+    for (let day = 1; day <= 7; day++) {
+      days.push(day);
+    }
+    return days;
+  };
+
+  const hasEvent = (day: number) => FeaturesOperations.hasEventOnDate(day);
+  const getEventType = (day: number) =>
+    FeaturesOperations.getEventTypeForDate(day);
+
+  return (
+    <FeatureCard
+      icon={Calendar}
+      title="EU Calendar"
+      description="Track important EU regulatory dates and deadlines"
+    >
+      <div className="space-y-3 p-4">
+        {/* Calendar Header */}
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-black dark:text-white text-sm">
+            {currentDate.toLocaleDateString('en-US', {
+              month: 'long',
+              year: 'numeric',
+            })}{' '}
+            - Week 1
+          </h3>
+          <div className="flex gap-1">
+            <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
+              <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            </button>
+            <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
+              <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            </button>
+          </div>
+        </div>
+
+        {/* Calendar Grid - Only first week */}
+        <div className="grid grid-cols-7 gap-1 text-center">
+          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+            <div
+              key={day}
+              className="p-1.5 text-xs font-medium text-gray-500 dark:text-gray-400"
+            >
+              {day}
+            </div>
+          ))}
+          {getFirstWeekDays().map((day, index) => (
+            <div
+              key={index}
+              className={`p-1.5 text-sm cursor-pointer rounded relative ${
+                day === selectedDate
+                  ? 'bg-black dark:bg-white text-white dark:text-black'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white'
+              }`}
+              onClick={() => setSelectedDate(day)}
+            >
+              {day}
+              {hasEvent(day) && (
+                <div
+                  className={`absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full ${
+                    getEventType(day) === 'urgent'
+                      ? 'bg-red-500'
+                      : 'bg-blue-500'
+                  }`}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Selected Date Events */}
+        {FeaturesOperations.getEventsForDate(selectedDate)
+          .slice(0, 1)
+          .map((event, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`p-2 rounded-lg border-l-4 ${
+                event.type === 'urgent'
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                  : 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+              }`}
+            >
+              <div className="font-medium text-black dark:text-white text-sm">
+                {event.title}
+              </div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">
+                December {event.date}, 2024
+              </div>
+            </motion.div>
+          ))}
+      </div>
+    </FeatureCard>
+  );
+}
