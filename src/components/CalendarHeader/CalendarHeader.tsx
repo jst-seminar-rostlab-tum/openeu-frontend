@@ -14,6 +14,7 @@ import * as React from 'react';
 
 import { DateNavigator } from '@/components/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/CalendarHeader/TodayButton';
+import FilterModal from '@/components/FilterModal/FilterModal';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Input } from '@/components/ui/input';
@@ -25,8 +26,6 @@ import {
   transition,
 } from '@/domain/animations';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
-
-import FilterModal from '../FilterModal/FilterModal';
 
 export const MotionButton = motion.create(Button);
 

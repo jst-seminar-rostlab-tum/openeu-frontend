@@ -4,7 +4,6 @@ import { Funnel } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { DatePicker } from '@/components/ui/date-picker';
 import {
   Dialog,
   DialogContent,
@@ -43,8 +42,6 @@ export default function FilterModal({
     FilterModalOperations.getDefaultState(),
   );
   const [filterState, setFilterState] = useState<FilterModalState>({
-    startDate: new Date(),
-    endDate: new Date(),
     country: '',
     topics: [],
   });
@@ -65,27 +62,6 @@ export default function FilterModal({
 
   const updateLocalState = (updates: Partial<FilterModalState>) => {
     setLocalState((prev) => ({ ...prev, ...updates }));
-  };
-
-  const handleStartDateChange = (newStartDate: Date) => {
-    const updates: Partial<FilterModalState> = { startDate: newStartDate };
-
-    if (localState.endDate <= newStartDate) {
-      updates.endDate = newStartDate;
-    }
-
-    updateLocalState(updates);
-  };
-
-  const handleEndDateChange = (newEndDate: Date) => {
-    if (
-      !FilterModalOperations.validateDateRange(localState.startDate, newEndDate)
-    ) {
-      console.error('End date must be after start date.');
-      return;
-    }
-
-    updateLocalState({ endDate: newEndDate });
   };
 
   const handleTopicsChange = (selectedTopics: string[]) => {
@@ -122,16 +98,6 @@ export default function FilterModal({
             Filter all events and meetings by your preference profile.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <DatePicker
-            date={localState.startDate}
-            onSelect={handleStartDateChange}
-          />
-          <DatePicker
-            date={localState.endDate}
-            onSelect={handleEndDateChange}
-          />
-        </div>
         <div
           className={`grid gap-4 ${showCountryDropdown ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}
         >

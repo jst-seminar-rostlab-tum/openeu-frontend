@@ -35,8 +35,6 @@ export default class FilterModalOperations {
 
   static getDefaultState(): FilterModalState {
     return {
-      startDate: new Date(),
-      endDate: new Date(),
       country: '',
       topics: [],
     };

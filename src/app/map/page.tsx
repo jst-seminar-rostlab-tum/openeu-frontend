@@ -14,8 +14,6 @@ export default function MapPage() {
   const [searchValue, setSearchValue] = useState('');
 
   const [filterState, setFilterState] = useState<FilterModalState>({
-    startDate: new Date(),
-    endDate: new Date(),
     country: '',
     topics: [],
   });
