@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-const useMeetingFilters = (startDate: Date, endDate: Date) => {
+const useMeetingFilters = (startDate: string, endDate: string) => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -11,10 +11,10 @@ const useMeetingFilters = (startDate: Date, endDate: Date) => {
     const params = new URLSearchParams();
 
     if (startDate) {
-      params.set('startDate', startDate.toString());
+      params.set('start', startDate);
     }
     if (endDate) {
-      params.set('endDate', endDate.toString());
+      params.set('end', endDate);
     }
 
     const qs = params.toString();

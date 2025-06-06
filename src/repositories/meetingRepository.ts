@@ -3,15 +3,26 @@ import { Meeting } from '@/domain/entities/MeetingData';
 const API_URL = 'https://openeu-backend.onrender.com/meetings';
 
 export const meetingRepository = {
-  getMeetings: async (start?: Date, end?: Date): Promise<Meeting[]> => {
+  getMeetings: async (start?: string, end?: string): Promise<Meeting[]> => {
     const params = new URLSearchParams();
-    const startDate = start?.toString() || '';
-    const endDate = end?.toString() || '';
+    // const startUtcEquivalent = start
+    //   ? new Date(start.getTime() - start.getTimezoneOffset() * 60_000)
+    //   : new Date();
+    // const endUtcEquivalent = end
+    //   ? new Date(end.getTime() - end.getTimezoneOffset() * 60_000)
+    //   : new Date();
 
-    if (startDate) params.append('meeting_start_datetime', startDate);
-    if (endDate) params.append('meeting_end_datetime', endDate);
+    // const startDate = startUtcEquivalent.toISOString() || '';
+    // const endDate = endUtcEquivalent.toISOString() || '';
+
+    // if (startDate) params.append('start', startDate);
+    // if (endDate) params.append('end', endDate);
+
+    if (start) params.append('start', start);
+    if (end) params.append('end', end);
 
     const url = API_URL + `?${params.toString()}`;
+    console.log(url);
 
     const res = await fetch(url);
 

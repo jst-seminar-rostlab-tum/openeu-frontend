@@ -9,39 +9,32 @@ import { Card } from '@/components/ui/card';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { meetingsPerCountry } from '@/domain/entities/MeetingData';
 import useMeetingFilters from '@/domain/hooks/useMeetingsFilter';
-import { getMeetingCountPerCountry } from '@/operations/mapIndicator/MeetingsPerCountry';
+import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
+import MapOperations from '@/operations/map/MapOperations';
+import { getMeetingCountPerCountry } from '@/operations/map/MeetingsPerCountry';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function MapPage() {
   const [searchValue, setSearchValue] = useState('');
-  // const [filteredMeetings, setDateRange] = useFilteredMeetings(
-  //   meetings || undefined,
-  // );
   const [meetingCountByCountry, setMeetingCountByCountry] =
     useState(meetingsPerCountry);
+  const todayRange = FilterModalOperations.initDateRange();
 
   const [filterState, setFilterState] = useState<FilterModalState>({
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: todayRange.startDate,
+    endDate: todayRange.endDate,
     country: '',
     topics: [],
   });
 
-  useMeetingFilters(filterState.startDate, filterState.endDate);
+  const startIso = MapOperations.dateToISOString(filterState.startDate);
+  const endIso = MapOperations.dateToISOString(filterState.endDate);
+
+  useMeetingFilters(startIso, endIso);
 
   const handleFilterStateChange = async (newState: typeof filterState) => {
     setFilterState(newState);
-    // setMeetingCountByCountry(getMeetingCountPerCountry(filterState.startDate, filterState.endDate));
-    try {
-      const counts = await getMeetingCountPerCountry(
-        new Date(newState.startDate),
-        new Date(newState.endDate),
-      );
-      setMeetingCountByCountry(counts);
-    } catch (err) {
-      console.error('Failed to fetch meeting counts:', err);
-    }
   };
 
   const handleSearchChange = (value: string) => {
@@ -49,18 +42,16 @@ export default function MapPage() {
   };
 
   useEffect(() => {
-    const { startDate, endDate } = filterState;
-    if (startDate || endDate) {
-      // setMeetingCountByCountry(getMeetingCountPerCountry(filterState.startDate, filterState.endDate));
+    async function fetchCounts() {
+      try {
+        const counts = await getMeetingCountPerCountry(startIso, endIso);
+        setMeetingCountByCountry(counts);
+      } catch (err) {
+        console.error('Failed to fetch meeting counts:', err);
+      }
     }
-  }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    params.set('start', filterState.startDate.toISOString());
-    params.set('end', filterState.endDate.toISOString());
-    window.history.replaceState({}, '', `?${params.toString()}`);
-  }, [filterState]);
+    fetchCounts();
+  }, [startIso, endIso]);
 
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
@@ -78,11 +69,13 @@ export default function MapPage() {
           showCountryDropdown={false}
         />
         <ul>
-          {Object.entries(meetingCountByCountry).map(([country, count]) => (
-            <li key={country}>
-              {country}: {count}
-            </li>
-          ))}
+          {Array.from(meetingCountByCountry.entries()).map(
+            ([country, count]) => (
+              <li key={country}>
+                {country}: {count}
+              </li>
+            ),
+          )}
         </ul>
       </Card>
     </div>

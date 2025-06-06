@@ -220,9 +220,7 @@ export default function MapComponent({
             hoveredFeature?.properties?.name === countryName;
 
           const countForThisCountry =
-            meetingCountByCountry[
-              countryName as keyof typeof meetingCountByCountry
-            ] ?? 0;
+            meetingCountByCountry.get(countryName) ?? 0;
 
           return (
             <MapIndicator
