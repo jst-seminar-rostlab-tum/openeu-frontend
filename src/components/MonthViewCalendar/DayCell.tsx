@@ -44,7 +44,6 @@ export const dayCellVariants = cva('text-white', {
 
 export function DayCell({ cell, events, eventPositions }: IProps) {
   const { day, currentMonth, date } = cell;
-
   const cellEvents = useMemo(() => {
     const result = getMonthCellEvents(date, events, eventPositions);
     return Array.isArray(result) ? result : [];
@@ -75,7 +74,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
           )}
         >
           {[0, 1, 2].map((position) => {
-            const event = cellEvents[position];
+            const event = cellEvents.find((e) => e.position === position);
             const eventKey = event
               ? `event-${event.meeting_id}-${position}`
               : `empty-${position}`;

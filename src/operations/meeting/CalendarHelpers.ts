@@ -109,9 +109,9 @@ export function getMonthCellEvents(
   date: Date,
   events: MeetingData[],
   eventPositions: Record<string, number>,
-): MeetingData[] {
+) {
   const dayStart = startOfDay(date);
-  const eventsForDate: MeetingData[] = events.filter((event) => {
+  const eventsForDate = events.filter((event) => {
     const eventStart = parseISO(event.meeting_start_datetime);
     const eventEnd = parseISO(event.meeting_end_datetime);
     return (
@@ -123,11 +123,8 @@ export function getMonthCellEvents(
   return eventsForDate
     .map((event) => ({
       ...event,
-      position: eventPositions[Number(event.meeting_id)] ?? -1,
-      isMultiDay: !isSameDay(
-        parseISO(event.meeting_start_datetime),
-        parseISO(event.meeting_end_datetime),
-      ),
+      position: eventPositions[event.meeting_id] ?? -1,
+      isMultiDay: event.meeting_start_datetime !== event.meeting_end_datetime,
     }))
     .sort((a, b) => {
       if (a.isMultiDay && !b.isMultiDay) return -1;
