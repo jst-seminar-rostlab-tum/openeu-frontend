@@ -6,13 +6,14 @@ export interface MeetingData {
 }
 
 export interface Meeting {
-  meeding_id: string;
+  meeting_id: string;
   title: string;
   status?: string;
   meeting_url: string;
   meeting_start_datetime: string;
   meeting_end_datetime?: string;
   location: string;
+  source_table: string;
   description?: string;
   tags?: string[];
   similarity?: number;
