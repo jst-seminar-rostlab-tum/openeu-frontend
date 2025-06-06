@@ -1,7 +1,14 @@
 'use client';
 
 import { format, parseISO } from 'date-fns';
-import { Building, Calendar, Clock, Tag, Text } from 'lucide-react';
+import {
+  Building,
+  Calendar,
+  CalendarOff,
+  MapPin,
+  Tag,
+  Text,
+} from 'lucide-react';
 import { ReactNode } from 'react';
 
 import { TagBadge } from '@/components/calendar/TagBadge';
@@ -39,30 +46,29 @@ export function EventDetailsDialog({ event, children }: IProps) {
         </DialogHeader>
 
         <ScrollArea className="max-h-[80vh]">
-          <div className="space-y-4 p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-start gap-2">
-              <Building className="mt-1 size-4 shrink-0 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">Meeting Type</p>
-                <div className="mt-1">
-                  <TagBadge tag={getMeetingType(event.source_table)} />
-                </div>
+              <MapPin className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium">Location</p>
+                <TagBadge className="max-w-full mt-1">
+                  <span
+                    className="truncate direction-rtl text-left"
+                    title={event.location}
+                  >
+                    {event.location}
+                  </span>
+                </TagBadge>
               </div>
             </div>
 
             <div className="flex items-start gap-2">
-              <Tag className="mt-1 size-4 shrink-0 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">Tags</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {event.tags?.length ? (
-                    event.tags.map((tag) => <TagBadge key={tag} tag={tag} />)
-                  ) : (
-                    <span className="text-sm text-muted-foreground">
-                      No tags
-                    </span>
-                  )}
-                </div>
+              <Building className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium">Meeting Type</p>
+                <TagBadge className="mt-1">
+                  {getMeetingType(event.source_table)}
+                </TagBadge>
               </div>
             </div>
 
@@ -79,7 +85,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
             </div>
 
             <div className="flex items-start gap-2">
-              <Clock className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <CalendarOff className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">End Date</p>
                 <p className="text-sm text-muted-foreground">
@@ -90,13 +96,31 @@ export function EventDetailsDialog({ event, children }: IProps) {
               </div>
             </div>
 
-            <div className="flex items-start gap-2">
+            <div className="flex items-start gap-2 col-span-full">
               <Text className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Description</p>
                 <p className="text-sm text-muted-foreground">
                   {event.description}
                 </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2 col-span-full">
+              <Tag className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">Tags</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {event.tags?.length ? (
+                    event.tags.map((tag) => (
+                      <TagBadge key={tag}>{tag}</TagBadge>
+                    ))
+                  ) : (
+                    <span className="text-sm text-muted-foreground">
+                      No tags
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
