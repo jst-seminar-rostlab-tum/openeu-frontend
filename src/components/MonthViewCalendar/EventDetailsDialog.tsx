@@ -1,9 +1,10 @@
 'use client';
 
 import { format, parseISO } from 'date-fns';
-import { Calendar, Clock, Text, User } from 'lucide-react';
+import { Calendar, Clock, Tag, Text } from 'lucide-react';
 import { ReactNode } from 'react';
 
+import { TagBadge } from '@/components/calendar/TagBadge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -37,21 +38,18 @@ export function EventDetailsDialog({ event, children }: IProps) {
         <ScrollArea className="max-h-[80vh]">
           <div className="space-y-4 p-4">
             <div className="flex items-start gap-2">
-              <User className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <Tag className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">Topics</p>
-                <p className="text-sm text-muted-foreground">
-                  {event.tags?.length
-                    ? event.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="inline-block mr-1 px-2 py-0.5 m-2 bg-gray-500 text-white rounded"
-                        >
-                          {tag}
-                        </span>
-                      ))
-                    : 'Unknown'}
-                </p>
+                <p className="text-sm font-medium">Tags</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {event.tags?.length ? (
+                    event.tags.map((tag) => <TagBadge key={tag} tag={tag} />)
+                  ) : (
+                    <span className="text-sm text-muted-foreground">
+                      No tags
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 

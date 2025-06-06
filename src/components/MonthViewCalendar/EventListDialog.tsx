@@ -1,8 +1,10 @@
 import { format } from 'date-fns';
 import React, { ReactNode } from 'react';
 
+import { TagBadge } from '@/components/calendar/TagBadge';
 import { dayCellVariants } from '@/components/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/MonthViewCalendar/EventBullet';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -70,8 +72,27 @@ export function EventListDialog({
             >
               <EventBullet color={event.color as TMeetingColor} className="" />
               <div className="flex-1">
-                <p className="text-sm font-medium">{event.title}</p>
-                <p>{format(event.meeting_start_datetime, 'EE dd MMMM')}</p>
+                <p className="text-sm font-medium mb-2">{event.title}</p>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {event.tags
+                    ?.slice(0, 3)
+                    .map((tag) => (
+                      <TagBadge
+                        key={tag}
+                        tag={tag}
+                        variant="outline"
+                        className="text-white"
+                      />
+                    ))}
+                  {event.tags?.length > 3 && (
+                    <Badge
+                      variant="outline"
+                      className="text-xs font-medium text-white"
+                    >
+                      +{event.tags.length - 3}
+                    </Badge>
+                  )}
+                </div>
               </div>
             </div>
           ))}
