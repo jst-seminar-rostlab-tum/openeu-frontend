@@ -45,16 +45,4 @@ export default class FilterModalOperations {
   static validateDateRange(startDate: Date, endDate: Date): boolean {
     return endDate > startDate;
   }
-
-  static initDateRange(): { startDate: Date; endDate: Date } {
-    const now = new Date();
-    const start = new Date(now);
-    const end = new Date(now);
-
-    start.setHours(0, 0, 0, 0);
-
-    end.setHours(23, 59, 0, 0);
-
-    return { startDate: start, endDate: end };
-  }
 }

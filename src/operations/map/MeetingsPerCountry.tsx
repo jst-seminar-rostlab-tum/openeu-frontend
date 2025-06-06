@@ -5,8 +5,14 @@ import { meetingRepository } from '@/repositories/meetingRepository';
 export async function getMeetingCountPerCountry(
   start: string,
   end: string,
+  search?: string,
 ): Promise<Map<string, number>> {
-  const meetings: Meeting[] = await meetingRepository.getMeetings(start, end);
+  const meetings: Meeting[] = await meetingRepository.getMeetings(
+    start,
+    end,
+    search,
+  );
+  console.log(meetings);
 
   meetingsPerCountry.forEach((_, countryName) => {
     meetingsPerCountry.set(countryName, 0);

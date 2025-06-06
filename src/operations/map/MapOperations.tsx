@@ -14,4 +14,19 @@ export default class MapOperations {
     }
     return new Date(parsed.getTime() + parsed.getTimezoneOffset() * 60_000);
   }
+
+  static initDateRange(): { startDate: string; endDate: string } {
+    const now = new Date();
+    const start = new Date(now);
+    const end = new Date(now);
+
+    start.setHours(0, 0, 0, 0);
+
+    end.setHours(23, 59, 0, 0);
+
+    return {
+      startDate: this.dateToISOString(start),
+      endDate: this.dateToISOString(end),
+    };
+  }
 }

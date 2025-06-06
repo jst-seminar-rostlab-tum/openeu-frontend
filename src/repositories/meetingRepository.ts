@@ -3,11 +3,16 @@ import { Meeting } from '@/domain/entities/MeetingData';
 const API_URL = 'https://openeu-backend.onrender.com/meetings';
 
 export const meetingRepository = {
-  getMeetings: async (start?: string, end?: string): Promise<Meeting[]> => {
+  getMeetings: async (
+    start?: string,
+    end?: string,
+    search?: string,
+  ): Promise<Meeting[]> => {
     const params = new URLSearchParams();
 
     if (start) params.append('start', start);
     if (end) params.append('end', end);
+    if (search) params.append('query', search);
 
     const url = API_URL + `?${params.toString()}`;
 

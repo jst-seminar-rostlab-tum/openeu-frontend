@@ -9,7 +9,6 @@ import { Card } from '@/components/ui/card';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { meetingsPerCountry } from '@/domain/entities/MeetingData';
 import useMeetingFilter from '@/domain/hooks/useMeetingsFilter';
-import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 import MapOperations from '@/operations/map/MapOperations';
 import { getMeetingCountPerCountry } from '@/operations/map/MeetingsPerCountry';
 
@@ -18,14 +17,9 @@ const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 export default function MapPage() {
   const { filters, setFilters } = useMeetingFilter();
   const [filterState, setFilterState] = useState<FilterModalState>(() => {
-    const todayRange = FilterModalOperations.initDateRange();
     return {
-      startDate: filters.start
-        ? MapOperations.isoStringToDate(filters.start)
-        : todayRange.startDate,
-      endDate: filters.end
-        ? MapOperations.isoStringToDate(filters.end)
-        : todayRange.endDate,
+      startDate: new Date(),
+      endDate: new Date(),
       country: '',
       topics: [],
     };
@@ -51,6 +45,7 @@ export default function MapPage() {
         const counts = await getMeetingCountPerCountry(
           filters.start,
           filters.end,
+          filters.search,
         );
         setMeetingCountByCountry(counts);
       } catch (err) {
@@ -58,7 +53,7 @@ export default function MapPage() {
       }
     }
     fetchCounts();
-  }, [filters.start, filters.end]);
+  }, [filters.start, filters.end, filters.search]);
 
   const handleFilterStateChange = (newState: FilterModalState) => {
     setFilterState(newState);
@@ -66,23 +61,51 @@ export default function MapPage() {
     const newStartIso = MapOperations.dateToISOString(newState.startDate);
     const newEndIso = MapOperations.dateToISOString(newState.endDate);
 
-    setFilters({ start: newStartIso, end: newEndIso });
+    setFilters({
+      start: newStartIso,
+      end: newEndIso,
+      search: filters.search,
+    });
   };
 
-  const [searchValue, setSearchValue] = useState('');
-  const handleSearchChange = (value: string) => {
-    setSearchValue(value);
+  const [inputBuffer, setInputBuffer] = useState<string>(filters.search ?? '');
+
+  useEffect(() => {
+    if (inputBuffer === '' && (filters.search ?? '') !== '') {
+      setFilters({
+        start: filters.start,
+        end: filters.end,
+        search: '',
+      });
+    }
+  }, [inputBuffer, filters.search, filters.start, filters.end, setFilters]);
+
+  const handleSearchInput = (newText: string) => {
+    setInputBuffer(newText);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (inputBuffer !== filters.search) {
+      setFilters({
+        start: filters.start,
+        end: filters.end,
+        search: inputBuffer,
+      });
+    }
   };
 
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map meetingCountByCountry={meetingCountByCountry} />
       <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
-        <SearchBar
-          value={searchValue}
-          onValueChange={handleSearchChange}
-          placeholder="Search"
-        />
+        <form onSubmit={handleSearchSubmit}>
+          <SearchBar
+            value={inputBuffer}
+            onValueChange={handleSearchInput}
+            placeholder="Search"
+          />
+        </form>
         <FilterModal
           topics={topics}
           filterState={filterState}
