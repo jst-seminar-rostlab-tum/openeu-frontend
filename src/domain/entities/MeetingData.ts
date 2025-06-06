@@ -16,6 +16,7 @@ export interface Meeting {
   description?: string;
   tags?: string[];
   similarity?: number;
+  exact_location?: string;
 }
 
 export const meetingsPerCountry: Map<string, number> = new Map<string, number>([

@@ -7,7 +7,6 @@ export async function getMeetingCountPerCountry(
   end: string,
 ): Promise<Map<string, number>> {
   const meetings: Meeting[] = await meetingRepository.getMeetings(start, end);
-  console.log(meetings);
 
   meetingsPerCountry.forEach((_, countryName) => {
     meetingsPerCountry.set(countryName, 0);

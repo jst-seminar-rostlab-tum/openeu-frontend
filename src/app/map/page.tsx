@@ -8,7 +8,7 @@ import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { meetingsPerCountry } from '@/domain/entities/MeetingData';
-import useMeetingFilters from '@/domain/hooks/useMeetingsFilter';
+import useMeetingFilter from '@/domain/hooks/useMeetingsFilter';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 import MapOperations from '@/operations/map/MapOperations';
 import { getMeetingCountPerCountry } from '@/operations/map/MeetingsPerCountry';
@@ -16,42 +16,63 @@ import { getMeetingCountPerCountry } from '@/operations/map/MeetingsPerCountry';
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function MapPage() {
-  const [searchValue, setSearchValue] = useState('');
-  const [meetingCountByCountry, setMeetingCountByCountry] =
-    useState(meetingsPerCountry);
-  const todayRange = FilterModalOperations.initDateRange();
-
-  const [filterState, setFilterState] = useState<FilterModalState>({
-    startDate: todayRange.startDate,
-    endDate: todayRange.endDate,
-    country: '',
-    topics: [],
+  const { filters, setFilters } = useMeetingFilter();
+  const [filterState, setFilterState] = useState<FilterModalState>(() => {
+    const todayRange = FilterModalOperations.initDateRange();
+    return {
+      startDate: filters.start
+        ? MapOperations.isoStringToDate(filters.start)
+        : todayRange.startDate,
+      endDate: filters.end
+        ? MapOperations.isoStringToDate(filters.end)
+        : todayRange.endDate,
+      country: '',
+      topics: [],
+    };
   });
 
-  const startIso = MapOperations.dateToISOString(filterState.startDate);
-  const endIso = MapOperations.dateToISOString(filterState.endDate);
+  useEffect(() => {
+    const newStartDate = MapOperations.isoStringToDate(filters.start);
+    const newEndDate = MapOperations.isoStringToDate(filters.end);
 
-  useMeetingFilters(startIso, endIso);
+    setFilterState((prev) => ({
+      ...prev,
+      startDate: newStartDate,
+      endDate: newEndDate,
+    }));
+  }, [filters.start, filters.end]);
 
-  const handleFilterStateChange = async (newState: typeof filterState) => {
-    setFilterState(newState);
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearchValue(value);
-  };
+  const [meetingCountByCountry, setMeetingCountByCountry] =
+    useState(meetingsPerCountry);
 
   useEffect(() => {
     async function fetchCounts() {
       try {
-        const counts = await getMeetingCountPerCountry(startIso, endIso);
+        const counts = await getMeetingCountPerCountry(
+          filters.start,
+          filters.end,
+        );
         setMeetingCountByCountry(counts);
       } catch (err) {
         console.error('Failed to fetch meeting counts:', err);
       }
     }
     fetchCounts();
-  }, [startIso, endIso]);
+  }, [filters.start, filters.end]);
+
+  const handleFilterStateChange = (newState: FilterModalState) => {
+    setFilterState(newState);
+
+    const newStartIso = MapOperations.dateToISOString(newState.startDate);
+    const newEndIso = MapOperations.dateToISOString(newState.endDate);
+
+    setFilters({ start: newStartIso, end: newEndIso });
+  };
+
+  const [searchValue, setSearchValue] = useState('');
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+  };
 
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
@@ -68,15 +89,6 @@ export default function MapPage() {
           setFilterState={handleFilterStateChange}
           showCountryDropdown={false}
         />
-        <ul>
-          {Array.from(meetingCountByCountry.entries()).map(
-            ([country, count]) => (
-              <li key={country}>
-                {country}: {count}
-              </li>
-            ),
-          )}
-        </ul>
       </Card>
     </div>
   );
