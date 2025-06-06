@@ -21,7 +21,7 @@ export default function ChatInterface({
 
       {/* Show streaming message */}
       {streamingMessage && (
-        <p className="whitespace-pre-wrap text-sm leading-relaxed opacity-70">
+        <p className="whitespace-pre-wrap text-sm leading-relaxed opacity-70 break-words overflow-wrap-anywhere">
           {streamingMessage}
         </p>
       )}
