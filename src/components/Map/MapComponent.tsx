@@ -22,6 +22,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { meetingsPerCountry } from '@/domain/entities/MeetingData';
+
+type MeetingCountByCountry = typeof meetingsPerCountry;
 
 interface MapProps {
   mapData: geojson.FeatureCollection;
@@ -29,6 +32,7 @@ interface MapProps {
   zoom?: number;
   minZoom?: number;
   maxZoom?: number;
+  meetingCountByCountry: MeetingCountByCountry;
 }
 
 export default function MapComponent({
@@ -37,6 +41,7 @@ export default function MapComponent({
   zoom,
   minZoom,
   maxZoom,
+  meetingCountByCountry,
 }: MapProps) {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
@@ -209,14 +214,19 @@ export default function MapComponent({
             }
           }
 
+          const countryName = feature.properties?.name ?? '';
+
           const isHighlighted =
-            hoveredFeature?.properties?.name === feature.properties?.name;
+            hoveredFeature?.properties?.name === countryName;
+
+          const countForThisCountry =
+            meetingCountByCountry.get(countryName) ?? 0;
 
           return (
             <MapIndicator
-              key={feature.properties?.name || idx}
+              key={countryName || idx}
               position={centerLatLng}
-              count={idx + 1}
+              count={countForThisCountry}
               baseZoom={zoom}
               isHighlighted={isHighlighted}
             />
