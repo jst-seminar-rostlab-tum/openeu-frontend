@@ -4,7 +4,6 @@ import React, { ReactNode } from 'react';
 import { TagBadge } from '@/components/calendar/TagBadge';
 import { dayCellVariants } from '@/components/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/MonthViewCalendar/EventBullet';
-import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +14,7 @@ import { DialogHeader } from '@/components/ui/dialog';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
+import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
   date: Date;
@@ -72,26 +72,13 @@ export function EventListDialog({
             >
               <EventBullet color={event.color as TMeetingColor} className="" />
               <div className="flex-1">
-                <p className="text-sm font-medium mb-2">{event.title}</p>
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {event.tags
-                    ?.slice(0, 3)
-                    .map((tag) => (
-                      <TagBadge
-                        key={tag}
-                        tag={tag}
-                        variant="outline"
-                        className="text-white"
-                      />
-                    ))}
-                  {event.tags?.length > 3 && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs font-medium text-white"
-                    >
-                      +{event.tags.length - 3}
-                    </Badge>
-                  )}
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-sm font-medium flex-1">{event.title}</p>
+                  <TagBadge
+                    tag={getMeetingTypeShort(event.source_table)}
+                    variant="outline"
+                    className="text-white"
+                  />
                 </div>
               </div>
             </div>

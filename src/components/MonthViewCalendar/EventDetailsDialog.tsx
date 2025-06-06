@@ -1,7 +1,7 @@
 'use client';
 
 import { format, parseISO } from 'date-fns';
-import { Calendar, Clock, Tag, Text } from 'lucide-react';
+import { Building, Calendar, Clock, Tag, Text } from 'lucide-react';
 import { ReactNode } from 'react';
 
 import { TagBadge } from '@/components/calendar/TagBadge';
@@ -16,7 +16,10 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { formatTime } from '@/operations/meeting/CalendarHelpers';
+import {
+  formatTime,
+  getMeetingType,
+} from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
   event: MeetingData;
@@ -37,6 +40,16 @@ export function EventDetailsDialog({ event, children }: IProps) {
 
         <ScrollArea className="max-h-[80vh]">
           <div className="space-y-4 p-4">
+            <div className="flex items-start gap-2">
+              <Building className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">Meeting Type</p>
+                <div className="mt-1">
+                  <TagBadge tag={getMeetingType(event.source_table)} />
+                </div>
+              </div>
+            </div>
+
             <div className="flex items-start gap-2">
               <Tag className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>

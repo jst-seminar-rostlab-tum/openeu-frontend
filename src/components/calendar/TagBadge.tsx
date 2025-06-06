@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { getTagColor } from '@/operations/meeting/CalendarHelpers';
+import { getTagColor } from '@/lib/utils';
 
 interface TagBadgeProps {
   tag: string;
