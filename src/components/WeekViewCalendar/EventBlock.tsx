@@ -1,13 +1,18 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import { differenceInMinutes, parseISO } from 'date-fns';
-import type { HTMLAttributes } from 'react';
+import { Building, MapPin } from 'lucide-react';
+import React, { HTMLAttributes } from 'react';
 
 import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
+import { Badge } from '@/components/ui/badge';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
-import { formatTime } from '@/operations/meeting/CalendarHelpers';
+import {
+  formatTime,
+  getMeetingTypeShort,
+} from '@/operations/meeting/CalendarHelpers';
 
 const calendarWeekEventCardVariants = cva(
   'flex select-none flex-col gap-0.5 truncate whitespace-nowrap rounded-md border px-2 py-1.5 text-xs focus-visible:outline-offset-2',
@@ -94,6 +99,21 @@ export function EventBlock({ event, className }: IProps) {
             {formatTime(end, use24HourFormat)}
           </p>
         )}
+
+        <Badge variant="outline" className="text-white">
+          <Building className="shrink-0" />
+
+          {getMeetingTypeShort(event.source_table)}
+        </Badge>
+        <Badge variant="outline" className="text-white max-w-40">
+          <MapPin className="shrink-0 w-3 h-3" />
+          <span
+            className="truncate min-w-0 direction-rtl text-left"
+            title={getMeetingTypeShort(event.location)}
+          >
+            {getMeetingTypeShort(event.location)}
+          </span>
+        </Badge>
       </div>
     </EventDetailsDialog>
   );
