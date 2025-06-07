@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { ArrowRight, Shield, TrendingUp, Zap } from 'lucide-react';
+import { ArrowRight, ClipboardList, Megaphone, Vote } from 'lucide-react';
 import Link from 'next/link';
 import { useRef } from 'react';
 
@@ -24,16 +24,9 @@ export default function MissionSection() {
           transition={{ duration: 0.8 }}
           className="text-center space-y-12"
         >
-          <div className="space-y-6">
-            <h2 className="text-3xl lg:text-4xl font-bold">
-              Project Europe&apos;s Mission
-            </h2>
-            <p className="text-lg text-gray-300 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
-              In partnership with the EU Parliament, we are building the digital
-              infrastructure for a transparent, efficient, and accessible
-              European Union.
-            </p>
-          </div>
+          <h2 className="text-3xl lg:text-4xl font-bold">
+            OpenEU&apos;s Mission
+          </h2>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <motion.div
@@ -43,12 +36,12 @@ export default function MissionSection() {
               className="text-center space-y-4"
             >
               <div className="w-16 h-16 bg-white/20 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto">
-                <Shield className="w-8 h-8" />
+                <ClipboardList className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-semibold">Transparency</h3>
               <p className="text-gray-400 dark:text-gray-500">
-                Helps both individuals and businesses understand their
-                compliance requirements
+                Providing clear, timely information about regulatory changes
+                before they impact people&apos;s lives and work.
               </p>
             </motion.div>
 
@@ -59,11 +52,12 @@ export default function MissionSection() {
               className="text-center space-y-4"
             >
               <div className="w-16 h-16 bg-white/20 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto">
-                <Zap className="w-8 h-8" />
+                <Vote className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-semibold">Efficiency</h3>
+              <h3 className="text-xl font-semibold">Democratic Access</h3>
               <p className="text-gray-400 dark:text-gray-500">
-                Making EU compliance faster and easier.
+                Making EU laws understandable and accessible to everyone -
+                citizens, organizations, and businesses alike.
               </p>
             </motion.div>
 
@@ -74,12 +68,12 @@ export default function MissionSection() {
               className="text-center space-y-4"
             >
               <div className="w-16 h-16 bg-white/20 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto">
-                <TrendingUp className="w-8 h-8" />
+                <Megaphone className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-semibold">Growth</h3>
+              <h3 className="text-xl font-semibold">Empowerment</h3>
               <p className="text-gray-400 dark:text-gray-500">
-                Empowering European businesses to thrive in a compliant,
-                competitive global market.
+                Enabling informed participation in democracy by translating
+                complex policy into practical understanding.
               </p>
             </motion.div>
           </div>
@@ -88,15 +82,14 @@ export default function MissionSection() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={missionInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="pt-8"
           >
             <Button
               size="lg"
               className="text-lg px-8 bg-white text-black hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
               asChild
             >
-              <Link href="/register">
-                Sign Up <ArrowRight className="ml-2 h-5 w-5" />
+              <Link href="/login">
+                Login <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>
           </motion.div>

@@ -35,9 +35,8 @@ export default function HeroSection() {
                 The Transparency Backbone for the European Union
               </h2>
               <p className="text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto">
-                Powered by Agentic AI, OpenEU transforms how organizations
-                navigate EU regulations, ensuring compliance and transparency
-                across all member states.
+                OpenEU transforms how organizations navigate EU regulations,
+                ensuring compliance and transparency across all member states.
               </p>
             </div>
 
