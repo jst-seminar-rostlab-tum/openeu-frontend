@@ -55,46 +55,49 @@ export default function ChatFeature() {
     >
       <div className="flex flex-col h-50">
         {/* Chat Messages */}
-        <div className="flex-1 space-y-2 overflow-y-auto mb-3 scrollbar-custom">
-          {messages.map((message, index) => (
-            <motion.div
-              key={message.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`flex gap-2 ${message.isUser ? 'flex-row-reverse' : 'flex-row'}`}
-            >
-              <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.isUser
-                    ? 'bg-gray-300 dark:bg-gray-600'
-                    : 'bg-black dark:bg-white'
-                }`}
-              >
-                {message.isUser ? (
-                  <User className="w-3 h-3 text-gray-600 dark:text-gray-300" />
-                ) : (
-                  <Bot className="w-3 h-3 text-white dark:text-black" />
-                )}
-              </div>
-              <div
-                className={`max-w-[80%] ${message.isUser ? 'text-right' : 'text-left'}`}
+        <div className="flex-1 flex flex-col-reverse space-y-reverse space-y-2 overflow-y-auto mb-3 scrollbar-custom">
+          {messages
+            .slice()
+            .reverse()
+            .map((message, index) => (
+              <motion.div
+                key={message.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={`flex gap-2 ${message.isUser ? 'flex-row-reverse' : 'flex-row'}`}
               >
                 <div
-                  className={`inline-block p-2 rounded-lg text-sm ${
+                  className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
                     message.isUser
-                      ? 'bg-black dark:bg-white text-white dark:text-black rounded-br-none'
-                      : 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white rounded-bl-none'
+                      ? 'bg-gray-300 dark:bg-gray-600'
+                      : 'bg-black dark:bg-white'
                   }`}
                 >
-                  {message.text}
+                  {message.isUser ? (
+                    <User className="w-3 h-3 text-gray-600 dark:text-gray-300" />
+                  ) : (
+                    <Bot className="w-3 h-3 text-white dark:text-black" />
+                  )}
                 </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {message.timestamp}
+                <div
+                  className={`max-w-[80%] ${message.isUser ? 'text-right' : 'text-left'}`}
+                >
+                  <div
+                    className={`inline-block p-2 rounded-lg text-sm ${
+                      message.isUser
+                        ? 'bg-black dark:bg-white text-white dark:text-black rounded-br-none'
+                        : 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white rounded-bl-none'
+                    }`}
+                  >
+                    {message.text}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {message.timestamp}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
         </div>
 
         {/* Chat Input */}
