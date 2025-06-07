@@ -4,6 +4,7 @@ import {
   addWeeks,
   addYears,
   differenceInDays,
+  differenceInMinutes,
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
@@ -97,10 +98,7 @@ export function useFilteredEvents() {
       0,
     );
 
-    const isInSelectedMonth =
-      itemStartDate <= monthEnd && itemEndDate >= monthStart;
-
-    return isInSelectedMonth;
+    return itemStartDate <= monthEnd && itemEndDate >= monthStart;
   });
 }
 export function getEventsCount(
@@ -267,6 +265,7 @@ export function calculateMonthEventPositions(
 
     return eventPositions;
   } catch (error) {
+    // eslint-disable-next-line
     console.error('Error calculating month event positions:', error);
     return {};
   }
@@ -305,4 +304,49 @@ export function getTagColor(tag: string): string {
   const hash = hashString(tag);
   const colorIndex = hash % TAG_COLORS.length;
   return TAG_COLORS[colorIndex];
+}
+
+export function groupEvents(dayEvents: MeetingData[]): MeetingData[][] {
+  const sortedEvents = dayEvents.sort(
+    (a, b) =>
+      parseISO(a.meeting_end_datetime).getTime() -
+      parseISO(b.meeting_start_datetime).getTime(),
+  );
+  const groups: MeetingData[][] = [];
+
+  for (const event of sortedEvents) {
+    const eventStart = parseISO(event.meeting_start_datetime);
+    let placed = false;
+
+    for (const group of groups) {
+      const lastEventInGroup = group[group.length - 1];
+      const lastEventEnd = parseISO(lastEventInGroup.meeting_end_datetime);
+
+      if (eventStart >= lastEventEnd) {
+        group.push(event);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) groups.push([event]);
+  }
+  return groups;
+}
+
+export function getEventBlockStyle(
+  event: MeetingData,
+  day: Date,
+  groupIndex: number,
+  groupSize: number,
+) {
+  const startDate = parseISO(event.meeting_start_datetime);
+  const dayStart = startOfDay(day); // Use startOfDay instead of manual reset
+  const eventStart = startDate < dayStart ? dayStart : startDate;
+  const startMinutes = differenceInMinutes(eventStart, dayStart);
+
+  const top = (startMinutes / 1440) * 100; // 1440 minutes in a day
+  const width = 100 / groupSize;
+  const left = groupIndex * width;
+
+  return { top: `${top}%`, width: `${width}%`, left: `${left}%` };
 }

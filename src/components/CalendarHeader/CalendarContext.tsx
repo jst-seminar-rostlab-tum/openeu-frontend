@@ -11,6 +11,8 @@ export interface ICalendarContext {
   setView: (view: TCalendarView) => void;
   setSelectedDate: (date: Date | undefined) => void;
   events: MeetingData[];
+  use24HourFormat: boolean;
+  badgeVariant: 'dot' | 'colored';
 }
 
 export const CalendarContext = createContext<ICalendarContext | undefined>(
@@ -38,7 +40,6 @@ export function CalendarProvider({
     if (!date) return;
     setSelectedDate(date);
   };
-
   const value = {
     selectedDate,
     view: currentView,
@@ -46,6 +47,8 @@ export function CalendarProvider({
     setSelectedDate: handleSelectDate,
     selectedColors,
     events: data,
+    use24HourFormat: true,
+    badgeVariant: 'dot',
   };
 
   return (
