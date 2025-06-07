@@ -16,4 +16,28 @@ export default class HomeOperations {
       { id: 3, title: 'AI Regulation Draft', country: 'France', urgent: true },
     ];
   }
+
+  static getFeatures(): {
+    title: string;
+    href: string;
+  }[] {
+    return [
+      {
+        title: 'EU Calendar',
+        href: '/calendar',
+      },
+      {
+        title: 'Smart Inbox',
+        href: '/inbox',
+      },
+      {
+        title: 'EU Chat',
+        href: '/chat',
+      },
+      {
+        title: 'EU Map',
+        href: '/map',
+      },
+    ];
+  }
 }
