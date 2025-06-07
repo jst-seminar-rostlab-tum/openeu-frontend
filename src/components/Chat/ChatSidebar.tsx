@@ -63,6 +63,7 @@ export default function ChatSidebar({
                     <SidebarMenuButton
                       onClick={item.onClick}
                       className="truncate text-left"
+                      title={item.title}
                     >
                       {'icon' in item && item.icon && <item.icon />}
                       {item.title}
@@ -119,6 +120,7 @@ export default function ChatSidebar({
                         'truncate',
                         currentSessionId === session.id && 'bg-accent',
                       )}
+                      title={session.title}
                     >
                       {session.title}
                     </SidebarMenuButton>
