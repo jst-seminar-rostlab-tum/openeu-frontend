@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export function ForgotPasswordForm({
   className,
@@ -32,7 +33,10 @@ export function ForgotPasswordForm({
 
     setEmail('');
 
-    alert('Password reset link sent.');
+    ToastOperations.showInfo({
+      title: 'Info',
+      message: 'Password reset link sent.',
+    });
   };
 
   return (

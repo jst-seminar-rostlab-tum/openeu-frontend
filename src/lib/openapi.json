@@ -1,0 +1,595 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "FastAPI", "version": "0.1.0" },
+  "paths": {
+    "/profile/": {
+      "post": {
+        "tags": ["profile"],
+        "summary": "Create Profile",
+        "description": "Create or update a user profile: compute embedding from company_name, company_description, and topic_list,\nthen upsert the record into Supabase.",
+        "operationId": "create_profile_profile__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProfileCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meetings": {
+      "get": {
+        "summary": "Get Meetings",
+        "operationId": "get_meetings_meetings_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "type": "string", "format": "date-time" },
+                { "type": "null" }
+              ],
+              "description": "Start datetime (ISO8601)",
+              "title": "Start"
+            },
+            "description": "Start datetime (ISO8601)"
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "type": "string", "format": "date-time" },
+                { "type": "null" }
+              ],
+              "description": "End datetime (ISO8601)",
+              "title": "End"
+            },
+            "description": "End datetime (ISO8601)"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Search query using semantic similarity",
+              "title": "Query"
+            },
+            "description": "Search query using semantic similarity"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Meeting" },
+                  "title": "Response Get Meetings Meetings Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/crawler/": {
+      "get": {
+        "tags": ["crawler"],
+        "summary": "Dummy Crawl",
+        "operationId": "dummy_crawl_crawler__get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Dummy Crawl Crawler  Get"
+                }
+              }
+            }
+          },
+          "404": { "description": "Not found" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scheduler/tick": {
+      "get": {
+        "summary": "Run Scheduled Tasks",
+        "operationId": "run_scheduled_tasks_scheduler_tick_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": { "type": "string" },
+                  "type": "object",
+                  "title": "Response Run Scheduled Tasks Scheduler Tick Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scheduler/run/{job_name}": {
+      "post": {
+        "summary": "Run Task",
+        "operationId": "run_task_scheduler_run__job_name__post",
+        "parameters": [
+          {
+            "name": "job_name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Name" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/": {
+      "post": {
+        "summary": "Get Chat Response",
+        "operationId": "get_chat_response_chat__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChatMessageItem" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/start": {
+      "post": {
+        "summary": "Create New Session",
+        "operationId": "create_new_session_chat_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/NewSessionItem" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewChatResponseModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/sessions/{session_id}": {
+      "get": {
+        "summary": "Get All Messages",
+        "operationId": "get_all_messages_chat_sessions__session_id__get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessagesResponseModel"
+                  },
+                  "title": "Response Get All Messages Chat Sessions  Session Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat/sessions": {
+      "get": {
+        "summary": "Get User Sessions",
+        "operationId": "get_user_sessions_chat_sessions_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "title": "User Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionsResponseModel"
+                  },
+                  "title": "Response Get User Sessions Chat Sessions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{user_id}": {
+      "get": {
+        "tags": ["notifications"],
+        "summary": "Get Notifications For User",
+        "description": "Retrieve all notifications for a specific user by their ID.",
+        "operationId": "get_notifications_for_user_notifications__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "User Id" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Notification" },
+                  "title": "Response Get Notifications For User Notifications  User Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "anyOf": [{ "type": "string" }, { "type": "boolean" }]
+                  },
+                  "type": "object",
+                  "title": "Response Root  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChatMessageItem": {
+        "properties": {
+          "session_id": { "type": "string", "title": "Session Id" },
+          "message": { "type": "string", "title": "Message" }
+        },
+        "type": "object",
+        "required": ["session_id", "message"],
+        "title": "ChatMessageItem"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Meeting": {
+        "properties": {
+          "meeting_id": { "type": "string", "title": "Meeting Id" },
+          "source_table": { "type": "string", "title": "Source Table" },
+          "title": { "type": "string", "title": "Title" },
+          "status": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Status"
+          },
+          "meeting_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Meeting Url"
+          },
+          "meeting_start_datetime": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Meeting Start Datetime"
+          },
+          "meeting_end_datetime": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Meeting End Datetime"
+          },
+          "location": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Location"
+          },
+          "exact_location": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Exact Location"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "tags": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Tags"
+          },
+          "similarity": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Similarity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "meeting_id",
+          "source_table",
+          "title",
+          "meeting_start_datetime"
+        ],
+        "title": "Meeting"
+      },
+      "MessagesResponseModel": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "chat_session": { "type": "string", "title": "Chat Session" },
+          "content": { "type": "string", "title": "Content" },
+          "author": { "type": "string", "title": "Author" },
+          "date": { "type": "string", "format": "date-time", "title": "Date" }
+        },
+        "type": "object",
+        "required": ["id", "chat_session", "content", "author", "date"],
+        "title": "MessagesResponseModel"
+      },
+      "NewChatResponseModel": {
+        "properties": {
+          "session_id": { "type": "string", "title": "Session Id" }
+        },
+        "type": "object",
+        "required": ["session_id"],
+        "title": "NewChatResponseModel"
+      },
+      "NewSessionItem": {
+        "properties": {
+          "title": { "type": "string", "title": "Title" },
+          "user_id": { "type": "string", "title": "User Id" }
+        },
+        "type": "object",
+        "required": ["title", "user_id"],
+        "title": "NewSessionItem"
+      },
+      "Notification": {
+        "properties": {
+          "id": { "type": "integer", "title": "Id" },
+          "user_id": { "type": "string", "format": "uuid", "title": "User Id" },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Sent At"
+          },
+          "type": { "type": "string", "title": "Type" },
+          "message": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": ["id", "user_id", "sent_at", "type", "message"],
+        "title": "Notification"
+      },
+      "ProfileCreate": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid4", "title": "Id" },
+          "name": { "type": "string", "title": "Name" },
+          "surname": { "type": "string", "title": "Surname" },
+          "company_name": { "type": "string", "title": "Company Name" },
+          "company_description": {
+            "type": "string",
+            "title": "Company Description"
+          },
+          "topic_list": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Topic List"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "surname",
+          "company_name",
+          "company_description",
+          "topic_list"
+        ],
+        "title": "ProfileCreate"
+      },
+      "SessionsResponseModel": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "user_id": { "type": "string", "title": "User Id" },
+          "title": { "type": "string", "title": "Title" }
+        },
+        "type": "object",
+        "required": ["id", "user_id", "title"],
+        "title": "SessionsResponseModel"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

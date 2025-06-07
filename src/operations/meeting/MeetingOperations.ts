@@ -21,6 +21,7 @@ export const dummyMeetings: MeetingData[] = [
     description:
       'Stakeholders debate interoperable payment systems and regulatory sandboxes across Nordic economies.',
     tags: ['FinTech', 'DigitalPayments', 'NordicPolicy'],
+    source_table: 'ep_meetings',
   },
   {
     meeting_id: '2',
@@ -38,6 +39,7 @@ export const dummyMeetings: MeetingData[] = [
       'TechRegulation',
       'EU Policy',
     ],
+    source_table: 'mep_meetings',
   },
   {
     meeting_id: '3',
@@ -50,6 +52,7 @@ export const dummyMeetings: MeetingData[] = [
     description:
       'Legislators review proposals to cut single-use plastics and improve recyclability in consumer goods.',
     tags: ['CircularEconomy', 'Sustainability', 'WasteManagement', 'Packaging'],
+    source_table: 'austrian_parliament_meetings',
   },
   {
     meeting_id: '4',
@@ -67,6 +70,7 @@ export const dummyMeetings: MeetingData[] = [
       'EnergyTransition',
       'GreenHydrogen',
     ],
+    source_table: 'spanish_commission_meetings',
   },
   {
     meeting_id: '5',
@@ -79,6 +83,7 @@ export const dummyMeetings: MeetingData[] = [
     description:
       'Startups and policymakers explore smart labeling and compostable materials under new EU waste directives.',
     tags: ['Innovation', 'Sustainability', 'Packaging', 'WasteReduction'],
+    source_table: 'ipex_events',
   },
   {
     meeting_id: '6',
@@ -91,6 +96,7 @@ export const dummyMeetings: MeetingData[] = [
     description:
       'Lawmakers and fashion executives debate eco-labelling, labor ethics, and textile recycling standards.',
     tags: ['Sustainability', 'Fashion', 'EthicalProduction', 'Recycling'],
+    source_table: 'belgian_parliament_meetings',
   },
   {
     meeting_id: '7',
@@ -108,6 +114,7 @@ export const dummyMeetings: MeetingData[] = [
       'EasternEurope',
       'GridModernization',
     ],
+    source_table: 'polish_presidency_meeting',
   },
   {
     meeting_id: '8',
@@ -125,6 +132,7 @@ export const dummyMeetings: MeetingData[] = [
       'ArcticPolicy',
       'Sustainability',
     ],
+    source_table: 'mec_summit_ministerial_meeting',
   },
   {
     meeting_id: '9',
@@ -137,6 +145,7 @@ export const dummyMeetings: MeetingData[] = [
     description:
       'Baltic states collaborate on 5G deployment, digital sovereignty, and regional cybersecurity strategies.',
     tags: ['CyberSecurity', 'DigitalInfrastructure', 'BalticRegion', '5G'],
+    source_table: 'mec_prep_bodies_meeting',
   },
   {
     meeting_id: '10',
@@ -154,6 +163,7 @@ export const dummyMeetings: MeetingData[] = [
       'ClimatePolicy',
       'AlpineRegion',
     ],
+    source_table: 'weekly_agenda',
   },
   {
     meeting_id: '11',
@@ -172,5 +182,6 @@ export const dummyMeetings: MeetingData[] = [
       'WesternEurope',
       'CleanTech',
     ],
+    source_table: 'ep_meetings',
   },
 ];
