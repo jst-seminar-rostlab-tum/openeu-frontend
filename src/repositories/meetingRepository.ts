@@ -9,7 +9,7 @@ export const meetingRepository = {
       if (!res.ok) {
         throw new Error('Failed to fetch meetings');
       }
-      return await res.json();
+      return (await res.json()).data as MeetingData[];
     } catch {
       return [];
     }
