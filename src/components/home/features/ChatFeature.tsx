@@ -7,20 +7,20 @@ import { useState } from 'react';
 import FeatureCard from '@/components/home/features/FeatureCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import FeaturesOperations, {
+import ChatOperations, {
   type ChatMessage,
-} from '@/operations/features/FeaturesOperations';
+} from '@/operations/features/ChatOperations';
 
 export default function ChatFeature() {
   const [messages, setMessages] = useState<ChatMessage[]>(
-    FeaturesOperations.getChatMessages(),
+    ChatOperations.getChatMessages(),
   );
   const [inputValue, setInputValue] = useState('');
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
 
-    const newMessage = FeaturesOperations.createChatMessage(
+    const newMessage = ChatOperations.createChatMessage(
       messages.length + 1,
       inputValue,
       true,
@@ -31,9 +31,9 @@ export default function ChatFeature() {
 
     // Simulate AI response
     setTimeout(() => {
-      const aiResponse = FeaturesOperations.createChatMessage(
+      const aiResponse = ChatOperations.createChatMessage(
         messages.length + 2,
-        FeaturesOperations.generateMockAIResponse(),
+        ChatOperations.generateMockAIResponse(),
         false,
       );
       setMessages((prev) => [...prev, aiResponse]);

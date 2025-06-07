@@ -12,7 +12,7 @@ import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 import FeatureCard from '@/components/home/features/FeatureCard';
-import FeaturesOperations from '@/operations/features/FeaturesOperations';
+import CalendarOperations from '@/operations/features/CalendarOperations';
 
 export default function CalendarFeature() {
   const [currentDate] = useState(new Date());
@@ -23,9 +23,9 @@ export default function CalendarFeature() {
     return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
   };
 
-  const hasEvent = (day: number) => FeaturesOperations.hasEventOnDate(day);
+  const hasEvent = (day: number) => CalendarOperations.hasEventOnDate(day);
   const getEventType = (day: number) =>
-    FeaturesOperations.getEventTypeForDate(day);
+    CalendarOperations.getEventTypeForDate(day);
 
   return (
     <FeatureCard
@@ -88,7 +88,7 @@ export default function CalendarFeature() {
         </div>
 
         {/* Selected Date Events */}
-        {FeaturesOperations.getEventsForDate(selectedDate)
+        {CalendarOperations.getEventsForDate(selectedDate)
           .slice(0, 1)
           .map((event, index) => (
             <motion.div
@@ -111,14 +111,7 @@ export default function CalendarFeature() {
                 {event.title}
               </div>
               <div className="text-xs text-gray-600 dark:text-gray-400">
-                {format(
-                  new Date(
-                    currentDate.getFullYear(),
-                    currentDate.getMonth(),
-                    event.date,
-                  ),
-                  'MMMM d, yyyy',
-                )}
+                {format(new Date(), 'MMMM d, yyyy')}
               </div>
             </motion.div>
           ))}

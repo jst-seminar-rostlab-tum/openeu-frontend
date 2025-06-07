@@ -6,17 +6,18 @@ import { useState } from 'react';
 
 import FeatureCard from '@/components/home/features/FeatureCard';
 import { Badge } from '@/components/ui/badge';
-import FeaturesOperations from '@/operations/features/FeaturesOperations';
+import NotificationOperations from '@/operations/features/NotificationOperations';
 
 export default function InboxFeature() {
   const [selectedTab, setSelectedTab] = useState<'urgent' | 'info'>('urgent');
 
-  const notifications = FeaturesOperations.getInboxNotifications();
-  const counts = FeaturesOperations.getNotificationCounts(notifications);
-  const filteredNotifications = FeaturesOperations.filterNotificationsByType(
-    notifications,
-    selectedTab,
-  ).slice(0, 2); // Limit to 2 messages per tab
+  const notifications = NotificationOperations.getInboxNotifications();
+  const counts = NotificationOperations.getNotificationCounts(notifications);
+  const filteredNotifications =
+    NotificationOperations.filterNotificationsByType(
+      notifications,
+      selectedTab,
+    ).slice(0, 2); // Limit to 2 messages per tab
 
   const getIcon = (type: string) => {
     switch (type) {
