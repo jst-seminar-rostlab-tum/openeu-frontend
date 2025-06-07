@@ -22,12 +22,15 @@ interface EventListDialogProps {
   events: MeetingData[];
   MAX_VISIBLE_EVENTS?: number;
   children?: ReactNode;
+  endDate?: Date;
 }
+
 export function EventListDialog({
   date,
   events,
   MAX_VISIBLE_EVENTS = 3,
   children,
+  endDate,
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
@@ -54,7 +57,9 @@ export function EventListDialog({
                 className=""
               />
               <p className="text-sm font-medium">
-                Events on {format(date, 'EEEE, MMMM d, yyyy')}
+                {endDate
+                  ? `Events during ${format(date, 'HH:mm')} - ${format(endDate, 'HH:mm')}`
+                  : `Events on ${format(date, 'EEEE, MMMM d, yyyy')}`}
               </p>
             </div>
           </DialogTitle>

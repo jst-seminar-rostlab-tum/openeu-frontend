@@ -10,7 +10,7 @@ import { COLORS } from '@/operations/meeting/MeetingOperations';
 export default function CalendarPage() {
   const { data, error, isLoading, isError } = useMeetings(true);
 
-  function ensureMeetingEndTime(e: MeetingData) {
+  function ensureMeetingEndTimeAndColor(e: MeetingData) {
     if (e.meeting_end_datetime) return e;
     const endTime = parseISO(e.meeting_start_datetime);
     return {
@@ -23,6 +23,6 @@ export default function CalendarPage() {
   if (isLoading) return <CalendarSkeleton />;
   if (isError) return <p>Error: {error.message}</p>;
 
-  const events = data?.map((e: MeetingData) => ensureMeetingEndTime(e));
+  const events = data?.map((e: MeetingData) => ensureMeetingEndTimeAndColor(e));
   return <Calendar events={events ?? []} />;
 }

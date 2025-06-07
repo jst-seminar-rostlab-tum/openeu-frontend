@@ -325,30 +325,40 @@ export function getMeetingTypeShort(sourceTable?: string): string {
   );
 }
 
-export function groupEvents(dayEvents: MeetingData[]): MeetingData[][] {
+export function groupEvents(dayEvents: MeetingData[]) {
   const sortedEvents = dayEvents.sort(
     (a, b) =>
       parseISO(a.meeting_end_datetime).getTime() -
       parseISO(b.meeting_start_datetime).getTime(),
   );
-  const groups: MeetingData[][] = [];
 
-  for (const event of sortedEvents) {
-    const eventStart = parseISO(event.meeting_start_datetime);
+  const grouped = Object.groupBy(
+    sortedEvents,
+    ({ meeting_start_datetime, meeting_end_datetime }) => {
+      const start = parseISO(meeting_start_datetime);
+      const end = parseISO(meeting_end_datetime);
+      return start.toISOString() + '---' + end.toISOString();
+    },
+  );
+
+  const groups: MeetingData[][][] = [];
+  Object.entries(grouped).forEach(([key, value]) => {
+    const [start] = key.split('---');
+    const eventStart = parseISO(start);
     let placed = false;
 
     for (const group of groups) {
       const lastEventInGroup = group[group.length - 1];
-      const lastEventEnd = parseISO(lastEventInGroup.meeting_end_datetime);
+      const lastEventEnd = parseISO(lastEventInGroup[0].meeting_end_datetime);
 
       if (eventStart >= lastEventEnd) {
-        group.push(event);
+        group.push(value!);
         placed = true;
         break;
       }
     }
-    if (!placed) groups.push([event]);
-  }
+    if (!placed) groups.push([value!]);
+  });
   return groups;
 }
 
