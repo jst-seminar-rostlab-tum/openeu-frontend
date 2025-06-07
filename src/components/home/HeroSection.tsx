@@ -15,11 +15,14 @@ export default function HeroSection() {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-[calc(100vh-48px)] flex items-center justify-center overflow-hidden bg-black dark:bg-gray-900 text-white"
+      className="relative min-h-[calc(100vh-48px)] bg-black dark:bg-gray-900 text-white"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 dark:from-gray-800 dark:via-gray-900 dark:to-black" />
 
-      <Section className="relative z-10">
+      <Section
+        className="relative z-10 overflow-hidden"
+        variant="screenCentered"
+      >
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={heroInView ? { opacity: 1, y: 0 } : {}}

@@ -18,55 +18,50 @@ export default function FeaturesSection() {
 
   return (
     <section ref={featuresRef} className="py-16 bg-white dark:bg-black">
-      <Section>
+      <Section className="text-center space-y-12">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={featuresInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-black dark:text-white">
             Experience OpenEU Features
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             Discover our comprehensive suite of tools designed to make EU
-            compliance effortless and transparent for your business.
+            engagement accessible and transparent for everyone.
           </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-5 max-w-6xl mx-auto">
-          {/* Calendar Feature */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={featuresInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
             <CalendarFeature />
           </motion.div>
 
-          {/* Inbox Feature */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={featuresInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
           >
             <InboxFeature />
           </motion.div>
 
-          {/* Chat Feature */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={featuresInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
           >
             <ChatFeature />
           </motion.div>
 
-          {/* Map Feature */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={featuresInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
           >
             <MapFeature />
           </motion.div>

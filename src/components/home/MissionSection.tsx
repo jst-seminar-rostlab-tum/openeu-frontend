@@ -15,7 +15,7 @@ export default function MissionSection() {
   return (
     <section
       ref={missionRef}
-      className="py-24 bg-black dark:bg-gray-900 text-white"
+      className="py-16 bg-black dark:bg-gray-900 text-white"
     >
       <Section>
         <motion.div
