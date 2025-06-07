@@ -21,9 +21,10 @@ export async function GET(request: NextRequest) {
     if (!error) {
       // redirect user to specified redirect URL or root of app
       redirect(next);
+    } else {
+      redirect('/login?error=' + error.message);
     }
+  } else {
+    redirect('/login?confirm=2');
   }
-
-  // redirect the user to an error page with some instructions
-  redirect('/error');
 }

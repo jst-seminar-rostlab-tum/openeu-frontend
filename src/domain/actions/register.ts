@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
+import { profileRepository } from '@/repositories/profileRepository';
 
 // Official Supabase recommended URL helper
 function getURL() {
@@ -27,11 +28,13 @@ export async function signup(formData: FormData) {
   const name = formData.get('name') as string;
   const surname = formData.get('surname') as string;
   const company = formData.get('company') as string;
+  const companyDescription = formData.get('company-description') as string;
   const country = formData.get('country') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
+  const topics = formData.get('topics') as string;
 
-  const { error } = await supabase.auth.signUp({
+  const { error, data } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -46,10 +49,20 @@ export async function signup(formData: FormData) {
   });
 
   if (error) {
-    console.error('Signup error:', error.message);
-    redirect('/register?error=Registration failed');
+    redirect('/register?error=' + error.message);
+  }
+
+  if (data.user) {
+    await profileRepository.createProfile({
+      id: data.user.id,
+      name: name,
+      surname: surname,
+      companyName: company,
+      companyDescription: companyDescription,
+      topicList: topics.split(','),
+    });
   }
 
   revalidatePath('/', 'layout');
-  redirect('/');
+  redirect('/login?confirm=1');
 }

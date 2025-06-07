@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ChangeEvent, FormEvent, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export function ForgotPasswordForm({
   className,
@@ -33,10 +33,7 @@ export function ForgotPasswordForm({
 
     setEmail('');
 
-    ToastOperations.showInfo({
-      title: 'Info',
-      message: 'Password reset link sent.',
-    });
+    toast('Password reset link has been sent to your E-Mail address.');
   };
 
   return (
