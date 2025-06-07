@@ -22,6 +22,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { Meeting, meetingsPerCountry } from '@/domain/entities/MeetingData';
+import { useMeetings } from '@/domain/hooks/meetingHooks';
+
+type MeetingCountByCountry = typeof meetingsPerCountry;
 
 interface MapProps {
   mapData: geojson.FeatureCollection;
@@ -29,6 +33,25 @@ interface MapProps {
   zoom?: number;
   minZoom?: number;
   maxZoom?: number;
+  meetingCountByCountry: MeetingCountByCountry;
+}
+
+function getMeetingStats(countryName: string, meetings?: Meeting[]) {
+  if (!meetings || !countryName) return { total: 0, counts: {} };
+
+  // Special case: meetings with location "European Union" are matched to Belgium
+  const filtered = meetings.filter(
+    (m) =>
+      m.location === countryName ||
+      (m.location === 'European Union' && countryName === 'Belgium'),
+  );
+
+  const counts: Record<string, number> = {};
+  for (const meeting of filtered) {
+    counts[meeting.source_table] = (counts[meeting.source_table] || 0) + 1;
+  }
+
+  return { total: filtered.length, counts };
 }
 
 export default function MapComponent({
@@ -37,12 +60,13 @@ export default function MapComponent({
   zoom,
   minZoom,
   maxZoom,
+  meetingCountByCountry,
 }: MapProps) {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
   const countryFill = isDarkMode ? '#1E293B' : '#E2E8F0';
   const countryBorder = isDarkMode ? '#334155' : '#64748B';
-
+  const { data: meetings } = useMeetings();
   const [hoveredFeature, setHoveredFeature] = useState<geojson.Feature | null>(
     null,
   );
@@ -168,7 +192,7 @@ export default function MapComponent({
           <Tooltip open>
             <TooltipTrigger asChild />
             <TooltipContent
-              className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit`}
+              className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit whitespace-nowrap`}
               style={{
                 position: 'fixed',
                 left: tooltipPosition.x + 10,
@@ -176,7 +200,29 @@ export default function MapComponent({
                 pointerEvents: 'none',
               }}
             >
-              <p>{hoveredFeature.properties?.name}</p>
+              {(() => {
+                const countryName = hoveredFeature.properties?.name;
+                const { total, counts } = getMeetingStats(
+                  countryName,
+                  meetings,
+                );
+
+                return (
+                  <>
+                    <p className="text-sm font-semibold">{countryName}</p>
+                    <p className="text-sm">Total meetings: {total}</p>
+                    {total > 0 && (
+                      <ul className="mt-2 text-sm">
+                        {Object.entries(counts).map(([type, count]) => (
+                          <li key={type}>
+                            {type}: {count}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
+                );
+              })()}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -209,14 +255,19 @@ export default function MapComponent({
             }
           }
 
+          const countryName = feature.properties?.name ?? '';
+
           const isHighlighted =
-            hoveredFeature?.properties?.name === feature.properties?.name;
+            hoveredFeature?.properties?.name === countryName;
+
+          const countForThisCountry =
+            meetingCountByCountry.get(countryName) ?? 0;
 
           return (
             <MapIndicator
-              key={feature.properties?.name || idx}
+              key={countryName || idx}
               position={centerLatLng}
-              count={idx + 1}
+              count={countForThisCountry}
               baseZoom={zoom}
               isHighlighted={isHighlighted}
             />
