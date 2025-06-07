@@ -2,25 +2,16 @@
 
 import { useState } from 'react';
 
+import { CalendarProvider } from '@/components/CalendarHeader/CalendarContext';
 import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/Map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
-import { FilterModalState } from '@/domain/entities/FilterModalState';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function MapPage() {
   const [searchValue, setSearchValue] = useState('');
-
-  const [filterState, setFilterState] = useState<FilterModalState>({
-    country: '',
-    topics: [],
-  });
-
-  const handleFilterStateChange = (newState: typeof filterState) => {
-    setFilterState(newState);
-  };
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
@@ -35,12 +26,9 @@ export default function MapPage() {
           onValueChange={handleSearchChange}
           placeholder="Search"
         />
-        <FilterModal
-          topics={topics}
-          filterState={filterState}
-          setFilterState={handleFilterStateChange}
-          showCountryDropdown={false}
-        />
+        <CalendarProvider>
+          <FilterModal topics={topics} showCountryDropdown={false} />
+        </CalendarProvider>
       </Card>
     </div>
   );

@@ -1,5 +1,6 @@
 import {
   addDays,
+  addHours,
   addMonths,
   addWeeks,
   addYears,
@@ -83,7 +84,7 @@ export function useFilteredEvents() {
     const itemStartDate = new Date(event.meeting_start_datetime);
     let itemEndDate: Date;
     if (event.meeting_end_datetime === null) {
-      itemEndDate = itemStartDate;
+      itemEndDate = addHours(itemStartDate, 1.5);
     } else {
       itemEndDate = new Date(event.meeting_end_datetime);
     }
@@ -258,6 +259,18 @@ export function calculateMonthEventPositions(
     console.error('Error calculating month event positions:', error);
     return {};
   }
+}
+
+export function filterByCountry(
+  events: MeetingData[],
+  selectedCountry: string,
+) {
+  return events.filter((meeting) => {
+    if (!meeting.location) return false;
+    return meeting.location
+      .toLowerCase()
+      .includes(selectedCountry.toLowerCase());
+  });
 }
 
 export const getEvents = async (

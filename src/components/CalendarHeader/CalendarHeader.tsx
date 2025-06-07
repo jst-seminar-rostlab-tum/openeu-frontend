@@ -34,9 +34,18 @@ export function CalendarHeader() {
   const [searchText, setSearchText] = React.useState('');
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setSearchText(newValue);
-    searchByTitle(newValue);
+    setSearchText(e.target.value);
+  };
+
+  const onKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      try {
+        searchByTitle(searchText);
+      } catch (error) {
+        console.error('Error fetching meetings:', error);
+      }
+    }
   };
   return (
     <div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">
@@ -66,10 +75,11 @@ export function CalendarHeader() {
               className="pl-8"
               value={searchText}
               onChange={onChange}
+              onKeyDown={onKeyDown}
             />
             <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
           </div>
-          <FilterModal />
+          <FilterModal showDateDropdown={false} />
           <MotionButton
             variant="outline"
             onClick={() => setView('agenda')}

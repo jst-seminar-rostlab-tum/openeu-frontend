@@ -9,8 +9,11 @@ import {
 } from 'date-fns';
 import React, { createContext, useState } from 'react';
 
+import { getCurrentMonthRange } from '@/app/dateRange';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
+import { meetingRepository } from '@/repositories/meetingRepository';
+const { now, startDate, endDate } = getCurrentMonthRange();
 
 export interface ICalendarContext {
   selectedDate: Date;
@@ -20,8 +23,8 @@ export interface ICalendarContext {
   events: MeetingData[];
   setEvents: (events: MeetingData[]) => void;
   searchByTitle: (title: string) => void;
+  allEvents: MeetingData[];
   filterByTags: (tag: string[]) => void;
-  filterByCountry: (country: string) => void;
   getEventsCount: (
     events?: MeetingData[],
     selectedDate?: Date,
@@ -33,19 +36,22 @@ export const CalendarContext = createContext<ICalendarContext | undefined>(
   undefined,
 );
 
-export function CalendarProvider({
-  children,
-  events,
-  view = 'day',
-}: {
+interface CalendarProviderProps {
   children: React.ReactNode;
-  events: MeetingData[];
+  events?: MeetingData[];
   view?: TCalendarView;
   badge?: 'dot' | 'colored';
-}) {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+}
+
+export function CalendarProvider({
+  children,
+  events = [],
+  view = 'day',
+}: CalendarProviderProps) {
+  const [selectedDate, setSelectedDate] = useState<Date>(now);
   const [selectedColors] = useState<TMeetingColor[]>([]);
-  const [data, setData] = useState(events || []);
+  const [data, setData] = useState<MeetingData[]>(events);
+  const [allEvents] = useState<MeetingData[]>(events);
   const [currentView, setCurrentView] = useState<TCalendarView>(view);
   const setView = (newView: TCalendarView) => {
     setCurrentView(newView);
@@ -55,38 +61,33 @@ export function CalendarProvider({
     setSelectedDate(date);
   };
 
-  const searchByTitle = (title: string) => {
-    if (!title) {
-      setData(events);
-      return;
-    }
-    const filtered = events.filter((meeting) =>
-      meeting.title.toLowerCase().includes(title.toLowerCase()),
+  const searchByTitle = async (title: string) => {
+    const meetings = await meetingRepository.getMeetings(
+      startDate,
+      endDate,
+      title,
     );
-    setData(filtered);
+    setData(meetings);
   };
   const filterByTags = (selectedTags: string[]) => {
-    const filtered = events.filter((meeting) => {
+    const filtered = events.filter((meeting: MeetingData) => {
       if (!meeting.tags) return false;
 
       return selectedTags.some((tag) =>
-        meeting.tags.map((t) => t.toLowerCase()).includes(tag.toLowerCase()),
+        meeting
+          .tags!.map((t: string) => t.toLowerCase())
+          .includes(tag.toLowerCase()),
       );
     });
 
     setData(filtered);
   };
 
-  const filterByCountry = (selectedCountry: string) => {
-    const filtered = events.filter((meeting) => {
-      if (!meeting.location) return false;
-      return meeting.location
-        .toLowerCase()
-        .includes(selectedCountry.toLowerCase());
-    });
-    setData(filtered);
-  };
-  function getEventsCount(events?: MeetingData[], selectedDate?: Date): number {
+  function getEventsCount(
+    eventsParam: MeetingData[] = data,
+    selectedDateParam: Date = selectedDate,
+    viewParam: TCalendarView = currentView,
+  ): number {
     const compareFns: Record<TCalendarView, (d1: Date, d2: Date) => boolean> = {
       day: isSameDay,
       week: isSameWeek,
@@ -95,9 +96,9 @@ export function CalendarProvider({
       agenda: isSameMonth,
     };
 
-    const compareFn = compareFns[view];
-    return events!.filter((event) =>
-      compareFn(parseISO(event.meeting_start_datetime), selectedDate!),
+    const compareFn = compareFns[viewParam];
+    return eventsParam.filter((event) =>
+      compareFn(parseISO(event.meeting_start_datetime), selectedDateParam),
     ).length;
   }
 
@@ -110,8 +111,8 @@ export function CalendarProvider({
     events: data,
     setEvents: setData,
     searchByTitle,
+    allEvents,
     filterByTags,
-    filterByCountry,
     getEventsCount,
   };
 

@@ -1,6 +1,7 @@
+import { getCurrentMonthRange } from '@/app/dateRange';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+const { now } = getCurrentMonthRange();
 
-const now = new Date();
 const startRange = new Date(now);
 startRange.setDate(now.getDate() - 30);
 const endRange = new Date(now);
