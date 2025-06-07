@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
+import { profileRepository } from '@/repositories/profileRepository';
 
 // Official Supabase recommended URL helper
 function getURL() {
@@ -33,7 +34,7 @@ export async function signup(formData: FormData) {
   const password = formData.get('password') as string;
   const topics = formData.get('topics') as string;
 
-  const { error } = await supabase.auth.signUp({
+  const { error, data } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -51,20 +52,16 @@ export async function signup(formData: FormData) {
     redirect('/register?error=' + error.message);
   }
 
-  const values = JSON.stringify({
-    name: name,
-    surname: surname,
-    company_name: company,
-    company_description: companyDescription,
-    topic_list: topics.split(','),
-  });
-  await fetch('https://openeu-backend.onrender.com/profile/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: values,
-  });
+  if (data.user) {
+    await profileRepository.createProfile({
+      id: data.user.id,
+      name: name,
+      surname: surname,
+      companyName: company,
+      companyDescription: companyDescription,
+      topicList: topics.split(','),
+    });
+  }
 
   revalidatePath('/', 'layout');
   redirect('/login?confirm=1');
