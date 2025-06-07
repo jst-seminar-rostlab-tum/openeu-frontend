@@ -12,7 +12,6 @@ export async function getMeetingCountPerCountry(
     end,
     query,
   );
-  console.log(meetings);
 
   meetingsPerCountry.forEach((_, countryName) => {
     meetingsPerCountry.set(countryName, 0);

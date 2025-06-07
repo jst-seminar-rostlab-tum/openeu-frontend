@@ -47,7 +47,7 @@ export default function MapPage() {
           filters.end,
           filters.query,
         );
-        setMeetingCountByCountry(counts);
+        setMeetingCountByCountry(new window.Map(counts));
       } catch (err) {
         console.error('Failed to fetch meeting counts:', err);
       }
