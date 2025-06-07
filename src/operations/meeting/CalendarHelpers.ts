@@ -4,6 +4,7 @@ import {
   addWeeks,
   addYears,
   differenceInDays,
+  differenceInMinutes,
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
@@ -97,10 +98,7 @@ export function useFilteredEvents() {
       0,
     );
 
-    const isInSelectedMonth =
-      itemStartDate <= monthEnd && itemEndDate >= monthStart;
-
-    return isInSelectedMonth;
+    return itemStartDate <= monthEnd && itemEndDate >= monthStart;
   });
 }
 export function getEventsCount(
@@ -267,6 +265,7 @@ export function calculateMonthEventPositions(
 
     return eventPositions;
   } catch (error) {
+    // eslint-disable-next-line
     console.error('Error calculating month event positions:', error);
     return {};
   }
@@ -324,4 +323,59 @@ export function getMeetingTypeShort(sourceTable?: string): string {
     MEETING_TYPE_MAPPING[sourceTable] ||
     sourceTable
   );
+}
+
+export function groupEvents(dayEvents: MeetingData[]) {
+  const sortedEvents = dayEvents.sort(
+    (a, b) =>
+      parseISO(a.meeting_end_datetime).getTime() -
+      parseISO(b.meeting_start_datetime).getTime(),
+  );
+
+  const grouped = Object.groupBy(
+    sortedEvents,
+    ({ meeting_start_datetime, meeting_end_datetime }) => {
+      const start = parseISO(meeting_start_datetime);
+      const end = parseISO(meeting_end_datetime);
+      return start.toISOString() + '---' + end.toISOString();
+    },
+  );
+
+  const groups: MeetingData[][][] = [];
+  Object.entries(grouped).forEach(([key, value]) => {
+    const [start] = key.split('---');
+    const eventStart = parseISO(start);
+    let placed = false;
+
+    for (const group of groups) {
+      const lastEventInGroup = group[group.length - 1];
+      const lastEventEnd = parseISO(lastEventInGroup[0].meeting_end_datetime);
+
+      if (eventStart >= lastEventEnd) {
+        group.push(value!);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) groups.push([value!]);
+  });
+  return groups;
+}
+
+export function getEventBlockStyle(
+  event: MeetingData,
+  day: Date,
+  groupIndex: number,
+  groupSize: number,
+) {
+  const startDate = parseISO(event.meeting_start_datetime);
+  const dayStart = startOfDay(day); // Use startOfDay instead of manual reset
+  const eventStart = startDate < dayStart ? dayStart : startDate;
+  const startMinutes = differenceInMinutes(eventStart, dayStart);
+
+  const top = (startMinutes / 1440) * 100; // 1440 minutes in a day
+  const width = 100 / groupSize;
+  const left = groupIndex * width;
+
+  return { top: `${top}%`, width: `${width}%`, left: `${left}%` };
 }
