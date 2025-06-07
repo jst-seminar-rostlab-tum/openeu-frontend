@@ -29,7 +29,6 @@ export default function ChatFeature() {
     setMessages((prev) => [...prev, newMessage]);
     setInputValue('');
 
-    // Simulate AI response
     setTimeout(() => {
       const aiResponse = ChatOperations.createChatMessage(
         messages.length + 2,
@@ -50,11 +49,10 @@ export default function ChatFeature() {
   return (
     <FeatureCard
       icon={MessageSquare}
-      title="AI Legal Assistant"
-      description="Get instant answers about EU regulations and compliance"
+      title="EU Chat"
+      description="Get instant EU insights"
     >
       <div className="flex flex-col h-50">
-        {/* Chat Messages */}
         <div className="flex-1 flex flex-col-reverse space-y-reverse space-y-2 overflow-y-auto mb-3 scrollbar-custom">
           {messages
             .slice()
@@ -100,7 +98,6 @@ export default function ChatFeature() {
             ))}
         </div>
 
-        {/* Chat Input */}
         <div className="flex gap-2">
           <Input
             value={inputValue}
