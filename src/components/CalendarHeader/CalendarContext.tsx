@@ -49,7 +49,7 @@ export function CalendarProvider({
     selectedColors,
     events: data,
     use24HourFormat: true,
-    badgeVariant: 'dot',
+    badgeVariant: 'colored',
   };
 
   return (

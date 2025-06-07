@@ -5,6 +5,7 @@ import { CalendarSkeleton } from '@/components/CalendarSkeleton/CalendarSkeleton
 import Calendar from '@/components/MonthlyCalendar/MonthlyCalendar';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetings } from '@/domain/hooks/meetingHooks';
+import { COLORS } from '@/operations/meeting/MeetingOperations';
 
 export default function CalendarPage() {
   const { data, error, isLoading, isError } = useMeetings(true);
@@ -15,6 +16,7 @@ export default function CalendarPage() {
     return {
       ...e,
       meeting_end_datetime: addHours(endTime, 1.5).toISOString(),
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
     } as MeetingData;
   }
 
