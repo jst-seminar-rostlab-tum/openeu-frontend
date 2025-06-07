@@ -273,3 +273,55 @@ export function calculateMonthEventPositions(
 }
 
 export const getEvents = async () => dummyMeetings;
+
+// Meeting type mapping utilities
+export const MEETING_TYPE_MAPPING: Record<string, string> = {
+  mep_meetings: 'MEP',
+  ep_meetings: 'European Parliament',
+  austrian_parliament_meetings: 'Austrian Parliament',
+  belgian_parliament_meetings: 'Belgian Parliament',
+  ipex_events: 'IPEX Events',
+  mec_prep_bodies_meeting: 'MEC Prep-Bodies',
+  mec_summit_ministerial_meeting: 'MEC Summit/Ministerial',
+  polish_presidency_meeting: 'Polish Presidency',
+  spanish_commission_meetings: 'Spanish Commission',
+  weekly_agenda: 'Weekly Agenda',
+};
+
+/**
+ * Maps a source_table value to a human-readable meeting type
+ * @param sourceTable - The source_table value from the backend
+ * @returns Human-readable meeting type or the original value if not found
+ */
+export function getMeetingType(sourceTable?: string): string {
+  if (!sourceTable) return 'Unknown';
+  return MEETING_TYPE_MAPPING[sourceTable] || sourceTable;
+}
+
+/**
+ * Gets the short version of meeting type for compact display
+ * @param sourceTable - The source_table value from the backend
+ * @returns Short meeting type or the original value if not found
+ */
+export function getMeetingTypeShort(sourceTable?: string): string {
+  if (!sourceTable) return 'Unknown';
+
+  const shortMappings: Record<string, string> = {
+    mep_meetings: 'MEP',
+    ep_meetings: 'EP',
+    austrian_parliament_meetings: 'AT Parliament',
+    belgian_parliament_meetings: 'BE Parliament',
+    ipex_events: 'IPEX',
+    mec_prep_bodies_meeting: 'MEC Prep',
+    mec_summit_ministerial_meeting: 'MEC Summit',
+    polish_presidency_meeting: 'PL Presidency',
+    spanish_commission_meetings: 'ES Commission',
+    weekly_agenda: 'Weekly',
+  };
+
+  return (
+    shortMappings[sourceTable] ||
+    MEETING_TYPE_MAPPING[sourceTable] ||
+    sourceTable
+  );
+}
