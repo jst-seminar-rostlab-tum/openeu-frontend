@@ -9,29 +9,26 @@ import { buttonHover, transition } from '@/domain/animations';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import type { TCalendarView } from '@/domain/types/calendar/types';
-import {
-  getEventsCount,
-  navigateDate,
-  rangeText,
-} from '@/operations/meeting/CalendarHelpers';
+import { navigateDate, rangeText } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
   view: TCalendarView;
-  event: MeetingData[];
+  event?: MeetingData[];
 }
 
 const MotionButton = motion.create(Button);
 const MotionBadge = motion.create(Badge);
 
-export function DateNavigator({ view, event }: IProps) {
-  const { selectedDate, setSelectedDate } = useCalendar();
+export function DateNavigator({ view }: IProps) {
+  const { selectedDate, setSelectedDate, getEventsCount, events } =
+    useCalendar();
 
   const month = format(selectedDate, 'MMMM');
   const year = selectedDate.getFullYear();
 
   const eventCount = useMemo(
-    () => getEventsCount(event, selectedDate, view),
-    [event, selectedDate, view],
+    () => getEventsCount(events, selectedDate, view),
+    [events, selectedDate, view],
   );
 
   const handlePrevious = () =>

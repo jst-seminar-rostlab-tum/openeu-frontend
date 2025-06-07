@@ -3,6 +3,8 @@
 import { Funnel } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { getCurrentMonthRange } from '@/app/dateRange';
+import { MotionButton } from '@/components/CalendarHeader/CalendarHeader';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -22,28 +24,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
+import { useCalendar } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
-
+import { filterByCountry } from '@/operations/meeting/CalendarHelpers';
+const { now } = getCurrentMonthRange();
 interface FilterModalProps {
-  topics: string[];
-  filterState: FilterModalState;
-  setFilterState: (newState: FilterModalState) => void;
+  topics?: string[];
   showCountryDropdown?: boolean;
+  showDateDropdown?: boolean;
 }
 
 export default function FilterModal({
-  topics,
-  filterState,
-  setFilterState,
+  topics = [],
   showCountryDropdown = true,
+  showDateDropdown = true,
 }: FilterModalProps) {
+  const [filterState, setFilterState] = useState<FilterModalState>({
+    startDate: now,
+    endDate: now,
+    country: '',
+    topics: [],
+  });
+  const { events, setEvents, allEvents } = useCalendar();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [localState, setLocalState] = useState<FilterModalState>(filterState);
+  const [localState, setLocalState] = useState<FilterModalState>(
+    FilterModalOperations.getDefaultState(),
+  );
   const multiSelectRef = useRef<MultiSelectRef>(null);
-
   const countries = FilterModalOperations.getCountries();
-  const topicOptions = topics.map((topic) => ({
+  const topicOptions = topics!.map((topic) => ({
     label: topic,
     value: topic,
   }));
@@ -61,15 +72,19 @@ export default function FilterModal({
   const handleStartDateChange = (newStartDate: Date) => {
     const updates: Partial<FilterModalState> = { startDate: newStartDate };
 
-    if (localState.endDate <= newStartDate) {
+    if ((localState.endDate ?? newStartDate) <= newStartDate) {
       updates.endDate = newStartDate;
     }
-
+    if (localState.endDate && localState.endDate <= newStartDate) {
+      updates.endDate = newStartDate;
+    }
     updateLocalState(updates);
   };
 
   const handleEndDateChange = (newEndDate: Date) => {
     if (
+      !localState.startDate ||
+      !newEndDate ||
       !FilterModalOperations.validateDateRange(localState.startDate, newEndDate)
     ) {
       console.error('End date must be after start date.');
@@ -86,19 +101,26 @@ export default function FilterModal({
   const handleClear = () => {
     multiSelectRef.current?.clearHandler();
     setLocalState(FilterModalOperations.getDefaultState());
+    setEvents(allEvents);
   };
 
   const handleApply = () => {
     setFilterState(localState);
+    setEvents(filterByCountry(events, localState.country!));
     setDialogOpen(false);
   };
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button size="icon">
-          <Funnel />
-        </Button>
+        <MotionButton
+          variant="outline"
+          variants={buttonHover}
+          whileHover="hover"
+          whileTap="tap"
+        >
+          <Funnel className="h-5 w-5" />
+        </MotionButton>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="text-left">
@@ -107,16 +129,20 @@ export default function FilterModal({
             Filter all events and meetings by your preference profile.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <DatePicker
-            date={localState.startDate}
-            onSelect={handleStartDateChange}
-          />
-          <DatePicker
-            date={localState.endDate}
-            onSelect={handleEndDateChange}
-          />
-        </div>
+        {showDateDropdown && (
+          <div className="relative z-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <DatePicker
+                date={localState.startDate}
+                onSelect={handleStartDateChange}
+              />
+              <DatePicker
+                date={localState.endDate}
+                onSelect={handleEndDateChange}
+              />
+            </div>
+          </div>
+        )}
         <div
           className={`grid gap-4 ${showCountryDropdown ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}
         >

@@ -1,4 +1,6 @@
+import { getCurrentMonthRange } from '@/app/dateRange';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
+const { now } = getCurrentMonthRange();
 
 export default class FilterModalOperations {
   static getCountries(): string[] {
@@ -35,8 +37,8 @@ export default class FilterModalOperations {
 
   static getDefaultState(): FilterModalState {
     return {
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: now,
+      endDate: now,
       country: '',
       topics: [],
     };

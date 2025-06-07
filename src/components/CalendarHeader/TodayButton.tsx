@@ -1,13 +1,14 @@
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 
+import { getCurrentMonthRange } from '@/app/dateRange';
 import { Button } from '@/components/ui/button';
 import { buttonHover, transition } from '@/domain/animations';
 
 const MotionButton = motion.create(Button);
 
 export function TodayButton() {
-  const today = new Date();
+  const { now } = getCurrentMonthRange();
 
   return (
     <MotionButton
@@ -24,7 +25,7 @@ export function TodayButton() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, ...transition }}
       >
-        {format(today, 'MMM').toUpperCase()}
+        {format(now, 'MMM').toUpperCase()}
       </motion.span>
       <motion.span
         className="text-lg font-bold"
@@ -32,7 +33,7 @@ export function TodayButton() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, ...transition }}
       >
-        {today.getDate()}
+        {now.getDate()}
       </motion.span>
     </MotionButton>
   );

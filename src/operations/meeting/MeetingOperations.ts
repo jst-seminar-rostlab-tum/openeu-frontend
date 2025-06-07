@@ -1,6 +1,7 @@
+import { getCurrentMonthRange } from '@/app/dateRange';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+const { now } = getCurrentMonthRange();
 
-const now = new Date();
 const startRange = new Date(now);
 startRange.setDate(now.getDate() - 30);
 const endRange = new Date(now);
@@ -77,7 +78,7 @@ export const dummyMeetings: MeetingData[] = [
     meeting_url: 'https://zoom.us/j/987654321',
     meeting_start_datetime: '2025-06-04T10:00:00.000Z',
     meeting_end_datetime: '2025-06-04T11:00:00.000Z',
-    location: 'Zoom',
+    location: 'Spain',
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description:
       'Startups and policymakers explore smart labeling and compostable materials under new EU waste directives.',
