@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import FeatureCard from '@/components/home/features/FeatureCard';
 import { Badge } from '@/components/ui/badge';
-import NotificationOperations from '@/operations/features/NotificationOperations';
+import NotificationOperations from '@/operations/home/NotificationOperations';
 
 export default function InboxFeature() {
   const [selectedTab, setSelectedTab] = useState<'urgent' | 'info'>('urgent');

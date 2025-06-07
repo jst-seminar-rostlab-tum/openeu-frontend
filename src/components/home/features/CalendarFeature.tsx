@@ -12,7 +12,7 @@ import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 import FeatureCard from '@/components/home/features/FeatureCard';
-import CalendarOperations from '@/operations/features/CalendarOperations';
+import CalendarOperations from '@/operations/home/CalendarOperations';
 
 export default function CalendarFeature() {
   const [currentDate] = useState(new Date());

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ChatOperations, {
   type ChatMessage,
-} from '@/operations/features/ChatOperations';
+} from '@/operations/home/ChatOperations';
 
 export default function ChatFeature() {
   const [messages, setMessages] = useState<ChatMessage[]>(
