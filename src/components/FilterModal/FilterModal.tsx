@@ -4,6 +4,7 @@ import { Funnel } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { getCurrentMonthRange } from '@/app/dateRange';
+import { MotionButton } from '@/components/CalendarHeader/CalendarHeader';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -28,8 +29,6 @@ import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 import { filterByCountry } from '@/operations/meeting/CalendarHelpers';
-
-import { MotionButton } from '../CalendarHeader/CalendarHeader';
 const { now } = getCurrentMonthRange();
 interface FilterModalProps {
   topics?: string[];
@@ -80,7 +79,6 @@ export default function FilterModal({
       updates.endDate = newStartDate;
     }
     updateLocalState(updates);
-    console.log('updateing local state startdate', localState.startDate);
   };
 
   const handleEndDateChange = (newEndDate: Date) => {
@@ -94,7 +92,6 @@ export default function FilterModal({
     }
 
     updateLocalState({ endDate: newEndDate });
-    console.log('updateing local state enddate', localState.endDate);
   };
 
   const handleTopicsChange = (selectedTopics: string[]) => {
