@@ -273,37 +273,56 @@ export function calculateMonthEventPositions(
 
 export const getEvents = async () => dummyMeetings;
 
-// Tag color utilities
-const TAG_COLORS = [
-  'bg-blue-100 text-blue-800 border-blue-200',
-  'bg-green-100 text-green-800 border-green-200',
-  'bg-purple-100 text-purple-800 border-purple-200',
-  'bg-yellow-100 text-yellow-800 border-yellow-200',
-  'bg-red-100 text-red-800 border-red-200',
-  'bg-indigo-100 text-indigo-800 border-indigo-200',
-  'bg-pink-100 text-pink-800 border-pink-200',
-  'bg-orange-100 text-orange-800 border-orange-200',
-  'bg-teal-100 text-teal-800 border-teal-200',
-  'bg-cyan-100 text-cyan-800 border-cyan-200',
-];
+// Meeting type mapping utilities
+export const MEETING_TYPE_MAPPING: Record<string, string> = {
+  mep_meetings: 'MEP',
+  ep_meetings: 'European Parliament',
+  austrian_parliament_meetings: 'Austrian Parliament',
+  belgian_parliament_meetings: 'Belgian Parliament',
+  ipex_events: 'IPEX Events',
+  mec_prep_bodies_meeting: 'MEC Prep-Bodies',
+  mec_summit_ministerial_meeting: 'MEC Summit/Ministerial',
+  polish_presidency_meeting: 'Polish Presidency',
+  spanish_commission_meetings: 'Spanish Commission',
+  weekly_agenda: 'Weekly Agenda',
+};
 
-function hashString(str: string): number {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i);
-    hash +=
-      (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
-  }
-  return hash >>> 0;
+/**
+ * Maps a source_table value to a human-readable meeting type
+ * @param sourceTable - The source_table value from the backend
+ * @returns Human-readable meeting type or the original value if not found
+ */
+export function getMeetingType(sourceTable?: string): string {
+  if (!sourceTable) return 'Unknown';
+  return MEETING_TYPE_MAPPING[sourceTable] || sourceTable;
 }
 
 /**
- * Maps a tag to a consistent color using hashing
+ * Gets the short version of meeting type for compact display
+ * @param sourceTable - The source_table value from the backend
+ * @returns Short meeting type or the original value if not found
  */
-export function getTagColor(tag: string): string {
-  const hash = hashString(tag);
-  const colorIndex = hash % TAG_COLORS.length;
-  return TAG_COLORS[colorIndex];
+export function getMeetingTypeShort(sourceTable?: string): string {
+  if (!sourceTable) return 'Unknown';
+
+  const shortMappings: Record<string, string> = {
+    mep_meetings: 'MEP',
+    ep_meetings: 'EP',
+    austrian_parliament_meetings: 'AT Parliament',
+    belgian_parliament_meetings: 'BE Parliament',
+    ipex_events: 'IPEX',
+    mec_prep_bodies_meeting: 'MEC Prep',
+    mec_summit_ministerial_meeting: 'MEC Summit',
+    polish_presidency_meeting: 'PL Presidency',
+    spanish_commission_meetings: 'ES Commission',
+    weekly_agenda: 'Weekly',
+  };
+
+  return (
+    shortMappings[sourceTable] ||
+    MEETING_TYPE_MAPPING[sourceTable] ||
+    sourceTable
+  );
 }
 
 export function groupEvents(dayEvents: MeetingData[]): MeetingData[][] {
