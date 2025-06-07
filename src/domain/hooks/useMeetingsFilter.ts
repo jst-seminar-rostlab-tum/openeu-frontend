@@ -5,12 +5,12 @@ import { useCallback, useEffect, useState } from 'react';
 import MapOperations from '@/operations/map/MapOperations';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
-import { Meeting } from '../entities/MeetingData';
+import { MeetingData } from '../entities/calendar/MeetingData';
 
 export interface MeetingFilters {
   start: string;
   end: string;
-  search?: string;
+  query?: string;
 }
 
 export default function useMeetingFilter() {
@@ -21,14 +21,14 @@ export default function useMeetingFilter() {
       return {
         start: todayRange.startDate,
         end: todayRange.endDate,
-        search: '',
+        query: '',
       };
     }
     const params = new URLSearchParams(window.location.search);
     return {
       start: params.get('start') || todayRange.startDate,
       end: params.get('end') || todayRange.endDate,
-      search: params.get('search') || '',
+      query: params.get('query') || '',
     };
   });
 
@@ -39,13 +39,12 @@ export default function useMeetingFilter() {
     const rawStart = params.get('start');
     const rawEnd = params.get('end');
 
-    // Only rewrite if either was null/undefined
     if (rawStart === null || rawEnd === null) {
       const newParams = new URLSearchParams();
       newParams.set('start', filters.start);
       newParams.set('end', filters.end);
-      if (filters.search) {
-        newParams.set('search', filters.search);
+      if (filters.query) {
+        newParams.set('query', filters.query);
       }
 
       const basePath = window.location.pathname;
@@ -53,9 +52,9 @@ export default function useMeetingFilter() {
       const newUrl = qs ? `${basePath}?${qs}` : basePath;
       window.history.replaceState({}, '', newUrl);
     }
-  }, [filters.start, filters.end, filters.search]);
+  }, [filters.start, filters.end, filters.query]);
 
-  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [meetings, setMeetings] = useState<MeetingData[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -70,7 +69,7 @@ export default function useMeetingFilter() {
         const data = await meetingRepository.getMeetings(
           filters.start,
           filters.end,
-          filters.search,
+          filters.query,
         );
         if (!cancelled) {
           setMeetings(data);
@@ -86,7 +85,7 @@ export default function useMeetingFilter() {
     return () => {
       cancelled = true;
     };
-  }, [filters.start, filters.end, filters.search]);
+  }, [filters.start, filters.end, filters.query]);
 
   const setFilters = useCallback((newFilters: MeetingFilters) => {
     setFiltersState(newFilters);
@@ -94,7 +93,7 @@ export default function useMeetingFilter() {
     const params = new URLSearchParams();
     if (newFilters.start) params.set('start', newFilters.start);
     if (newFilters.end) params.set('end', newFilters.end);
-    if (newFilters.search) params.set('search', newFilters.search);
+    if (newFilters.query) params.set('query', newFilters.query);
 
     const basePath = window.location.pathname;
     const qs = params.toString();

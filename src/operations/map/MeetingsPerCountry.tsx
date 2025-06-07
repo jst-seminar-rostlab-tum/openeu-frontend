@@ -1,16 +1,16 @@
-import { meetingsPerCountry as meetingsPerCountry } from '@/domain/entities/MeetingData';
-import { Meeting } from '@/domain/entities/MeetingData';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { meetingsPerCountry as meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
 export async function getMeetingCountPerCountry(
   start: string,
   end: string,
-  search?: string,
+  query?: string,
 ): Promise<Map<string, number>> {
-  const meetings: Meeting[] = await meetingRepository.getMeetings(
+  const meetings: MeetingData[] = await meetingRepository.getMeetings(
     start,
     end,
-    search,
+    query,
   );
   console.log(meetings);
 

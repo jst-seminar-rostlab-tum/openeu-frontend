@@ -4,7 +4,7 @@ import { GeoJSON } from 'geojson';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
-import { meetingsPerCountry } from '@/domain/entities/MeetingData';
+import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 
 import MapData from '../../../public/map.geo.json';
 
@@ -14,7 +14,7 @@ interface MapProps {
   meetingCountByCountry: MeetingCountByCountry;
 }
 
-function MapInner({ meetingCountByCountry }: MapProps) {
+export default function Map({ meetingCountByCountry }: MapProps) {
   const MapComponent = dynamic(() => import('@/components/Map/MapComponent'), {
     ssr: false,
   });
@@ -29,5 +29,3 @@ function MapInner({ meetingCountByCountry }: MapProps) {
     />
   );
 }
-
-export default React.memo(MapInner);

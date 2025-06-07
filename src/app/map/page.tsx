@@ -7,7 +7,7 @@ import Map from '@/components/Map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
-import { meetingsPerCountry } from '@/domain/entities/MeetingData';
+import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 import useMeetingFilter from '@/domain/hooks/useMeetingsFilter';
 import MapOperations from '@/operations/map/MapOperations';
 import { getMeetingCountPerCountry } from '@/operations/map/MeetingsPerCountry';
@@ -45,7 +45,7 @@ export default function MapPage() {
         const counts = await getMeetingCountPerCountry(
           filters.start,
           filters.end,
-          filters.search,
+          filters.query,
         );
         setMeetingCountByCountry(counts);
       } catch (err) {
@@ -53,7 +53,7 @@ export default function MapPage() {
       }
     }
     fetchCounts();
-  }, [filters.start, filters.end, filters.search]);
+  }, [filters.start, filters.end, filters.query]);
 
   const handleFilterStateChange = (newState: FilterModalState) => {
     setFilterState(newState);
@@ -64,21 +64,21 @@ export default function MapPage() {
     setFilters({
       start: newStartIso,
       end: newEndIso,
-      search: filters.search,
+      query: filters.query,
     });
   };
 
-  const [inputBuffer, setInputBuffer] = useState<string>(filters.search ?? '');
+  const [inputBuffer, setInputBuffer] = useState<string>(filters.query ?? '');
 
   useEffect(() => {
-    if (inputBuffer === '' && (filters.search ?? '') !== '') {
+    if (inputBuffer === '' && (filters.query ?? '') !== '') {
       setFilters({
         start: filters.start,
         end: filters.end,
-        search: '',
+        query: '',
       });
     }
-  }, [inputBuffer, filters.search, filters.start, filters.end, setFilters]);
+  }, [inputBuffer, filters.query, filters.start, filters.end, setFilters]);
 
   const handleSearchInput = (newText: string) => {
     setInputBuffer(newText);
@@ -86,11 +86,11 @@ export default function MapPage() {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputBuffer !== filters.search) {
+    if (inputBuffer !== filters.query) {
       setFilters({
         start: filters.start,
         end: filters.end,
-        search: inputBuffer,
+        query: inputBuffer,
       });
     }
   };

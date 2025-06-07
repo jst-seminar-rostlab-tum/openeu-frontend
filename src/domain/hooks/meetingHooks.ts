@@ -8,17 +8,19 @@ import {
   ICalendarContext,
 } from '@/components/CalendarHeader/CalendarContext';
 import { DragDropContext } from '@/components/MonthViewCalendar/DragDropContext';
-import { Meeting } from '@/domain/entities/MeetingData';
 import { meetingRepository } from '@/repositories/meetingRepository';
+
+import { MeetingData } from '../entities/calendar/MeetingData';
 
 export const useMeetings = (
   startDate?: string,
   endDate?: string,
+  query?: string,
   enabled = true,
 ) =>
-  useQuery<Meeting[]>({
-    queryKey: ['meetings', startDate, endDate],
-    queryFn: () => meetingRepository.getMeetings(startDate, endDate),
+  useQuery<MeetingData[]>({
+    queryKey: ['meetings', startDate, endDate, query],
+    queryFn: () => meetingRepository.getMeetings(startDate, endDate, query),
     enabled,
   });
 

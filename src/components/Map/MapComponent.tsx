@@ -22,7 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { meetingsPerCountry } from '@/domain/entities/MeetingData';
+import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 
 type MeetingCountByCountry = typeof meetingsPerCountry;
 
