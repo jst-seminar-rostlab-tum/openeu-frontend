@@ -19,40 +19,33 @@ export default function HeroSection() {
     >
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 dark:from-gray-800 dark:via-gray-900 dark:to-black" />
 
-      <Section variant="noPadding" className="relative z-10">
-        <div className="container mx-auto px-4 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={heroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center space-y-8 max-w-4xl mx-auto"
-          >
-            <div className="space-y-6">
-              <h1 className="text-5xl lg:text-7xl font-bold text-white">
-                OpenEU
-              </h1>
-              <h2 className="text-2xl lg:text-4xl font-semibold text-gray-200">
-                The Transparency Backbone for the European Union
-              </h2>
-              <p className="text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto">
-                OpenEU transforms how organizations navigate EU regulations,
-                ensuring compliance and transparency across all member states.
-              </p>
-            </div>
+      <Section className="relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={heroInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-center space-y-8 max-w-4xl mx-auto"
+        >
+          <h1 className="text-5xl lg:text-7xl font-bold">OpenEU</h1>
+          <h2 className="text-2xl lg:text-4xl font-semibold text-gray-200">
+            The Transparency Backbone for the European Union
+          </h2>
+          <p className="text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto">
+            OpenEU transforms how citizens, businesses, and organizations engage
+            with and participate in the EU, ensuring transparency and
+            accessibility across all member states.
+          </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="text-lg px-8 bg-white text-black hover:bg-gray-100"
-                asChild
-              >
-                <Link href="/register">
-                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            </div>
-          </motion.div>
-        </div>
+          <Button
+            size="lg"
+            className="text-lg px-8 bg-white text-black hover:bg-gray-100"
+            asChild
+          >
+            <Link href="/login">
+              Get Started <ArrowRight className="h-5 w-5" />
+            </Link>
+          </Button>
+        </motion.div>
       </Section>
 
       {/* Bouncing Down Chevron */}

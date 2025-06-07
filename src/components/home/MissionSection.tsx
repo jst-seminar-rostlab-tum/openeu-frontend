@@ -89,7 +89,7 @@ export default function MissionSection() {
               asChild
             >
               <Link href="/login">
-                Login <ArrowRight className="h-5 w-5" />
+                Get Started <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>
           </motion.div>
