@@ -37,7 +37,7 @@ export default function FeatureCard({
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="!p-4">{children}</CardContent>
+      <CardContent className="!p-4 my-auto">{children}</CardContent>
     </Card>
   );
 }

@@ -31,9 +31,9 @@ export default function CalendarFeature() {
     <FeatureCard
       icon={Calendar}
       title="EU Calendar"
-      description="Track important EU regulatory dates and deadlines"
+      description="Track important EU meetings"
     >
-      <div className="space-y-3 p-4">
+      <div className="space-y-3">
         {/* Calendar Header */}
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-black dark:text-white text-sm">
@@ -111,7 +111,14 @@ export default function CalendarFeature() {
                 {event.title}
               </div>
               <div className="text-xs text-gray-600 dark:text-gray-400">
-                {format(new Date(), 'MMMM d, yyyy')}
+                {format(
+                  new Date(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    selectedDate,
+                  ),
+                  'MMMM d, yyyy',
+                )}
               </div>
             </motion.div>
           ))}
