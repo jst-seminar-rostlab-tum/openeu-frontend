@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { CalendarHeaderSkeleton } from '@/components/CalendarSkeleton/CalendarHeaderSkeleton';
 import { DayViewSkeleton } from '@/components/CalendarSkeleton/DayViewSkeleton';
 import { MonthViewSkeleton } from '@/components/CalendarSkeleton/MonthViewSkeleton';
 import { WeekViewSkeleton } from '@/components/CalendarSkeleton/WeekViewSkeleton';
@@ -23,23 +22,4 @@ export function CalendarSkeleton({ view }: CalendarSkeletonProps) {
   };
 
   return calendarView(view);
-}
-
-interface FullCalendarSkeletonProps {
-  view?: TCalendarView;
-}
-
-export function FullCalendarSkeleton({
-  view = 'month',
-}: FullCalendarSkeletonProps) {
-  return (
-    <div className="container mx-auto">
-      <div className="flex h-screen flex-col">
-        <CalendarHeaderSkeleton />
-        <div className="flex-1">
-          <CalendarSkeleton view={view} />
-        </div>
-      </div>
-    </div>
-  );
 }
