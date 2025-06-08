@@ -30,6 +30,7 @@ interface FilterModalProps {
   filterState: FilterModalState;
   setFilterState: (newState: FilterModalState) => void;
   showCountryDropdown?: boolean;
+  showTopicDropdown?: boolean;
 }
 
 export default function FilterModal({
@@ -37,6 +38,7 @@ export default function FilterModal({
   filterState,
   setFilterState,
   showCountryDropdown = true,
+  showTopicDropdown = true,
 }: FilterModalProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>(filterState);
@@ -137,18 +139,19 @@ export default function FilterModal({
               </SelectContent>
             </Select>
           )}
-
-          <MultiSelect
-            ref={multiSelectRef}
-            options={topicOptions}
-            value={localState.topics}
-            defaultValue={localState.topics}
-            onValueChange={handleTopicsChange}
-            placeholder="Topics"
-            variant="inverted"
-            maxCount={1}
-            className={showCountryDropdown ? '' : '!w-full'}
-          />
+          {showTopicDropdown && (
+            <MultiSelect
+              ref={multiSelectRef}
+              options={topicOptions}
+              value={localState.topics}
+              defaultValue={localState.topics}
+              onValueChange={handleTopicsChange}
+              placeholder="Topics"
+              variant="inverted"
+              maxCount={1}
+              className={showCountryDropdown ? '' : '!w-full'}
+            />
+          )}
         </div>
         <DialogFooter className="!flex-row !justify-between">
           <Button variant="link" onClick={handleClear} className="underline">

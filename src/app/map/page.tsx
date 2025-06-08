@@ -99,6 +99,7 @@ export default function MapPage() {
           filterState={filterState}
           setFilterState={handleFilterStateChange}
           showCountryDropdown={false}
+          showTopicDropdown={false}
         />
       </Card>
     </div>
