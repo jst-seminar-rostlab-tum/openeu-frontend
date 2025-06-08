@@ -14,11 +14,11 @@ interface MapProps {
   meetingCountByCountry: MeetingCountByCountry;
 }
 
-function MapInner({ meetingCountByCountry }: MapProps) {
-  const MapComponent = dynamic(() => import('@/components/Map/MapComponent'), {
-    ssr: false,
-  });
+const MapComponent = dynamic(() => import('@/components/Map/MapComponent'), {
+  ssr: false,
+});
 
+function MapInner({ meetingCountByCountry }: MapProps) {
   return (
     <MapComponent
       mapData={MapData as GeoJSON.FeatureCollection}

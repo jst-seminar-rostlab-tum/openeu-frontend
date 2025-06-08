@@ -14,20 +14,24 @@ export interface MeetingFilters {
 }
 
 export default function useMeetingFilter() {
-  const todayRange = MapOperations.initDateRange();
+  const iniDateRange = MapOperations.getCurrentWeekRange();
 
   const [filters, setFiltersState] = useState<MeetingFilters>(() => {
     if (typeof window === 'undefined') {
       return {
-        start: todayRange.startDate,
-        end: todayRange.endDate,
+        start: MapOperations.dateToISOString(iniDateRange.startDate),
+        end: MapOperations.dateToISOString(iniDateRange.endDate),
         query: '',
       };
     }
     const params = new URLSearchParams(window.location.search);
     return {
-      start: params.get('start') || todayRange.startDate,
-      end: params.get('end') || todayRange.endDate,
+      start:
+        params.get('start') ||
+        MapOperations.dateToISOString(iniDateRange.startDate),
+      end:
+        params.get('end') ||
+        MapOperations.dateToISOString(iniDateRange.endDate),
       query: params.get('query') || '',
     };
   });

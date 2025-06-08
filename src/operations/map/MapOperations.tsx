@@ -15,18 +15,24 @@ export default class MapOperations {
     return new Date(parsed.getTime() + parsed.getTimezoneOffset() * 60_000);
   }
 
-  static initDateRange(): { startDate: string; endDate: string } {
+  static getCurrentWeekRange(): {
+    startDate: Date;
+    endDate: Date;
+  } {
     const now = new Date();
-    const start = new Date(now);
-    const end = new Date(now);
 
-    start.setHours(0, 0, 0, 0);
+    const day = now.getDay();
 
-    end.setHours(23, 59, 0, 0);
+    const diffToMonday = (day + 6) % 7;
 
-    return {
-      startDate: this.dateToISOString(start),
-      endDate: this.dateToISOString(end),
-    };
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - diffToMonday);
+    monday.setHours(0, 0, 0, 0);
+
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    sunday.setHours(23, 59, 59, 999);
+
+    return { startDate: monday, endDate: sunday };
   }
 }
