@@ -46,7 +46,11 @@ export default function Calendar({
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
       >
-        {isLoading && <CalendarSkeleton />}
+        {isLoading && (
+          <div className="w-full border rounded-xl ">
+            <CalendarSkeleton view={view} />)
+          </div>
+        )}
         {isError && <p>Error: {error?.message}</p>}
         {!isLoading && !isError && (
           <div className="w-full border rounded-xl ">
