@@ -4,12 +4,8 @@ import { endOfDay, isSameDay, parseISO, startOfDay } from 'date-fns';
 
 import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
-import {
-  formatTime,
-  getColorFromId,
-} from '@/operations/meeting/CalendarHelpers';
+import { formatTime } from '@/operations/meeting/CalendarHelpers';
 
 const eventBadgeVariants = cva(
   'mx-1 flex size-auto h-6.5 sselect-none items-center gap-1.5  whitespace-nowrap truncate justify-between rounded-md border px-2 text-xs',
@@ -100,12 +96,10 @@ export function MonthEventBadge({
     new Date(event.meeting_start_datetime),
     true,
   );
+  const color = event.color as VariantProps<typeof eventBadgeVariants>['color'];
+
   const eventBadgeClasses = cn(
-    eventBadgeVariants({
-      color: getColorFromId(event.meeting_id) as TMeetingColor,
-      multiDayPosition: position,
-      className,
-    }),
+    eventBadgeVariants({ color, multiDayPosition: position, className }),
   );
 
   return (

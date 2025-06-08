@@ -10,17 +10,22 @@ import {
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
-export const useMeetings = (
-  startDate?: string,
-  endDate?: string,
-  query?: string,
-  country?: string,
-  enabled = true,
-) =>
+export interface GetMeetingsQueryParams {
+  limit?: number;
+  /** @description Start datetime (ISO8601) */
+  start?: string | null;
+  /** @description End datetime (ISO8601) */
+  end?: string | null;
+  /** @description Search query using semantic similarity */
+  query?: string | null;
+  /** @description Filter by country (e.g., 'Austria', 'European Union') */
+  country?: string | null;
+}
+
+export const useMeetings = (props: GetMeetingsQueryParams, enabled = true) =>
   useQuery<MeetingData[]>({
-    queryKey: ['meetings', startDate, endDate, query, country],
-    queryFn: () =>
-      meetingRepository.getMeetings(startDate, endDate, query, country),
+    queryKey: ['meetings', props],
+    queryFn: () => meetingRepository.getMeetings(props),
     enabled,
   });
 

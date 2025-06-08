@@ -28,13 +28,10 @@ export function CalendarBody() {
     }
   }, [isError]);
 
-  // Show skeleton while loading
   if (isLoading) {
     return <MonthViewSkeleton />;
   }
 
-  // Continue with normal flow even if there's an error,
-  // but with empty meetings array to show empty state
   const safeEvents = isError ? [] : meetings;
 
   const singleDayEvents = safeEvents.filter((event: MeetingData) => {

@@ -1,11 +1,12 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-export function MonthViewSkeleton() {
-  const seededRandom = (seed: number) => {
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
-  };
+// Simple deterministic random number generator
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
 
+export function MonthViewSkeleton() {
   return (
     <div className="flex h-full flex-col">
       <div className="grid grid-cols-7 border-b py-2">

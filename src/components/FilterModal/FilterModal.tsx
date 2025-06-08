@@ -117,8 +117,9 @@ export default function FilterModal({
           variants={buttonHover}
           whileHover="hover"
           whileTap="tap"
+          size="icon"
         >
-          <Funnel className="h-5 w-5" />
+          <Funnel className="h-5 w-5 pointer-events-none" />
         </MotionButton>
       </DialogTrigger>
       <DialogContent>

@@ -1,3 +1,4 @@
+import { User } from '@supabase/supabase-js';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -79,4 +80,38 @@ export function getTagColor(tag: string): string {
   const hash = hashString(tag);
   const colorIndex = hash % TAG_COLORS.length;
   return TAG_COLORS[colorIndex];
+}
+
+/**
+ * Extracts the first name from a Supabase user object.
+ * Falls back to the username part of email if no first name is available.
+ * @param user - Supabase User object
+ * @returns First name or email username
+ */
+export function getFirstName(user: User): string {
+  if (user?.user_metadata?.first_name) {
+    return user.user_metadata.first_name;
+  }
+  return user?.email?.split('@')[0] || '';
+}
+
+/**
+ * Extracts the full display name from a Supabase user object.
+ * Combines first and last name if available, otherwise falls back to email username.
+ * @param user - Supabase User object
+ * @returns Full display name or email username
+ */
+export function getDisplayName(user: User): string {
+  const firstName = user.user_metadata?.first_name as string;
+  const lastName = user.user_metadata?.last_name as string;
+
+  if (firstName && lastName) {
+    return `${firstName.trim()} ${lastName.trim()}`;
+  }
+
+  if (firstName) {
+    return firstName.trim();
+  }
+
+  return user?.email?.split('@')[0] || 'User';
 }

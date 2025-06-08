@@ -4,6 +4,7 @@ import React, { ReactNode } from 'react';
 
 import { dayCellVariants } from '@/components/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/MonthViewCalendar/EventBullet';
+import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -22,26 +23,18 @@ interface EventListDialogProps {
   events: MeetingData[];
   MAX_VISIBLE_EVENTS?: number;
   children?: ReactNode;
+  endDate?: Date;
 }
-const meetingColors: TMeetingColor[] = [
-  'blue',
-  'green',
-  'red',
-  'yellow',
-  'purple',
-  'orange',
-];
 
 export function EventListDialog({
   date,
   events,
   MAX_VISIBLE_EVENTS = 3,
   children,
+  endDate,
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
-  const randomColor =
-    meetingColors[Math.floor(Math.random() * meetingColors.length)];
 
   const defaultTrigger = (
     <span className="cursor-pointer">
@@ -60,45 +53,54 @@ export function EventListDialog({
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-center gap-2">
-              <EventBullet color={randomColor} className="" />
+              <EventBullet
+                color={cellEvents[0]?.color as TMeetingColor}
+                className=""
+              />
               <p className="text-sm font-medium">
-                Events on {format(date, 'EEEE, MMMM d, yyyy')}
+                {endDate
+                  ? `Events during ${format(date, 'HH:mm')} - ${format(endDate, 'HH:mm')}`
+                  : `Events on ${format(date, 'EEEE, MMMM d, yyyy')}`}
               </p>
             </div>
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
-          {cellEvents.map((event, index) => (
-            <div
-              key={`${event.meeting_id}-${index}`}
-              className={cn(
-                'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
-                {
-                  [dayCellVariants({ color: randomColor })]: true,
-                },
-              )}
-            >
-              <EventBullet color={randomColor} className="" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">{event.title}</p>
-                <div className="flex items-center gap-1">
-                  <Badge variant="outline" className="text-white">
-                    <Building className="shrink-0" />
-
-                    {getMeetingTypeShort(event.source_table)}
-                  </Badge>
-                  <Badge variant="outline" className="text-white max-w-40">
-                    <MapPin className="shrink-0 w-3 h-3" />
-                    <span
-                      className="truncate min-w-0 direction-rtl text-left"
-                      title={getMeetingTypeShort(event.location)}
-                    >
-                      {getMeetingTypeShort(event.location)}
-                    </span>
-                  </Badge>
+          {cellEvents.map((event) => (
+            <EventDetailsDialog key={event.meeting_id} event={event}>
+              <div
+                className={cn(
+                  'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
+                  {
+                    [dayCellVariants({ color: event.color as TMeetingColor })]:
+                      true,
+                  },
+                )}
+              >
+                <EventBullet
+                  color={event.color as TMeetingColor}
+                  className=""
+                />
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm font-medium">{event.title}</p>
+                  <div className="flex items-center gap-1">
+                    <Badge variant="outline" className="text-white">
+                      <Building className="shrink-0" />
+                      {getMeetingTypeShort(event.source_table)}
+                    </Badge>
+                    <Badge variant="outline" className="text-white max-w-40">
+                      <MapPin className="shrink-0 w-3 h-3" />
+                      <span
+                        className="truncate min-w-0 direction-rtl text-left"
+                        title={getMeetingTypeShort(event.location)}
+                      >
+                        {getMeetingTypeShort(event.location)}
+                      </span>
+                    </Badge>
+                  </div>
                 </div>
               </div>
-            </div>
+            </EventDetailsDialog>
           ))}
         </div>
       </DialogContent>

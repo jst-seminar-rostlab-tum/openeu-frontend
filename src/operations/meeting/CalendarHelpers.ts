@@ -8,6 +8,7 @@ import {
   differenceInDays,
   differenceInMinutes,
   eachDayOfInterval,
+  endOfDay,
   endOfMonth,
   endOfWeek,
   endOfYear,
@@ -243,7 +244,6 @@ export function calculateMonthEventPositions(
 
     return eventPositions;
   } catch (error) {
-    // eslint-disable-next-line
     console.error('Error calculating month event positions:', error);
     return {};
   }
@@ -373,3 +373,30 @@ export function getColorFromId(meetingId: string) {
   const index = Math.abs(hash) % COLORS.length;
   return COLORS[index].toString();
 }
+
+// New functions from the incoming branch
+export const calculateStartDate = (start: Date, view: TCalendarView): Date => {
+  switch (view) {
+    case 'month':
+      return startOfMonth(start);
+    case 'week':
+      return startOfWeek(start);
+    case 'day':
+      return startOfDay(start);
+    default:
+      return start;
+  }
+};
+
+export const calculateEndDate = (start: Date, view: TCalendarView): Date => {
+  switch (view) {
+    case 'month':
+      return endOfMonth(start);
+    case 'week':
+      return endOfWeek(start);
+    case 'day':
+      return endOfDay(start);
+    default:
+      return start;
+  }
+};

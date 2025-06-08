@@ -1,25 +1,27 @@
 'use client';
 
 import {
-  endOfMonth,
-  endOfWeek,
-  endOfYear,
-  format,
+  addHours,
   isSameDay,
   isSameMonth,
   isSameWeek,
   isSameYear,
   parseISO,
-  startOfMonth,
-  startOfWeek,
-  startOfYear,
 } from 'date-fns';
-import React, { createContext, useState } from 'react';
+import React, { createContext, useMemo, useState } from 'react';
 
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useMeetings } from '@/domain/hooks/meetingHooks';
-import { TCalendarView } from '@/domain/types/calendar/types';
-import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
+import {
+  GetMeetingsQueryParams,
+  useMeetings,
+} from '@/domain/hooks/meetingHooks';
+import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
+import {
+  calculateEndDate,
+  calculateStartDate,
+  getColorFromId,
+  getCurrentMonthRange,
+} from '@/operations/meeting/CalendarHelpers';
 
 const { now } = getCurrentMonthRange();
 
@@ -28,6 +30,7 @@ export interface ICalendarContext {
   view: TCalendarView;
   setView: (view: TCalendarView) => void;
   setSelectedDate: (date: Date | undefined) => void;
+  selectedColors: TMeetingColor[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
@@ -37,6 +40,8 @@ export interface ICalendarContext {
   isError: boolean;
   use24HourFormat: boolean;
   badgeVariant: 'dot' | 'colored';
+  filters: GetMeetingsQueryParams;
+  setFilters: (filters: GetMeetingsQueryParams) => void;
   getEventsCount: (
     events?: MeetingData[],
     selectedDate?: Date,
@@ -61,64 +66,71 @@ export function CalendarProvider({
   const [currentView, setCurrentView] = useState<TCalendarView>(view);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
+  const [selectedColors] = useState<TMeetingColor[]>([]);
 
-  // Generate start and end dates based on current view and selected date
-  const getDateRange = () => {
-    switch (currentView) {
-      case 'day':
-        return {
-          startDate: format(selectedDate, 'yyyy-MM-dd'),
-          endDate: format(selectedDate, 'yyyy-MM-dd'),
-        };
-      case 'week':
-        return {
-          startDate: format(startOfWeek(selectedDate), 'yyyy-MM-dd'),
-          endDate: format(endOfWeek(selectedDate), 'yyyy-MM-dd'),
-        };
-      case 'month':
-        return {
-          startDate: format(startOfMonth(selectedDate), 'yyyy-MM-dd'),
-          endDate: format(endOfMonth(selectedDate), 'yyyy-MM-dd'),
-        };
-      case 'year':
-        return {
-          startDate: format(startOfYear(selectedDate), 'yyyy-MM-dd'),
-          endDate: format(endOfYear(selectedDate), 'yyyy-MM-dd'),
-        };
-      case 'agenda':
-        return {
-          startDate: format(startOfMonth(selectedDate), 'yyyy-MM-dd'),
-          endDate: format(endOfMonth(selectedDate), 'yyyy-MM-dd'),
-        };
-      default:
-        return {
-          startDate: format(startOfMonth(selectedDate), 'yyyy-MM-dd'),
-          endDate: format(endOfMonth(selectedDate), 'yyyy-MM-dd'),
-        };
-    }
+  // Generate filters based on current view and selected date
+  const getFilters = (): GetMeetingsQueryParams => {
+    const start = calculateStartDate(selectedDate, currentView).toISOString();
+    const end = calculateEndDate(selectedDate, currentView).toISOString();
+
+    return {
+      start,
+      end,
+      query: searchQuery || undefined,
+      country: selectedCountry || undefined,
+    };
   };
 
-  const { startDate, endDate } = getDateRange();
+  const [filters, setFilters] = useState<GetMeetingsQueryParams>(getFilters());
 
-  // Use TanStack Query for data fetching
-  const {
-    data: meetings = [],
-    isLoading,
-    isError,
-  } = useMeetings(
-    startDate,
-    endDate,
-    searchQuery || undefined,
-    selectedCountry || undefined,
-  );
+  // Use TanStack Query for data fetching with the new API
+  const { data: rawMeetings = [], isLoading, isError } = useMeetings(filters);
+
+  // Add colors to meetings using getColorFromId
+  const meetings = useMemo(() => {
+    return rawMeetings.map((meeting) => {
+      // Ensure meeting has valid end time
+      const processedMeeting = { ...meeting };
+      if (!meeting.meeting_end_datetime) {
+        const startTime = parseISO(meeting.meeting_start_datetime);
+        const endTime = addHours(startTime, 1.5);
+        processedMeeting.meeting_end_datetime = endTime.toISOString();
+      }
+
+      // Assign color
+      processedMeeting.color = getColorFromId(
+        meeting.meeting_id,
+      ) as TMeetingColor;
+
+      return processedMeeting;
+    });
+  }, [rawMeetings]);
 
   const setView = (newView: TCalendarView) => {
     setCurrentView(newView);
+    // Update filters when view changes
+    const newStart = calculateStartDate(selectedDate, newView).toISOString();
+    const newEnd = calculateEndDate(selectedDate, newView).toISOString();
+    setFilters((prev) => ({ ...prev, start: newStart, end: newEnd }));
   };
 
   const handleSelectDate = (date: Date | undefined) => {
     if (!date) return;
     setSelectedDate(date);
+    // Update filters when date changes
+    const start = calculateStartDate(date, currentView).toISOString();
+    const end = calculateEndDate(date, currentView).toISOString();
+    setFilters((prev) => ({ ...prev, start, end }));
+  };
+
+  const handleSetSearchQuery = (query: string) => {
+    setSearchQuery(query);
+    setFilters((prev) => ({ ...prev, query: query || undefined }));
+  };
+
+  const handleSetSelectedCountry = (country: string) => {
+    setSelectedCountry(country);
+    setFilters((prev) => ({ ...prev, country: country || undefined }));
   };
 
   function getEventsCount(
@@ -140,20 +152,23 @@ export function CalendarProvider({
     ).length;
   }
 
-  const value = {
+  const value: ICalendarContext = {
     selectedDate,
     view: currentView,
     setView,
     setSelectedDate: handleSelectDate,
+    selectedColors,
     searchQuery,
-    setSearchQuery,
+    setSearchQuery: handleSetSearchQuery,
     selectedCountry,
-    setSelectedCountry,
+    setSelectedCountry: handleSetSelectedCountry,
     meetings,
     isLoading,
     isError,
     use24HourFormat: true,
     badgeVariant: 'colored' as const,
+    filters,
+    setFilters,
     getEventsCount,
   };
 
