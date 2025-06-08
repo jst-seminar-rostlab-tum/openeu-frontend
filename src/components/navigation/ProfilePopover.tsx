@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/domain/hooks/useAuth';
-import { extractInitials } from '@/lib/utils';
+import { extractInitials, getDisplayName } from '@/lib/utils';
 
 export function ProfilePopover() {
   const { user, loading, signOut } = useAuth();
@@ -38,15 +38,7 @@ export function ProfilePopover() {
 
   const userData = {
     email: user.email,
-    name: (() => {
-      const firstName = user.user_metadata?.first_name as string;
-      const lastName = user.user_metadata?.last_name as string;
-      if (firstName && lastName) {
-        return `${firstName.trim()} ${lastName.trim()}`;
-      }
-
-      return user.email?.split('@')[0];
-    })(),
+    name: getDisplayName(user),
     image: user.user_metadata?.avatar_url as string | undefined,
   };
 

@@ -1,24 +1,21 @@
-import MeetingList from '@/components/MeetingList/MeetingList';
-import SampleComponent from '@/components/SampleCard/SampleComponent';
-import { createClient } from '@/lib/supabase/server';
+import FeaturesSection from '@/components/home/FeaturesSection';
+import HeroSection from '@/components/home/HeroSection';
+import LoggedInLanding from '@/components/home/LoggedInLanding';
+import MissionSection from '@/components/home/MissionSection';
+import { verifySession } from '@/lib/dal';
 
 export default async function HomePage() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  let email: string;
-  if (error || !data?.user) {
-    email = 'Guest';
-  } else {
-    email = data.user.email || '';
+  const session = await verifySession();
+
+  if (session) {
+    return <LoggedInLanding user={session.user} />;
   }
 
   return (
-    <main className="flex flex-col items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-300">
-        Welcome to OpenEU 👋
-      </h1>
-      <SampleComponent email={email} data={data} />
-      <MeetingList />
+    <main className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
+      <HeroSection />
+      <FeaturesSection />
+      <MissionSection />
     </main>
   );
 }
