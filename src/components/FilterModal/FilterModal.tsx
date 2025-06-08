@@ -3,6 +3,7 @@
 import { Funnel } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { MotionButton } from '@/components/CalendarHeader/CalendarHeader';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -22,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 
@@ -96,9 +98,15 @@ export default function FilterModal({
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button size="icon">
-          <Funnel />
-        </Button>
+        <MotionButton
+          variant="outline"
+          variants={buttonHover}
+          whileHover="hover"
+          whileTap="tap"
+          size="icon"
+        >
+          <Funnel className="h-5 w-5 pointer-events-none" />
+        </MotionButton>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="text-left">

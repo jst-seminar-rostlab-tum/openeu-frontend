@@ -6,6 +6,7 @@ import {
   differenceInDays,
   differenceInMinutes,
   eachDayOfInterval,
+  endOfDay,
   endOfMonth,
   endOfWeek,
   endOfYear,
@@ -30,7 +31,7 @@ import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
-import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
+import { COLORS, dummyMeetings } from '@/operations/meeting/MeetingOperations';
 
 const FORMAT_STRING = 'MMM d, yyyy';
 
@@ -149,6 +150,15 @@ export function getMonthCellEvents(
       if (!a.isMultiDay && b.isMultiDay) return 1;
       return a.position - b.position;
     });
+}
+
+export function getColorFromId(meetingId: string) {
+  let hash = 0;
+  for (let i = 0; i < meetingId.length; i++) {
+    hash = meetingId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % COLORS.length;
+  return COLORS[index].toString();
 }
 
 export function getCalendarCells(selectedDate: Date): CalendarCell[] {
@@ -379,3 +389,27 @@ export function getEventBlockStyle(
 
   return { top: `${top}%`, width: `${width}%`, left: `${left}%` };
 }
+
+export const calculateStartDate = (start: Date, view: TCalendarView): Date => {
+  switch (view) {
+    case 'day':
+      return startOfDay(start);
+    case 'week':
+      return startOfWeek(start);
+    case 'month':
+    default:
+      return startOfMonth(start);
+  }
+};
+
+export const calculateEndDate = (start: Date, view: TCalendarView): Date => {
+  switch (view) {
+    case 'day':
+      return endOfDay(start);
+    case 'week':
+      return endOfWeek(start);
+    case 'month':
+    default:
+      return endOfMonth(start);
+  }
+};

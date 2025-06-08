@@ -1,10 +1,17 @@
 'use client';
 
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from 'date-fns';
 import { motion } from 'framer-motion';
 import {
   CalendarRange,
   Columns,
-  Funnel,
   Grid2X2,
   Grid3X3,
   LayoutList,
@@ -12,9 +19,11 @@ import {
   Search,
 } from 'lucide-react';
 import * as React from 'react';
+import { useState } from 'react';
 
 import { DateNavigator } from '@/components/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/CalendarHeader/TodayButton';
+import FilterModal from '@/components/FilterModal/FilterModal';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Input } from '@/components/ui/input';
@@ -25,15 +34,75 @@ import {
   slideFromRight,
   transition,
 } from '@/domain/animations';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
-import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
+import { FilterModalState } from '@/domain/entities/FilterModalState';
+import {
+  GetMeetingsQueryParams,
+  useCalendar,
+} from '@/domain/hooks/meetingHooks';
+import { TCalendarView } from '@/domain/types/calendar/types';
+import { useFilteredEvents } from '@/operations/meeting/CalendarHelpers';
 
 export const MotionButton = motion.create(Button);
 
 export function CalendarHeader() {
-  const events = dummyMeetings;
+  const { view, setView, filters, setFilters, selectedDate } = useCalendar();
+  const events = useFilteredEvents();
+  const [searchInput, setSearchInput] = useState(filters.query ?? '');
 
-  const { view, setView } = useCalendar();
+  const calculateStartDate = (start: Date, view: TCalendarView): Date => {
+    switch (view) {
+      case 'day':
+        return startOfDay(start);
+      case 'week':
+        return startOfWeek(start);
+      case 'month':
+      default:
+        return startOfMonth(start);
+    }
+  };
+
+  const calculateEndDate = (start: Date, view: TCalendarView): Date => {
+    switch (view) {
+      case 'day':
+        return endOfDay(start);
+      case 'week':
+        return endOfWeek(start);
+      case 'month':
+      default:
+        return endOfMonth(start);
+    }
+  };
+
+  const startDate = calculateStartDate(selectedDate, view);
+  const endDate = calculateEndDate(selectedDate, view);
+
+  const modalState: FilterModalState = {
+    startDate,
+    endDate,
+    country: filters.country ?? undefined,
+    topics: [],
+  };
+
+  const onModalChange = (newState: FilterModalState) => {
+    const newFilters: GetMeetingsQueryParams = {
+      ...filters,
+      country: newState.country,
+    };
+    setFilters(newFilters);
+  };
+
+  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value);
+  };
+
+  const onSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter') return;
+    const newFilters: GetMeetingsQueryParams = {
+      ...filters,
+      query: searchInput,
+    };
+    setFilters(newFilters);
+  };
 
   return (
     <div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">
@@ -57,17 +126,21 @@ export function CalendarHeader() {
       >
         <div className="options flex-wrap flex items-center gap-4 md:gap-2">
           <div className="relative flex items-center">
-            <Input type="search" placeholder="Search" className="pl-8" />
+            <Input
+              type="search"
+              placeholder="Search"
+              className="pl-8"
+              value={searchInput}
+              onChange={onInputChange}
+              onKeyDown={onSearch}
+            />
             <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
           </div>
-          <MotionButton
-            variant="outline"
-            variants={buttonHover}
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <Funnel className="h-5 w-5 pointer-events-none" />
-          </MotionButton>
+          <FilterModal
+            topics={[]}
+            filterState={modalState}
+            setFilterState={onModalChange}
+          />
           <MotionButton
             variant="outline"
             asChild
