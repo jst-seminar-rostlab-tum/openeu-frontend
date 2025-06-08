@@ -27,7 +27,6 @@ import {
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { TCalendarView } from '@/domain/types/calendar/types';
-import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
 
 const FORMAT_STRING = 'MMM d, yyyy';
 export const COLORS = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
@@ -250,7 +249,14 @@ export function calculateMonthEventPositions(
   }
 }
 
-export const getEvents = async () => dummyMeetings;
+export const getCurrentMonthRange = () => {
+  const now = new Date();
+  return {
+    startDate: startOfMonth(now).toISOString(),
+    endDate: endOfMonth(now).toISOString(),
+    now: now,
+  };
+};
 
 // Meeting type mapping utilities
 export const MEETING_TYPE_MAPPING: Record<string, string> = {
@@ -367,12 +373,3 @@ export function getColorFromId(meetingId: string) {
   const index = Math.abs(hash) % COLORS.length;
   return COLORS[index].toString();
 }
-
-export const getCurrentMonthRange = () => {
-  const now = new Date();
-  return {
-    startDate: startOfMonth(now).toISOString(),
-    endDate: endOfMonth(now).toISOString(),
-    now: now,
-  };
-};

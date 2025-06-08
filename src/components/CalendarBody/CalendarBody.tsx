@@ -2,8 +2,9 @@
 
 import { isSameDay, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useEffect } from 'react';
 
+import { MonthViewSkeleton } from '@/components/CalendarSkeleton/MonthViewSkeleton';
 import { CalendarDayView } from '@/components/DayViewCalendar/DayViewCalendar';
 import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalendar';
 import { CalendarWeekView } from '@/components/WeekViewCalendar/WeekViewCalendar';
@@ -11,35 +12,38 @@ import { fadeIn, transition } from '@/domain/animations';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export function CalendarBody() {
   const { view, isLoading, isError, meetings } = useCalendar();
 
+  // Handle error state with toast notification
+  useEffect(() => {
+    if (isError) {
+      ToastOperations.showError({
+        title: 'Failed to Load Meetings',
+        message:
+          'Unable to fetch meeting data. Please check your connection and try again.',
+      });
+    }
+  }, [isError]);
+
+  // Show skeleton while loading
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <p className="text-muted-foreground">Loading meetings...</p>
-      </div>
-    );
+    return <MonthViewSkeleton />;
   }
 
-  if (isError) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <p className="text-red-500">
-          Failed to load meetings. Please try again later.
-        </p>
-      </div>
-    );
-  }
+  // Continue with normal flow even if there's an error,
+  // but with empty meetings array to show empty state
+  const safeEvents = isError ? [] : meetings;
 
-  const singleDayEvents = meetings.filter((event: MeetingData) => {
+  const singleDayEvents = safeEvents.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return isSameDay(startDate, endDate);
   });
 
-  const multiDayEvents = meetings.filter((event: MeetingData) => {
+  const multiDayEvents = safeEvents.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return !isSameDay(startDate, endDate);
@@ -72,7 +76,7 @@ export function CalendarBody() {
   };
 
   return (
-    <div className=" w-full overflow-scroll relative]">
+    <div className="w-full overflow-scroll relative">
       <motion.div
         key={view}
         initial="initial"
