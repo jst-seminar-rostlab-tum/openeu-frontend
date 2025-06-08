@@ -1,3 +1,5 @@
+import { addHours } from 'date-fns';
+
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { GetMeetingsQueryParams } from '@/domain/hooks/meetingHooks';
 
@@ -22,7 +24,10 @@ export const meetingRepository = {
       // Handle null end datetime
       data.forEach((element: MeetingData) => {
         if (element.meeting_end_datetime === null) {
-          element.meeting_end_datetime = element.meeting_start_datetime;
+          element.meeting_end_datetime = addHours(
+            new Date(element.meeting_start_datetime),
+            1.5,
+          ).toISOString();
         }
       });
 

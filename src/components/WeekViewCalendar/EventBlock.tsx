@@ -11,6 +11,7 @@ import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
 import {
   formatTime,
+  getColorFromId,
   getMeetingTypeShort,
 } from '@/operations/meeting/CalendarHelpers';
 
@@ -66,8 +67,9 @@ export function EventBlock({ event, className }: IProps) {
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
+  const eventColor = getColorFromId(event.meeting_id);
   const color = (
-    badgeVariant === 'dot' ? `${event.color}-dot` : event.color
+    badgeVariant === 'dot' ? `${eventColor}-dot` : eventColor
   ) as VariantProps<typeof calendarWeekEventCardVariants>['color'];
 
   const calendarWeekEventCardClasses = cn(

@@ -7,7 +7,10 @@ import { EventListDialog } from '@/components/MonthViewCalendar/EventListDialog'
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
-import { formatTime } from '@/operations/meeting/CalendarHelpers';
+import {
+  formatTime,
+  getColorFromId,
+} from '@/operations/meeting/CalendarHelpers';
 
 const calendarWeekEventCardVariants = cva(
   'flex select-none flex-col gap-0.5 truncate whitespace-nowrap rounded-md border px-2 py-1.5 text-xs focus-visible:outline-offset-2',
@@ -61,8 +64,9 @@ export function EventListBlock({ events, className }: IProps) {
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
+  const eventColor = getColorFromId(events[0].meeting_id);
   const color = (
-    badgeVariant === 'dot' ? `${events[0].color}-dot` : events[0].color
+    badgeVariant === 'dot' ? `${eventColor}-dot` : eventColor
   ) as VariantProps<typeof calendarWeekEventCardVariants>['color'];
 
   const calendarWeekEventCardClasses = cn(

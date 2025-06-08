@@ -15,9 +15,9 @@ export function RenderGroupedEvents({
   day,
 }: RenderGroupedEventsProps) {
   return groupedEvents.map((group, groupIndex) =>
-    group.map((event, eventIndex) => {
+    group.map((events, eventIndex) => {
       let style = getEventBlockStyle(
-        event[0],
+        events[0],
         day,
         groupIndex,
         groupedEvents.length,
@@ -28,8 +28,8 @@ export function RenderGroupedEvents({
           otherGroup.some((otherEvent) =>
             areIntervalsOverlapping(
               {
-                start: parseISO(event[0].meeting_start_datetime),
-                end: parseISO(event[0].meeting_end_datetime),
+                start: parseISO(events[0].meeting_start_datetime),
+                end: parseISO(events[0].meeting_end_datetime),
               },
               {
                 start: parseISO(otherEvent[0].meeting_start_datetime),
@@ -41,10 +41,14 @@ export function RenderGroupedEvents({
 
       if (!hasOverlap) style = { ...style, width: '100%', left: '0%' };
 
-      if (event.length == 1) {
+      if (events.length == 1) {
         return (
-          <div key={event[0].meeting_id} className="absolute p-1" style={style}>
-            <EventBlock event={event[0]} />
+          <div
+            key={events[0].meeting_id}
+            className="absolute p-1"
+            style={style}
+          >
+            <EventBlock event={events[0]} />
           </div>
         );
       }
@@ -55,7 +59,7 @@ export function RenderGroupedEvents({
           className="absolute p-1"
           style={style}
         >
-          <EventListBlock events={event} />
+          <EventListBlock events={events} />
         </div>
       );
     }),
