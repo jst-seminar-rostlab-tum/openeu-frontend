@@ -25,6 +25,7 @@ import {
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 import { useMeetings } from '@/domain/hooks/meetingHooks';
+import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
 
 type MeetingCountByCountry = typeof meetingsPerCountry;
 
@@ -216,7 +217,7 @@ export default function MapComponent({
                       <ul className="mt-2 text-sm">
                         {Object.entries(counts).map(([type, count]) => (
                           <li key={type}>
-                            {type}: {count}
+                            {getMeetingType(type)}: {count}
                           </li>
                         ))}
                       </ul>
