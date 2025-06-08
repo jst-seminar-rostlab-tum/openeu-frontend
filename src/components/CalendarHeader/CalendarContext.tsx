@@ -16,10 +16,10 @@ import {
 } from 'date-fns';
 import React, { createContext, useState } from 'react';
 
-import { getCurrentMonthRange } from '@/app/dateRange';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetings } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
+import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 
 const { now } = getCurrentMonthRange();
 

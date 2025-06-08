@@ -367,3 +367,12 @@ export function getColorFromId(meetingId: string) {
   const index = Math.abs(hash) % COLORS.length;
   return COLORS[index].toString();
 }
+
+export const getCurrentMonthRange = () => {
+  const now = new Date();
+  return {
+    startDate: startOfMonth(now).toISOString(),
+    endDate: endOfMonth(now).toISOString(),
+    now: now,
+  };
+};

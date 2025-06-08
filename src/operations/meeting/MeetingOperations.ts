@@ -1,5 +1,5 @@
-import { getCurrentMonthRange } from '@/app/dateRange';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 const { now } = getCurrentMonthRange();
 
 const startRange = new Date(now);

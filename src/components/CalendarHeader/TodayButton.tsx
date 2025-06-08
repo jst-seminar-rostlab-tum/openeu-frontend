@@ -1,9 +1,10 @@
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
+import React from 'react';
 
-import { getCurrentMonthRange } from '@/app/dateRange';
 import { Button } from '@/components/ui/button';
 import { buttonHover, transition } from '@/domain/animations';
+import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 
 const MotionButton = motion.create(Button);
 

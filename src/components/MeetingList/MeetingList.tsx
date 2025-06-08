@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { getCurrentMonthRange } from '@/app/dateRange';
 import { useMeetings } from '@/domain/hooks/meetingHooks';
+import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 
 export default function MeetingList() {
   const { startDate, endDate } = getCurrentMonthRange();

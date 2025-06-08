@@ -4,12 +4,12 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import React from 'react';
 
-import ReactQueryProvider from '@/app/ReactQueryProvider';
 import NavBar from '@/components/navigation/NavBar';
-import { ThemeProvider } from '@/components/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/domain/hooks/useAuth';
 import { getUser } from '@/lib/dal';
+import ReactQueryProvider from '@/lib/provider/ReactQueryProvider';
+import { ThemeProvider } from '@/lib/provider/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 

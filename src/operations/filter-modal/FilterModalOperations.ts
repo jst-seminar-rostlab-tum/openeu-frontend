@@ -1,5 +1,5 @@
-import { getCurrentMonthRange } from '@/app/dateRange';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
+import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 const { now } = getCurrentMonthRange();
 
 export default class FilterModalOperations {
