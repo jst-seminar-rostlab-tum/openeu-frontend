@@ -71,7 +71,7 @@ export function EventListBlock({ events, className }: IProps) {
   );
 
   return (
-    <EventListDialog date={start} endDate={end} events={events}>
+    <EventListDialog date={start} events={events}>
       <div
         role="button"
         tabIndex={0}
