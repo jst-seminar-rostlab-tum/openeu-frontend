@@ -7,14 +7,10 @@ import { WeekViewSkeleton } from '@/components/CalendarSkeleton/WeekViewSkeleton
 import { TCalendarView } from '@/domain/types/calendar/types';
 
 interface CalendarSkeletonProps {
-  view?: TCalendarView;
-  showHeader?: boolean;
+  view: TCalendarView;
 }
 
-export function CalendarSkeleton({
-  view = 'month',
-  showHeader = true,
-}: CalendarSkeletonProps) {
+export function CalendarSkeleton({ view }: CalendarSkeletonProps) {
   const calendarView = (view: TCalendarView) => {
     switch (view) {
       case 'month':
@@ -23,21 +19,27 @@ export function CalendarSkeleton({
         return <DayViewSkeleton />;
       case 'week':
         return <WeekViewSkeleton />;
-      default:
-        return <MonthViewSkeleton />;
     }
   };
 
-  if (showHeader) {
-    return (
-      <div className="container mx-auto">
-        <div className="flex h-screen flex-col">
-          <CalendarHeaderSkeleton />
-          <div className="flex-1">{calendarView(view)}</div>
+  return calendarView(view);
+}
+
+interface FullCalendarSkeletonProps {
+  view?: TCalendarView;
+}
+
+export function FullCalendarSkeleton({
+  view = 'month',
+}: FullCalendarSkeletonProps) {
+  return (
+    <div className="container mx-auto">
+      <div className="flex h-screen flex-col">
+        <CalendarHeaderSkeleton />
+        <div className="flex-1">
+          <CalendarSkeleton view={view} />
         </div>
       </div>
-    );
-  }
-
-  return calendarView(view);
+    </div>
+  );
 }

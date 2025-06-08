@@ -4,7 +4,7 @@ import { isSameDay, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
 
-import { MonthViewSkeleton } from '@/components/CalendarSkeleton/MonthViewSkeleton';
+import { CalendarSkeleton } from '@/components/CalendarSkeleton/CalendarSkeleton';
 import { CalendarDayView } from '@/components/DayViewCalendar/DayViewCalendar';
 import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalendar';
 import { CalendarWeekView } from '@/components/WeekViewCalendar/WeekViewCalendar';
@@ -17,7 +17,6 @@ import { ToastOperations } from '@/operations/toast/toastOperations';
 export function CalendarBody() {
   const { view, isLoading, isError, meetings } = useCalendar();
 
-  // Handle error state with toast notification
   useEffect(() => {
     if (isError) {
       ToastOperations.showError({
@@ -29,7 +28,7 @@ export function CalendarBody() {
   }, [isError]);
 
   if (isLoading) {
-    return <MonthViewSkeleton />;
+    return <CalendarSkeleton view={view} />;
   }
 
   const safeEvents = isError ? [] : meetings;
