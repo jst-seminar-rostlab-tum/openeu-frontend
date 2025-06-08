@@ -46,7 +46,10 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
   const cellEvents = useMemo(() => {
     const result = getMonthCellEvents(date, events, eventPositions);
     return Array.isArray(result) ? result : [];
-  }, [date, events, eventPositions]);
+  }, [date, events, eventPositions]) as (MeetingData & {
+    position: number;
+    isMultiDay: boolean;
+  })[];
 
   const isSunday = date.getDay() === 0;
   return (

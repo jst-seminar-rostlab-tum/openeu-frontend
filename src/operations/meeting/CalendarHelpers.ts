@@ -26,7 +26,6 @@ import {
 
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
 import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
 
@@ -79,29 +78,6 @@ export function navigateDate(
   };
 
   return operations[view](date, amount);
-}
-
-export function useFilteredEvents() {
-  const { meetings, selectedDate } = useCalendar();
-  const eventsData = meetings || [];
-
-  return eventsData.filter((event) => {
-    const itemStartDate = new Date(event.meeting_start_datetime);
-    const itemEndDate = new Date(event.meeting_end_datetime);
-
-    const monthStart = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      1,
-    );
-    const monthEnd = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth() + 1,
-      0,
-    );
-
-    return itemStartDate <= monthEnd && itemEndDate >= monthStart;
-  });
 }
 
 export function getEventsCount(

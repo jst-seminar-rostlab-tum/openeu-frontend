@@ -2,6 +2,8 @@
 
 import {
   endOfMonth,
+  endOfWeek,
+  endOfYear,
   format,
   isSameDay,
   isSameMonth,
@@ -9,6 +11,8 @@ import {
   isSameYear,
   parseISO,
   startOfMonth,
+  startOfWeek,
+  startOfYear,
 } from 'date-fns';
 import React, { createContext, useState } from 'react';
 
@@ -28,7 +32,7 @@ export interface ICalendarContext {
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
   setSelectedCountry: (country: string) => void;
-  meetings: MeetingData[] | undefined;
+  meetings: MeetingData[];
   isLoading: boolean;
   isError: boolean;
   use24HourFormat: boolean;
@@ -61,13 +65,27 @@ export function CalendarProvider({
   // Generate start and end dates based on current view and selected date
   const getDateRange = () => {
     switch (currentView) {
+      case 'day':
+        return {
+          startDate: format(selectedDate, 'yyyy-MM-dd'),
+          endDate: format(selectedDate, 'yyyy-MM-dd'),
+        };
+      case 'week':
+        return {
+          startDate: format(startOfWeek(selectedDate), 'yyyy-MM-dd'),
+          endDate: format(endOfWeek(selectedDate), 'yyyy-MM-dd'),
+        };
       case 'month':
         return {
           startDate: format(startOfMonth(selectedDate), 'yyyy-MM-dd'),
           endDate: format(endOfMonth(selectedDate), 'yyyy-MM-dd'),
         };
-      case 'week':
-        // Add week logic if needed
+      case 'year':
+        return {
+          startDate: format(startOfYear(selectedDate), 'yyyy-MM-dd'),
+          endDate: format(endOfYear(selectedDate), 'yyyy-MM-dd'),
+        };
+      case 'agenda':
         return {
           startDate: format(startOfMonth(selectedDate), 'yyyy-MM-dd'),
           endDate: format(endOfMonth(selectedDate), 'yyyy-MM-dd'),
@@ -84,7 +102,7 @@ export function CalendarProvider({
 
   // Use TanStack Query for data fetching
   const {
-    data: meetings,
+    data: meetings = [],
     isLoading,
     isError,
   } = useMeetings(
@@ -104,7 +122,7 @@ export function CalendarProvider({
   };
 
   function getEventsCount(
-    eventsParam: MeetingData[] = meetings || [],
+    eventsParam: MeetingData[] = meetings,
     selectedDateParam: Date = selectedDate,
     viewParam: TCalendarView = currentView,
   ): number {

@@ -16,21 +16,21 @@ export interface DatePickerProps {
 }
 export function DatePicker({ date, onSelect }: DatePickerProps) {
   return (
-<Popover modal={false}>
-        <PopoverTrigger asChild>
+    <Popover modal={false}>
+      <PopoverTrigger asChild>
         <Button
           variant={'outline'}
           className={cn(
-            'justify-start text-left font-normal',
+            'w-[280px] justify-start text-left font-normal',
             !date && 'text-muted-foreground',
           )}
         >
-          <CalendarIcon />
+          <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, 'PPP') : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-<PopoverContent className="block w-auto p-0">
-          <Calendar
+      <PopoverContent className="block w-auto p-0">
+        <Calendar
           mode="single"
           selected={date}
           onSelect={(newDate) => {

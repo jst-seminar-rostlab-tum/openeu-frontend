@@ -11,11 +11,9 @@ import { fadeIn, transition } from '@/domain/animations';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
-import { useFilteredEvents } from '@/operations/meeting/CalendarHelpers';
 
 export function CalendarBody() {
-  const { view, isLoading, isError } = useCalendar();
-  const filteredEvents = useFilteredEvents();
+  const { view, isLoading, isError, meetings } = useCalendar();
 
   if (isLoading) {
     return (
@@ -35,13 +33,13 @@ export function CalendarBody() {
     );
   }
 
-  const singleDayEvents = filteredEvents.filter((event: MeetingData) => {
+  const singleDayEvents = meetings.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return isSameDay(startDate, endDate);
   });
 
-  const multiDayEvents = filteredEvents.filter((event: MeetingData) => {
+  const multiDayEvents = meetings.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return !isSameDay(startDate, endDate);
