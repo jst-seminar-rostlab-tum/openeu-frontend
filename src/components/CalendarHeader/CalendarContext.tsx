@@ -31,6 +31,8 @@ export interface ICalendarContext {
   meetings: MeetingData[] | undefined;
   isLoading: boolean;
   isError: boolean;
+  use24HourFormat: boolean;
+  badgeVariant: 'dot' | 'colored';
   getEventsCount: (
     events?: MeetingData[],
     selectedDate?: Date,
@@ -132,6 +134,8 @@ export function CalendarProvider({
     meetings,
     isLoading,
     isError,
+    use24HourFormat: true,
+    badgeVariant: 'colored' as const,
     getEventsCount,
   };
 
