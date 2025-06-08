@@ -1,33 +1,34 @@
+'use client';
+
 import {
   addDays,
-  addHours,
   addMonths,
   addWeeks,
   addYears,
   differenceInDays,
+  differenceInMinutes,
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
   endOfYear,
   format,
   isSameDay,
+  isSameMonth,
+  isSameWeek,
+  isSameYear,
   isValid,
   parseISO,
   startOfDay,
   startOfMonth,
   startOfWeek,
   startOfYear,
-  subDays,
-  subMonths,
-  subWeeks,
-  subYears,
 } from 'date-fns';
 
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
-import { meetingRepository } from '@/repositories/meetingRepository';
+import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
 
 const FORMAT_STRING = 'MMM d, yyyy';
 export const COLORS = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
@@ -67,15 +68,17 @@ export function navigateDate(
   view: TCalendarView,
   direction: 'previous' | 'next',
 ): Date {
-  const operations: Record<TCalendarView, (d: Date, n: number) => Date> = {
-    month: direction === 'next' ? addMonths : subMonths,
-    week: direction === 'next' ? addWeeks : subWeeks,
-    day: direction === 'next' ? addDays : subDays,
-    year: direction === 'next' ? addYears : subYears,
-    agenda: direction === 'next' ? addMonths : subMonths,
+  const amount = direction === 'next' ? 1 : -1;
+
+  const operations = {
+    day: (d: Date, amt: number) => addDays(d, amt),
+    week: (d: Date, amt: number) => addWeeks(d, amt),
+    month: (d: Date, amt: number) => addMonths(d, amt),
+    year: (d: Date, amt: number) => addYears(d, amt),
+    agenda: (d: Date, amt: number) => addMonths(d, amt),
   };
 
-  return operations[view](date, 1);
+  return operations[view](date, amount);
 }
 
 export function useFilteredEvents() {
@@ -84,12 +87,8 @@ export function useFilteredEvents() {
 
   return eventsData.filter((event) => {
     const itemStartDate = new Date(event.meeting_start_datetime);
-    let itemEndDate: Date;
-    if (event.meeting_end_datetime === null) {
-      itemEndDate = addHours(itemStartDate, 1.5);
-    } else {
-      itemEndDate = new Date(event.meeting_end_datetime);
-    }
+    const itemEndDate = new Date(event.meeting_end_datetime);
+
     const monthStart = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth(),
@@ -101,20 +100,36 @@ export function useFilteredEvents() {
       0,
     );
 
-    const isInSelectedMonth =
-      itemStartDate <= monthEnd && itemEndDate >= monthStart;
-
-    return isInSelectedMonth;
+    return itemStartDate <= monthEnd && itemEndDate >= monthStart;
   });
+}
+
+export function getEventsCount(
+  events: MeetingData[],
+  date: Date,
+  view: TCalendarView,
+): number {
+  const compareFns: Record<TCalendarView, (d1: Date, d2: Date) => boolean> = {
+    day: isSameDay,
+    week: isSameWeek,
+    month: isSameMonth,
+    year: isSameYear,
+    agenda: isSameMonth,
+  };
+
+  const compareFn = compareFns[view];
+  return events.filter((event) =>
+    compareFn(parseISO(event.meeting_start_datetime), date),
+  ).length;
 }
 
 export function getMonthCellEvents(
   date: Date,
   events: MeetingData[],
   eventPositions: Record<string, number>,
-) {
+): MeetingData[] {
   const dayStart = startOfDay(date);
-  const eventsForDate = events.filter((event) => {
+  const eventsForDate: MeetingData[] = events.filter((event) => {
     const eventStart = parseISO(event.meeting_start_datetime);
     const eventEnd = parseISO(event.meeting_end_datetime);
     return (
@@ -126,8 +141,11 @@ export function getMonthCellEvents(
   return eventsForDate
     .map((event) => ({
       ...event,
-      position: eventPositions[event.meeting_id] ?? -1,
-      isMultiDay: event.meeting_start_datetime !== event.meeting_end_datetime,
+      position: eventPositions[Number(event.meeting_id)] ?? -1,
+      isMultiDay: !isSameDay(
+        parseISO(event.meeting_start_datetime),
+        parseISO(event.meeting_end_datetime),
+      ),
     }))
     .sort((a, b) => {
       if (a.isMultiDay && !b.isMultiDay) return -1;
@@ -136,14 +154,6 @@ export function getMonthCellEvents(
     });
 }
 
-export function getColorFromId(meetingId: string) {
-  let hash = 0;
-  for (let i = 0; i < meetingId.length; i++) {
-    hash = meetingId.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const index = Math.abs(hash) % COLORS.length;
-  return COLORS[index].toString();
-}
 export function getCalendarCells(selectedDate: Date): CalendarCell[] {
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
@@ -252,44 +262,19 @@ export function calculateMonthEventPositions(
           const dayKey = startOfDay(day).toISOString();
           occupiedPositions[dayKey][position] = true;
         });
-        eventPositions[event.meeting_id] = position;
+        eventPositions[Number(event.meeting_id)] = position;
       }
     });
 
     return eventPositions;
   } catch (error) {
+    // eslint-disable-next-line
     console.error('Error calculating month event positions:', error);
     return {};
   }
 }
 
-export function filterByCountry(
-  events: MeetingData[],
-  selectedCountry: string,
-) {
-  return events.filter((meeting) => {
-    if (!meeting.location) return false;
-    return meeting.location
-      .toLowerCase()
-      .includes(selectedCountry.toLowerCase());
-  });
-}
-
-export const getEvents = async (
-  startDate?: string,
-  endDate?: string,
-  query?: string,
-  country?: string,
-): Promise<MeetingData[]> => {
-  return await meetingRepository.getMeetings(
-    startDate,
-    endDate,
-    query,
-    country,
-  );
-};
-// Please leave this for testing.
-// export const getEvents = async () => dummyMeetings;
+export const getEvents = async () => dummyMeetings;
 
 // Meeting type mapping utilities
 export const MEETING_TYPE_MAPPING: Record<string, string> = {
@@ -341,4 +326,68 @@ export function getMeetingTypeShort(sourceTable?: string): string {
     MEETING_TYPE_MAPPING[sourceTable] ||
     sourceTable
   );
+}
+
+export function groupEvents(dayEvents: MeetingData[]) {
+  const sortedEvents = dayEvents.sort(
+    (a, b) =>
+      parseISO(a.meeting_end_datetime).getTime() -
+      parseISO(b.meeting_start_datetime).getTime(),
+  );
+
+  const grouped = Object.groupBy(
+    sortedEvents,
+    ({ meeting_start_datetime, meeting_end_datetime }) => {
+      const start = parseISO(meeting_start_datetime);
+      const end = parseISO(meeting_end_datetime);
+      return start.toISOString() + '---' + end.toISOString();
+    },
+  );
+
+  const groups: MeetingData[][][] = [];
+  Object.entries(grouped).forEach(([key, value]) => {
+    const [start] = key.split('---');
+    const eventStart = parseISO(start);
+    let placed = false;
+
+    for (const group of groups) {
+      const lastEventInGroup = group[group.length - 1];
+      const lastEventEnd = parseISO(lastEventInGroup[0].meeting_end_datetime);
+
+      if (eventStart >= lastEventEnd) {
+        group.push(value!);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) groups.push([value!]);
+  });
+  return groups;
+}
+
+export function getEventBlockStyle(
+  event: MeetingData,
+  day: Date,
+  groupIndex: number,
+  groupSize: number,
+) {
+  const startDate = parseISO(event.meeting_start_datetime);
+  const dayStart = startOfDay(day); // Use startOfDay instead of manual reset
+  const eventStart = startDate < dayStart ? dayStart : startDate;
+  const startMinutes = differenceInMinutes(eventStart, dayStart);
+
+  const top = (startMinutes / 1440) * 100; // 1440 minutes in a day
+  const width = 100 / groupSize;
+  const left = groupIndex * width;
+
+  return { top: `${top}%`, width: `${width}%`, left: `${left}%` };
+}
+
+export function getColorFromId(meetingId: string) {
+  let hash = 0;
+  for (let i = 0; i < meetingId.length; i++) {
+    hash = meetingId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % COLORS.length;
+  return COLORS[index].toString();
 }
