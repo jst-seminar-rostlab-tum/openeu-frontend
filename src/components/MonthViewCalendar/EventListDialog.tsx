@@ -68,9 +68,9 @@ export function EventListDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
-          {cellEvents.map((event) => (
+          {cellEvents.map((event, index) => (
             <div
-              key={event.meeting_id}
+              key={`${event.meeting_id}-${index}`}
               className={cn(
                 'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
                 {
@@ -78,10 +78,8 @@ export function EventListDialog({
                 },
               )}
             >
-
               <EventBullet color={randomColor} className="" />
               <div className="flex-1">
-
                 <p className="text-sm font-medium">{event.title}</p>
                 <div className="flex items-center gap-1">
                   <Badge variant="outline" className="text-white">

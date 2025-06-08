@@ -13,6 +13,7 @@ export default class FilterModalOperations {
       'Czech Republic',
       'Denmark',
       'Estonia',
+      'European Union',
       'Finland',
       'France',
       'Germany',

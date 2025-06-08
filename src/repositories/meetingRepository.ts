@@ -7,12 +7,14 @@ export const meetingRepository = {
     startDate?: string,
     endDate?: string,
     query?: string,
+    country?: string,
   ): Promise<MeetingData[]> => {
     const params = new URLSearchParams();
 
     if (startDate) params.append('meeting_start_datetime', startDate);
     if (endDate) params.append('meeting_end_datetime', endDate);
     if (query) params.append('query', query);
+    if (country) params.append('country', country);
 
     const url = API_URL + `?${params.toString()}`;
 

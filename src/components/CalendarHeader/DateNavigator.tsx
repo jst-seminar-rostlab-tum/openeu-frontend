@@ -20,15 +20,15 @@ const MotionButton = motion.create(Button);
 const MotionBadge = motion.create(Badge);
 
 export function DateNavigator({ view }: IProps) {
-  const { selectedDate, setSelectedDate, getEventsCount, events } =
+  const { selectedDate, setSelectedDate, getEventsCount, meetings } =
     useCalendar();
 
   const month = format(selectedDate, 'MMMM');
   const year = selectedDate.getFullYear();
 
   const eventCount = useMemo(
-    () => getEventsCount(events, selectedDate, view),
-    [events, selectedDate, view],
+    () => getEventsCount(meetings, selectedDate, view),
+    [meetings, selectedDate, view, getEventsCount],
   );
 
   const handlePrevious = () =>

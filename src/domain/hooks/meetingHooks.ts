@@ -14,13 +14,16 @@ export const useMeetings = (
   startDate?: string,
   endDate?: string,
   query?: string,
+  country?: string,
   enabled = true,
 ) =>
   useQuery<MeetingData[]>({
-    queryKey: ['meetings', startDate, endDate, query],
-    queryFn: () => meetingRepository.getMeetings(startDate, endDate, query),
+    queryKey: ['meetings', startDate, endDate, query, country],
+    queryFn: () =>
+      meetingRepository.getMeetings(startDate, endDate, query, country),
     enabled,
   });
+
 export function useCalendar(): ICalendarContext {
   const context = useContext(CalendarContext);
   if (context === undefined)

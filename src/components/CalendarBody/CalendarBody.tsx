@@ -11,15 +11,34 @@ import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { useFilteredEvents } from '@/operations/meeting/CalendarHelpers';
 
 export function CalendarBody() {
-  const { view } = useCalendar();
+  const { view, isLoading, isError } = useCalendar();
+  const filteredEvents = useFilteredEvents();
 
-  const singleDayEvents = useFilteredEvents().filter((event: MeetingData) => {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <p className="text-muted-foreground">Loading meetings...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <p className="text-red-500">
+          Failed to load meetings. Please try again later.
+        </p>
+      </div>
+    );
+  }
+
+  const singleDayEvents = filteredEvents.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return isSameDay(startDate, endDate);
   });
 
-  const multiDayEvents = useFilteredEvents().filter((event: MeetingData) => {
+  const multiDayEvents = filteredEvents.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return !isSameDay(startDate, endDate);

@@ -28,7 +28,6 @@ import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
-import { filterByCountry } from '@/operations/meeting/CalendarHelpers';
 const { now } = getCurrentMonthRange();
 interface FilterModalProps {
   topics?: string[];
@@ -47,7 +46,7 @@ export default function FilterModal({
     country: '',
     topics: [],
   });
-  const { events, setEvents, allEvents } = useCalendar();
+  const { selectedCountry, setSelectedCountry } = useCalendar();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>(
     FilterModalOperations.getDefaultState(),
@@ -61,9 +60,9 @@ export default function FilterModal({
 
   useEffect(() => {
     if (dialogOpen) {
-      setLocalState(filterState);
+      setLocalState({ ...filterState, country: selectedCountry });
     }
-  }, [dialogOpen, filterState]);
+  }, [dialogOpen, filterState, selectedCountry]);
 
   const updateLocalState = (updates: Partial<FilterModalState>) => {
     setLocalState((prev) => ({ ...prev, ...updates }));
@@ -101,12 +100,12 @@ export default function FilterModal({
   const handleClear = () => {
     multiSelectRef.current?.clearHandler();
     setLocalState(FilterModalOperations.getDefaultState());
-    setEvents(allEvents);
+    setSelectedCountry('');
   };
 
   const handleApply = () => {
     setFilterState(localState);
-    setEvents(filterByCountry(events, localState.country!));
+    setSelectedCountry(localState.country || '');
     setDialogOpen(false);
   };
 

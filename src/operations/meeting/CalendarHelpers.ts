@@ -79,8 +79,10 @@ export function navigateDate(
 }
 
 export function useFilteredEvents() {
-  const { events, selectedDate } = useCalendar();
-  return events.filter((event) => {
+  const { meetings, selectedDate } = useCalendar();
+  const eventsData = meetings || [];
+
+  return eventsData.filter((event) => {
     const itemStartDate = new Date(event.meeting_start_datetime);
     let itemEndDate: Date;
     if (event.meeting_end_datetime === null) {
@@ -261,7 +263,6 @@ export function calculateMonthEventPositions(
   }
 }
 
-
 export function filterByCountry(
   events: MeetingData[],
   selectedCountry: string,
@@ -278,8 +279,14 @@ export const getEvents = async (
   startDate?: string,
   endDate?: string,
   query?: string,
+  country?: string,
 ): Promise<MeetingData[]> => {
-  return await meetingRepository.getMeetings(startDate, endDate, query);
+  return await meetingRepository.getMeetings(
+    startDate,
+    endDate,
+    query,
+    country,
+  );
 };
 // Please leave this for testing.
 // export const getEvents = async () => dummyMeetings;
@@ -335,4 +342,3 @@ export function getMeetingTypeShort(sourceTable?: string): string {
     sourceTable
   );
 }
-

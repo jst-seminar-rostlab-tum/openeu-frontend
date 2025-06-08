@@ -1,12 +1,17 @@
 'use client';
 
-// This is just a dummy component to test data fetching
 import React from 'react';
 
+import { getCurrentMonthRange } from '@/app/dateRange';
 import { useMeetings } from '@/domain/hooks/meetingHooks';
 
 export default function MeetingList() {
-  const { data: meetings, isLoading, isError } = useMeetings();
+  const { startDate, endDate } = getCurrentMonthRange();
+  const {
+    data: meetings,
+    isLoading,
+    isError,
+  } = useMeetings(startDate, endDate);
 
   if (isLoading) {
     return <p>Loading meetings...</p>;
@@ -23,9 +28,9 @@ export default function MeetingList() {
         <div className="flex flex-col items-center w-full">
           <div className="w-full max-w-4xl">
             <ul className="space-y-2 flex flex-col md:flex-row md:space-x-5 md:space-y-0">
-              {meetings.slice(0, 3).map((meeting) => (
+              {meetings.slice(0, 3).map((meeting, index) => (
                 <li
-                  key={meeting.meeting_start_datetime}
+                  key={`meeting-${index}`}
                   className="flex-1 p-4 border rounded-md shadow-sm bg-gray-50 dark:bg-gray-800"
                 >
                   <h3 className="text-lg font-semibold">{meeting.title}</h3>
