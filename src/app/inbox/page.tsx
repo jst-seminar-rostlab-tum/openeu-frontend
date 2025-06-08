@@ -10,42 +10,52 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { DataTablePagination } from '@/components/Inbox/data-table-pagination';
 import { DataTableToolbar } from '@/components/Inbox/data-table-toolbar';
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
-import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
-import InboxOperations from '@/operations/inbox/InboxOperations';
+import { useNotifications } from '@/domain/hooks/notificationsHooks';
+import { useAuth } from '@/domain/hooks/useAuth';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 import { createColumns } from './columns';
 import { DataTable } from './data-table';
 
 export default function InboxPage() {
-  const [data, setData] = useState<InboxItem[]>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const items = InboxOperations.getInboxItems();
-        setData(items);
-      } catch (error) {
-        console.error('Failed to load inbox items:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+  // Get user from auth context
+  const { user } = useAuth();
 
-  // Get unique countries for filter options - memoized to prevent recalculation
+  // Fetch notifications with user ID
+  const {
+    data: notifications,
+    isLoading,
+    error,
+  } = useNotifications(
+    user?.id || '',
+    !!user, // Only fetch when user exists
+  );
+
+  // Use notifications data directly
+  const data = useMemo(() => notifications || [], [notifications]);
+
+  // Get unique countries for filter options
   const uniqueCountries = useMemo(() => {
-    return Array.from(new Set(data.map((item) => item.country)));
+    try {
+      return Array.from(
+        new Set(data.map((item) => item.country).filter(Boolean)),
+      );
+    } catch {
+      ToastOperations.showError({
+        title: 'Error',
+        message: `Error extracting unique countries.`,
+      });
+      return [];
+    }
   }, [data]);
 
   // Action handlers
@@ -64,7 +74,11 @@ export default function InboxPage() {
   }, []);
 
   const handleDelete = useCallback((itemId: string) => {
-    setData((prev) => prev.filter((item) => item.id !== itemId));
+    ToastOperations.showInfo({
+      title: 'Info',
+      message: `Deleting item: ${itemId}`,
+    });
+    // TODO: Implement actual delete API call
   }, []);
 
   const columns = useMemo(
@@ -109,11 +123,14 @@ export default function InboxPage() {
     const selectedIds = table
       .getFilteredSelectedRowModel()
       .rows.map((row) => row.original.id);
-    setData((prev) => prev.filter((item) => !selectedIds.includes(item.id)));
+    ToastOperations.showInfo({
+      title: 'Info',
+      message: `Deleting ${selectedIds.length} items`,
+    });
     setRowSelection({});
   }, [table]);
 
-  // Loading state with proper skeleton
+  // Handle loading state
   if (isLoading) {
     return (
       <Section>
@@ -122,6 +139,36 @@ export default function InboxPage() {
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-64 w-full" />
           <Skeleton className="h-12 w-full" />
+        </div>
+      </Section>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <Section>
+        <h1 className="text-2xl font-bold">Inbox</h1>
+        <div className="text-center py-8">
+          <p className="text-red-500">Failed to load notifications</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Retry
+          </button>
+        </div>
+      </Section>
+    );
+  }
+
+  // Handle no user state
+  if (!user) {
+    return (
+      <Section>
+        <h1 className="text-2xl font-bold">Inbox</h1>
+        <div className="text-center py-8">
+          <p>Please log in to view your notifications</p>
         </div>
       </Section>
     );
