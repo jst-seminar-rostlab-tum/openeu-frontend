@@ -1,19 +1,21 @@
 'use client';
 
 import {
+  endOfMonth,
   isSameDay,
   isSameMonth,
   isSameWeek,
   isSameYear,
   parseISO,
+  startOfMonth,
 } from 'date-fns';
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
 import { getCurrentMonthRange } from '@/app/dateRange';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { useMeetings } from '@/domain/hooks/meetingHooks';
 import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
-import { meetingRepository } from '@/repositories/meetingRepository';
-const { now, startDate, endDate } = getCurrentMonthRange();
+const { now } = getCurrentMonthRange();
 
 export interface ICalendarContext {
   selectedDate: Date;
@@ -22,14 +24,20 @@ export interface ICalendarContext {
   setSelectedDate: (date: Date | undefined) => void;
   events: MeetingData[];
   setEvents: (events: MeetingData[]) => void;
-  searchByTitle: (title: string) => void;
-  allEvents: MeetingData[];
   filterByTags: (tag: string[]) => void;
   getEventsCount: (
     events?: MeetingData[],
     selectedDate?: Date,
     view?: TCalendarView,
   ) => number;
+  monthStart: Date;
+  monthEnd: Date;
+  setMonthStart: (date: Date) => void;
+  setMonthEnd: (date: Date) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  countryFilter: string;
+  setCountryFilter: (country: string) => void;
 }
 
 export const CalendarContext = createContext<ICalendarContext | undefined>(
@@ -45,13 +53,22 @@ interface CalendarProviderProps {
 
 export function CalendarProvider({
   children,
-  events = [],
   view = 'day',
 }: CalendarProviderProps) {
+  const [countryFilter, setCountryFilter] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date>(now);
+  const [monthStart, setMonthStart] = useState<Date>(
+    startOfMonth(selectedDate),
+  );
+  const [monthEnd, setMonthEnd] = useState<Date>(endOfMonth(selectedDate));
   const [selectedColors] = useState<TMeetingColor[]>([]);
-  const [data, setData] = useState<MeetingData[]>(events);
-  const [allEvents] = useState<MeetingData[]>(events);
+  const { data: meetings = [], isLoading } = useMeetings(
+    monthStart.toISOString(),
+    monthEnd.toISOString(),
+    searchQuery,
+  );
+  const [data, setData] = useState<MeetingData[]>(meetings);
   const [currentView, setCurrentView] = useState<TCalendarView>(view);
   const setView = (newView: TCalendarView) => {
     setCurrentView(newView);
@@ -60,17 +77,19 @@ export function CalendarProvider({
     if (!date) return;
     setSelectedDate(date);
   };
+  useEffect(() => {
+    setMonthStart(startOfMonth(selectedDate));
+    setMonthEnd(endOfMonth(selectedDate));
+  }, [selectedDate]);
 
-  const searchByTitle = async (title: string) => {
-    const meetings = await meetingRepository.getMeetings(
-      startDate,
-      endDate,
-      title,
-    );
-    setData(meetings);
-  };
+  useEffect(() => {
+    if (!isLoading) {
+      setData(meetings);
+    }
+  }, [meetings, isLoading]);
+
   const filterByTags = (selectedTags: string[]) => {
-    const filtered = events.filter((meeting: MeetingData) => {
+    const filtered = data.filter((meeting: MeetingData) => {
       if (!meeting.tags) return false;
 
       return selectedTags.some((tag) =>
@@ -110,10 +129,16 @@ export function CalendarProvider({
     selectedColors,
     events: data,
     setEvents: setData,
-    searchByTitle,
-    allEvents,
     filterByTags,
     getEventsCount,
+    monthStart,
+    monthEnd,
+    setMonthStart,
+    setMonthEnd,
+    searchQuery,
+    setSearchQuery,
+    countryFilter,
+    setCountryFilter,
   };
 
   return (

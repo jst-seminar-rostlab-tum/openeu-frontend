@@ -17,8 +17,7 @@ interface IProps {
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
-  const { selectedDate } = useCalendar();
-  const allEvents = [...multiDayEvents, ...singleDayEvents];
+  const { selectedDate, events } = useCalendar();
   const cells = getCalendarCells(selectedDate);
 
   const eventPositions = calculateMonthEventPositions(
@@ -48,7 +47,7 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
           <DayCell
             key={index}
             cell={cell}
-            events={allEvents}
+            events={events ?? []}
             eventPositions={eventPositions}
           />
         ))}

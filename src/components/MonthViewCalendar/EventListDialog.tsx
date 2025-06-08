@@ -78,10 +78,8 @@ export function EventListDialog({
                 },
               )}
             >
-
               <EventBullet color={randomColor} className="" />
               <div className="flex-1">
-
                 <p className="text-sm font-medium">{event.title}</p>
                 <div className="flex items-center gap-1">
                   <Badge variant="outline" className="text-white">

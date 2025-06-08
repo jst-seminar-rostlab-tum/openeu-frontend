@@ -30,23 +30,19 @@ import { useCalendar } from '@/domain/hooks/meetingHooks';
 export const MotionButton = motion.create(Button);
 
 export function CalendarHeader() {
-  const { view, setView, searchByTitle } = useCalendar();
+  const { view, setView, setSearchQuery } = useCalendar();
   const [searchText, setSearchText] = React.useState('');
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
 
-  const onKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
-      try {
-        searchByTitle(searchText);
-      } catch (error) {
-        console.error('Error fetching meetings:', error);
-      }
+      setSearchQuery(searchText);
     }
   };
+
   return (
     <div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">
       <motion.div

@@ -13,13 +13,13 @@ import { useFilteredEvents } from '@/operations/meeting/CalendarHelpers';
 export function CalendarBody() {
   const { view } = useCalendar();
 
-  const singleDayEvents = useFilteredEvents().filter((event: MeetingData) => {
+  const singleDayEvents = useFilteredEvents()?.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return isSameDay(startDate, endDate);
   });
 
-  const multiDayEvents = useFilteredEvents().filter((event: MeetingData) => {
+  const multiDayEvents = useFilteredEvents()?.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return !isSameDay(startDate, endDate);
@@ -37,8 +37,8 @@ export function CalendarBody() {
       >
         {view === 'month' && (
           <CalendarMonthView
-            singleDayEvents={singleDayEvents}
-            multiDayEvents={multiDayEvents}
+            singleDayEvents={singleDayEvents ?? []}
+            multiDayEvents={multiDayEvents ?? []}
           />
         )}
       </motion.div>
