@@ -1,5 +1,7 @@
 'use client';
 
+import { format, parseISO } from 'date-fns';
+
 import {
   Dialog,
   DialogContent,
@@ -22,13 +24,15 @@ export function NewsletterDialog({
 }: NewsletterDialogProps) {
   if (!item) return null;
 
+  const formattedDate = format(parseISO(item.date), 'PPP');
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="!w-2xl !max-w-6xl h-fit max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>{item.title}</DialogTitle>
           <DialogDescription className="flex items-center gap-2">
-            <span>{item.date}</span>
+            <span>{formattedDate}</span>
             <span>•</span>
             <span>{item.country}</span>
           </DialogDescription>

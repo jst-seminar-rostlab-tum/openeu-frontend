@@ -43,7 +43,7 @@ export default function InboxPage() {
     error,
   } = useNotifications(
     {
-      userId: 'd9199f68-2da4-4bc6-be54-44a49e2cea75',
+      userId: user?.id || '',
     },
     !!user,
   );
@@ -73,10 +73,10 @@ export default function InboxPage() {
     );
 
     // Map notifications with index
-    return sortedNotifications.map((notification, index) => ({
+    return sortedNotifications.map((notification) => ({
       id: notification.id.toString(),
-      title: notification.type ? `newsletter ${index + 1}.` : 'No title',
-      date: notification.sent_at, // Store original ISO string
+      title: 'Meeting Newsletter',
+      date: notification.sent_at,
       country: 'EU wide', // Backend doesn't provide country info yet
       relevanceScore: 0, // Backend doesn't provide relevance score yet
       message: notification.message,

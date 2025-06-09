@@ -63,7 +63,12 @@ export const createColumns = ({
       <DataTableColumnHeader column={column} title="Title" />
     ),
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue('title')}</div>
+      <div
+        className="font-medium cursor-pointer hover:text-blue-800 underline"
+        onClick={() => onView(row.original)}
+      >
+        {row.getValue('title')}
+      </div>
     ),
   },
   {
