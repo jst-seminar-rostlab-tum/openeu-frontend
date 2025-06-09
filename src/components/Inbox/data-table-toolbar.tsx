@@ -11,14 +11,12 @@ import { Input } from '@/components/ui/input';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  uniqueCountries: string[];
   onBulkArchive?: () => void;
   onBulkDelete?: () => void;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  uniqueCountries,
   onBulkArchive,
   onBulkDelete,
 }: DataTableToolbarProps<TData>) {
@@ -26,15 +24,17 @@ export function DataTableToolbar<TData>({
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
 
-  // Memoize country options to prevent recreation
-  const countryOptions = useMemo(
-    () =>
-      uniqueCountries.map((country) => ({
-        label: country,
-        value: country,
-      })),
-    [uniqueCountries],
-  );
+  // Get country options from TanStack Table's faceted values
+  const countryOptions = useMemo(() => {
+    const countryColumn = table.getColumn('country');
+    if (!countryColumn) return [];
+
+    const facetedValues = countryColumn.getFacetedUniqueValues();
+    return Array.from(facetedValues.keys()).map((country) => ({
+      label: country,
+      value: country,
+    }));
+  }, [table]);
 
   // Show bulk actions when items are selected
   if (selectedCount > 0) {

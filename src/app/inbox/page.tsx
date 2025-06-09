@@ -10,12 +10,13 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DataTablePagination } from '@/components/Inbox/data-table-pagination';
 import { DataTableToolbar } from '@/components/Inbox/data-table-toolbar';
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
+import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 import { useNotifications } from '@/domain/hooks/notificationsHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { ToastOperations } from '@/operations/toast/toastOperations';
@@ -27,7 +28,6 @@ export default function InboxPage() {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
-  // Get user from auth context
   const { user } = useAuth();
 
   // Fetch notifications with user ID
@@ -36,27 +36,34 @@ export default function InboxPage() {
     isLoading,
     error,
   } = useNotifications(
-    user?.id || '',
-    !!user, // Only fetch when user exists
+    {
+      userId: user?.id || '',
+    },
+    !!user,
   );
 
-  // Use notifications data directly
-  const data = useMemo(() => notifications || [], [notifications]);
-
-  // Get unique countries for filter options
-  const uniqueCountries = useMemo(() => {
-    try {
-      return Array.from(
-        new Set(data.map((item) => item.country).filter(Boolean)),
-      );
-    } catch {
+  // Handle errors with toast notifications
+  useEffect(() => {
+    if (error) {
       ToastOperations.showError({
-        title: 'Error',
-        message: `Error extracting unique countries.`,
+        title: 'Error Loading Notifications',
+        message: 'Failed to load your notifications. Please try again later.',
       });
-      return [];
     }
-  }, [data]);
+  }, [error]);
+
+  // Map notifications to InboxItem format
+  const data: InboxItem[] = useMemo(() => {
+    if (!notifications) return [];
+
+    return notifications.map((notification) => ({
+      id: notification.id.toString(),
+      title: notification.type || 'No title',
+      date: new Date(notification.sent_at).toLocaleDateString(),
+      country: 'EU wide', // Backend doesn't provide country info yet
+      relevanceScore: 0, // Backend doesn't provide relevance score yet
+    }));
+  }, [notifications]);
 
   // Action handlers
   const handleView = useCallback((itemId: string) => {
@@ -144,43 +151,12 @@ export default function InboxPage() {
     );
   }
 
-  // Handle error state
-  if (error) {
-    return (
-      <Section>
-        <h1 className="text-2xl font-bold">Inbox</h1>
-        <div className="text-center py-8">
-          <p className="text-red-500">Failed to load notifications</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Retry
-          </button>
-        </div>
-      </Section>
-    );
-  }
-
-  // Handle no user state
-  if (!user) {
-    return (
-      <Section>
-        <h1 className="text-2xl font-bold">Inbox</h1>
-        <div className="text-center py-8">
-          <p>Please log in to view your notifications</p>
-        </div>
-      </Section>
-    );
-  }
-
   return (
     <Section>
       <h1 className="text-2xl font-bold">Inbox</h1>
       <div className="space-y-2">
         <DataTableToolbar
           table={table}
-          uniqueCountries={uniqueCountries}
           onBulkArchive={handleBulkArchive}
           onBulkDelete={handleBulkDelete}
         />

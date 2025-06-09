@@ -1,11 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
-import { fetchNotifications } from '@/repositories/notificationRepository';
+import { Notification } from '@/domain/entities/notifications/generated-types';
+import { fetchBackendNotifications } from '@/repositories/notificationRepository';
 
-export const useNotifications = (userId: string, enabled = true) =>
-  useQuery<InboxItem[]>({
-    queryKey: ['notifications', userId],
-    queryFn: () => fetchNotifications(userId),
-    enabled: enabled && !!userId, // Only fetch if userId exists
+export interface NotificationQueryParams {
+  userId: string;
+  limit?: number;
+}
+
+export const useNotifications = (
+  props: NotificationQueryParams,
+  enabled = true,
+) =>
+  useQuery<Notification[]>({
+    queryKey: ['notifications', props],
+    queryFn: () => fetchBackendNotifications(props.userId),
+    enabled: enabled && !!props.userId,
   });
