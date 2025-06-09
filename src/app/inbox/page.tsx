@@ -58,11 +58,6 @@ export default function InboxPage() {
     }
   }, [error]);
 
-  // Reset pagination when data changes
-  useEffect(() => {
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  }, [notifications]);
-
   // Map notifications to InboxItem format
   const data: InboxItem[] = useMemo(() => {
     if (!notifications) return [];
@@ -132,6 +127,7 @@ export default function InboxPage() {
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
+    autoResetPageIndex: false,
     state: {
       rowSelection,
       columnVisibility,
