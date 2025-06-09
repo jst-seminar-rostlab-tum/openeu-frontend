@@ -1,4 +1,6 @@
 import { FilterModalState } from '@/domain/entities/FilterModalState';
+import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
+const { now } = getCurrentMonthRange();
 
 export default class FilterModalOperations {
   static getCountries(): string[] {
@@ -11,6 +13,7 @@ export default class FilterModalOperations {
       'Czech Republic',
       'Denmark',
       'Estonia',
+      'European Union',
       'Finland',
       'France',
       'Germany',
@@ -35,8 +38,8 @@ export default class FilterModalOperations {
 
   static getDefaultState(): FilterModalState {
     return {
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: now,
+      endDate: now,
       country: '',
       topics: [],
     };

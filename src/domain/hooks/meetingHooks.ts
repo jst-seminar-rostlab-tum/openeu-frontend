@@ -7,14 +7,25 @@ import {
   CalendarContext,
   ICalendarContext,
 } from '@/components/CalendarHeader/CalendarContext';
-import { DragDropContext } from '@/components/MonthViewCalendar/DragDropContext';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
-export const useMeetings = (enabled = true) =>
+export interface GetMeetingsQueryParams {
+  limit?: number;
+  /** @description Start datetime (ISO8601) */
+  start?: string | null;
+  /** @description End datetime (ISO8601) */
+  end?: string | null;
+  /** @description Search query using semantic similarity */
+  query?: string | null;
+  /** @description Filter by country (e.g., 'Austria', 'European Union') */
+  country?: string | null;
+}
+
+export const useMeetings = (props: GetMeetingsQueryParams, enabled = true) =>
   useQuery<MeetingData[]>({
-    queryKey: ['meetings'],
-    queryFn: meetingRepository.getMeetings,
+    queryKey: ['meetings', props],
+    queryFn: () => meetingRepository.getMeetings(props),
     enabled,
   });
 
@@ -22,13 +33,5 @@ export function useCalendar(): ICalendarContext {
   const context = useContext(CalendarContext);
   if (context === undefined)
     throw new Error('useCalendar must be used within a CalendarProvider.');
-  return context;
-}
-
-export function useDragDrop() {
-  const context = useContext(DragDropContext);
-  if (context === undefined) {
-    throw new Error('useDragDrop must be used within a DragDropProvider');
-  }
   return context;
 }
