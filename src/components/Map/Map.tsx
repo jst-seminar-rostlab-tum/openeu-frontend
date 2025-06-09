@@ -1,24 +1,21 @@
 'use client';
 
-import { GeoJSON } from 'geojson';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
-import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
+import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingCountByCountry } from '@/operations/map/MapOperations';
 
 import MapData from '../../../public/map.geo.json';
 
-type MeetingCountByCountry = typeof meetingsPerCountry;
-
-interface MapProps {
-  meetingCountByCountry: MeetingCountByCountry;
-}
-
-const MapComponent = dynamic(() => import('@/components/Map/MapComponent'), {
+const MapComponent = dynamic(() => import('@/components/map/MapComponent'), {
   ssr: false,
 });
 
-function MapInner({ meetingCountByCountry }: MapProps) {
+function MapInner() {
+  const { meetings } = useCalendar();
+  const meetingCountByCountry = useMeetingCountByCountry(meetings);
+
   return (
     <MapComponent
       mapData={MapData as GeoJSON.FeatureCollection}

@@ -9,12 +9,14 @@ import { Input } from '@/components/ui/input';
 interface SearchBarProps {
   value: string;
   onValueChange: (value: string) => void;
+  onSearch?: (value: string) => void;
   placeholder?: string;
 }
 
 export function SearchBar({
   value,
   onValueChange,
+  onSearch,
   placeholder,
 }: SearchBarProps) {
   const onChange = useCallback(
@@ -22,6 +24,15 @@ export function SearchBar({
       onValueChange(e.target.value);
     },
     [onValueChange],
+  );
+
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && onSearch) {
+        onSearch(value);
+      }
+    },
+    [onSearch, value],
   );
 
   return (
@@ -32,6 +43,7 @@ export function SearchBar({
         placeholder={placeholder || 'Search...'}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyDown}
         className="pl-8"
       />
     </div>

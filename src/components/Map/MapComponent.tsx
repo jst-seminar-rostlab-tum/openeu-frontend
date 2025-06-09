@@ -14,8 +14,8 @@ import {
   countryBorderStyle,
   europeanCountries,
   oceanBounds,
-} from '@/components/Map/constants';
-import { MapIndicator } from '@/components/Map/MapIndicator';
+} from '@/components/map/constants';
+import { MapIndicator } from '@/components/map/MapIndicator';
 import {
   Tooltip,
   TooltipContent,

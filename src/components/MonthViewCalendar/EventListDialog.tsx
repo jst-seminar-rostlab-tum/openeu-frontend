@@ -1,9 +1,10 @@
 import { format } from 'date-fns';
+import { Building, MapPin } from 'lucide-react';
 import React, { ReactNode } from 'react';
 
-import { TagBadge } from '@/components/calendar/TagBadge';
 import { dayCellVariants } from '@/components/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/MonthViewCalendar/EventBullet';
+import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -15,18 +16,22 @@ import { DialogHeader } from '@/components/ui/dialog';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
+import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
   date: Date;
   events: MeetingData[];
   MAX_VISIBLE_EVENTS?: number;
   children?: ReactNode;
+  endDate?: Date;
 }
+
 export function EventListDialog({
   date,
   events,
   MAX_VISIBLE_EVENTS = 3,
   children,
+  endDate,
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
@@ -53,48 +58,49 @@ export function EventListDialog({
                 className=""
               />
               <p className="text-sm font-medium">
-                Events on {format(date, 'EEEE, MMMM d, yyyy')}
+                {endDate
+                  ? `Events during ${format(date, 'HH:mm')} - ${format(endDate, 'HH:mm')}`
+                  : `Events on ${format(date, 'EEEE, MMMM d, yyyy')}`}
               </p>
             </div>
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
           {cellEvents.map((event) => (
-            <div
-              key={event.meeting_id}
-              className={cn(
-                'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
-                {
-                  [dayCellVariants({ color: event.color as TMeetingColor })]:
-                    true,
-                },
-              )}
-            >
-              <EventBullet color={event.color as TMeetingColor} className="" />
-              <div className="flex-1">
-                <p className="text-sm font-medium mb-2">{event.title}</p>
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {event.tags
-                    ?.slice(0, 3)
-                    .map((tag) => (
-                      <TagBadge
-                        key={tag}
-                        tag={tag}
-                        variant="outline"
-                        className="text-white"
-                      />
-                    ))}
-                  {event.tags?.length > 3 && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs font-medium text-white"
-                    >
-                      +{event.tags.length - 3}
+            <EventDetailsDialog key={event.meeting_id} event={event}>
+              <div
+                className={cn(
+                  'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
+                  {
+                    [dayCellVariants({ color: event.color as TMeetingColor })]:
+                      true,
+                  },
+                )}
+              >
+                <EventBullet
+                  color={event.color as TMeetingColor}
+                  className=""
+                />
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm font-medium">{event.title}</p>
+                  <div className="flex items-center gap-1">
+                    <Badge variant="outline" className="text-white">
+                      <Building className="shrink-0" />
+                      {getMeetingTypeShort(event.source_table)}
                     </Badge>
-                  )}
+                    <Badge variant="outline" className="text-white max-w-40">
+                      <MapPin className="shrink-0 w-3 h-3" />
+                      <span
+                        className="truncate min-w-0 direction-rtl text-left"
+                        title={getMeetingTypeShort(event.location)}
+                      >
+                        {getMeetingTypeShort(event.location)}
+                      </span>
+                    </Badge>
+                  </div>
                 </div>
               </div>
-            </div>
+            </EventDetailsDialog>
           ))}
         </div>
       </DialogContent>

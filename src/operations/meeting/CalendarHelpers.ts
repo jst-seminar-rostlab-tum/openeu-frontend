@@ -1,10 +1,14 @@
+'use client';
+
 import {
   addDays,
   addMonths,
   addWeeks,
   addYears,
   differenceInDays,
+  differenceInMinutes,
   eachDayOfInterval,
+  endOfDay,
   endOfMonth,
   endOfWeek,
   endOfYear,
@@ -19,19 +23,14 @@ import {
   startOfMonth,
   startOfWeek,
   startOfYear,
-  subDays,
-  subMonths,
-  subWeeks,
-  subYears,
 } from 'date-fns';
 
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
-import { dummyMeetings } from '@/operations/meeting/MeetingOperations';
 
 const FORMAT_STRING = 'MMM d, yyyy';
+export const COLORS = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
 
 export function rangeText(view: TCalendarView, date: Date): string {
   let start: Date;
@@ -68,41 +67,19 @@ export function navigateDate(
   view: TCalendarView,
   direction: 'previous' | 'next',
 ): Date {
-  const operations: Record<TCalendarView, (d: Date, n: number) => Date> = {
-    month: direction === 'next' ? addMonths : subMonths,
-    week: direction === 'next' ? addWeeks : subWeeks,
-    day: direction === 'next' ? addDays : subDays,
-    year: direction === 'next' ? addYears : subYears,
-    agenda: direction === 'next' ? addMonths : subMonths,
+  const amount = direction === 'next' ? 1 : -1;
+
+  const operations = {
+    day: (d: Date, amt: number) => addDays(d, amt),
+    week: (d: Date, amt: number) => addWeeks(d, amt),
+    month: (d: Date, amt: number) => addMonths(d, amt),
+    year: (d: Date, amt: number) => addYears(d, amt),
+    agenda: (d: Date, amt: number) => addMonths(d, amt),
   };
 
-  return operations[view](date, 1);
+  return operations[view](date, amount);
 }
 
-export function useFilteredEvents() {
-  const { events, selectedDate } = useCalendar();
-
-  return events.filter((event) => {
-    const itemStartDate = new Date(event.meeting_start_datetime);
-    const itemEndDate = new Date(event.meeting_end_datetime);
-
-    const monthStart = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      1,
-    );
-    const monthEnd = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth() + 1,
-      0,
-    );
-
-    const isInSelectedMonth =
-      itemStartDate <= monthEnd && itemEndDate >= monthStart;
-
-    return isInSelectedMonth;
-  });
-}
 export function getEventsCount(
   events: MeetingData[],
   date: Date,
@@ -272,37 +249,154 @@ export function calculateMonthEventPositions(
   }
 }
 
-export const getEvents = async () => dummyMeetings;
+export const getCurrentMonthRange = () => {
+  const now = new Date();
+  return {
+    startDate: startOfMonth(now).toISOString(),
+    endDate: endOfMonth(now).toISOString(),
+    now: now,
+  };
+};
 
-// Tag color utilities
-const TAG_COLORS = [
-  'bg-blue-100 text-blue-800 border-blue-200',
-  'bg-green-100 text-green-800 border-green-200',
-  'bg-purple-100 text-purple-800 border-purple-200',
-  'bg-yellow-100 text-yellow-800 border-yellow-200',
-  'bg-red-100 text-red-800 border-red-200',
-  'bg-indigo-100 text-indigo-800 border-indigo-200',
-  'bg-pink-100 text-pink-800 border-pink-200',
-  'bg-orange-100 text-orange-800 border-orange-200',
-  'bg-teal-100 text-teal-800 border-teal-200',
-  'bg-cyan-100 text-cyan-800 border-cyan-200',
-];
+// Meeting type mapping utilities
+export const MEETING_TYPE_MAPPING: Record<string, string> = {
+  mep_meetings: 'MEP',
+  ep_meetings: 'European Parliament',
+  austrian_parliament_meetings: 'Austrian Parliament',
+  belgian_parliament_meetings: 'Belgian Parliament',
+  ipex_events: 'IPEX Events',
+  mec_prep_bodies_meeting: 'MEC Prep-Bodies',
+  mec_summit_ministerial_meeting: 'MEC Summit/Ministerial',
+  polish_presidency_meeting: 'Polish Presidency',
+  spanish_commission_meetings: 'Spanish Commission',
+  weekly_agenda: 'Weekly Agenda',
+};
 
-function hashString(str: string): number {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i);
-    hash +=
-      (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
-  }
-  return hash >>> 0;
+/**
+ * Maps a source_table value to a human-readable meeting type
+ * @param sourceTable - The source_table value from the backend
+ * @returns Human-readable meeting type or the original value if not found
+ */
+export function getMeetingType(sourceTable?: string): string {
+  if (!sourceTable) return 'Unknown';
+  return MEETING_TYPE_MAPPING[sourceTable] || sourceTable;
 }
 
 /**
- * Maps a tag to a consistent color using hashing
+ * Gets the short version of meeting type for compact display
+ * @param sourceTable - The source_table value from the backend
+ * @returns Short meeting type or the original value if not found
  */
-export function getTagColor(tag: string): string {
-  const hash = hashString(tag);
-  const colorIndex = hash % TAG_COLORS.length;
-  return TAG_COLORS[colorIndex];
+export function getMeetingTypeShort(sourceTable?: string): string {
+  if (!sourceTable) return 'Unknown';
+
+  const shortMappings: Record<string, string> = {
+    mep_meetings: 'MEP',
+    ep_meetings: 'EP',
+    austrian_parliament_meetings: 'AT Parliament',
+    belgian_parliament_meetings: 'BE Parliament',
+    ipex_events: 'IPEX',
+    mec_prep_bodies_meeting: 'MEC Prep',
+    mec_summit_ministerial_meeting: 'MEC Summit',
+    polish_presidency_meeting: 'PL Presidency',
+    spanish_commission_meetings: 'ES Commission',
+    weekly_agenda: 'Weekly',
+  };
+
+  return (
+    shortMappings[sourceTable] ||
+    MEETING_TYPE_MAPPING[sourceTable] ||
+    sourceTable
+  );
 }
+
+export function groupEvents(dayEvents: MeetingData[]) {
+  const sortedEvents = dayEvents.sort(
+    (a, b) =>
+      parseISO(a.meeting_end_datetime).getTime() -
+      parseISO(b.meeting_start_datetime).getTime(),
+  );
+
+  const grouped = Object.groupBy(
+    sortedEvents,
+    ({ meeting_start_datetime, meeting_end_datetime }) => {
+      const start = parseISO(meeting_start_datetime);
+      const end = parseISO(meeting_end_datetime);
+      return start.toISOString() + '---' + end.toISOString();
+    },
+  );
+
+  const groups: MeetingData[][][] = [];
+  Object.entries(grouped).forEach(([key, value]) => {
+    const [start] = key.split('---');
+    const eventStart = parseISO(start);
+    let placed = false;
+
+    for (const group of groups) {
+      const lastEventInGroup = group[group.length - 1];
+      const lastEventEnd = parseISO(lastEventInGroup[0].meeting_end_datetime);
+
+      if (eventStart >= lastEventEnd) {
+        group.push(value!);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) groups.push([value!]);
+  });
+  return groups;
+}
+
+export function getEventBlockStyle(
+  event: MeetingData,
+  day: Date,
+  groupIndex: number,
+  groupSize: number,
+) {
+  const startDate = parseISO(event.meeting_start_datetime);
+  const dayStart = startOfDay(day); // Use startOfDay instead of manual reset
+  const eventStart = startDate < dayStart ? dayStart : startDate;
+  const startMinutes = differenceInMinutes(eventStart, dayStart);
+
+  const top = (startMinutes / 1440) * 100; // 1440 minutes in a day
+  const width = 100 / groupSize;
+  const left = groupIndex * width;
+
+  return { top: `${top}%`, width: `${width}%`, left: `${left}%` };
+}
+
+export function getColorFromId(meetingId: string) {
+  let hash = 0;
+  for (let i = 0; i < meetingId.length; i++) {
+    hash = meetingId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % COLORS.length;
+  return COLORS[index].toString();
+}
+
+// New functions from the incoming branch
+export const calculateStartDate = (start: Date, view: TCalendarView): Date => {
+  switch (view) {
+    case 'month':
+      return startOfMonth(start);
+    case 'week':
+      return startOfWeek(start);
+    case 'day':
+      return startOfDay(start);
+    default:
+      return start;
+  }
+};
+
+export const calculateEndDate = (start: Date, view: TCalendarView): Date => {
+  switch (view) {
+    case 'month':
+      return endOfMonth(start);
+    case 'week':
+      return endOfWeek(start);
+    case 'day':
+      return endOfDay(start);
+    default:
+      return start;
+  }
+};
