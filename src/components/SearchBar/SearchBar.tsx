@@ -1,6 +1,6 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import type React from 'react';
 import { useCallback } from 'react';
 
@@ -11,6 +11,7 @@ interface SearchBarProps {
   onValueChange: (value: string) => void;
   onSearch?: (value: string) => void;
   placeholder?: string;
+  isFetching?: boolean;
 }
 
 export function SearchBar({
@@ -18,6 +19,7 @@ export function SearchBar({
   onValueChange,
   onSearch,
   placeholder,
+  isFetching = false,
 }: SearchBarProps) {
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +48,13 @@ export function SearchBar({
         onKeyDown={onKeyDown}
         className="pl-8"
       />
+
+      {isFetching && (
+        <Loader2
+          className="absolute right-8 top-2.5 h-4 w-4 animate-spin text-gray-500"
+          aria-label="Loading"
+        />
+      )}
     </div>
   );
 }

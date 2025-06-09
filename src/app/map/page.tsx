@@ -6,27 +6,30 @@ import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
-import { Spinner } from '@/components/ui/spinner';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function MapPage() {
-  const { searchQuery, setSearchQuery, isLoading } = useCalendar();
+  const { searchQuery, setSearchQuery, isFetching } = useCalendar();
   const [displayValue, setDisplayValue] = useState(searchQuery);
 
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
       <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
-        {isLoading && <Spinner size="small" className="mx-2" />}
         <SearchBar
           value={displayValue}
           onValueChange={setDisplayValue}
           onSearch={setSearchQuery}
+          isFetching={isFetching}
           placeholder="Search meetings..."
         />
-        <FilterModal topics={topics} showCountryDropdown={false} />
+        <FilterModal
+          topics={topics}
+          showCountryDropdown={false}
+          showTopicDropdown={false}
+        />
       </Card>
     </div>
   );

@@ -37,6 +37,7 @@ export interface ICalendarContext {
   setSelectedCountry: (country: string) => void;
   meetings: MeetingData[];
   isLoading: boolean;
+  isFetching: boolean;
   isError: boolean;
   use24HourFormat: boolean;
   badgeVariant: 'dot' | 'colored';
@@ -84,7 +85,12 @@ export function CalendarProvider({
   const [filters, setFilters] = useState<GetMeetingsQueryParams>(getFilters());
 
   // Use TanStack Query for data fetching with the new API
-  const { data: rawMeetings = [], isLoading, isError } = useMeetings(filters);
+  const {
+    data: rawMeetings = [],
+    isLoading,
+    isFetching,
+    isError,
+  } = useMeetings(filters);
 
   // Add colors to meetings using getColorFromId
   const meetings = useMemo(() => {
@@ -167,6 +173,7 @@ export function CalendarProvider({
     setSelectedCountry: handleSetSelectedCountry,
     meetings,
     isLoading,
+    isFetching,
     isError,
     use24HourFormat: true,
     badgeVariant: 'colored' as const,
