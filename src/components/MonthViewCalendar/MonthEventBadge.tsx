@@ -92,6 +92,10 @@ export function MonthEventBadge({
 
   const renderBadgeText = ['first', 'none'].includes(position);
 
+  const formattedTime = formatTime(
+    new Date(event.meeting_start_datetime),
+    true,
+  );
   const color = event.color as VariantProps<typeof eventBadgeVariants>['color'];
 
   const eventBadgeClasses = cn(
@@ -115,11 +119,7 @@ export function MonthEventBadge({
           )}
         </div>
 
-        {renderBadgeText && (
-          <span>
-            {formatTime(new Date(event.meeting_start_datetime), true)}
-          </span>
-        )}
+        {renderBadgeText && <span>{formattedTime}</span>}
       </div>
     </EventDetailsDialog>
   );

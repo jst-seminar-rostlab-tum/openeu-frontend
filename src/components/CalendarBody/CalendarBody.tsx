@@ -2,31 +2,77 @@
 
 import { isSameDay, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useEffect } from 'react';
 
+import { CalendarSkeleton } from '@/components/CalendarSkeleton/CalendarSkeleton';
+import { CalendarDayView } from '@/components/DayViewCalendar/DayViewCalendar';
 import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalendar';
+import { CalendarWeekView } from '@/components/WeekViewCalendar/WeekViewCalendar';
 import { fadeIn, transition } from '@/domain/animations';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
-import { useFilteredEvents } from '@/operations/meeting/CalendarHelpers';
+import { TCalendarView } from '@/domain/types/calendar/types';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export function CalendarBody() {
-  const { view } = useCalendar();
+  const { view, isLoading, isError, meetings } = useCalendar();
 
-  const singleDayEvents = useFilteredEvents().filter((event: MeetingData) => {
+  useEffect(() => {
+    if (isError) {
+      ToastOperations.showError({
+        title: 'Failed to Load Meetings',
+        message:
+          'Unable to fetch meeting data. Please check your connection and try again.',
+      });
+    }
+  }, [isError]);
+
+  if (isLoading) {
+    return <CalendarSkeleton view={view} />;
+  }
+
+  const safeEvents = isError ? [] : meetings;
+
+  const singleDayEvents = safeEvents.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return isSameDay(startDate, endDate);
   });
 
-  const multiDayEvents = useFilteredEvents().filter((event: MeetingData) => {
+  const multiDayEvents = safeEvents.filter((event: MeetingData) => {
     const startDate = parseISO(event.meeting_start_datetime);
     const endDate = parseISO(event.meeting_end_datetime);
     return !isSameDay(startDate, endDate);
   });
 
+  const calendarView = (view: TCalendarView) => {
+    switch (view) {
+      case 'month':
+        return (
+          <CalendarMonthView
+            singleDayEvents={singleDayEvents}
+            multiDayEvents={multiDayEvents}
+          />
+        );
+      case 'day':
+        return (
+          <CalendarDayView
+            singleDayEvents={singleDayEvents}
+            multiDayEvents={multiDayEvents}
+          />
+        );
+      case 'week':
+        return (
+          <CalendarWeekView
+            singleDayEvents={singleDayEvents}
+            multiDayEvents={multiDayEvents}
+          />
+        );
+    }
+  };
+
   return (
-    <div className=" w-full overflow-scroll relative]">
+    <div className="w-full overflow-scroll relative">
       <motion.div
         key={view}
         initial="initial"
@@ -35,12 +81,7 @@ export function CalendarBody() {
         variants={fadeIn}
         transition={transition}
       >
-        {view === 'month' && (
-          <CalendarMonthView
-            singleDayEvents={singleDayEvents}
-            multiDayEvents={multiDayEvents}
-          />
-        )}
+        {calendarView(view)}
       </motion.div>
     </div>
   );

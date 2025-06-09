@@ -67,7 +67,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
       <DroppableArea date={date}>
         <motion.span
           className={cn(
-            'h-6 w-6 px-1 flex translate-x-1 items-center justify-center rounded-full text-xs font-semibold lg:px-2 mb-1', // mb-0.5 here, always applied
+            'h-6 w-6 px-1 flex translate-x-1 items-center justify-center rounded-full text-xs font-semibold lg:px-2 mb-1',
             !currentMonth && 'text-muted-foreground',
             isToday(date) && ' bg-primary text-primary-foreground',
           )}
