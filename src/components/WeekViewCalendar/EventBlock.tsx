@@ -102,12 +102,12 @@ export function EventBlock({ event, className }: IProps) {
           </p>
         )}
 
-        <Badge variant="outline" className="text-white">
+        <Badge variant="outline" className="dark:text-white">
           <Building className="shrink-0" />
 
           {getMeetingTypeShort(event.source_table)}
         </Badge>
-        <Badge variant="outline" className="text-white max-w-40">
+        <Badge variant="outline" className="dark:text-white max-w-40">
           <MapPin className="shrink-0 w-3 h-3" />
           <span
             className="truncate min-w-0 direction-rtl text-left"
