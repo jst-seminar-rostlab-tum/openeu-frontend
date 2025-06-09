@@ -68,7 +68,7 @@ export default function MapComponent({
   const isDarkMode = theme === 'dark';
   const countryFill = isDarkMode ? '#1E293B' : '#E2E8F0';
   const countryBorder = isDarkMode ? '#334155' : '#64748B';
-  const { data: meetings } = useMeetings();
+  const { data: meetings } = useMeetings({});
   const [hoveredFeature, setHoveredFeature] = useState<geojson.Feature | null>(
     null,
   );
