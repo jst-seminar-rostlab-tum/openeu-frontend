@@ -2,33 +2,34 @@
 
 import { useState } from 'react';
 
-import { CalendarProvider } from '@/components/CalendarHeader/CalendarContext';
 import FilterModal from '@/components/FilterModal/FilterModal';
-import Map from '@/components/Map/Map';
+import Map from '@/components/map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
+import { useCalendar } from '@/domain/hooks/meetingHooks';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function MapPage() {
-  const [searchValue, setSearchValue] = useState('');
-
-  const handleSearchChange = (value: string) => {
-    setSearchValue(value);
-  };
+  const { searchQuery, setSearchQuery, isFetching } = useCalendar();
+  const [displayValue, setDisplayValue] = useState(searchQuery);
 
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
       <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
         <SearchBar
-          value={searchValue}
-          onValueChange={handleSearchChange}
-          placeholder="Search"
+          value={displayValue}
+          onValueChange={setDisplayValue}
+          onSearch={setSearchQuery}
+          isFetching={isFetching}
+          placeholder="Search meetings..."
         />
-        <CalendarProvider>
-          <FilterModal topics={topics} showCountryDropdown={false} />
-        </CalendarProvider>
+        <FilterModal
+          topics={topics}
+          showCountryDropdown={false}
+          showTopicDropdown={false}
+        />
       </Card>
     </div>
   );

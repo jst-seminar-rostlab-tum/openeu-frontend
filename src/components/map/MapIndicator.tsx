@@ -21,7 +21,13 @@ export function MapIndicator({
   const [scale, setScale] = useState(1);
 
   const bgClass =
-    count < 6 ? 'bg-lime-500' : count > 10 ? 'bg-red-500' : 'bg-orange-400';
+    count === 0
+      ? 'bg-gray-500'
+      : count < 6
+        ? 'bg-lime-500'
+        : count > 10
+          ? 'bg-red-500'
+          : 'bg-orange-400';
 
   useMapEvents({
     zoomend(e) {

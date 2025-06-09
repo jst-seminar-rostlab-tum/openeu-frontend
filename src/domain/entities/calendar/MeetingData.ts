@@ -8,5 +8,7 @@ export interface MeetingData {
   description: string;
   tags: string[];
   color?: string;
+  similarity?: number;
+  exact_location?: string;
   source_table?: string;
 }

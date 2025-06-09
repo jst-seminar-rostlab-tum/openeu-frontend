@@ -2,8 +2,9 @@
 
 import { Globe } from 'lucide-react';
 
+import { CalendarProvider } from '@/components/CalendarHeader/CalendarContext';
 import FeatureCard from '@/components/home/features/FeatureCard';
-import Map from '@/components/Map/Map';
+import Map from '@/components/map/Map';
 
 export default function MapFeature() {
   return (
@@ -13,7 +14,9 @@ export default function MapFeature() {
       description="Visualize activity across EU member states"
     >
       <div className="w-full h-50 ">
-        <Map />
+        <CalendarProvider>
+          <Map />
+        </CalendarProvider>
       </div>
     </FeatureCard>
   );

@@ -8,13 +8,14 @@ import {
   isSameYear,
   parseISO,
 } from 'date-fns';
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import {
   GetMeetingsQueryParams,
   useMeetings,
 } from '@/domain/hooks/meetingHooks';
+import { useUrlSync } from '@/domain/hooks/useCalendarUrlSync';
 import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
 import {
   calculateEndDate,
@@ -37,6 +38,7 @@ export interface ICalendarContext {
   setSelectedCountry: (country: string) => void;
   meetings: MeetingData[];
   isLoading: boolean;
+  isFetching: boolean;
   isError: boolean;
   use24HourFormat: boolean;
   badgeVariant: 'dot' | 'colored';
@@ -62,16 +64,45 @@ export function CalendarProvider({
   children,
   view = 'month',
 }: CalendarProviderProps) {
-  const [selectedDate, setSelectedDate] = useState<Date>(now);
+  const { urlState, syncFiltersToUrl } = useUrlSync();
+
+  // Initialize state from URL (single source of truth pattern)
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    return urlState.startDate || now;
+  });
+
   const [currentView, setCurrentView] = useState<TCalendarView>(view);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCountry, setSelectedCountry] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>(urlState.searchQuery);
+  const [selectedCountry, setSelectedCountry] = useState<string>(
+    urlState.selectedCountry,
+  );
   const [selectedColors] = useState<TMeetingColor[]>([]);
 
-  // Generate filters based on current view and selected date
-  const getFilters = (): GetMeetingsQueryParams => {
-    const start = calculateStartDate(selectedDate, currentView).toISOString();
-    const end = calculateEndDate(selectedDate, currentView).toISOString();
+  // Track if we're using a custom date range (from FilterModal)
+  const [isCustomRange, setIsCustomRange] = useState<boolean>(
+    Boolean(urlState.startDate && urlState.endDate),
+  );
+  const [customStart, setCustomStart] = useState<string | null>(
+    urlState.startDate?.toISOString() || null,
+  );
+  const [customEnd, setCustomEnd] = useState<string | null>(
+    urlState.endDate?.toISOString() || null,
+  );
+
+  // Memoized filter calculation following Medium article pattern
+  const filters = useMemo((): GetMeetingsQueryParams => {
+    let start: string;
+    let end: string;
+
+    if (isCustomRange && customStart && customEnd) {
+      // Use custom date range from FilterModal
+      start = customStart;
+      end = customEnd;
+    } else {
+      // Use calculated range from selectedDate + view for normal navigation
+      start = calculateStartDate(selectedDate, currentView).toISOString();
+      end = calculateEndDate(selectedDate, currentView).toISOString();
+    }
 
     return {
       start,
@@ -79,12 +110,28 @@ export function CalendarProvider({
       query: searchQuery || undefined,
       country: selectedCountry || undefined,
     };
-  };
+  }, [
+    selectedDate,
+    currentView,
+    searchQuery,
+    selectedCountry,
+    isCustomRange,
+    customStart,
+    customEnd,
+  ]);
 
-  const [filters, setFilters] = useState<GetMeetingsQueryParams>(getFilters());
+  // Single effect: internal state changes → URL params update
+  useEffect(() => {
+    syncFiltersToUrl(filters);
+  }, [filters, syncFiltersToUrl]);
 
   // Use TanStack Query for data fetching with the new API
-  const { data: rawMeetings = [], isLoading, isError } = useMeetings(filters);
+  const {
+    data: rawMeetings = [],
+    isLoading,
+    isFetching,
+    isError,
+  } = useMeetings(filters);
 
   // Add colors to meetings using getColorFromId
   const meetings = useMemo(() => {
@@ -109,31 +156,50 @@ export function CalendarProvider({
     });
   }, [rawMeetings]);
 
+  // Clean handler functions following Medium article pattern
   const setView = (newView: TCalendarView) => {
     setCurrentView(newView);
-    // Update filters when view changes
-    const newStart = calculateStartDate(selectedDate, newView).toISOString();
-    const newEnd = calculateEndDate(selectedDate, newView).toISOString();
-    setFilters((prev) => ({ ...prev, start: newStart, end: newEnd }));
+    // Clear custom date range when changing views
+    setIsCustomRange(false);
+    setCustomStart(null);
+    setCustomEnd(null);
   };
 
   const handleSelectDate = (date: Date | undefined) => {
     if (!date) return;
     setSelectedDate(date);
-    // Update filters when date changes
-    const start = calculateStartDate(date, currentView).toISOString();
-    const end = calculateEndDate(date, currentView).toISOString();
-    setFilters((prev) => ({ ...prev, start, end }));
+    // Clear custom date range when navigating dates
+    setIsCustomRange(false);
+    setCustomStart(null);
+    setCustomEnd(null);
   };
 
   const handleSetSearchQuery = (query: string) => {
     setSearchQuery(query);
-    setFilters((prev) => ({ ...prev, query: query || undefined }));
   };
 
   const handleSetSelectedCountry = (country: string) => {
     setSelectedCountry(country);
-    setFilters((prev) => ({ ...prev, country: country || undefined }));
+  };
+
+  const handleSetFilters = (newFilters: GetMeetingsQueryParams) => {
+    // Update basic state
+    if (newFilters.query !== undefined) {
+      setSearchQuery(newFilters.query || '');
+    }
+    if (newFilters.country !== undefined) {
+      setSelectedCountry(newFilters.country || '');
+    }
+    if (newFilters.start) {
+      setSelectedDate(new Date(newFilters.start));
+    }
+
+    // Handle custom date ranges from FilterModal
+    if (newFilters.start && newFilters.end) {
+      setIsCustomRange(true);
+      setCustomStart(newFilters.start);
+      setCustomEnd(newFilters.end);
+    }
   };
 
   function getEventsCount(
@@ -167,11 +233,12 @@ export function CalendarProvider({
     setSelectedCountry: handleSetSelectedCountry,
     meetings,
     isLoading,
+    isFetching,
     isError,
     use24HourFormat: true,
     badgeVariant: 'colored' as const,
     filters,
-    setFilters,
+    setFilters: handleSetFilters,
     getEventsCount,
   };
 

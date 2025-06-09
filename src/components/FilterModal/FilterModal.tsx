@@ -32,12 +32,14 @@ const { now } = getCurrentMonthRange();
 interface FilterModalProps {
   topics?: string[];
   showCountryDropdown?: boolean;
+  showTopicDropdown?: boolean;
   showDateDropdown?: boolean;
 }
 
 export default function FilterModal({
   topics = [],
   showCountryDropdown = true,
+  showTopicDropdown = true,
   showDateDropdown = true,
 }: FilterModalProps) {
   const [filterState, setFilterState] = useState<FilterModalState>({
@@ -46,7 +48,8 @@ export default function FilterModal({
     country: '',
     topics: [],
   });
-  const { selectedCountry, setSelectedCountry } = useCalendar();
+  const { selectedCountry, setSelectedCountry, setFilters, filters } =
+    useCalendar();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>(
     FilterModalOperations.getDefaultState(),
@@ -99,13 +102,33 @@ export default function FilterModal({
 
   const handleClear = () => {
     multiSelectRef.current?.clearHandler();
-    setLocalState(FilterModalOperations.getDefaultState());
+    const defaultState = FilterModalOperations.getDefaultState();
+    setLocalState(defaultState);
     setSelectedCountry('');
+
+    // Reset CalendarContext filters to default date range
+    setFilters({
+      ...filters,
+      start: (defaultState.startDate || now).toISOString(),
+      end: (defaultState.endDate || now).toISOString(),
+      country: undefined,
+    });
   };
 
   const handleApply = () => {
     setFilterState(localState);
     setSelectedCountry(localState.country || '');
+
+    // Update CalendarContext filters with new date range
+    if (localState.startDate && localState.endDate) {
+      setFilters({
+        ...filters,
+        start: localState.startDate.toISOString(),
+        end: localState.endDate.toISOString(),
+        country: localState.country || undefined,
+      });
+    }
+
     setDialogOpen(false);
   };
 
@@ -163,18 +186,19 @@ export default function FilterModal({
               </SelectContent>
             </Select>
           )}
-
-          <MultiSelect
-            ref={multiSelectRef}
-            options={topicOptions}
-            value={localState.topics}
-            defaultValue={localState.topics}
-            onValueChange={handleTopicsChange}
-            placeholder="Topics"
-            variant="inverted"
-            maxCount={1}
-            className={showCountryDropdown ? '' : '!w-full'}
-          />
+          {showTopicDropdown && (
+            <MultiSelect
+              ref={multiSelectRef}
+              options={topicOptions}
+              value={localState.topics}
+              defaultValue={localState.topics}
+              onValueChange={handleTopicsChange}
+              placeholder="Topics"
+              variant="inverted"
+              maxCount={1}
+              className={showCountryDropdown ? '' : '!w-full'}
+            />
+          )}
         </div>
         <DialogFooter className="!flex-row !justify-between">
           <Button variant="link" onClick={handleClear} className="underline">
