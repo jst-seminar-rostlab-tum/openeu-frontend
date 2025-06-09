@@ -26,6 +26,8 @@ export async function signup(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const topics = formData.get('topics') as string;
+  const url = await getCurrentURL();
+  console.log('Current URL:', url);
 
   const { error, data } = await supabase.auth.signUp({
     email,
@@ -37,7 +39,7 @@ export async function signup(formData: FormData) {
         company: company.trim(),
         country,
       },
-      emailRedirectTo: `${getCurrentURL()}auth/confirm`,
+      emailRedirectTo: `${url}auth/confirm`,
     },
   });
 
