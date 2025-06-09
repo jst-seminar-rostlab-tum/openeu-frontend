@@ -1,10 +1,12 @@
 'use client';
 
-import { Loader2, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import type React from 'react';
 import { useCallback } from 'react';
 
 import { Input } from '@/components/ui/input';
+
+import { Spinner } from '../ui/spinner';
 
 interface SearchBarProps {
   value: string;
@@ -50,10 +52,7 @@ export function SearchBar({
       />
 
       {isFetching && (
-        <Loader2
-          className="absolute right-8 top-2.5 h-4 w-4 animate-spin text-gray-500"
-          aria-label="Loading"
-        />
+        <Spinner className="absolute right-8 top-2.5" size="xsmall" />
       )}
     </div>
   );

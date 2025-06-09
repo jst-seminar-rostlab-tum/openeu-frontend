@@ -48,7 +48,8 @@ export default function FilterModal({
     country: '',
     topics: [],
   });
-  const { selectedCountry, setSelectedCountry } = useCalendar();
+  const { selectedCountry, setSelectedCountry, setFilters, filters } =
+    useCalendar();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>(
     FilterModalOperations.getDefaultState(),
@@ -101,13 +102,33 @@ export default function FilterModal({
 
   const handleClear = () => {
     multiSelectRef.current?.clearHandler();
-    setLocalState(FilterModalOperations.getDefaultState());
+    const defaultState = FilterModalOperations.getDefaultState();
+    setLocalState(defaultState);
     setSelectedCountry('');
+
+    // Reset CalendarContext filters to default date range
+    setFilters({
+      ...filters,
+      start: (defaultState.startDate || now).toISOString(),
+      end: (defaultState.endDate || now).toISOString(),
+      country: undefined,
+    });
   };
 
   const handleApply = () => {
     setFilterState(localState);
     setSelectedCountry(localState.country || '');
+
+    // Update CalendarContext filters with new date range
+    if (localState.startDate && localState.endDate) {
+      setFilters({
+        ...filters,
+        start: localState.startDate.toISOString(),
+        end: localState.endDate.toISOString(),
+        country: localState.country || undefined,
+      });
+    }
+
     setDialogOpen(false);
   };
 
