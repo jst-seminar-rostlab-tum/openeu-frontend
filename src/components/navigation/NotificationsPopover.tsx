@@ -19,10 +19,9 @@ export function NotificationsPopover() {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
 
-  // Fetch notifications with user ID
   const { data: notifications } = useNotifications(
     {
-      userId: 'd9199f68-2da4-4bc6-be54-44a49e2cea75',
+      userId: user?.id || '',
     },
     !!user,
   );
@@ -62,14 +61,12 @@ export function NotificationsPopover() {
         <ScrollArea className="h-[300px] mt-2">
           <div className="flex flex-col gap-1 px-2">
             {topNotifications.length > 0 ? (
-              topNotifications.map((notification, index) => (
+              topNotifications.map((notification) => (
                 <div key={notification.id}>
                   <div className="flex items-center justify-between py-1">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">
-                        {notification.type
-                          ? `newsletter ${topNotifications.length - index}.`
-                          : 'No title'}
+                        {notification.type ?? 'No title'}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(notification.sent_at).toLocaleDateString()}
