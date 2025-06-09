@@ -188,7 +188,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
             </div>
           ) : (
             <p className="p-4 text-center text-sm italic text-t-tertiary">
-              No appointments or consultations at the moment
+              No meeting at the moment
             </p>
           )}
 
