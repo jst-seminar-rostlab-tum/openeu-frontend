@@ -14,7 +14,7 @@ export default function MapFeature() {
       description="Visualize activity across EU member states"
     >
       <div className="w-full h-50 ">
-        <CalendarProvider>
+        <CalendarProvider updateUrl={false}>
           <Map />
         </CalendarProvider>
       </div>
