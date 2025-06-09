@@ -17,7 +17,7 @@ import {
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 
 interface ActionsProps {
-  onView: (itemId: string) => void;
+  onView: (item: InboxItem) => void;
   onArchive: (itemId: string) => void;
   onDelete: (itemId: string) => void;
 }
@@ -129,7 +129,7 @@ export const createColumns = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => onView(item.id)}>
+            <DropdownMenuItem onClick={() => onView(item)}>
               <Eye className="mr-2 h-4 w-4" />
               View
             </DropdownMenuItem>

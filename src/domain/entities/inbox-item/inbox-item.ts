@@ -4,4 +4,5 @@ export type InboxItem = {
   date: string;
   country: string;
   relevanceScore: number;
+  message: string | null;
 };

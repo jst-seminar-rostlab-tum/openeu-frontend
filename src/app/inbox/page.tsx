@@ -14,11 +14,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DataTablePagination } from '@/components/Inbox/data-table-pagination';
 import { DataTableToolbar } from '@/components/Inbox/data-table-toolbar';
+import { NewsletterDialog } from '@/components/Inbox/newsletter-dialog';
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 import { useNotifications } from '@/domain/hooks/notificationsHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
+import { useNewsletterDialog } from '@/domain/hooks/useNewsletterDialog';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 import { createColumns } from './columns';
@@ -27,6 +29,10 @@ import { DataTable } from './data-table';
 export default function InboxPage() {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const { user } = useAuth();
 
@@ -37,7 +43,7 @@ export default function InboxPage() {
     error,
   } = useNotifications(
     {
-      userId: user?.id || '',
+      userId: 'd9199f68-2da4-4bc6-be54-44a49e2cea75',
     },
     !!user,
   );
@@ -52,26 +58,42 @@ export default function InboxPage() {
     }
   }, [error]);
 
+  // Reset pagination when data changes
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [notifications]);
+
   // Map notifications to InboxItem format
   const data: InboxItem[] = useMemo(() => {
     if (!notifications) return [];
 
-    return notifications.map((notification) => ({
+    // Sort notifications by date in descending order
+    const sortedNotifications = [...notifications].sort(
+      (a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime(),
+    );
+
+    // Map notifications with index
+    return sortedNotifications.map((notification, index) => ({
       id: notification.id.toString(),
-      title: notification.type || 'No title',
+      title: notification.type ? `newsletter ${index + 1}.` : 'No title',
       date: new Date(notification.sent_at).toLocaleDateString(),
       country: 'EU wide', // Backend doesn't provide country info yet
       relevanceScore: 0, // Backend doesn't provide relevance score yet
+      message: notification.message,
     }));
   }, [notifications]);
 
+  // Custom hook for dialog management
+  const { selectedItem, isOpen, openDialog, closeDialog } =
+    useNewsletterDialog();
+
   // Action handlers
-  const handleView = useCallback((itemId: string) => {
-    ToastOperations.showInfo({
-      title: 'Info',
-      message: `Viewing item: ${itemId}`,
-    });
-  }, []);
+  const handleView = useCallback(
+    (item: InboxItem) => {
+      openDialog(item);
+    },
+    [openDialog],
+  );
 
   const handleArchive = useCallback((itemId: string) => {
     ToastOperations.showInfo({
@@ -109,9 +131,11 @@ export default function InboxPage() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     state: {
       rowSelection,
       columnVisibility,
+      pagination,
     },
   });
 
@@ -163,6 +187,11 @@ export default function InboxPage() {
         <DataTable table={table} columns={columns} />
         <DataTablePagination table={table} />
       </div>
+      <NewsletterDialog
+        item={selectedItem}
+        open={isOpen}
+        onOpenChange={closeDialog}
+      />
     </Section>
   );
 }
