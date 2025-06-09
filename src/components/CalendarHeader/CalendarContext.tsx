@@ -91,7 +91,10 @@ export function CalendarProvider({
     return rawMeetings.map((meeting) => {
       // Ensure meeting has valid end time
       const processedMeeting = { ...meeting };
-      if (!meeting.meeting_end_datetime) {
+      if (
+        !meeting.meeting_end_datetime ||
+        meeting.meeting_start_datetime == meeting.meeting_end_datetime
+      ) {
         const startTime = parseISO(meeting.meeting_start_datetime);
         const endTime = addHours(startTime, 1.5);
         processedMeeting.meeting_end_datetime = endTime.toISOString();
