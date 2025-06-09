@@ -4,6 +4,7 @@ import { isSameDay, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
 
+import { CalendarSkeleton } from '@/components/CalendarSkeleton/CalendarSkeleton';
 import { CalendarDayView } from '@/components/DayViewCalendar/DayViewCalendar';
 import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalendar';
 import { CalendarWeekView } from '@/components/WeekViewCalendar/WeekViewCalendar';
@@ -14,7 +15,7 @@ import { TCalendarView } from '@/domain/types/calendar/types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export function CalendarBody() {
-  const { view, isError, meetings } = useCalendar();
+  const { view, isLoading, isError, meetings } = useCalendar();
 
   useEffect(() => {
     if (isError) {
@@ -25,6 +26,10 @@ export function CalendarBody() {
       });
     }
   }, [isError]);
+
+  if (isLoading) {
+    return <CalendarSkeleton view={view} />;
+  }
 
   const safeEvents = isError ? [] : meetings;
 
