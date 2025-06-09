@@ -110,17 +110,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <Tag className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">Tags</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {event.tags?.length ? (
-                    event.tags.map((tag) => (
-                      <TagBadge key={tag}>{tag}</TagBadge>
-                    ))
-                  ) : (
-                    <span className="text-sm text-muted-foreground">
-                      No tags
-                    </span>
-                  )}
-                </div>
+                <p className="text-sm text-muted-foreground">{event.topic}</p>
               </div>
             </div>
           </div>
