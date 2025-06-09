@@ -27,7 +27,6 @@ export async function signup(formData: FormData) {
   const password = formData.get('password') as string;
   const topics = formData.get('topics') as string;
   const url = await getCurrentURL();
-  console.log('Current URL:', url);
 
   const { error, data } = await supabase.auth.signUp({
     email,
