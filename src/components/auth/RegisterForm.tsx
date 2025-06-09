@@ -8,13 +8,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { signup } from '@/domain/actions/register';
 import { cn } from '@/lib/utils';
 
@@ -30,6 +24,7 @@ export function RegisterForm({
   ];
 
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [redraw, setRedraw] = useState(false);
 
@@ -85,19 +80,28 @@ export function RegisterForm({
           />
         </div>
         <div className="grid gap-3">
-          <Label>Country</Label>
-          <Select name="country" disabled={loading}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ger">Germany</SelectItem>
-              <SelectItem value="aut">Austria</SelectItem>
-              <SelectItem value="it">Italy</SelectItem>
-            </SelectContent>
-          </Select>
+          <Label>Countries of interest</Label>
+          <input
+            type="hidden"
+            value={selectedCountries.join(',')}
+            name="country"
+          />
+          <MultiSelect
+            options={[
+              { label: 'Germany', value: 'de' },
+              { label: 'Spain', value: 'es' },
+              { label: 'Austria', value: 'at' },
+              { label: 'Belgium', value: 'be' },
+              { label: 'Poland', value: 'po' },
+            ]}
+            value={selectedCountries}
+            onValueChange={setSelectedCountries}
+            placeholder="Select countries"
+            variant="inverted"
+            disabled={loading}
+          />
         </div>
-        <div className="grid gap-3">
+        <div className="hidden gap-3">
           <Label>Topics</Label>
           <input type="hidden" value={selectedTopics.join(',')} name="topics" />
           <RadioGroup
@@ -136,7 +140,7 @@ export function RegisterForm({
           </RadioGroup>
         </div>
         <div className="grid gap-3 mt-10">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">E-Mail</Label>
           <Input
             id="email"
             type="email"

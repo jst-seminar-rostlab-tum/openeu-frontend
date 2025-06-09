@@ -11,17 +11,19 @@ export default async function Page(props: {
   const error = decodeURIComponent(searchParams?.error || '');
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="relative hidden lg:flex justify-center items-center">
+      <div className="hidden lg:flex justify-center items-center h-screen sticky top-0 left-0">
         <div className="justify-center items-center flex flex-col">
           <Image
-            src="/project-europe.png"
+            src="/project-europe-no-bg.png"
             alt="Project Europe"
             className="object-fit dark:brightness-[0.2] dark:grayscale mb-20 dark:invert"
-            width={500}
-            height={280}
+            width={450}
+            height={149}
           />
-          <p className="font-light text-lg">
-            Create your free account and never miss an eu legal agreement
+          <p className="font-light text-lg text-center px-10">
+            OpenEU transforms how citizens, businesses, and organizations engage
+            with and participate in the EU, ensuring transparency and
+            accessibility across all member states.
           </p>
         </div>
       </div>
