@@ -6,6 +6,7 @@ import { useCallback, useMemo } from 'react';
 import { GetMeetingsQueryParams } from './meetingHooks';
 
 interface UrlState {
+  selectedTopics: string[];
   searchQuery: string;
   selectedCountry: string;
   startDate: Date | null;
@@ -25,6 +26,9 @@ export function useUrlSync() {
   const urlState = useMemo((): UrlState => {
     const searchQuery = searchParams.get('q') || '';
     const selectedCountry = searchParams.get('country') || '';
+    const selectedTopics = searchParams.get('topics')
+      ? searchParams.get('topics')!.split(',').filter(Boolean)
+      : [];
 
     // Safe date parsing with validation (prevents crashes from malformed URLs)
     let startDate: Date | null = null;
@@ -52,6 +56,7 @@ export function useUrlSync() {
       selectedCountry,
       startDate,
       endDate,
+      selectedTopics,
     };
   }, [searchParams]);
 

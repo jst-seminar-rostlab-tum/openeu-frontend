@@ -11,4 +11,5 @@ export interface MeetingData {
   similarity?: number;
   exact_location?: string;
   source_table?: string;
+  topic?: string;
 }

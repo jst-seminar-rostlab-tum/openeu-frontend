@@ -35,6 +35,8 @@ export interface ICalendarContext {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
+  selectedTopics: string[];
+  setSelectedTopics: (topics: string[]) => void;
   setSelectedCountry: (country: string) => void;
   meetings: MeetingData[];
   isLoading: boolean;
@@ -76,6 +78,10 @@ export function CalendarProvider({
   const [selectedCountry, setSelectedCountry] = useState<string>(
     urlState.selectedCountry,
   );
+  const [selectedTopics, setSelectedTopics] = useState<string[]>(
+    urlState.selectedTopics || [],
+  );
+
   const [selectedColors] = useState<TMeetingColor[]>([]);
 
   // Track if we're using a custom date range (from FilterModal)
@@ -109,6 +115,7 @@ export function CalendarProvider({
       end,
       query: searchQuery || undefined,
       country: selectedCountry || undefined,
+      topics: selectedTopics.length > 0 ? selectedTopics : undefined,
     };
   }, [
     selectedDate,
@@ -182,6 +189,10 @@ export function CalendarProvider({
     setSelectedCountry(country);
   };
 
+  const handleSetSelectedTopics = (topics: string[]) => {
+    setSelectedTopics(topics);
+  };
+
   const handleSetFilters = (newFilters: GetMeetingsQueryParams) => {
     // Update basic state
     if (newFilters.query !== undefined) {
@@ -192,6 +203,10 @@ export function CalendarProvider({
     }
     if (newFilters.start) {
       setSelectedDate(new Date(newFilters.start));
+    }
+
+    if (newFilters.topics != undefined) {
+      setSelectedTopics(newFilters.topics || []);
     }
 
     // Handle custom date ranges from FilterModal
@@ -231,6 +246,8 @@ export function CalendarProvider({
     setSearchQuery: handleSetSearchQuery,
     selectedCountry,
     setSelectedCountry: handleSetSelectedCountry,
+    selectedTopics,
+    setSelectedTopics: handleSetSelectedTopics,
     meetings,
     isLoading,
     isFetching,

@@ -118,7 +118,6 @@ export default function FilterModal({
   const handleApply = () => {
     setFilterState(localState);
     setSelectedCountry(localState.country || '');
-
     // Update CalendarContext filters with new date range
     if (localState.startDate && localState.endDate) {
       setFilters({
@@ -126,6 +125,7 @@ export default function FilterModal({
         start: localState.startDate.toISOString(),
         end: localState.endDate.toISOString(),
         country: localState.country || undefined,
+        topics: localState.topics?.length ? localState.topics : undefined,
       });
     }
 
