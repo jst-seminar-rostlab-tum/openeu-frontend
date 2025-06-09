@@ -1,23 +1,17 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
+import { profileRepository } from '@/repositories/profileRepository';
 
-// Official Supabase recommended URL helper
-function getURL() {
-  let url =
-    process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production env.
-    process?.env?.URL ?? // Automatically set by Netlify.
-    process?.env?.VERCEL_URL ?? // Automatically set by Vercel.
-    'http://localhost:3000/';
-
-  // Make sure to include `https://` when not localhost.
-  url = url.startsWith('http') ? url : `https://${url}`;
-  // Make sure to include a trailing `/`.
-  url = url.endsWith('/') ? url : `${url}/`;
-  return url;
+async function getCurrentURL() {
+  const headersList = await headers();
+  const host = headersList.get('host');
+  const protocol = headersList.get('x-forwarded-proto') ?? 'http';
+  return `${protocol}://${host}/`;
 }
 
 export async function signup(formData: FormData) {
@@ -27,11 +21,14 @@ export async function signup(formData: FormData) {
   const name = formData.get('name') as string;
   const surname = formData.get('surname') as string;
   const company = formData.get('company') as string;
+  const companyDescription = formData.get('company-description') as string;
   const country = formData.get('country') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
+  const topics = formData.get('topics') as string;
+  const url = await getCurrentURL();
 
-  const { error } = await supabase.auth.signUp({
+  const { error, data } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -41,15 +38,25 @@ export async function signup(formData: FormData) {
         company: company.trim(),
         country,
       },
-      emailRedirectTo: `${getURL()}auth/confirm`,
+      emailRedirectTo: `${url}auth/confirm`,
     },
   });
 
   if (error) {
-    console.error('Signup error:', error.message);
-    redirect('/register?error=Registration failed');
+    redirect('/register?error=' + error.message);
+  }
+
+  if (data.user) {
+    await profileRepository.createProfile({
+      id: data.user.id,
+      name: name,
+      surname: surname,
+      companyName: company,
+      companyDescription: companyDescription,
+      topicList: topics.split(','),
+    });
   }
 
   revalidatePath('/', 'layout');
-  redirect('/');
+  redirect('/login?confirm=1');
 }

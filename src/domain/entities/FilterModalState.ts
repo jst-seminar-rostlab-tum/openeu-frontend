@@ -1,6 +1,6 @@
 export interface FilterModalState {
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
   country?: string;
   topics: string[];
 }
