@@ -12,9 +12,9 @@ import {
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { NewsletterDialog } from '@/components/Inbox/NewsletterDialog';
-import { DataTablePagination } from '@/components/Inbox/Pagination';
-import { DataTableToolbar } from '@/components/Inbox/Toolbar';
+import { NewsletterDialog } from '@/components/inbox/NewsletterDialog';
+import { DataTablePagination } from '@/components/inbox/Pagination';
+import { DataTableToolbar } from '@/components/inbox/Toolbar';
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';

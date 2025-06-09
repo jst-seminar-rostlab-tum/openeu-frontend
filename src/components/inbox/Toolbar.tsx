@@ -2,10 +2,10 @@ import { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { DataTableBulkActions } from '@/components/Inbox/BulkActions';
-import { DataTableDateRangeFilter } from '@/components/Inbox/DateRangeFilter';
-import { DataTableFacetedFilter } from '@/components/Inbox/FacetedFilter';
-import { DataTableViewOptions } from '@/components/Inbox/ViewOptions';
+import { DataTableBulkActions } from '@/components/inbox/BulkActions';
+import { DataTableDateRangeFilter } from '@/components/inbox/DateRangeFilter';
+import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
+import { DataTableViewOptions } from '@/components/inbox/ViewOptions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 

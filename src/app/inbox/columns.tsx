@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Archive, Eye, MoreVertical, Trash2 } from 'lucide-react';
 
-import { DataTableColumnHeader } from '@/components/Inbox/ColHeader';
+import { DataTableColumnHeader } from '@/components/inbox/ColHeader';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
