@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Archive, Eye, MoreVertical, Trash2 } from 'lucide-react';
 
-import { DataTableColumnHeader } from '@/components/Inbox/data-table-column-header';
+import { DataTableColumnHeader } from '@/components/Inbox/ColHeader';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -71,8 +71,13 @@ export const createColumns = ({
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Date" />
     ),
-    cell: ({ row }) => <div>{row.getValue('date')}</div>,
+    cell: ({ row }) => {
+      // Format the ISO date string for display
+      const dateString = row.getValue('date') as string;
+      return <div>{new Date(dateString).toLocaleDateString()}</div>;
+    },
     filterFn: (row, id, value) => {
+      // Parse the ISO date string directly for filtering
       const rowDate = new Date(row.getValue(id) as string);
       const { from, to } = value as { from?: Date; to?: Date };
 

@@ -12,9 +12,9 @@ import {
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DataTablePagination } from '@/components/Inbox/data-table-pagination';
-import { DataTableToolbar } from '@/components/Inbox/data-table-toolbar';
-import { NewsletterDialog } from '@/components/Inbox/newsletter-dialog';
+import { NewsletterDialog } from '@/components/Inbox/NewsletterDialog';
+import { DataTablePagination } from '@/components/Inbox/Pagination';
+import { DataTableToolbar } from '@/components/Inbox/Toolbar';
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
@@ -76,7 +76,7 @@ export default function InboxPage() {
     return sortedNotifications.map((notification, index) => ({
       id: notification.id.toString(),
       title: notification.type ? `newsletter ${index + 1}.` : 'No title',
-      date: new Date(notification.sent_at).toLocaleDateString(),
+      date: notification.sent_at, // Store original ISO string
       country: 'EU wide', // Backend doesn't provide country info yet
       relevanceScore: 0, // Backend doesn't provide relevance score yet
       message: notification.message,
