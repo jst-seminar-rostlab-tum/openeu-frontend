@@ -2,23 +2,21 @@ import { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { DataTableBulkActions } from '@/components/Inbox/data-table-bulk-actions';
-import { DataTableDateRangeFilter } from '@/components/Inbox/data-table-date-range-filter';
-import { DataTableFacetedFilter } from '@/components/Inbox/data-table-faceted-filter';
-import { DataTableViewOptions } from '@/components/Inbox/data-table-view-options';
+import { DataTableBulkActions } from '@/components/inbox/BulkActions';
+import { DataTableDateRangeFilter } from '@/components/inbox/DateRangeFilter';
+import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
+import { DataTableViewOptions } from '@/components/inbox/ViewOptions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  uniqueCountries: string[];
   onBulkArchive?: () => void;
   onBulkDelete?: () => void;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  uniqueCountries,
   onBulkArchive,
   onBulkDelete,
 }: DataTableToolbarProps<TData>) {
@@ -26,15 +24,17 @@ export function DataTableToolbar<TData>({
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
 
-  // Memoize country options to prevent recreation
-  const countryOptions = useMemo(
-    () =>
-      uniqueCountries.map((country) => ({
-        label: country,
-        value: country,
-      })),
-    [uniqueCountries],
-  );
+  // Get country options from TanStack Table's faceted values
+  const countryOptions = useMemo(() => {
+    const countryColumn = table.getColumn('country');
+    if (!countryColumn) return [];
+
+    const facetedValues = countryColumn.getFacetedUniqueValues();
+    return Array.from(facetedValues.keys()).map((country) => ({
+      label: country,
+      value: country,
+    }));
+  }, [table]);
 
   // Show bulk actions when items are selected
   if (selectedCount > 0) {

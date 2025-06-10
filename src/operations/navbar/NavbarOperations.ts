@@ -4,10 +4,6 @@ export default class NavbarOperations {
   static getNavItems(): NavItemType[] {
     return [
       {
-        title: 'About',
-        href: '/about',
-      },
-      {
         title: 'Map',
         href: '/map',
       },
@@ -15,9 +11,14 @@ export default class NavbarOperations {
         title: 'Calendar',
         href: '/calendar',
       },
+
       {
         title: 'Chat',
         href: '/chat',
+      },
+      {
+        title: 'Inbox',
+        href: '/inbox',
       },
     ];
   }

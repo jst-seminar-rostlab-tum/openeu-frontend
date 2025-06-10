@@ -47,12 +47,12 @@ export function EventListDialog({
     </span>
   );
 
-  function eveltListEntry(event: MeetingData) {
+  function eveltListEntry(event: MeetingData, index: number) {
     const relevanceScore = event.similarity
       ? Math.round(event.similarity * 100)
       : null;
     return (
-      <EventDetailsDialog key={event.meeting_id} event={event}>
+      <EventDetailsDialog key={`${event.meeting_id}-${index}`} event={event}>
         <div
           className={cn(
             'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
@@ -113,7 +113,7 @@ export function EventListDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
-          {cellEvents.map(eveltListEntry)}
+          {cellEvents.map((event, index) => eveltListEntry(event, index))}
         </div>
       </DialogContent>
     </Dialog>

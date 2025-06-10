@@ -12,49 +12,83 @@ import {
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DataTablePagination } from '@/components/Inbox/data-table-pagination';
-import { DataTableToolbar } from '@/components/Inbox/data-table-toolbar';
+import { NewsletterDialog } from '@/components/inbox/NewsletterDialog';
+import { DataTablePagination } from '@/components/inbox/Pagination';
+import { DataTableToolbar } from '@/components/inbox/Toolbar';
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
-import InboxOperations from '@/operations/inbox/InboxOperations';
+import { useNotifications } from '@/domain/hooks/notificationsHooks';
+import { useAuth } from '@/domain/hooks/useAuth';
+import { useNewsletterDialog } from '@/domain/hooks/useNewsletterDialog';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 import { createColumns } from './columns';
 import { DataTable } from './data-table';
 
 export default function InboxPage() {
-  const [data, setData] = useState<InboxItem[]>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
+  const { user } = useAuth();
+
+  // Fetch notifications with user ID
+  const {
+    data: notifications,
+    isLoading,
+    error,
+  } = useNotifications(
+    {
+      userId: user?.id || '',
+    },
+    !!user,
+  );
+
+  // Handle errors with toast notifications
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const items = InboxOperations.getInboxItems();
-        setData(items);
-      } catch (error) {
-        console.error('Failed to load inbox items:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+    if (error) {
+      ToastOperations.showError({
+        title: 'Error Loading Notifications',
+        message: 'Failed to load your notifications. Please try again later.',
+      });
+    }
+  }, [error]);
 
-  // Get unique countries for filter options - memoized to prevent recalculation
-  const uniqueCountries = useMemo(() => {
-    return Array.from(new Set(data.map((item) => item.country)));
-  }, [data]);
+  // Map notifications to InboxItem format
+  const data: InboxItem[] = useMemo(() => {
+    if (!notifications) return [];
+
+    // Sort notifications by date in descending order
+    const sortedNotifications = [...notifications].sort(
+      (a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime(),
+    );
+
+    // Map notifications with index
+    return sortedNotifications.map((notification) => ({
+      id: notification.id.toString(),
+      title: 'Meeting Newsletter',
+      date: notification.sent_at,
+      country: 'EU wide', // Backend doesn't provide country info yet
+      relevanceScore: notification.relevance_score ?? undefined,
+      message: notification.message,
+    }));
+  }, [notifications]);
+
+  // Custom hook for dialog management
+  const { selectedItem, isOpen, openDialog, closeDialog } =
+    useNewsletterDialog();
 
   // Action handlers
-  const handleView = useCallback((itemId: string) => {
-    ToastOperations.showInfo({
-      title: 'Info',
-      message: `Viewing item: ${itemId}`,
-    });
-  }, []);
+  const handleView = useCallback(
+    (item: InboxItem) => {
+      openDialog(item);
+    },
+    [openDialog],
+  );
 
   const handleArchive = useCallback((itemId: string) => {
     ToastOperations.showInfo({
@@ -64,7 +98,11 @@ export default function InboxPage() {
   }, []);
 
   const handleDelete = useCallback((itemId: string) => {
-    setData((prev) => prev.filter((item) => item.id !== itemId));
+    ToastOperations.showInfo({
+      title: 'Info',
+      message: `Deleting item: ${itemId}`,
+    });
+    // TODO: Implement actual delete API call
   }, []);
 
   const columns = useMemo(
@@ -88,9 +126,12 @@ export default function InboxPage() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
+    autoResetPageIndex: false,
     state: {
       rowSelection,
       columnVisibility,
+      pagination,
     },
   });
 
@@ -109,11 +150,14 @@ export default function InboxPage() {
     const selectedIds = table
       .getFilteredSelectedRowModel()
       .rows.map((row) => row.original.id);
-    setData((prev) => prev.filter((item) => !selectedIds.includes(item.id)));
+    ToastOperations.showInfo({
+      title: 'Info',
+      message: `Deleting ${selectedIds.length} items`,
+    });
     setRowSelection({});
   }, [table]);
 
-  // Loading state with proper skeleton
+  // Handle loading state
   if (isLoading) {
     return (
       <Section>
@@ -133,13 +177,17 @@ export default function InboxPage() {
       <div className="space-y-2">
         <DataTableToolbar
           table={table}
-          uniqueCountries={uniqueCountries}
           onBulkArchive={handleBulkArchive}
           onBulkDelete={handleBulkDelete}
         />
         <DataTable table={table} columns={columns} />
         <DataTablePagination table={table} />
       </div>
+      <NewsletterDialog
+        item={selectedItem}
+        open={isOpen}
+        onOpenChange={closeDialog}
+      />
     </Section>
   );
 }
