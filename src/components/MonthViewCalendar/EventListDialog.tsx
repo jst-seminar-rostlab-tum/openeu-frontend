@@ -5,6 +5,7 @@ import React, { ReactNode } from 'react';
 import { dayCellVariants } from '@/components/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/MonthViewCalendar/EventBullet';
 import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
+import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -66,37 +67,8 @@ export function EventListDialog({
             <div className="flex justify-between gap-1">
               <p className="flex flex-col text-sm font-medium">{event.title}</p>
               {relevanceScore && (
-                <div className="relative flex flex-none size-10">
-                  <svg
-                    className="size-full -rotate-90"
-                    viewBox="0 0 36 36"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="18"
-                      cy="18"
-                      r="16"
-                      fill="none"
-                      style={{ stroke: `var(--color-${event.color}-300)` }}
-                      strokeWidth="3"
-                    ></circle>
-                    <circle
-                      cx="18"
-                      cy="18"
-                      r="16"
-                      fill="none"
-                      style={{ stroke: `var(--color-${event.color}-800)` }}
-                      strokeWidth="3"
-                      strokeDasharray="100"
-                      strokeDashoffset={relevanceScore}
-                      strokeLinecap="round"
-                    ></circle>
-                  </svg>
-                  <div className="absolute top-1/2 start-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                    <span className="text-center text-sm font-bold text-white">
-                      {relevanceScore}
-                    </span>
-                  </div>
+                <div className="flex flex-none size-10">
+                  <RelevanceScore meeting={event} type={'circle'} />
                 </div>
               )}
             </div>

@@ -13,6 +13,7 @@ import {
 import { ReactNode } from 'react';
 
 import { TagBadge } from '@/components/calendar/TagBadge';
+import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -38,9 +39,6 @@ export function EventDetailsDialog({ event, children }: IProps) {
   const startDate = parseISO(event.meeting_start_datetime);
   const endDate = parseISO(event.meeting_end_datetime);
 
-  const relevanceScore = event.similarity
-    ? (Math.round(event.similarity * 10000) / 100).toFixed(2)
-    : null;
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -128,22 +126,12 @@ export function EventDetailsDialog({ event, children }: IProps) {
               </div>
             </div>
 
-            {relevanceScore && (
+            {event.similarity && (
               <div className="flex items-start gap-2 col-span-full">
                 <Scale className="mt-1 size-4 shrink-0 text-muted-foreground" />
                 <div className="w-full">
                   <p className="mb-2 text-sm">Relevance</p>
-                  <div
-                    className="flex w-full h-3 bg-gray-200 rounded-full overflow-hidden outline-1 outline-solid dark:bg-neutral-700 py-auto"
-                    role="progressbar"
-                  >
-                    <div
-                      className="flex flex-col justify-center rounded-full overflow-hidden outline-1 outline-solid bg-accent-foreground text-white text-xs text-center align-middle whitespace-nowrap transition duration-500 h-3 dark:bg-white dark:text-black"
-                      style={{ width: `${relevanceScore}%` }}
-                    >
-                      {relevanceScore}%
-                    </div>
-                  </div>
+                  <RelevanceScore meeting={event} type={'bar'} />
                 </div>
               </div>
             )}
