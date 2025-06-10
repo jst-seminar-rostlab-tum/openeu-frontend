@@ -290,6 +290,8 @@ export interface components {
       type: string;
       /** Message */
       message: string | null;
+      /** Relevance Score */
+      relevance_score: number | null;
     };
     /** ProfileCreate */
     ProfileCreate: {
@@ -379,6 +381,8 @@ export interface operations {
         end?: string | null;
         /** @description Search query using semantic similarity */
         query?: string | null;
+        /** @description Filter by country (e.g., 'Austria', 'European Union') */
+        country?: string | null;
       };
       header?: never;
       path?: never;

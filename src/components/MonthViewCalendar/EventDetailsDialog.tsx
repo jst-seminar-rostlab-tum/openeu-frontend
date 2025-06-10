@@ -6,12 +6,14 @@ import {
   Calendar,
   CalendarOff,
   MapPin,
+  Scale,
   Tag,
   Text,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 
 import { TagBadge } from '@/components/calendar/TagBadge';
+import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -123,6 +125,16 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 </div>
               </div>
             </div>
+
+            {event.similarity && (
+              <div className="flex items-start gap-2 col-span-full">
+                <Scale className="mt-1 size-4 shrink-0 text-muted-foreground" />
+                <div className="w-full">
+                  <p className="mb-2 text-sm">Relevance</p>
+                  <RelevanceScore meeting={event} type={'bar'} />
+                </div>
+              </div>
+            )}
           </div>
         </ScrollArea>
         <DialogClose asChild>
