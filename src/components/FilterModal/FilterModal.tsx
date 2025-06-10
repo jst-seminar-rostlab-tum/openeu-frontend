@@ -113,6 +113,7 @@ export default function FilterModal({
         start: (defaultState.startDate || now).toISOString(),
         end: (defaultState.endDate || now).toISOString(),
         country: undefined,
+        topics: undefined,
       });
     } else {
       setFilters({
@@ -138,6 +139,7 @@ export default function FilterModal({
       setFilters({
         ...filters,
         country: localState.country || undefined,
+        topics: localState.topics || undefined,
       });
     }
 
