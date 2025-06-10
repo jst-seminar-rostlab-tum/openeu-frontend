@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/tooltip';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
-import { useMeetings } from '@/domain/hooks/meetingHooks';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
 
 type MeetingCountByCountry = typeof meetingsPerCountry;
@@ -36,10 +35,11 @@ interface MapProps {
   minZoom?: number;
   maxZoom?: number;
   meetingCountByCountry: MeetingCountByCountry;
+  meetings: MeetingData[];
 }
 
 function getMeetingStats(countryName: string, meetings?: MeetingData[]) {
-  if (!meetings || !countryName) return { total: 0, counts: {} };
+  if (!meetings || !countryName) return { counts: {} };
 
   // Special case: meetings with location "European Union" are matched to Belgium
   const filtered = meetings.filter(
@@ -53,7 +53,7 @@ function getMeetingStats(countryName: string, meetings?: MeetingData[]) {
     counts[meeting.source_table] = (counts[meeting.source_table] || 0) + 1;
   }
 
-  return { total: filtered.length, counts };
+  return { counts };
 }
 
 export default function MapComponent({
@@ -63,12 +63,12 @@ export default function MapComponent({
   minZoom,
   maxZoom,
   meetingCountByCountry,
+  meetings,
 }: MapProps) {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
   const countryFill = isDarkMode ? '#1E293B' : '#E2E8F0';
   const countryBorder = isDarkMode ? '#334155' : '#64748B';
-  const { data: meetings } = useMeetings({});
   const [hoveredFeature, setHoveredFeature] = useState<geojson.Feature | null>(
     null,
   );
@@ -204,16 +204,12 @@ export default function MapComponent({
             >
               {(() => {
                 const countryName = hoveredFeature.properties?.name;
-                const { total, counts } = getMeetingStats(
-                  countryName,
-                  meetings,
-                );
+                const { counts } = getMeetingStats(countryName, meetings);
 
                 return (
                   <>
                     <p className="text-sm font-semibold">{countryName}</p>
-                    <p className="text-sm">Total meetings: {total}</p>
-                    {total > 0 && (
+                    {Object.keys(counts).length > 0 && (
                       <ul className="mt-2 text-sm">
                         {Object.entries(counts).map(([type, count]) => (
                           <li key={type}>
