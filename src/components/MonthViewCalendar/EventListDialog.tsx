@@ -47,7 +47,7 @@ export function EventListDialog({
     </span>
   );
 
-  function eveltListEntry(event: MeetingData, index: number) {
+  function eventListEntry(event: MeetingData, index: number) {
     const relevanceScore = event.similarity
       ? Math.round(event.similarity * 100)
       : null;
@@ -113,7 +113,7 @@ export function EventListDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
-          {cellEvents.map((event, index) => eveltListEntry(event, index))}
+          {cellEvents.map((event, index) => eventListEntry(event, index))}
         </div>
       </DialogContent>
     </Dialog>
