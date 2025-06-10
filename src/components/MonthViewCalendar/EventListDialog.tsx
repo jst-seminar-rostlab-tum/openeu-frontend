@@ -46,6 +46,81 @@ export function EventListDialog({
     </span>
   );
 
+  function eveltListEntry(event: MeetingData) {
+    const relevanceScore = event.similarity
+      ? Math.round(event.similarity * 100)
+      : null;
+    return (
+      <EventDetailsDialog key={event.meeting_id} event={event}>
+        <div
+          className={cn(
+            'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
+            {
+              [dayCellVariants({
+                color: event.color as TMeetingColor,
+              })]: true,
+            },
+          )}
+        >
+          <div className="flex w-full flex-col gap-1">
+            <div className="flex justify-between gap-1">
+              <p className="flex flex-col text-sm font-medium">{event.title}</p>
+              {relevanceScore && (
+                <div className="relative flex flex-none size-10">
+                  <svg
+                    className="size-full -rotate-90"
+                    viewBox="0 0 36 36"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="none"
+                      style={{ stroke: `var(--color-${event.color}-300)` }}
+                      strokeWidth="3"
+                    ></circle>
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="none"
+                      style={{ stroke: `var(--color-${event.color}-800)` }}
+                      strokeWidth="3"
+                      strokeDasharray="100"
+                      strokeDashoffset={relevanceScore}
+                      strokeLinecap="round"
+                    ></circle>
+                  </svg>
+                  <div className="absolute top-1/2 start-1/2 transform -translate-y-1/2 -translate-x-1/2">
+                    <span className="text-center text-sm font-bold text-white">
+                      {relevanceScore}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-1">
+              <Badge variant="outline" className="text-white">
+                <Building className="shrink-0" />
+                {getMeetingTypeShort(event.source_table)}
+              </Badge>
+              <Badge variant="outline" className="text-white max-w-40">
+                <MapPin className="shrink-0 w-3 h-3" />
+                <span
+                  className="truncate min-w-0 direction-rtl text-left"
+                  title={getMeetingTypeShort(event.location)}
+                >
+                  {getMeetingTypeShort(event.location)}
+                </span>
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </EventDetailsDialog>
+    );
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children || defaultTrigger}</DialogTrigger>
@@ -66,42 +141,7 @@ export function EventListDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
-          {cellEvents.map((event) => (
-            <EventDetailsDialog key={event.meeting_id} event={event}>
-              <div
-                className={cn(
-                  'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
-                  {
-                    [dayCellVariants({ color: event.color as TMeetingColor })]:
-                      true,
-                  },
-                )}
-              >
-                <EventBullet
-                  color={event.color as TMeetingColor}
-                  className=""
-                />
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm font-medium">{event.title}</p>
-                  <div className="flex items-center gap-1">
-                    <Badge variant="outline" className="text-white">
-                      <Building className="shrink-0" />
-                      {getMeetingTypeShort(event.source_table)}
-                    </Badge>
-                    <Badge variant="outline" className="text-white max-w-40">
-                      <MapPin className="shrink-0 w-3 h-3" />
-                      <span
-                        className="truncate min-w-0 direction-rtl text-left"
-                        title={getMeetingTypeShort(event.location)}
-                      >
-                        {getMeetingTypeShort(event.location)}
-                      </span>
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </EventDetailsDialog>
-          ))}
+          {cellEvents.map(eveltListEntry)}
         </div>
       </DialogContent>
     </Dialog>
