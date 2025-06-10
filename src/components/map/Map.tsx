@@ -23,6 +23,7 @@ function MapInner() {
       minZoom={4}
       center={[54.5452, 25.11912]}
       meetingCountByCountry={meetingCountByCountry}
+      meetings={meetings}
     />
   );
 }
