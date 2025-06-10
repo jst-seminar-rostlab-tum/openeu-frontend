@@ -5,6 +5,7 @@ import React, { ReactNode } from 'react';
 import { dayCellVariants } from '@/components/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/MonthViewCalendar/EventBullet';
 import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
+import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -46,6 +47,52 @@ export function EventListDialog({
     </span>
   );
 
+  function eventListEntry(event: MeetingData, index: number) {
+    const relevanceScore = event.similarity
+      ? Math.round(event.similarity * 100)
+      : null;
+    return (
+      <EventDetailsDialog key={`${event.meeting_id}-${index}`} event={event}>
+        <div
+          className={cn(
+            'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
+            {
+              [dayCellVariants({
+                color: event.color as TMeetingColor,
+              })]: true,
+            },
+          )}
+        >
+          <div className="flex w-full flex-col gap-1">
+            <div className="flex justify-between gap-1">
+              <p className="flex flex-col text-sm font-medium">{event.title}</p>
+              {relevanceScore && (
+                <div className="flex flex-none size-10">
+                  <RelevanceScore meeting={event} type={'circle'} />
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-1">
+              <Badge variant="outline" className="text-white">
+                <Building className="shrink-0" />
+                {getMeetingTypeShort(event.source_table)}
+              </Badge>
+              <Badge variant="outline" className="text-white max-w-40">
+                <MapPin className="shrink-0 w-3 h-3" />
+                <span
+                  className="truncate min-w-0 direction-rtl text-left"
+                  title={getMeetingTypeShort(event.location)}
+                >
+                  {getMeetingTypeShort(event.location)}
+                </span>
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </EventDetailsDialog>
+    );
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children || defaultTrigger}</DialogTrigger>
@@ -66,45 +113,7 @@ export function EventListDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
-          {cellEvents.map((event, index) => (
-            <EventDetailsDialog
-              key={`${event.meeting_id}-${index}`}
-              event={event}
-            >
-              <div
-                className={cn(
-                  'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
-                  {
-                    [dayCellVariants({ color: event.color as TMeetingColor })]:
-                      true,
-                  },
-                )}
-              >
-                <EventBullet
-                  color={event.color as TMeetingColor}
-                  className=""
-                />
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm font-medium">{event.title}</p>
-                  <div className="flex items-center gap-1">
-                    <Badge variant="outline" className="text-white">
-                      <Building className="shrink-0" />
-                      {getMeetingTypeShort(event.source_table)}
-                    </Badge>
-                    <Badge variant="outline" className="text-white max-w-40">
-                      <MapPin className="shrink-0 w-3 h-3" />
-                      <span
-                        className="truncate min-w-0 direction-rtl text-left"
-                        title={getMeetingTypeShort(event.location)}
-                      >
-                        {getMeetingTypeShort(event.location)}
-                      </span>
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </EventDetailsDialog>
-          ))}
+          {cellEvents.map((event, index) => eventListEntry(event, index))}
         </div>
       </DialogContent>
     </Dialog>
