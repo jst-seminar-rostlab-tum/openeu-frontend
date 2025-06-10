@@ -60,11 +60,13 @@ export const CalendarContext = createContext<ICalendarContext | undefined>(
 interface CalendarProviderProps {
   children: React.ReactNode;
   view?: TCalendarView;
+  updateUrl?: boolean;
 }
 
 export function CalendarProvider({
   children,
   view = 'month',
+  updateUrl = true,
 }: CalendarProviderProps) {
   const { urlState, syncFiltersToUrl } = useUrlSync();
 
@@ -129,7 +131,9 @@ export function CalendarProvider({
 
   // Single effect: internal state changes → URL params update
   useEffect(() => {
-    syncFiltersToUrl(filters);
+    if (updateUrl) {
+      syncFiltersToUrl(filters);
+    }
   }, [filters, syncFiltersToUrl]);
 
   // Use TanStack Query for data fetching with the new API

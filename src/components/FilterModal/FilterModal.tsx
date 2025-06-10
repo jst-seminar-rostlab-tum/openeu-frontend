@@ -107,25 +107,37 @@ export default function FilterModal({
     setSelectedCountry('');
 
     // Reset CalendarContext filters to default date range
-    setFilters({
-      ...filters,
-      start: (defaultState.startDate || now).toISOString(),
-      end: (defaultState.endDate || now).toISOString(),
-      country: undefined,
-    });
+    if (showDateDropdown) {
+      setFilters({
+        ...filters,
+        start: (defaultState.startDate || now).toISOString(),
+        end: (defaultState.endDate || now).toISOString(),
+        country: undefined,
+      });
+    } else {
+      setFilters({
+        ...filters,
+        country: undefined,
+      });
+    }
   };
 
   const handleApply = () => {
     setFilterState(localState);
     setSelectedCountry(localState.country || '');
     // Update CalendarContext filters with new date range
-    if (localState.startDate && localState.endDate) {
+    if (localState.startDate && localState.endDate && showDateDropdown) {
       setFilters({
         ...filters,
         start: localState.startDate.toISOString(),
         end: localState.endDate.toISOString(),
         country: localState.country || undefined,
         topics: localState.topics?.length ? localState.topics : undefined,
+      });
+    } else {
+      setFilters({
+        ...filters,
+        country: localState.country || undefined,
       });
     }
 
