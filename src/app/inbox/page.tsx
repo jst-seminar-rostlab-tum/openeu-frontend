@@ -73,7 +73,7 @@ export default function InboxPage() {
       title: 'Meeting Newsletter',
       date: notification.sent_at,
       country: 'EU wide', // Backend doesn't provide country info yet
-      relevanceScore: 0, // Backend doesn't provide relevance score yet
+      relevanceScore: notification.relevance_score ?? undefined,
       message: notification.message,
     }));
   }, [notifications]);

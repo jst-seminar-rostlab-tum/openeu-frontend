@@ -111,12 +111,21 @@ export const createColumns = ({
       </div>
     ),
     cell: ({ row }) => {
-      const score = row.getValue('relevanceScore') as number;
+      const score = row.getValue('relevanceScore') as number | undefined;
+
+      if (score === undefined) {
+        return (
+          <div className="flex items-center justify-end gap-2">
+            <span>-</span>
+          </div>
+        );
+      }
+
       return (
         <div className="flex items-center justify-end gap-2">
-          <span>{score}%</span>
+          <span>{(score * 100).toFixed(2)}%</span>
           <div
-            className={`w-2 h-2 rounded-full ${getRelevanceColor(score)}`}
+            className={`w-2 h-2 rounded-full ${getRelevanceColor(score * 100)}`}
             style={{ opacity: 0.75 }}
           />
         </div>

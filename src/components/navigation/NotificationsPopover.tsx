@@ -58,7 +58,7 @@ export function NotificationsPopover() {
           </Button>
         </Link>
 
-        <ScrollArea className="h-[300px] mt-2">
+        <ScrollArea className="h-64 mt-2">
           <div className="flex flex-col gap-1 px-2">
             {topNotifications.length > 0 ? (
               topNotifications.map((notification) => (

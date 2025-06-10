@@ -3,6 +3,6 @@ export type InboxItem = {
   title: string;
   date: string;
   country: string;
-  relevanceScore: number;
+  relevanceScore: number | undefined;
   message: string | null;
 };
