@@ -13,11 +13,11 @@ export function RelevanceScore({ meeting, type }: RelevanceScoreProps) {
   if (isBar) {
     return (
       <div
-        className="flex w-full h-3 bg-gray-200 rounded-full overflow-hidden outline-1 outline-solid dark:bg-neutral-700 py-auto"
+        className="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden outline-1 outline-solid dark:bg-neutral-700 py-auto"
         role="progressbar"
       >
         <div
-          className="flex flex-col justify-center rounded-full overflow-hidden outline-1 outline-solid bg-accent-foreground text-white text-xs text-center align-middle whitespace-nowrap transition duration-500 h-3 dark:bg-white dark:text-black"
+          className="flex flex-col justify-center rounded-full overflow-hidden outline-1 outline-solid bg-accent-foreground text-white text-[0.75em] text-center align-middle whitespace-nowrap transition duration-500 h-4 dark:bg-white dark:text-black"
           style={{ width: `${relevanceScore}%` }}
         >
           {relevanceScore.toFixed(2)}%
@@ -53,7 +53,7 @@ export function RelevanceScore({ meeting, type }: RelevanceScoreProps) {
           ></circle>
         </svg>
         <div className="absolute top-1/2 start-1/2 transform -translate-y-1/2 -translate-x-1/2">
-          <span className="text-center text-sm font-bold text-white">
+          <span className="text-center text-[0.75em] text-white">
             {relevanceScore}
           </span>
         </div>

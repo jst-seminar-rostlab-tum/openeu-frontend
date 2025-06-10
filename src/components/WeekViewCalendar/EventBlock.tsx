@@ -5,6 +5,7 @@ import { Building, MapPin } from 'lucide-react';
 import React, { HTMLAttributes } from 'react';
 
 import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
+import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useCalendar } from '@/domain/hooks/meetingHooks';
@@ -85,23 +86,35 @@ export function EventBlock({ event, className }: IProps) {
         className={calendarWeekEventCardClasses}
         style={{ height: `${heightInPixels}px` }}
       >
-        <div className="flex items-center gap-1.5 truncate">
-          {badgeVariant === 'dot' && (
-            <svg width="8" height="8" viewBox="0 0 8 8" className="shrink-0">
-              <circle cx="4" cy="4" r="4" />
-            </svg>
+        <div className="flex justify-between gap-1">
+          <div id="title" className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 truncate">
+              {badgeVariant === 'dot' && (
+                <svg
+                  width="8"
+                  height="8"
+                  viewBox="0 0 8 8"
+                  className="shrink-0"
+                >
+                  <circle cx="4" cy="4" r="4" />
+                </svg>
+              )}
+              <p className="truncate font-semibold">{event.title}</p>
+            </div>
+
+            {durationInMinutes > 25 && (
+              <p className="truncate">
+                {formatTime(start, use24HourFormat)} -{' '}
+                {formatTime(end, use24HourFormat)}
+              </p>
+            )}
+          </div>
+          {event.similarity && (
+            <div id="score" className="flex-none w-6 h-6">
+              <RelevanceScore meeting={event} type={'circle'} />
+            </div>
           )}
-
-          <p className="truncate font-semibold">{event.title}</p>
         </div>
-
-        {durationInMinutes > 25 && (
-          <p>
-            {formatTime(start, use24HourFormat)} -{' '}
-            {formatTime(end, use24HourFormat)}
-          </p>
-        )}
-
         <Badge variant="outline" className="dark:text-white">
           <Building className="shrink-0" />
 
