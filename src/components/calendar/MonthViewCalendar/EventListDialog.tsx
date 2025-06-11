@@ -2,9 +2,9 @@ import { format } from 'date-fns';
 import { Building, MapPin } from 'lucide-react';
 import React, { ReactNode } from 'react';
 
-import { dayCellVariants } from '@/components/MonthViewCalendar/DayCell';
-import { EventBullet } from '@/components/MonthViewCalendar/EventBullet';
-import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
+import { dayCellVariants } from '@/components/calendar/MonthViewCalendar/DayCell';
+import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet';
+import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import {

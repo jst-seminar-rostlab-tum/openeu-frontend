@@ -5,10 +5,10 @@ import { isToday, startOfDay } from 'date-fns';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 
-import { DroppableArea } from '@/components/MonthViewCalendar/DroppableArea';
-import { EventBullet } from '@/components/MonthViewCalendar/EventBullet';
-import { EventListDialog } from '@/components/MonthViewCalendar/EventListDialog';
-import { MonthEventBadge } from '@/components/MonthViewCalendar/MonthEventBadge';
+import { DroppableArea } from '@/components/calendar/MonthViewCalendar/DroppableArea';
+import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet';
+import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
+import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
 import { staggerContainer, transition } from '@/domain/animations';
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-import { DayCell } from '@/components/MonthViewCalendar/DayCell';
+import { DayCell } from '@/components/calendar/MonthViewCalendar/DayCell';
 import { staggerContainer, transition } from '@/domain/animations';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';

@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority';
 import { differenceInMinutes, parseISO } from 'date-fns';
 import type { HTMLAttributes } from 'react';
 
-import { EventListDialog } from '@/components/MonthViewCalendar/EventListDialog';
+import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';

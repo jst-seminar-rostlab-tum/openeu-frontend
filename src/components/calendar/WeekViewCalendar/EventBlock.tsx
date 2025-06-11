@@ -4,7 +4,7 @@ import { differenceInMinutes, parseISO } from 'date-fns';
 import { Building, MapPin } from 'lucide-react';
 import React, { HTMLAttributes } from 'react';
 
-import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
+import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';

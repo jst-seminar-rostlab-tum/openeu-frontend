@@ -1,11 +1,11 @@
 import { addDays, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
 import { motion } from 'framer-motion';
 
-import { DroppableArea } from '@/components/MonthViewCalendar/DroppableArea';
+import { DroppableArea } from '@/components/calendar/MonthViewCalendar/DroppableArea';
+import { CalendarTimeline } from '@/components/calendar/WeekViewCalendar/CalendarTimeline';
+import { RenderGroupedEvents } from '@/components/calendar/WeekViewCalendar/RenderGroupedEvents';
+import { WeekViewMultiDayEventsRow } from '@/components/calendar/WeekViewCalendar/WeekViewMultiDayEventsRow';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CalendarTimeline } from '@/components/WeekViewCalendar/CalendarTimeline';
-import { RenderGroupedEvents } from '@/components/WeekViewCalendar/RenderGroupedEvents';
-import { WeekViewMultiDayEventsRow } from '@/components/WeekViewCalendar/WeekViewMultiDayEventsRow';
 import { fadeIn, staggerContainer, transition } from '@/domain/animations';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';

@@ -4,10 +4,10 @@ import { isSameDay, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
 
-import { CalendarSkeleton } from '@/components/CalendarSkeleton/CalendarSkeleton';
-import { CalendarDayView } from '@/components/DayViewCalendar/DayViewCalendar';
-import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalendar';
-import { CalendarWeekView } from '@/components/WeekViewCalendar/WeekViewCalendar';
+import { CalendarSkeleton } from '@/components/calendar/CalendarSkeleton/CalendarSkeleton';
+import { CalendarDayView } from '@/components/calendar/DayViewCalendar/DayViewCalendar';
+import { CalendarMonthView } from '@/components/calendar/MonthViewCalendar/MonthViewCalendar';
+import { CalendarWeekView } from '@/components/calendar/WeekViewCalendar/WeekViewCalendar';
 import { fadeIn, transition } from '@/domain/animations';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';

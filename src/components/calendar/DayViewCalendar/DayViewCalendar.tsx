@@ -2,12 +2,12 @@ import { format, isWithinInterval, parseISO } from 'date-fns';
 import { Calendar, Clock } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
-import { DayPicker } from '@/components/DayViewCalendar/DayPicker';
-import { DayViewMultiDayEventsRow } from '@/components/DayViewCalendar/DayViewMultiDayEventsRow';
-import { DroppableArea } from '@/components/MonthViewCalendar/DroppableArea';
+import { DayPicker } from '@/components/calendar/DayViewCalendar/DayPicker';
+import { DayViewMultiDayEventsRow } from '@/components/calendar/DayViewCalendar/DayViewMultiDayEventsRow';
+import { DroppableArea } from '@/components/calendar/MonthViewCalendar/DroppableArea';
+import { CalendarTimeline } from '@/components/calendar/WeekViewCalendar/CalendarTimeline';
+import { RenderGroupedEvents } from '@/components/calendar/WeekViewCalendar/RenderGroupedEvents';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CalendarTimeline } from '@/components/WeekViewCalendar/CalendarTimeline';
-import { RenderGroupedEvents } from '@/components/WeekViewCalendar/RenderGroupedEvents';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { groupEvents } from '@/operations/meeting/CalendarHelpers';

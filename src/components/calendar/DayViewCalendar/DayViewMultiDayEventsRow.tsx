@@ -6,7 +6,7 @@ import {
   startOfDay,
 } from 'date-fns';
 
-import { MonthEventBadge } from '@/components/MonthViewCalendar/MonthEventBadge';
+import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 
 interface IProps {
