@@ -12,6 +12,12 @@ import { ButtonGroup } from '@/components/ui/button-group';
 import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
   buttonHover,
   slideFromLeft,
   slideFromRight,
@@ -20,6 +26,24 @@ import {
 import { useCalendar } from '@/domain/hooks/meetingHooks';
 
 export const MotionButton = motion.create(Button);
+
+const TooltipButton = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<typeof MotionButton> & { tooltipContent: string }
+>(({ tooltipContent, children, ...props }, ref) => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <MotionButton ref={ref} {...props}>
+        {children}
+      </MotionButton>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>{tooltipContent}</p>
+    </TooltipContent>
+  </Tooltip>
+));
+
+TooltipButton.displayName = 'TooltipButton';
 
 export function CalendarHeader() {
   const { view, setView, searchQuery, setSearchQuery } = useCalendar();
@@ -74,64 +98,78 @@ export function CalendarHeader() {
           </div>
           <FilterModal showDateDropdown={false} />
 
-          <MotionButton
-            variant="outline"
-            onClick={() => setView('agenda')}
-            asChild
-            variants={buttonHover}
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <Toggle className="relative">
-              {view === 'agenda' ? (
-                <>
-                  <CalendarRange />
-                  <span className="absolute -top-1 -right-1 size-3 rounded-full bg-green-400" />
-                </>
-              ) : (
-                <CalendarRange />
-              )}
-            </Toggle>
-          </MotionButton>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <MotionButton
+                  variant="outline"
+                  onClick={() => setView('agenda')}
+                  asChild
+                  variants={buttonHover}
+                  whileHover="hover"
+                  whileTap="tap"
+                >
+                  <Toggle className="relative">
+                    {view === 'agenda' ? (
+                      <>
+                        <CalendarRange />
+                        <span className="absolute -top-1 -right-1 size-3 rounded-full bg-green-400" />
+                      </>
+                    ) : (
+                      <CalendarRange />
+                    )}
+                  </Toggle>
+                </MotionButton>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Agenda View</p>
+              </TooltipContent>
+            </Tooltip>
 
-          <ButtonGroup>
-            <MotionButton
-              variant={view === 'month' ? 'default' : 'outline'}
-              onClick={() => setView('month')}
-              asChild
-              variants={buttonHover}
-              whileHover="hover"
-              whileTap="tap"
-            >
-              <Toggle>
-                <Grid3X3 />
-              </Toggle>
-            </MotionButton>
-            <MotionButton
-              variant={view === 'week' ? 'default' : 'outline'}
-              onClick={() => setView('week')}
-              asChild
-              variants={buttonHover}
-              whileHover="hover"
-              whileTap="tap"
-            >
-              <Toggle>
-                <Columns />
-              </Toggle>
-            </MotionButton>
-            <MotionButton
-              variant={view === 'day' ? 'default' : 'outline'}
-              onClick={() => setView('day')}
-              asChild
-              variants={buttonHover}
-              whileHover="hover"
-              whileTap="tap"
-            >
-              <Toggle>
-                <Grid2X2 />
-              </Toggle>
-            </MotionButton>
-          </ButtonGroup>
+            <ButtonGroup>
+              <TooltipButton
+                tooltipContent="Month View"
+                variant={view === 'month' ? 'default' : 'outline'}
+                onClick={() => setView('month')}
+                asChild
+                variants={buttonHover}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <Toggle>
+                  <Grid3X3 />
+                </Toggle>
+              </TooltipButton>
+
+              <TooltipButton
+                tooltipContent="Week View"
+                variant={view === 'week' ? 'default' : 'outline'}
+                onClick={() => setView('week')}
+                asChild
+                variants={buttonHover}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <Toggle>
+                  <Columns />
+                </Toggle>
+              </TooltipButton>
+
+              <TooltipButton
+                tooltipContent="Day View"
+                variant={view === 'day' ? 'default' : 'outline'}
+                onClick={() => setView('day')}
+                asChild
+                variants={buttonHover}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <Toggle>
+                  <Grid2X2 />
+                </Toggle>
+              </TooltipButton>
+            </ButtonGroup>
+          </TooltipProvider>
         </div>
       </motion.div>
     </div>
