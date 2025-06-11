@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { CalendarTimeline } from '@/components/WeekViewCalendar/CalendarTimeline';
 import { RenderGroupedEvents } from '@/components/WeekViewCalendar/RenderGroupedEvents';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { groupEvents } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
@@ -19,7 +19,7 @@ interface IProps {
 
 export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
   const { selectedDate, setSelectedDate, /*users,*/ use24HourFormat } =
-    useCalendar();
+    useMeetingContext();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const hours = Array.from({ length: 24 }, (_, i) => i);

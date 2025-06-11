@@ -26,7 +26,7 @@ import {
 
 const { now } = getCurrentMonthRange();
 
-export interface ICalendarContext {
+export interface IMeetingContext {
   selectedDate: Date;
   view: TCalendarView;
   setView: (view: TCalendarView) => void;
@@ -51,29 +51,37 @@ export interface ICalendarContext {
   ) => number;
 }
 
-export const CalendarContext = createContext<ICalendarContext | undefined>(
+export const MeetingContext = createContext<IMeetingContext | undefined>(
   undefined,
 );
 
-interface CalendarProviderProps {
+interface MeetingProviderProps {
   children: React.ReactNode;
   view?: TCalendarView;
   updateUrl?: boolean;
+  excludeUrlParams?: string[];
 }
 
-export function CalendarProvider({
+export function MeetingProvider({
   children,
   view = 'month',
   updateUrl = true,
-}: CalendarProviderProps) {
-  const { urlState, syncFiltersToUrl } = useUrlSync();
+  excludeUrlParams = [],
+}: MeetingProviderProps) {
+  const { urlState, syncFiltersToUrl } = useUrlSync({
+    excludeParams: excludeUrlParams,
+  });
 
   // Initialize state from URL (single source of truth pattern)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     return urlState.startDate || now;
   });
 
-  const [currentView, setCurrentView] = useState<TCalendarView>(view);
+  // Initialize view from URL, fallback to prop
+  const [currentView, setCurrentView] = useState<TCalendarView>(() => {
+    return urlState.view || view;
+  });
+
   const [searchQuery, setSearchQuery] = useState<string>(urlState.searchQuery);
   const [selectedCountry, setSelectedCountry] = useState<string>(
     urlState.selectedCountry,
@@ -125,9 +133,9 @@ export function CalendarProvider({
   // Single effect: internal state changes → URL params update
   useEffect(() => {
     if (updateUrl) {
-      syncFiltersToUrl(filters);
+      syncFiltersToUrl(filters, currentView);
     }
-  }, [filters, syncFiltersToUrl]);
+  }, [filters, currentView, syncFiltersToUrl, updateUrl]);
 
   // Use TanStack Query for data fetching with the new API
   const {
@@ -225,7 +233,7 @@ export function CalendarProvider({
     ).length;
   }
 
-  const value: ICalendarContext = {
+  const value: IMeetingContext = {
     selectedDate,
     view: currentView,
     setView,
@@ -247,8 +255,6 @@ export function CalendarProvider({
   };
 
   return (
-    <CalendarContext.Provider value={value}>
-      {children}
-    </CalendarContext.Provider>
+    <MeetingContext.Provider value={value}>{children}</MeetingContext.Provider>
   );
 }

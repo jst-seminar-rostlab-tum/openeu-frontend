@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 
 import {
-  CalendarContext,
-  ICalendarContext,
-} from '@/components/CalendarHeader/CalendarContext';
+  IMeetingContext,
+  MeetingContext,
+} from '@/components/calendar/MeetingContext';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
@@ -29,9 +29,9 @@ export const useMeetings = (props: GetMeetingsQueryParams, enabled = true) =>
     enabled,
   });
 
-export function useCalendar(): ICalendarContext {
-  const context = useContext(CalendarContext);
+export function useMeetingContext(): IMeetingContext {
+  const context = useContext(MeetingContext);
   if (context === undefined)
-    throw new Error('useCalendar must be used within a CalendarProvider.');
+    throw new Error('useCalendar must be used within a MeetingProvider.');
   return context;
 }

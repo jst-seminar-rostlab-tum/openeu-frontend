@@ -8,7 +8,7 @@ import { RenderGroupedEvents } from '@/components/WeekViewCalendar/RenderGrouped
 import { WeekViewMultiDayEventsRow } from '@/components/WeekViewCalendar/WeekViewMultiDayEventsRow';
 import { fadeIn, staggerContainer, transition } from '@/domain/animations';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { groupEvents } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
@@ -17,7 +17,7 @@ interface IProps {
 }
 
 export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
-  const { selectedDate, use24HourFormat } = useCalendar();
+  const { selectedDate, use24HourFormat } = useMeetingContext();
 
   const weekStart = startOfWeek(selectedDate);
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));

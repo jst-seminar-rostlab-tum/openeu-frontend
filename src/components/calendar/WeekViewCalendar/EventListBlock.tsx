@@ -1,19 +1,15 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import { differenceInMinutes, parseISO } from 'date-fns';
-import { Building, MapPin } from 'lucide-react';
-import React, { HTMLAttributes } from 'react';
+import type { HTMLAttributes } from 'react';
 
-import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
-import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
-import { Badge } from '@/components/ui/badge';
+import { EventListDialog } from '@/components/MonthViewCalendar/EventListDialog';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
 import {
   formatTime,
   getColorFromId,
-  getMeetingTypeShort,
 } from '@/operations/meeting/CalendarHelpers';
 
 const calendarWeekEventCardVariants = cva(
@@ -57,18 +53,18 @@ const calendarWeekEventCardVariants = cva(
 interface IProps
   extends HTMLAttributes<HTMLDivElement>,
     Omit<VariantProps<typeof calendarWeekEventCardVariants>, 'color'> {
-  event: MeetingData;
+  events: MeetingData[];
 }
 
-export function EventBlock({ event, className }: IProps) {
-  const { badgeVariant, use24HourFormat } = useCalendar();
+export function EventListBlock({ events, className }: IProps) {
+  const { badgeVariant, use24HourFormat } = useMeetingContext();
 
-  const start = parseISO(event.meeting_start_datetime);
-  const end = parseISO(event.meeting_end_datetime);
+  const start = parseISO(events[0].meeting_start_datetime);
+  const end = parseISO(events[0].meeting_end_datetime);
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
-  const eventColor = getColorFromId(event.meeting_id);
+  const eventColor = getColorFromId(events[0].meeting_id);
   const color = (
     badgeVariant === 'dot' ? `${eventColor}-dot` : eventColor
   ) as VariantProps<typeof calendarWeekEventCardVariants>['color'];
@@ -79,57 +75,30 @@ export function EventBlock({ event, className }: IProps) {
   );
 
   return (
-    <EventDetailsDialog event={event}>
+    <EventListDialog date={start} endDate={end} events={events}>
       <div
         role="button"
         tabIndex={0}
         className={calendarWeekEventCardClasses}
         style={{ height: `${heightInPixels}px` }}
       >
-        <div className="flex justify-between gap-1">
-          <div id="title" className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 truncate">
-              {badgeVariant === 'dot' && (
-                <svg
-                  width="8"
-                  height="8"
-                  viewBox="0 0 8 8"
-                  className="shrink-0"
-                >
-                  <circle cx="4" cy="4" r="4" />
-                </svg>
-              )}
-              <p className="truncate font-semibold">{event.title}</p>
-            </div>
-
-            {durationInMinutes > 25 && (
-              <p className="truncate">
-                {formatTime(start, use24HourFormat)} -{' '}
-                {formatTime(end, use24HourFormat)}
-              </p>
-            )}
-          </div>
-          {event.similarity && (
-            <div id="score" className="flex-none w-6 h-6">
-              <RelevanceScore meeting={event} type={'circle'} />
-            </div>
+        <div className="flex items-center gap-1.5 truncate">
+          {badgeVariant === 'dot' && (
+            <svg width="8" height="8" viewBox="0 0 8 8" className="shrink-0">
+              <circle cx="4" cy="4" r="4" />
+            </svg>
           )}
-        </div>
-        <Badge variant="outline" className="dark:text-white">
-          <Building className="shrink-0" />
 
-          {getMeetingTypeShort(event.source_table)}
-        </Badge>
-        <Badge variant="outline" className="dark:text-white max-w-40">
-          <MapPin className="shrink-0 w-3 h-3" />
-          <span
-            className="truncate min-w-0 direction-rtl text-left"
-            title={getMeetingTypeShort(event.location)}
-          >
-            {getMeetingTypeShort(event.location)}
-          </span>
-        </Badge>
+          <p className="truncate font-semibold">{events.length} Events</p>
+        </div>
+
+        {durationInMinutes > 25 && (
+          <p>
+            {formatTime(start, use24HourFormat)} -{' '}
+            {formatTime(end, use24HourFormat)}
+          </p>
+        )}
       </div>
-    </EventDetailsDialog>
+    </EventListDialog>
   );
 }

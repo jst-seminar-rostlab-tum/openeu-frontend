@@ -2,7 +2,7 @@
 
 import { Globe } from 'lucide-react';
 
-import { CalendarProvider } from '@/components/CalendarHeader/CalendarContext';
+import { CalendarProvider } from '@/components/calendar/MeetingContext';
 import FeatureCard from '@/components/home/features/FeatureCard';
 import Map from '@/components/map/Map';
 

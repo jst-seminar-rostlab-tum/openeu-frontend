@@ -10,12 +10,12 @@ import { CalendarMonthView } from '@/components/MonthViewCalendar/MonthViewCalen
 import { CalendarWeekView } from '@/components/WeekViewCalendar/WeekViewCalendar';
 import { fadeIn, transition } from '@/domain/animations';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export function CalendarBody() {
-  const { view, isLoading, isError, meetings } = useCalendar();
+  const { view, isLoading, isError, meetings } = useMeetingContext();
 
   useEffect(() => {
     if (isError) {
