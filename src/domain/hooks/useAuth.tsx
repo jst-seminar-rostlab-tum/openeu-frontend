@@ -1,6 +1,7 @@
 'use client';
 
 import { User } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
 import React, {
   createContext,
   useCallback,
@@ -29,6 +30,7 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(initialUser);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   const supabase = createClient();
 
   // 🚨 DEV ONLY: Mock authenticated user for testing
@@ -67,11 +69,18 @@ export function AuthProvider({
   }, [supabase, MOCK_AUTH, initialUser]);
 
   const signOut = useCallback(async () => {
+    // Immediately clear user state to prevent any UI interaction
+    setUser(null);
+
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error('Error signing out:', error.message);
+      // Restore user state if logout failed
+      setUser(initialUser);
+    } else {
+      router.push('/');
     }
-  }, [supabase]);
+  }, [supabase, router, initialUser]);
 
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),
