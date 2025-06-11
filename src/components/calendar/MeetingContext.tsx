@@ -130,12 +130,11 @@ export function MeetingProvider({
     customEnd,
   ]);
 
-  // Single effect: internal state changes → URL params update
   useEffect(() => {
     if (updateUrl) {
       syncFiltersToUrl(filters, currentView);
     }
-  }, [filters, currentView, syncFiltersToUrl, updateUrl]);
+  }, [filters, currentView, updateUrl]);
 
   // Use TanStack Query for data fetching with the new API
   const {
