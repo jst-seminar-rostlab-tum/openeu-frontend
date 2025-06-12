@@ -1,7 +1,7 @@
 import { areIntervalsOverlapping, parseISO } from 'date-fns';
 
-import { EventBlock } from '@/components/WeekViewCalendar/EventBlock';
-import { EventListBlock } from '@/components/WeekViewCalendar/EventListBlock';
+import { EventBlock } from '@/components/calendar/WeekViewCalendar/EventBlock';
+import { EventListBlock } from '@/components/calendar/WeekViewCalendar/EventListBlock';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { getEventBlockStyle } from '@/operations/meeting/CalendarHelpers';
 

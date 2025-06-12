@@ -6,12 +6,12 @@ import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function MapPage() {
-  const { searchQuery, setSearchQuery, isFetching } = useCalendar();
+  const { searchQuery, setSearchQuery, isFetching } = useMeetingContext();
   const [displayValue, setDisplayValue] = useState(searchQuery);
 
   return (
