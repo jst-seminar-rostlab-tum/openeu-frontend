@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import { endOfDay, isSameDay, parseISO, startOfDay } from 'date-fns';
 
-import { EventDetailsDialog } from '@/components/MonthViewCalendar/EventDetailsDialog';
+import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { cn } from '@/lib/utils';
 import { formatTime } from '@/operations/meeting/CalendarHelpers';

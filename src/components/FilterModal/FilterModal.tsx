@@ -3,7 +3,7 @@
 import { Funnel } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { MotionButton } from '@/components/CalendarHeader/CalendarHeader';
+import { MotionButton } from '@/components/calendar/CalendarHeader/CalendarHeader';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select';
 import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 const { now } = getCurrentMonthRange();
@@ -49,7 +49,7 @@ export default function FilterModal({
     topics: [],
   });
   const { selectedCountry, setSelectedCountry, setFilters, filters } =
-    useCalendar();
+    useMeetingContext();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>(
     FilterModalOperations.getDefaultState(),

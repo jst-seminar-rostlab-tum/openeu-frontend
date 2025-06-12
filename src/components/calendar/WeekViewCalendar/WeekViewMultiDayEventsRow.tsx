@@ -10,7 +10,7 @@ import {
 } from 'date-fns';
 import { useMemo } from 'react';
 
-import { MonthEventBadge } from '@/components/MonthViewCalendar/MonthEventBadge';
+import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 
 interface IProps {

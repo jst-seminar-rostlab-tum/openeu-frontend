@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { formatTime } from '@/operations/meeting/CalendarHelpers';
 
 export function CalendarTimeline() {
-  const { use24HourFormat } = useCalendar();
+  const { use24HourFormat } = useMeetingContext();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {

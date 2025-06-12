@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 
-import { DayCell } from '@/components/MonthViewCalendar/DayCell';
+import { DayCell } from '@/components/calendar/MonthViewCalendar/DayCell';
 import { staggerContainer, transition } from '@/domain/animations';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import {
   calculateMonthEventPositions,
   getCalendarCells,
@@ -17,7 +17,7 @@ interface IProps {
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
-  const { selectedDate } = useCalendar();
+  const { selectedDate } = useMeetingContext();
   const allEvents = [...multiDayEvents, ...singleDayEvents];
   const cells = getCalendarCells(selectedDate);
 

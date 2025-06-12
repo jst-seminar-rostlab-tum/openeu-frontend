@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { buttonHover, transition } from '@/domain/animations';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import type { TCalendarView } from '@/domain/types/calendar/types';
 import { navigateDate, rangeText } from '@/operations/meeting/CalendarHelpers';
 
@@ -21,7 +21,7 @@ const MotionBadge = motion.create(Badge);
 
 export function DateNavigator({ view }: IProps) {
   const { selectedDate, setSelectedDate, getEventsCount, meetings } =
-    useCalendar();
+    useMeetingContext();
 
   const month = format(selectedDate, 'MMMM');
   const year = selectedDate.getFullYear();
