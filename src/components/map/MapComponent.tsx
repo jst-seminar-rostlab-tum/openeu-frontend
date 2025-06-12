@@ -19,7 +19,6 @@ import { MapIndicator } from '@/components/map/MapIndicator';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
@@ -190,40 +189,38 @@ export default function MapComponent({
         style={styleFeatures}
       />
       {hoveredFeature && (
-        <TooltipProvider>
-          <Tooltip open>
-            <TooltipTrigger asChild />
-            <TooltipContent
-              className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit whitespace-nowrap`}
-              style={{
-                position: 'fixed',
-                left: tooltipPosition.x + 10,
-                top: tooltipPosition.y - 30,
-                pointerEvents: 'none',
-              }}
-            >
-              {(() => {
-                const countryName = hoveredFeature.properties?.name;
-                const { counts } = getMeetingStats(countryName, meetings);
+        <Tooltip open>
+          <TooltipTrigger asChild />
+          <TooltipContent
+            className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit whitespace-nowrap`}
+            style={{
+              position: 'fixed',
+              left: tooltipPosition.x + 10,
+              top: tooltipPosition.y - 30,
+              pointerEvents: 'none',
+            }}
+          >
+            {(() => {
+              const countryName = hoveredFeature.properties?.name;
+              const { counts } = getMeetingStats(countryName, meetings);
 
-                return (
-                  <>
-                    <p className="text-sm font-semibold">{countryName}</p>
-                    {Object.keys(counts).length > 0 && (
-                      <ul className="mt-2 text-sm">
-                        {Object.entries(counts).map(([type, count]) => (
-                          <li key={type}>
-                            {getMeetingType(type)}: {count}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </>
-                );
-              })()}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+              return (
+                <>
+                  <p className="text-sm font-semibold">{countryName}</p>
+                  {Object.keys(counts).length > 0 && (
+                    <ul className="mt-2 text-sm">
+                      {Object.entries(counts).map(([type, count]) => (
+                        <li key={type}>
+                          {getMeetingType(type)}: {count}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              );
+            })()}
+          </TooltipContent>
+        </Tooltip>
       )}
 
       {/* MapIndicators */}
