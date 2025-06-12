@@ -3,9 +3,9 @@ import { cva } from 'class-variance-authority';
 import { differenceInMinutes, parseISO } from 'date-fns';
 import type { HTMLAttributes } from 'react';
 
-import { EventListDialog } from '@/components/MonthViewCalendar/EventListDialog';
+import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
 import {
   formatTime,
@@ -57,7 +57,7 @@ interface IProps
 }
 
 export function EventListBlock({ events, className }: IProps) {
-  const { badgeVariant, use24HourFormat } = useCalendar();
+  const { badgeVariant, use24HourFormat } = useMeetingContext();
 
   const start = parseISO(events[0].meeting_start_datetime);
   const end = parseISO(events[0].meeting_end_datetime);

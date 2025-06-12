@@ -1,5 +1,7 @@
-import { CalendarProvider } from '@/components/CalendarHeader/CalendarContext';
+import { MeetingProvider } from '@/components/calendar/MeetingContext';
 
 export default function MapLayout({ children }: { children: React.ReactNode }) {
-  return <CalendarProvider>{children}</CalendarProvider>;
+  return (
+    <MeetingProvider excludeUrlParams={['view']}>{children}</MeetingProvider>
+  );
 }

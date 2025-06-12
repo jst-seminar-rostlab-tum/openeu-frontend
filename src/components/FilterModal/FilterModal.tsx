@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select';
 import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 
@@ -50,7 +50,7 @@ export default function FilterModal({
     topics: [],
   });
   const { selectedCountry, setSelectedCountry, setFilters, filters } =
-    useCalendar();
+    useMeetingContext();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>(
     FilterModalOperations.getDefaultState(),

@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import { CalendarRange, Columns, Grid2X2, Grid3X3, Search } from 'lucide-react';
 import * as React from 'react';
 
-import { DateNavigator } from '@/components/CalendarHeader/DateNavigator';
-import { TodayButton } from '@/components/CalendarHeader/TodayButton';
+import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigator';
+import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
 import FilterModal from '@/components/FilterModal/FilterModal';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
 import { ButtonGroup } from '@/components/ui/button-group';
@@ -22,10 +22,10 @@ import {
   slideFromRight,
   transition,
 } from '@/domain/animations';
-import { useCalendar } from '@/domain/hooks/meetingHooks';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 
 export function CalendarHeader() {
-  const { view, setView, searchQuery, setSearchQuery } = useCalendar();
+  const { view, setView, searchQuery, setSearchQuery } = useMeetingContext();
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
