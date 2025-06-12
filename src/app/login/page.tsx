@@ -10,7 +10,7 @@ export default async function Page(props: {
   const error = decodeURIComponent(searchParams?.error || '');
   const confirm = searchParams?.confirm || '';
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-muted">
+    <div className="flex min-h-[calc(100vh-3rem)] w-full items-center justify-center p-6 md:p-10 bg-muted">
       <div className="w-full max-w-sm">
         {error !== '' && (
           <div className="mb-10 shadow-sm rounded-xl">
