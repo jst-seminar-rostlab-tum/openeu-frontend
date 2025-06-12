@@ -111,7 +111,11 @@ export function EventBlock({ event, className }: IProps) {
           </div>
           {event.similarity && (
             <div id="score" className="flex-none w-6 h-6">
-              <RelevanceScore meeting={event} type={'circle'} />
+              <RelevanceScore
+                meeting={event}
+                type={'circle'}
+                textClassName="text-slate-800 dark:text-slate-50"
+              />
             </div>
           )}
         </div>
