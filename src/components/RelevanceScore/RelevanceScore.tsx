@@ -3,9 +3,14 @@ import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 interface RelevanceScoreProps {
   meeting: MeetingData;
   type: 'bar' | 'circle';
+  textClassName?: string;
 }
 
-export function RelevanceScore({ meeting, type }: RelevanceScoreProps) {
+export function RelevanceScore({
+  meeting,
+  type,
+  textClassName = 'text-white',
+}: RelevanceScoreProps) {
   const isBar = type === 'bar';
   const relevanceScore = isBar
     ? Math.round(meeting.similarity! * 10000) / 100
@@ -17,7 +22,7 @@ export function RelevanceScore({ meeting, type }: RelevanceScoreProps) {
         role="progressbar"
       >
         <div
-          className="flex flex-col justify-center rounded-full overflow-hidden outline-1 outline-solid bg-accent-foreground text-white text-[0.75em] text-center align-middle whitespace-nowrap transition duration-500 h-4 dark:bg-white dark:text-black"
+          className={`flex flex-col justify-center rounded-full overflow-hidden outline-1 outline-solid bg-accent-foreground ${textClassName} text-[0.75em] text-center align-middle whitespace-nowrap transition duration-500 h-4 dark:bg-white dark:text-black`}
           style={{ width: `${relevanceScore}%` }}
         >
           {relevanceScore.toFixed(2)}%
@@ -53,7 +58,7 @@ export function RelevanceScore({ meeting, type }: RelevanceScoreProps) {
           ></circle>
         </svg>
         <div className="absolute top-1/2 start-1/2 transform -translate-y-1/2 -translate-x-1/2">
-          <span className="text-center text-[0.75em] text-white">
+          <span className={`text-center text-[0.75em] ${textClassName}`}>
             {relevanceScore}
           </span>
         </div>

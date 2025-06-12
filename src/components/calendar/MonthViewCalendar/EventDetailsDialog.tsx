@@ -5,6 +5,7 @@ import {
   Building,
   Calendar,
   CalendarOff,
+  ExternalLink,
   MapPin,
   Scale,
   Tag,
@@ -19,6 +20,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -135,11 +137,23 @@ export function EventDetailsDialog({ event, children }: IProps) {
             )}
           </div>
         </ScrollArea>
-        <DialogClose asChild>
-          <Button variant="outline" className="mt-4 w-full">
-            Close
-          </Button>
-        </DialogClose>
+        <DialogFooter>
+          {event.meeting_url && (
+            <Button variant="default" asChild>
+              <a
+                href={event.meeting_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Visit
+                <ExternalLink className="size-4" />
+              </a>
+            </Button>
+          )}
+          <DialogClose asChild>
+            <Button variant="outline">Close</Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
