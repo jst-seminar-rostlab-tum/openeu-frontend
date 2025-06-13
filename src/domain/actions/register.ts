@@ -22,11 +22,16 @@ export async function signup(formData: FormData) {
   const surname = formData.get('surname') as string;
   const company = formData.get('company') as string;
   const companyDescription = formData.get('company-description') as string;
-  const country = formData.get('country') as string;
+  let country = formData.get('country') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const topics = formData.get('topics') as string;
+  const subscribedNewsletter = formData.get('subscribed-newsletter') as string;
   const url = await getCurrentURL();
+
+  if (country.split(',').length === 0 || country === '') {
+    country = 'de,es,at,be,pl';
+  }
 
   const { error, data } = await supabase.auth.signUp({
     email,
@@ -54,6 +59,7 @@ export async function signup(formData: FormData) {
       companyName: company,
       companyDescription: companyDescription,
       topicList: topics.split(','),
+      subscribedNewsletter: subscribedNewsletter === 'true',
     });
   }
 
