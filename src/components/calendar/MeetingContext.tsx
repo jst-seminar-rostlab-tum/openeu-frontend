@@ -10,7 +10,7 @@ import {
 } from 'date-fns';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import {
   GetMeetingsQueryParams,
   useMeetings,
@@ -36,7 +36,7 @@ export interface IMeetingContext {
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
   setSelectedCountry: (country: string) => void;
-  meetings: MeetingData[];
+  meetings: Meeting[];
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
@@ -45,7 +45,7 @@ export interface IMeetingContext {
   filters: GetMeetingsQueryParams;
   setFilters: (filters: GetMeetingsQueryParams) => void;
   getEventsCount: (
-    events?: MeetingData[],
+    events?: Meeting[],
     selectedDate?: Date,
     view?: TCalendarView,
   ) => number;
@@ -214,7 +214,7 @@ export function MeetingProvider({
   };
 
   function getEventsCount(
-    eventsParam: MeetingData[] = meetings,
+    eventsParam: Meeting[] = meetings,
     selectedDateParam: Date = selectedDate,
     viewParam: TCalendarView = currentView,
   ): number {

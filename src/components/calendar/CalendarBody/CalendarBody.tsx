@@ -9,7 +9,7 @@ import { CalendarDayView } from '@/components/calendar/DayViewCalendar/DayViewCa
 import { CalendarMonthView } from '@/components/calendar/MonthViewCalendar/MonthViewCalendar';
 import { CalendarWeekView } from '@/components/calendar/WeekViewCalendar/WeekViewCalendar';
 import { fadeIn, transition } from '@/domain/animations';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
@@ -33,15 +33,15 @@ export function CalendarBody() {
 
   const safeEvents = isError ? [] : meetings;
 
-  const singleDayEvents = safeEvents.filter((event: MeetingData) => {
+  const singleDayEvents = safeEvents.filter((event: Meeting) => {
     const startDate = parseISO(event.meeting_start_datetime);
-    const endDate = parseISO(event.meeting_end_datetime);
+    const endDate = parseISO(event.meeting_end_datetime!);
     return isSameDay(startDate, endDate);
   });
 
-  const multiDayEvents = safeEvents.filter((event: MeetingData) => {
+  const multiDayEvents = safeEvents.filter((event: Meeting) => {
     const startDate = parseISO(event.meeting_start_datetime);
-    const endDate = parseISO(event.meeting_end_datetime);
+    const endDate = parseISO(event.meeting_end_datetime!);
     return !isSameDay(startDate, endDate);
   });
 

@@ -7,7 +7,7 @@ import {
 } from 'date-fns';
 import { useMemo } from 'react';
 
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 
 const COUNTRY_MAPPINGS = {
@@ -15,7 +15,7 @@ const COUNTRY_MAPPINGS = {
 } as const;
 
 export function useMeetingCountByCountry(
-  meetings: MeetingData[],
+  meetings: Meeting[],
 ): typeof meetingsPerCountry {
   return useMemo(() => {
     const countMap = new Map<string, number>();

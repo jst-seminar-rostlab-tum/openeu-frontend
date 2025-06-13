@@ -7,13 +7,13 @@ import { RenderGroupedEvents } from '@/components/calendar/WeekViewCalendar/Rend
 import { WeekViewMultiDayEventsRow } from '@/components/calendar/WeekViewCalendar/WeekViewMultiDayEventsRow';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { fadeIn, staggerContainer, transition } from '@/domain/animations';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { groupEvents } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
-  singleDayEvents: MeetingData[];
-  multiDayEvents: MeetingData[];
+  singleDayEvents: Meeting[];
+  multiDayEvents: Meeting[];
 }
 
 export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
@@ -115,7 +115,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                   const dayEvents = singleDayEvents.filter(
                     (event) =>
                       isSameDay(parseISO(event.meeting_start_datetime), day) ||
-                      isSameDay(parseISO(event.meeting_end_datetime), day),
+                      isSameDay(parseISO(event.meeting_end_datetime!), day),
                   );
                   const groupedEvents = groupEvents(dayEvents);
 
