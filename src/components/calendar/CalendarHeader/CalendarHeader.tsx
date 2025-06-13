@@ -6,6 +6,7 @@ import * as React from 'react';
 
 import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
+import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
 import { ButtonGroup } from '@/components/ui/button-group';
@@ -147,6 +148,7 @@ export function CalendarHeader() {
               </Toggle>
             </TooltipButton>
           </ButtonGroup>
+          <ExportModal />
         </div>
       </motion.div>
     </div>
