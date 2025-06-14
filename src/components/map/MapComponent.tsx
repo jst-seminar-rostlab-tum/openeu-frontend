@@ -21,7 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
 
@@ -34,10 +34,10 @@ interface MapProps {
   minZoom?: number;
   maxZoom?: number;
   meetingCountByCountry: MeetingCountByCountry;
-  meetings: MeetingData[];
+  meetings: Meeting[];
 }
 
-function getMeetingStats(countryName: string, meetings?: MeetingData[]) {
+function getMeetingStats(countryName: string, meetings?: Meeting[]) {
   if (!meetings || !countryName) return { counts: {} };
 
   // Special case: meetings with location "European Union" are matched to Belgium

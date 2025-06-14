@@ -6,14 +6,14 @@ import { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { buttonHover, transition } from '@/domain/animations';
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import type { TCalendarView } from '@/domain/types/calendar/types';
 import { navigateDate, rangeText } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
   view: TCalendarView;
-  event?: MeetingData[];
+  event?: Meeting[];
 }
 
 const MotionButton = motion.create(Button);

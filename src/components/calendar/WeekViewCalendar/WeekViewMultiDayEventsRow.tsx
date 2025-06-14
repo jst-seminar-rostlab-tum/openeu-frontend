@@ -11,11 +11,11 @@ import {
 import { useMemo } from 'react';
 
 import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 
 interface IProps {
   selectedDate: Date;
-  multiDayEvents: MeetingData[];
+  multiDayEvents: Meeting[];
 }
 
 export function WeekViewMultiDayEventsRow({
@@ -30,7 +30,7 @@ export function WeekViewMultiDayEventsRow({
     return multiDayEvents
       .map((event) => {
         const start = parseISO(event.meeting_start_datetime);
-        const end = parseISO(event.meeting_end_datetime);
+        const end = parseISO(event.meeting_end_datetime!);
         const adjustedStart = isBefore(start, weekStart) ? weekStart : start;
         const adjustedEnd = isAfter(end, weekEnd) ? weekEnd : end;
         const startIndex = differenceInDays(adjustedStart, weekStart);
@@ -75,7 +75,7 @@ export function WeekViewMultiDayEventsRow({
   const hasEventsInWeek = useMemo(() => {
     return multiDayEvents.some((event) => {
       const start = parseISO(event.meeting_start_datetime);
-      const end = parseISO(event.meeting_end_datetime);
+      const end = parseISO(event.meeting_end_datetime!);
 
       return (
         // Event starts within the week

@@ -7,11 +7,11 @@ import {
 } from 'date-fns';
 
 import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 
 interface IProps {
   selectedDate: Date;
-  multiDayEvents: MeetingData[];
+  multiDayEvents: Meeting[];
 }
 
 export function DayViewMultiDayEventsRow({
@@ -24,7 +24,7 @@ export function DayViewMultiDayEventsRow({
   const multiDayEventsInDay = multiDayEvents
     .filter((event) => {
       const eventStart = parseISO(event.meeting_start_datetime);
-      const eventEnd = parseISO(event.meeting_end_datetime);
+      const eventEnd = parseISO(event.meeting_end_datetime!);
 
       return (
         isWithinInterval(dayStart, { start: eventStart, end: eventEnd }) ||
@@ -34,8 +34,8 @@ export function DayViewMultiDayEventsRow({
     })
     .sort((a, b) => {
       const durationA = differenceInDays(
-        parseISO(a.meeting_end_datetime),
-        parseISO(a.meeting_end_datetime),
+        parseISO(a.meeting_end_datetime!),
+        parseISO(a.meeting_end_datetime!),
       );
       const durationB = differenceInDays(
         parseISO(b.meeting_start_datetime),
@@ -52,7 +52,7 @@ export function DayViewMultiDayEventsRow({
       <div className="flex flex-1 flex-col gap-1 border-l py-1">
         {multiDayEventsInDay.map((event) => {
           const eventStart = startOfDay(parseISO(event.meeting_start_datetime));
-          const eventEnd = startOfDay(parseISO(event.meeting_end_datetime));
+          const eventEnd = startOfDay(parseISO(event.meeting_end_datetime!));
           const currentDate = startOfDay(selectedDate);
 
           const eventTotalDays = differenceInDays(eventEnd, eventStart) + 1;
