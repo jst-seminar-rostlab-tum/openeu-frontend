@@ -1,6 +1,6 @@
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
 
-const API_URL = 'https://openeu-backend.onrender.com/profile';
+const API_URL = 'https://openeu-backend-1.onrender.com/profile';
 
 export const profileRepository = {
   async createProfile(profileData: ProfileData): Promise<string> {
