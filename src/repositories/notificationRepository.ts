@@ -1,6 +1,6 @@
 import { Notification } from '@/domain/entities/notifications/generated-types';
 
-const API_URL = 'https://openeu-backend.onrender.com';
+const API_URL = 'https://openeu-backend-1.onrender.com';
 
 export async function fetchBackendNotifications(
   userId: string,

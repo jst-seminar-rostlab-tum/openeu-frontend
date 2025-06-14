@@ -10,7 +10,7 @@ import {
 } from '../entities/chat/generated-types';
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend.onrender.com';
+  process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend-1.onrender.com';
 
 export async function createChatSession(
   data: Omit<CreateSessionRequest, 'user_id'>,

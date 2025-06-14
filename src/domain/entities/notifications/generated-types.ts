@@ -2,7 +2,7 @@
  * Auto-generated notification types extracted from OpenAPI specification
  * Run `yarn run api:update` to regenerate
  *
- * Backend API: https://openeu-backend.onrender.com/docs#/notifications/get_notifications_for_user_notifications__user_id__get
+ * Backend API: https://openeu-backend-1.onrender.com/docs#/notifications/get_notifications_for_user_notifications__user_id__get
  */
 
 // Import the auto-generated types
