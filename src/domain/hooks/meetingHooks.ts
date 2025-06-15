@@ -20,6 +20,8 @@ export interface GetMeetingsQueryParams {
   query?: string | null;
   /** @description Filter by country (e.g., 'Austria', 'European Union') */
   country?: string | null;
+  /** @description List of topic names (repeat or comma-separated) */
+  topics?: string[] | null;
 }
 
 export const useMeetings = (props: GetMeetingsQueryParams, enabled = true) =>
