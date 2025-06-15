@@ -1,6 +1,6 @@
 import { TopicData } from '@/domain/entities/calendar/TopicData';
 
-const API_URL = 'https://openeu-backend.onrender.com/topics';
+const API_URL = 'https://openeu-backend-1.onrender.com/topics';
 
 export const topicRepository = {
   async getTopics(): Promise<TopicData[]> {

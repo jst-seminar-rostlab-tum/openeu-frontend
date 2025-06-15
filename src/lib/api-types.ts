@@ -310,6 +310,8 @@ export interface components {
       company_description: string;
       /** Topic List */
       topic_list: string[];
+      /** Subscribed Newsletter */
+      subscribed_newsletter: boolean;
     };
     /** SessionsResponseModel */
     SessionsResponseModel: {
