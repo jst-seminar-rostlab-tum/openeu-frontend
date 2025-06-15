@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Archive, Eye, MoreVertical, Trash2 } from 'lucide-react';
 
-import { DataTableColumnHeader } from '@/components/Inbox/data-table-column-header';
+import { DataTableColumnHeader } from '@/components/inbox/ColHeader';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -17,7 +17,7 @@ import {
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 
 interface ActionsProps {
-  onView: (itemId: string) => void;
+  onView: (item: InboxItem) => void;
   onArchive: (itemId: string) => void;
   onDelete: (itemId: string) => void;
 }
@@ -63,7 +63,12 @@ export const createColumns = ({
       <DataTableColumnHeader column={column} title="Title" />
     ),
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue('title')}</div>
+      <div
+        className="font-medium cursor-pointer hover:text-blue-800 underline"
+        onClick={() => onView(row.original)}
+      >
+        {row.getValue('title')}
+      </div>
     ),
   },
   {
@@ -71,8 +76,13 @@ export const createColumns = ({
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Date" />
     ),
-    cell: ({ row }) => <div>{row.getValue('date')}</div>,
+    cell: ({ row }) => {
+      // Format the ISO date string for display
+      const dateString = row.getValue('date') as string;
+      return <div>{new Date(dateString).toLocaleDateString()}</div>;
+    },
     filterFn: (row, id, value) => {
+      // Parse the ISO date string directly for filtering
       const rowDate = new Date(row.getValue(id) as string);
       const { from, to } = value as { from?: Date; to?: Date };
 
@@ -101,12 +111,21 @@ export const createColumns = ({
       </div>
     ),
     cell: ({ row }) => {
-      const score = row.getValue('relevanceScore') as number;
+      const score = row.getValue('relevanceScore') as number | undefined;
+
+      if (score === undefined) {
+        return (
+          <div className="flex items-center justify-end gap-2">
+            <span>-</span>
+          </div>
+        );
+      }
+
       return (
         <div className="flex items-center justify-end gap-2">
-          <span>{score}%</span>
+          <span>{(score * 100).toFixed(2)}%</span>
           <div
-            className={`w-2 h-2 rounded-full ${getRelevanceColor(score)}`}
+            className={`w-2 h-2 rounded-full ${getRelevanceColor(score * 100)}`}
             style={{ opacity: 0.75 }}
           />
         </div>
@@ -129,7 +148,7 @@ export const createColumns = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => onView(item.id)}>
+            <DropdownMenuItem onClick={() => onView(item)}>
               <Eye className="mr-2 h-4 w-4" />
               View
             </DropdownMenuItem>

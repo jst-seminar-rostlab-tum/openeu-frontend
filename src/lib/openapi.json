@@ -86,6 +86,17 @@
               "title": "Query"
             },
             "description": "Search query using semantic similarity"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Filter by country (e.g., 'Austria', 'European Union')",
+              "title": "Country"
+            },
+            "description": "Filter by country (e.g., 'Austria', 'European Union')"
           }
         ],
         "responses": {
@@ -533,10 +544,21 @@
           "message": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Message"
+          },
+          "relevance_score": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Relevance Score"
           }
         },
         "type": "object",
-        "required": ["id", "user_id", "sent_at", "type", "message"],
+        "required": [
+          "id",
+          "user_id",
+          "sent_at",
+          "type",
+          "message",
+          "relevance_score"
+        ],
         "title": "Notification"
       },
       "ProfileCreate": {

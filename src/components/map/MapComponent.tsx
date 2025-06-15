@@ -19,10 +19,11 @@ import { MapIndicator } from '@/components/map/MapIndicator';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
+import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
 
 type MeetingCountByCountry = typeof meetingsPerCountry;
 
@@ -33,6 +34,25 @@ interface MapProps {
   minZoom?: number;
   maxZoom?: number;
   meetingCountByCountry: MeetingCountByCountry;
+  meetings: MeetingData[];
+}
+
+function getMeetingStats(countryName: string, meetings?: MeetingData[]) {
+  if (!meetings || !countryName) return { counts: {} };
+
+  // Special case: meetings with location "European Union" are matched to Belgium
+  const filtered = meetings.filter(
+    (m) =>
+      m.location === countryName ||
+      (m.location === 'European Union' && countryName === 'Belgium'),
+  );
+
+  const counts: Record<string, number> = {};
+  for (const meeting of filtered) {
+    counts[meeting.source_table] = (counts[meeting.source_table] || 0) + 1;
+  }
+
+  return { counts };
 }
 
 export default function MapComponent({
@@ -42,12 +62,12 @@ export default function MapComponent({
   minZoom,
   maxZoom,
   meetingCountByCountry,
+  meetings,
 }: MapProps) {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
   const countryFill = isDarkMode ? '#1E293B' : '#E2E8F0';
   const countryBorder = isDarkMode ? '#334155' : '#64748B';
-
   const [hoveredFeature, setHoveredFeature] = useState<geojson.Feature | null>(
     null,
   );
@@ -169,22 +189,38 @@ export default function MapComponent({
         style={styleFeatures}
       />
       {hoveredFeature && (
-        <TooltipProvider>
-          <Tooltip open>
-            <TooltipTrigger asChild />
-            <TooltipContent
-              className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit`}
-              style={{
-                position: 'fixed',
-                left: tooltipPosition.x + 10,
-                top: tooltipPosition.y - 30,
-                pointerEvents: 'none',
-              }}
-            >
-              <p>{hoveredFeature.properties?.name}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip open>
+          <TooltipTrigger asChild />
+          <TooltipContent
+            className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit whitespace-nowrap`}
+            style={{
+              position: 'fixed',
+              left: tooltipPosition.x + 10,
+              top: tooltipPosition.y - 30,
+              pointerEvents: 'none',
+            }}
+          >
+            {(() => {
+              const countryName = hoveredFeature.properties?.name;
+              const { counts } = getMeetingStats(countryName, meetings);
+
+              return (
+                <>
+                  <p className="text-sm font-semibold">{countryName}</p>
+                  {Object.keys(counts).length > 0 && (
+                    <ul className="mt-2 text-sm">
+                      {Object.entries(counts).map(([type, count]) => (
+                        <li key={type}>
+                          {getMeetingType(type)}: {count}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              );
+            })()}
+          </TooltipContent>
+        </Tooltip>
       )}
 
       {/* MapIndicators */}

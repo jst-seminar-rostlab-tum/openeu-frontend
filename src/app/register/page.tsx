@@ -10,8 +10,8 @@ export default async function Page(props: {
   const searchParams = await props.searchParams;
   const error = decodeURIComponent(searchParams?.error || '');
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="hidden lg:flex justify-center items-center h-screen sticky top-0 left-0">
+    <div className="grid min-h-[calc(100vh-3rem)] lg:grid-cols-2">
+      <div className="hidden lg:flex justify-center items-center sticky top-0 left-0">
         <div className="justify-center items-center flex flex-col">
           <Image
             src="/project-europe-no-bg.png"
