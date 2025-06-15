@@ -34,7 +34,7 @@ export function AuthProvider({
   const supabase = createClient();
 
   // 🚨 DEV ONLY: Mock authenticated user for testing
-  const MOCK_AUTH = process.env.NODE_ENV === 'development' && false; // Set to true to enable
+  const MOCK_AUTH = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
     if (MOCK_AUTH) {
