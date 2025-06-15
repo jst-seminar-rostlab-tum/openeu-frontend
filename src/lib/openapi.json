@@ -575,6 +575,10 @@
             "items": { "type": "string" },
             "type": "array",
             "title": "Topic List"
+          },
+          "subscribed_newsletter": {
+            "type": "boolean",
+            "title": "Subscribed Newsletter"
           }
         },
         "type": "object",
@@ -584,7 +588,8 @@
           "surname",
           "company_name",
           "company_description",
-          "topic_list"
+          "topic_list",
+          "subscribed_newsletter"
         ],
         "title": "ProfileCreate"
       },
