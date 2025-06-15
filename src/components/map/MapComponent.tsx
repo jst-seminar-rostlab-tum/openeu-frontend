@@ -16,6 +16,8 @@ import {
   oceanBounds,
 } from '@/components/map/constants';
 import { MapIndicator } from '@/components/map/MapIndicator';
+import { MeetingListDialog } from '@/components/map/MeetingListDialog';
+import { Dialog } from '@/components/ui/dialog';
 import {
   Tooltip,
   TooltipContent,
@@ -24,7 +26,7 @@ import {
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
-
+import { ToastOperations } from '@/operations/toast/toastOperations';
 type MeetingCountByCountry = typeof meetingsPerCountry;
 
 interface MapProps {
@@ -72,6 +74,8 @@ export default function MapComponent({
     null,
   );
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const onEachFeature = (feature: geojson.Feature, layer: Layer) => {
     layer.on({
@@ -90,6 +94,28 @@ export default function MapComponent({
           x: e.originalEvent.clientX,
           y: e.originalEvent.clientY,
         });
+      },
+      click: () => {
+        const countryName = feature.properties?.name;
+        if (countryName && europeanCountries.includes(countryName)) {
+          const countryMeetingCount = meetings.filter(
+            (meeting) =>
+              meeting.location === countryName ||
+              (meeting.location === 'European Union' &&
+                countryName === 'Belgium'),
+          ).length;
+
+          if (countryMeetingCount === 0) {
+            ToastOperations.showError({
+              title: 'No meetings found',
+              message: `There are no meetings scheduled in ${countryName}.`,
+            });
+          }
+          if (countryMeetingCount > 0) {
+            setSelectedCountry(countryName);
+            setDialogOpen(true);
+          }
+        }
       },
     });
   };
@@ -259,15 +285,37 @@ export default function MapComponent({
             meetingCountByCountry.get(countryName) ?? 0;
 
           return (
-            <MapIndicator
+            <div
               key={countryName || idx}
-              position={centerLatLng}
-              count={countForThisCountry}
-              baseZoom={zoom}
-              isHighlighted={isHighlighted}
-            />
+              style={{
+                cursor: countForThisCountry > 0 ? 'pointer' : 'default',
+              }}
+              onClick={() => {
+                if (countForThisCountry > 0) {
+                  setSelectedCountry(countryName);
+                  setDialogOpen(true);
+                }
+              }}
+            >
+              <MapIndicator
+                position={centerLatLng}
+                count={countForThisCountry}
+                baseZoom={zoom}
+                isHighlighted={isHighlighted}
+              />
+            </div>
           );
         })}
+
+      {/* Country click dialog */}
+      {selectedCountry && (
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <MeetingListDialog
+            countryName={selectedCountry}
+            meetings={meetings}
+          />
+        </Dialog>
+      )}
     </MapContainer>
   );
 }
