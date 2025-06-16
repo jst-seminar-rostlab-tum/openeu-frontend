@@ -7,6 +7,7 @@ import * as React from 'react';
 import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
 import FilterModal from '@/components/FilterModal/FilterModal';
+import SelectedFilterBadge from '@/components/FilterModal/SelectedFilterBadge';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Input } from '@/components/ui/input';
@@ -23,13 +24,23 @@ import {
   transition,
 } from '@/domain/animations';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
+import { FilterData } from '@/operations/filter-modal/FilterModalOperations';
 
 export function CalendarHeader() {
   const { view, setView, searchQuery, setSearchQuery } = useMeetingContext();
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
+  const [filterData, setFilterData] = React.useState<FilterData>({
+    country: '',
+    dateRange: '',
+    topics: '',
+  });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchText(e.target.value);
+  };
+
+  const handleFilterSelectForBadge = (newData: FilterData) => {
+    setFilterData(newData);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -64,6 +75,14 @@ export function CalendarHeader() {
         transition={transition}
       >
         <div className="options flex-wrap flex items-center gap-4 md:gap-2">
+          <div className="flex flex-wrap gap-2">
+            {filterData &&
+              Object.entries(filterData).map(([key, value]) => {
+                if (value == '') return null;
+
+                return <SelectedFilterBadge key={key} value={value} />;
+              })}
+          </div>
           <div className="relative flex items-center">
             <Input
               type="search"
@@ -75,7 +94,10 @@ export function CalendarHeader() {
             />
             <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
           </div>
-          <FilterModal showDateDropdown={false} />
+          <FilterModal
+            showDateDropdown={false}
+            onSelect={handleFilterSelectForBadge}
+          />
 
           <Tooltip>
             <TooltipTrigger asChild>

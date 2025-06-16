@@ -49,3 +49,9 @@ export default class FilterModalOperations {
     return endDate > startDate;
   }
 }
+
+export type FilterData = {
+  country: string;
+  dateRange: string;
+  topics: string;
+};
