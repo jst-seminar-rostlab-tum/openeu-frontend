@@ -7,12 +7,15 @@ import Map from '@/components/map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
+import useInitUrlMeetingFilter from '@/domain/hooks/useInitUrlMeetingFilter';
+import MapOperations from '@/operations/map/MapOperations';
 
 const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function MapPage() {
   const { searchQuery, setSearchQuery, isFetching } = useMeetingContext();
   const [displayValue, setDisplayValue] = useState(searchQuery);
+  const { urlFilters } = useInitUrlMeetingFilter();
 
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
@@ -27,6 +30,12 @@ export default function MapPage() {
         />
         <FilterModal
           topics={topics}
+          initFilterState={{
+            startDate: MapOperations.isoStringToDate(urlFilters.start),
+            endDate: MapOperations.isoStringToDate(urlFilters.end),
+            country: '',
+            topics: [],
+          }}
           showCountryDropdown={false}
           showTopicDropdown={false}
         />

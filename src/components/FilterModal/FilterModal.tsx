@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { MotionButton } from '@/components/TooltipMotionButton';
 import { Button } from '@/components/ui/button';
-import { DatePicker } from '@/components/ui/date-picker';
 import {
   Dialog,
   DialogContent,
@@ -29,12 +28,15 @@ import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 
+import { DateRangeFilter, DateRangeFilterProps } from '../DateRangeFilter';
+
 const { now } = getCurrentMonthRange();
 interface FilterModalProps {
   topics?: string[];
   showCountryDropdown?: boolean;
   showTopicDropdown?: boolean;
   showDateDropdown?: boolean;
+  initFilterState?: FilterModalState;
 }
 
 export default function FilterModal({
@@ -42,19 +44,20 @@ export default function FilterModal({
   showCountryDropdown = true,
   showTopicDropdown = true,
   showDateDropdown = true,
-}: FilterModalProps) {
-  const [filterState, setFilterState] = useState<FilterModalState>({
+  initFilterState = {
     startDate: now,
     endDate: now,
     country: '',
     topics: [],
-  });
+  },
+}: FilterModalProps) {
+  const [filterState, setFilterState] =
+    useState<FilterModalState>(initFilterState);
   const { selectedCountry, setSelectedCountry, setFilters, filters } =
     useMeetingContext();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [localState, setLocalState] = useState<FilterModalState>(
-    FilterModalOperations.getDefaultState(),
-  );
+  const [localState, setLocalState] =
+    useState<FilterModalState>(initFilterState);
   const multiSelectRef = useRef<MultiSelectRef>(null);
   const countries = FilterModalOperations.getCountries();
   const topicOptions = topics!.map((topic) => ({
@@ -72,29 +75,8 @@ export default function FilterModal({
     setLocalState((prev) => ({ ...prev, ...updates }));
   };
 
-  const handleStartDateChange = (newStartDate: Date) => {
-    const updates: Partial<FilterModalState> = { startDate: newStartDate };
-
-    if ((localState.endDate ?? newStartDate) <= newStartDate) {
-      updates.endDate = newStartDate;
-    }
-    if (localState.endDate && localState.endDate <= newStartDate) {
-      updates.endDate = newStartDate;
-    }
-    updateLocalState(updates);
-  };
-
-  const handleEndDateChange = (newEndDate: Date) => {
-    if (
-      !localState.startDate ||
-      !newEndDate ||
-      !FilterModalOperations.validateDateRange(localState.startDate, newEndDate)
-    ) {
-      console.error('End date must be after start date.');
-      return;
-    }
-
-    updateLocalState({ endDate: newEndDate });
+  const handleDateChange = (range: DateRangeFilterProps) => {
+    updateLocalState({ startDate: range.from, endDate: range.to });
   };
 
   const handleTopicsChange = (selectedTopics: string[]) => {
@@ -168,13 +150,10 @@ export default function FilterModal({
         {showDateDropdown && (
           <div className="relative z-0">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <DatePicker
-                date={localState.startDate}
-                onSelect={handleStartDateChange}
-              />
-              <DatePicker
-                date={localState.endDate}
-                onSelect={handleEndDateChange}
+              <DateRangeFilter
+                from={localState.startDate}
+                to={localState.endDate}
+                onSelect={handleDateChange}
               />
             </div>
           </div>
