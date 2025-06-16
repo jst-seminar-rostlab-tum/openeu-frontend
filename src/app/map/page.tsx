@@ -7,12 +7,14 @@ import Map from '@/components/map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-
-const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
+import { useTopics } from '@/domain/hooks/topicHook';
 
 export default function MapPage() {
   const { searchQuery, setSearchQuery, isFetching } = useMeetingContext();
   const [displayValue, setDisplayValue] = useState(searchQuery);
+
+  const { data: topicsData = [] } = useTopics();
+  const topicLabels = topicsData.map((topic) => topic.topic);
 
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
@@ -25,11 +27,7 @@ export default function MapPage() {
           isFetching={isFetching}
           placeholder="Search meetings..."
         />
-        <FilterModal
-          topics={topics}
-          showCountryDropdown={false}
-          showTopicDropdown={false}
-        />
+        <FilterModal topics={topicLabels} showCountryDropdown={false} />
       </Card>
     </div>
   );
