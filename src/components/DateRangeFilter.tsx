@@ -39,8 +39,8 @@ export function DateRangeFilter({ from, to, onSelect }: DateRangeFilterProps) {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="w-45 border-dashed">
-          <CalendarIcon className="absolute left-3 h-4 w-4" />
-          <span className="relative w-full left-3">
+          <CalendarIcon className="h-4 w-4" />
+          <span className="w-full left-3">
             {hasDateRange ? (
               <>
                 {dateRange.from && format(dateRange.from, 'MMM dd')}
