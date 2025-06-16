@@ -104,6 +104,10 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
         start: filters.start || null,
         end: filters.end || null,
         view: view || null,
+        topics:
+          filters.topics && filters.topics.length > 0
+            ? filters.topics.join(',')
+            : null,
       };
 
       // Apply excludeParams filter
