@@ -212,6 +212,7 @@ export default function FilterModal({
               variant="inverted"
               maxCount={1}
               className={showCountryDropdown ? '' : '!w-full'}
+              modalPopover={true}
             />
           )}
         </div>
