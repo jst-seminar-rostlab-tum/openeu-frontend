@@ -161,6 +161,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/topics': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Topics */
+    get: operations['get_topics_topics_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/notifications/{user_id}': {
     parameters: {
       query?: never;
@@ -220,6 +237,8 @@ export interface components {
       meeting_id: string;
       /** Source Table */
       source_table: string;
+      /** Source Id */
+      source_id: string;
       /** Title */
       title: string;
       /** Status */
@@ -322,6 +341,13 @@ export interface components {
       /** Title */
       title: string;
     };
+    /** Topic */
+    Topic: {
+      /** Topic */
+      topic: string;
+      /** Id */
+      id: string;
+    };
     /** ValidationError */
     ValidationError: {
       /** Location */
@@ -383,6 +409,8 @@ export interface operations {
         end?: string | null;
         /** @description Search query using semantic similarity */
         query?: string | null;
+        /** @description List of topic names (repeat or comma-separated) */
+        topics?: string[] | null;
         /** @description Filter by country (e.g., 'Austria', 'European Union') */
         country?: string | null;
       };
@@ -629,6 +657,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_topics_topics_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Topic'][];
         };
       };
     };

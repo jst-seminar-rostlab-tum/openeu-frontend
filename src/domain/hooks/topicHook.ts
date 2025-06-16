@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { TopicData } from '@/domain/entities/calendar/TopicData';
+import { Topic } from '@/domain/entities/calendar/generated-types';
 import { topicRepository } from '@/repositories/topicRepository';
 
 export const useTopics = (enabled = true) =>
-  useQuery<TopicData[]>({
+  useQuery<Topic[]>({
     queryKey: ['topics'],
     queryFn: topicRepository.getTopics,
     enabled,
