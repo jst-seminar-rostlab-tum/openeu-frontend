@@ -1,12 +1,9 @@
-import {
-  endOfWeek,
-  formatISO,
-  parseISO,
-  startOfDay,
-  startOfWeek,
-} from 'date-fns';
+import * as turf from '@turf/turf';
+import { parseISO } from 'date-fns';
+import * as geojson from 'geojson';
 import { useMemo } from 'react';
 
+import { europeanCountries } from '@/components/map/constants';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 
@@ -14,64 +11,92 @@ const COUNTRY_MAPPINGS = {
   'European Union': 'Belgium',
 } as const;
 
-export function useMeetingCountByCountry(
-  meetings: MeetingData[],
-): typeof meetingsPerCountry {
-  return useMemo(() => {
-    const countMap = new Map<string, number>();
-    meetingsPerCountry.forEach((_, country) => countMap.set(country, 0));
+export interface CountryData {
+  totalCount: number;
+  meetings: MeetingData[];
+  meetingTypeMap: Record<string, number>;
+}
 
+export function useCountryMeetingMap(
+  meetings: MeetingData[],
+): Map<string, CountryData> {
+  return useMemo(() => {
+    const countryMap = new Map<string, CountryData>();
+
+    // Initialize all European countries
+    meetingsPerCountry.forEach((_, country) => {
+      countryMap.set(country, {
+        totalCount: 0,
+        meetings: [],
+        meetingTypeMap: {},
+      });
+    });
+
+    // Process meetings in single pass
     meetings.forEach((meeting) => {
       const country =
         COUNTRY_MAPPINGS[meeting.location as keyof typeof COUNTRY_MAPPINGS] ??
         meeting.location;
 
-      if (countMap.has(country)) {
-        countMap.set(country, countMap.get(country)! + 1);
-      } else {
-        console.warn(`Unknown country "${meeting.location}" - skipping`);
+      if (countryMap.has(country)) {
+        const data = countryMap.get(country)!;
+        data.totalCount++;
+        data.meetings.push(meeting);
+        data.meetingTypeMap[meeting.source_table] =
+          (data.meetingTypeMap[meeting.source_table] || 0) + 1;
       }
     });
 
-    return countMap;
+    // Sort meetings by date for each country
+    countryMap.forEach((data) => {
+      data.meetings.sort(
+        (a, b) =>
+          parseISO(a.meeting_start_datetime).getTime() -
+          parseISO(b.meeting_start_datetime).getTime(),
+      );
+    });
+
+    return countryMap;
   }, [meetings]);
 }
 
-export default class MapOperations {
-  /**
-   * Converts a Date to ISO string format
-   * Uses date-fns for reliable formatting
-   */
-  static dateToISOString(date?: Date): string {
-    if (!date) return '';
-    return formatISO(date);
-  }
+export const filterNonEUCountries = (feature: geojson.Feature): boolean =>
+  !!feature.properties && europeanCountries.includes(feature.properties.name);
 
-  /**
-   * Parses ISO string to Date with fallback to current date
-   * Uses date-fns for reliable parsing
-   */
-  static isoStringToDate(iso: string): Date {
-    try {
-      return parseISO(iso);
-    } catch {
-      return startOfDay(new Date());
+export const getCapitalCoordinates = (
+  countryName: string,
+): [number, number] | null => {
+  const capitals: { [key: string]: [number, number] } = {
+    Germany: [51.1657, 10.4515],
+    France: [48.8566, 2.3522],
+    // Add more countries and their capitals as needed
+  };
+
+  return capitals[countryName] || null;
+};
+
+export const getLargestPolygon = (feature: geojson.Feature) => {
+  let largestArea = 0;
+  let largestPolygon = null;
+
+  // Check if the geometry is MultiPolygon or Polygon
+  if (feature.geometry.type === 'MultiPolygon') {
+    feature.geometry.coordinates.forEach((polygonCoords) => {
+      const polygon = turf.polygon(polygonCoords);
+      const area = turf.area(polygon);
+      if (area > largestArea) {
+        largestArea = area;
+        largestPolygon = polygon;
+      }
+    });
+  } else if (feature.geometry.type === 'Polygon') {
+    const polygon = turf.polygon(feature.geometry.coordinates);
+    const area = turf.area(polygon);
+    if (area > largestArea) {
+      largestArea = area;
+      largestPolygon = polygon;
     }
   }
 
-  /**
-   * Gets current week range (Monday to Sunday)
-   * Uses date-fns for accurate week calculations
-   */
-  static getCurrentWeekRange(): {
-    startDate: Date;
-    endDate: Date;
-  } {
-    const now = new Date();
-
-    return {
-      startDate: startOfWeek(now, { weekStartsOn: 1 }), // Monday
-      endDate: endOfWeek(now, { weekStartsOn: 1 }), // Sunday
-    };
-  }
-}
+  return largestPolygon;
+};

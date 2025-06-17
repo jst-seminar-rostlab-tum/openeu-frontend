@@ -25,6 +25,9 @@ interface EventListDialogProps {
   MAX_VISIBLE_EVENTS?: number;
   children?: ReactNode;
   endDate?: Date;
+  title?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function EventListDialog({
@@ -33,6 +36,9 @@ export function EventListDialog({
   MAX_VISIBLE_EVENTS = 3,
   children,
   endDate,
+  title,
+  open,
+  onOpenChange,
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
@@ -94,7 +100,7 @@ export function EventListDialog({
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children || defaultTrigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -105,9 +111,10 @@ export function EventListDialog({
                 className=""
               />
               <p className="text-sm font-medium">
-                {endDate
-                  ? `Events during ${format(date, 'HH:mm')} - ${format(endDate, 'HH:mm')}`
-                  : `Events on ${format(date, 'EEEE, MMMM d, yyyy')}`}
+                {title ||
+                  (endDate
+                    ? `Events during ${format(date, 'HH:mm')} - ${format(endDate, 'HH:mm')}`
+                    : `Events on ${format(date, 'EEEE, MMMM d, yyyy')}`)}
               </p>
             </div>
           </DialogTitle>
