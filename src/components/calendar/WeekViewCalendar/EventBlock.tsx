@@ -1,6 +1,6 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
-import { differenceInMinutes, parseISO } from 'date-fns';
+import { differenceInMinutes } from 'date-fns';
 import { Building, MapPin } from 'lucide-react';
 import React, { HTMLAttributes } from 'react';
 
@@ -62,8 +62,8 @@ interface IProps
 export function EventBlock({ event, className }: IProps) {
   const { badgeVariant, use24HourFormat } = useMeetingContext();
 
-  const start = parseISO(event.meeting_start_datetime);
-  const end = parseISO(event.meeting_end_datetime!);
+  const start = event.meeting_start_datetime;
+  const end = event.meeting_end_datetime!;
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 

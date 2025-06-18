@@ -6,7 +6,6 @@ import {
   isSameMonth,
   isSameWeek,
   isSameYear,
-  parseISO,
 } from 'date-fns';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 
@@ -153,9 +152,9 @@ export function MeetingProvider({
         !meeting.meeting_end_datetime ||
         meeting.meeting_start_datetime == meeting.meeting_end_datetime
       ) {
-        const startTime = parseISO(meeting.meeting_start_datetime);
+        const startTime = meeting.meeting_start_datetime;
         const endTime = addHours(startTime, 1.5);
-        processedMeeting.meeting_end_datetime = endTime.toISOString();
+        processedMeeting.meeting_end_datetime = endTime;
       }
 
       // Assign color
@@ -228,7 +227,7 @@ export function MeetingProvider({
 
     const compareFn = compareFns[viewParam];
     return eventsParam.filter((event) =>
-      compareFn(parseISO(event.meeting_start_datetime), selectedDateParam),
+      compareFn(event.meeting_start_datetime, selectedDateParam),
     ).length;
   }
 

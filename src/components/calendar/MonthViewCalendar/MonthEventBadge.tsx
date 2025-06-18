@@ -1,6 +1,6 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
-import { endOfDay, isSameDay, parseISO, startOfDay } from 'date-fns';
+import { endOfDay, isSameDay, startOfDay } from 'date-fns';
 
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
@@ -68,9 +68,9 @@ export function MonthEventBadge({
   className,
   position: propPosition,
 }: IProps) {
-  const itemStart = startOfDay(parseISO(event.meeting_start_datetime));
+  const itemStart = startOfDay(event.meeting_start_datetime);
 
-  const itemEnd = endOfDay(parseISO(event.meeting_end_datetime!));
+  const itemEnd = endOfDay(event.meeting_end_datetime!);
 
   if (cellDate < itemStart || cellDate > itemEnd) return null;
 

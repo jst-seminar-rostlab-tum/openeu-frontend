@@ -1,6 +1,6 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
-import { differenceInMinutes, parseISO } from 'date-fns';
+import { differenceInMinutes } from 'date-fns';
 import type { HTMLAttributes } from 'react';
 
 import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
@@ -56,8 +56,8 @@ interface IProps
 export function EventListBlock({ events, className }: IProps) {
   const { badgeVariant, use24HourFormat } = useMeetingContext();
 
-  const start = parseISO(events[0].meeting_start_datetime);
-  const end = parseISO(events[0].meeting_end_datetime!);
+  const start = events[0].meeting_start_datetime;
+  const end = events[0].meeting_end_datetime!;
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 

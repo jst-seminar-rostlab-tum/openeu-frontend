@@ -4,7 +4,6 @@ import {
   endOfWeek,
   isAfter,
   isBefore,
-  parseISO,
   startOfDay,
   startOfWeek,
 } from 'date-fns';
@@ -29,8 +28,8 @@ export function WeekViewMultiDayEventsRow({
   const processedEvents = useMemo(() => {
     return multiDayEvents
       .map((event) => {
-        const start = parseISO(event.meeting_start_datetime);
-        const end = parseISO(event.meeting_end_datetime!);
+        const start = event.meeting_start_datetime;
+        const end = event.meeting_end_datetime!;
         const adjustedStart = isBefore(start, weekStart) ? weekStart : start;
         const adjustedEnd = isAfter(end, weekEnd) ? weekEnd : end;
         const startIndex = differenceInDays(adjustedStart, weekStart);
@@ -74,8 +73,8 @@ export function WeekViewMultiDayEventsRow({
 
   const hasEventsInWeek = useMemo(() => {
     return multiDayEvents.some((event) => {
-      const start = parseISO(event.meeting_start_datetime);
-      const end = parseISO(event.meeting_end_datetime!);
+      const start = event.meeting_start_datetime;
+      const end = event.meeting_end_datetime!;
 
       return (
         // Event starts within the week

@@ -230,9 +230,9 @@ export interface components {
        * Meeting Start Datetime
        * Format: date-time
        */
-      meeting_start_datetime: string;
+      meeting_start_datetime: Date;
       /** Meeting End Datetime */
-      meeting_end_datetime?: string | null;
+      meeting_end_datetime?: Date | null;
       /** Location */
       location?: string | null;
       /** Exact Location */

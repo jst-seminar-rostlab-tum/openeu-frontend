@@ -27,7 +27,7 @@ export const meetingRepository = {
           element.meeting_end_datetime = addHours(
             new Date(element.meeting_start_datetime),
             1.5,
-          ).toISOString();
+          );
         }
       });
 

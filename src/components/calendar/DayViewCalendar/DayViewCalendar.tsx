@@ -1,4 +1,4 @@
-import { format, isWithinInterval, parseISO } from 'date-fns';
+import { format, isWithinInterval } from 'date-fns';
 import { Calendar, Clock } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
@@ -57,8 +57,8 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
     return (
       events.filter((event) =>
         isWithinInterval(now, {
-          start: parseISO(event.meeting_start_datetime),
-          end: parseISO(event.meeting_end_datetime!),
+          start: event.meeting_start_datetime,
+          end: event.meeting_end_datetime!,
         }),
       ) || []
     );
@@ -67,7 +67,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
   const currentEvents = getCurrentEvents(singleDayEvents);
 
   const dayEvents = singleDayEvents.filter((event) => {
-    const eventDate = parseISO(event.meeting_start_datetime);
+    const eventDate = event.meeting_start_datetime;
     return (
       eventDate.getDate() === selectedDate.getDate() &&
       eventDate.getMonth() === selectedDate.getMonth() &&
@@ -224,12 +224,12 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                         <Clock className="size-4 text-t-quinary" />
                         <span className="text-sm text-t-tertiary">
                           {format(
-                            parseISO(event.meeting_start_datetime),
+                            event.meeting_start_datetime,
                             use24HourFormat ? 'HH:mm' : 'hh:mm a',
                           )}{' '}
                           -
                           {format(
-                            parseISO(event.meeting_end_datetime!),
+                            event.meeting_end_datetime!,
                             use24HourFormat ? 'HH:mm' : 'hh:mm a',
                           )}
                         </span>
