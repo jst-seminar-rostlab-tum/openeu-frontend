@@ -9,9 +9,9 @@ const filterMeetingsForExport = (meetings: MeetingData[]) =>
       color: _color,
       meeting_id: _meetingId,
       source_id: _sourceId,
-      tags: _tags,
       similarity: _similarity,
       source_table: sourceTable,
+      tags: _tags,
       ...rest
     }) => ({
       ...rest,
@@ -24,6 +24,7 @@ export const handleExportXLSX = (
   setDialogOpen: (open: boolean) => void,
 ) => {
   const filteredMeetings = filterMeetingsForExport(meetings);
+  console.log('Exporting meetings:', filteredMeetings);
   const worksheet = XLSX.utils.json_to_sheet(filteredMeetings);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Meetings');

@@ -12,4 +12,5 @@ export interface MeetingData {
   source_table: string;
   source_id: string;
   topic?: string;
+  tags?: string[];
 }

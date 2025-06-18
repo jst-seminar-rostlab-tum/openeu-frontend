@@ -25,7 +25,6 @@ import {
 export default function ExportModal() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { meetings } = useMeetingContext();
-
   return (
     <div>
       <Tooltip>
