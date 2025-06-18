@@ -2,10 +2,10 @@ import { motion } from 'framer-motion';
 import React, { ReactNode } from 'react';
 
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 
 interface DraggableEventProps {
-  event: Meeting;
+  event: MeetingData;
   children: ReactNode;
   className?: string;
 }

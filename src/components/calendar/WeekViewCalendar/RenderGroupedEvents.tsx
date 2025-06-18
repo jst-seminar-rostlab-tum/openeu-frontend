@@ -1,12 +1,12 @@
-import { areIntervalsOverlapping } from 'date-fns';
+import { areIntervalsOverlapping, parseISO } from 'date-fns';
 
 import { EventBlock } from '@/components/calendar/WeekViewCalendar/EventBlock';
 import { EventListBlock } from '@/components/calendar/WeekViewCalendar/EventListBlock';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { getEventBlockStyle } from '@/operations/meeting/CalendarHelpers';
 
 interface RenderGroupedEventsProps {
-  groupedEvents: Meeting[][][];
+  groupedEvents: MeetingData[][][];
   day: Date;
 }
 
@@ -28,12 +28,12 @@ export function RenderGroupedEvents({
           otherGroup.some((otherEvent) =>
             areIntervalsOverlapping(
               {
-                start: events[0].meeting_start_datetime,
-                end: events[0].meeting_end_datetime,
+                start: parseISO(events[0].meeting_start_datetime),
+                end: parseISO(events[0].meeting_end_datetime),
               },
               {
-                start: otherEvent[0].meeting_start_datetime,
-                end: otherEvent[0].meeting_end_datetime,
+                start: parseISO(otherEvent[0].meeting_start_datetime),
+                end: parseISO(otherEvent[0].meeting_end_datetime),
               },
             ),
           ),

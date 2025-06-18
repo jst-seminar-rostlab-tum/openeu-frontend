@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 import { DayCell } from '@/components/calendar/MonthViewCalendar/DayCell';
 import { staggerContainer, transition } from '@/domain/animations';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import {
   calculateMonthEventPositions,
@@ -10,8 +10,8 @@ import {
 } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
-  singleDayEvents: Meeting[];
-  multiDayEvents: Meeting[];
+  singleDayEvents: MeetingData[];
+  multiDayEvents: MeetingData[];
 }
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

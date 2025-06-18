@@ -1,6 +1,6 @@
 'use client';
 
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import {
   Building,
   Calendar,
@@ -26,20 +26,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import {
   formatTime,
   getMeetingType,
 } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
-  event: Meeting;
+  event: MeetingData;
   children: ReactNode;
 }
 
 export function EventDetailsDialog({ event, children }: IProps) {
-  const startDate = event.meeting_start_datetime;
-  const endDate = event.meeting_end_datetime;
+  const startDate = parseISO(event.meeting_start_datetime);
+  const endDate = parseISO(event.meeting_end_datetime);
 
   return (
     <Dialog>
@@ -58,7 +58,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <TagBadge className="max-w-full mt-1">
                   <span
                     className="truncate direction-rtl text-left"
-                    title={event.location!}
+                    title={event.location}
                   >
                     {event.location}
                   </span>
@@ -83,7 +83,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <p className="text-sm text-muted-foreground">
                   {format(startDate, 'EEEE dd MMMM')}
                   <span className="mx-1">at</span>
-                  {formatTime(event.meeting_start_datetime, true)}
+                  {formatTime(parseISO(event.meeting_start_datetime), true)}
                 </p>
               </div>
             </div>
@@ -95,7 +95,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <p className="text-sm text-muted-foreground">
                   {format(endDate, 'EEEE dd MMMM')}
                   <span className="mx-1">at</span>
-                  {formatTime(event.meeting_end_datetime, true)}
+                  {formatTime(parseISO(event.meeting_end_datetime), true)}
                 </p>
               </div>
             </div>

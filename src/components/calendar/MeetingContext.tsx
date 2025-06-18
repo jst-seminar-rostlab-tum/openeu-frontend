@@ -6,10 +6,11 @@ import {
   isSameMonth,
   isSameWeek,
   isSameYear,
+  parseISO,
 } from 'date-fns';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import {
   GetMeetingsQueryParams,
   useMeetings,
@@ -37,7 +38,7 @@ export interface IMeetingContext {
   selectedTopics: string[];
   setSelectedTopics: (topics: string[]) => void;
   setSelectedCountry: (country: string) => void;
-  meetings: Meeting[];
+  meetings: MeetingData[];
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
@@ -46,7 +47,7 @@ export interface IMeetingContext {
   filters: GetMeetingsQueryParams;
   setFilters: (filters: GetMeetingsQueryParams) => void;
   getEventsCount: (
-    events?: Meeting[],
+    events?: MeetingData[],
     selectedDate?: Date,
     view?: TCalendarView,
   ) => number;
@@ -159,9 +160,9 @@ export function MeetingProvider({
         !meeting.meeting_end_datetime ||
         meeting.meeting_start_datetime == meeting.meeting_end_datetime
       ) {
-        const startTime = meeting.meeting_start_datetime;
+        const startTime = parseISO(meeting.meeting_start_datetime);
         const endTime = addHours(startTime, 1.5);
-        processedMeeting.meeting_end_datetime = endTime;
+        processedMeeting.meeting_end_datetime = endTime.toISOString();
       }
 
       // Assign color
@@ -228,7 +229,7 @@ export function MeetingProvider({
   };
 
   function getEventsCount(
-    eventsParam: Meeting[] = meetings,
+    eventsParam: MeetingData[] = meetings,
     selectedDateParam: Date = selectedDate,
     viewParam: TCalendarView = currentView,
   ): number {
@@ -242,7 +243,7 @@ export function MeetingProvider({
 
     const compareFn = compareFns[viewParam];
     return eventsParam.filter((event) =>
-      compareFn(event.meeting_start_datetime, selectedDateParam),
+      compareFn(parseISO(event.meeting_start_datetime), selectedDateParam),
     ).length;
   }
 

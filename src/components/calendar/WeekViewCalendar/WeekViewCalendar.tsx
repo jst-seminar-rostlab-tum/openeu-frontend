@@ -1,4 +1,4 @@
-import { addDays, format, isSameDay, startOfWeek } from 'date-fns';
+import { addDays, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
 import { motion } from 'framer-motion';
 
 import { DroppableArea } from '@/components/calendar/MonthViewCalendar/DroppableArea';
@@ -7,13 +7,13 @@ import { RenderGroupedEvents } from '@/components/calendar/WeekViewCalendar/Rend
 import { WeekViewMultiDayEventsRow } from '@/components/calendar/WeekViewCalendar/WeekViewMultiDayEventsRow';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { fadeIn, staggerContainer, transition } from '@/domain/animations';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { groupEvents } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
-  singleDayEvents: Meeting[];
-  multiDayEvents: Meeting[];
+  singleDayEvents: MeetingData[];
+  multiDayEvents: MeetingData[];
 }
 
 export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
@@ -114,8 +114,8 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                 {weekDays.map((day, dayIndex) => {
                   const dayEvents = singleDayEvents.filter(
                     (event) =>
-                      isSameDay(event.meeting_start_datetime, day) ||
-                      isSameDay(event.meeting_end_datetime, day),
+                      isSameDay(parseISO(event.meeting_start_datetime), day) ||
+                      isSameDay(parseISO(event.meeting_end_datetime), day),
                   );
                   const groupedEvents = groupEvents(dayEvents);
 
