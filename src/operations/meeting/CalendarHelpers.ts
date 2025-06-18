@@ -188,25 +188,38 @@ export function calculateMonthEventPositions(
 
     const sortedEvents = [
       ...multiDayEvents.sort((a, b) => {
-        const aDuration = differenceInDays(
-          a.meeting_end_datetime!,
-          a.meeting_start_datetime,
-        );
-        const bDuration = differenceInDays(
-          b.meeting_end_datetime!,
-          b.meeting_start_datetime,
-        );
-        return (
-          bDuration - aDuration ||
-          a.meeting_start_datetime.getTime() -
-            b.meeting_start_datetime.getTime()
-        );
+        if (
+          a.meeting_end_datetime instanceof Date &&
+          a.meeting_start_datetime instanceof Date
+        ) {
+          const aDuration = differenceInDays(
+            a.meeting_end_datetime!,
+            a.meeting_start_datetime,
+          );
+          const bDuration = differenceInDays(
+            b.meeting_end_datetime!,
+            b.meeting_start_datetime,
+          );
+          return (
+            bDuration - aDuration ||
+            a.meeting_start_datetime.getTime() -
+              b.meeting_start_datetime.getTime()
+          );
+        }
+        return 0;
       }),
-      ...singleDayEvents.sort(
-        (a, b) =>
-          a.meeting_start_datetime.getTime() -
-          b.meeting_start_datetime.getTime(),
-      ),
+      ...singleDayEvents.sort((a, b) => {
+        if (
+          a.meeting_end_datetime instanceof Date &&
+          a.meeting_start_datetime instanceof Date
+        ) {
+          return (
+            a.meeting_start_datetime.getTime() -
+            b.meeting_start_datetime.getTime()
+          );
+        }
+        return 0;
+      }),
     ];
 
     sortedEvents.forEach((event) => {
@@ -310,10 +323,17 @@ export function getMeetingTypeShort(sourceTable?: string): string {
 }
 
 export function groupEvents(dayEvents: Meeting[]) {
-  const sortedEvents = dayEvents.sort(
-    (a, b) =>
-      a.meeting_end_datetime!.getTime() - b.meeting_start_datetime.getTime(),
-  );
+  const sortedEvents = dayEvents.sort((a, b) => {
+    if (
+      a.meeting_start_datetime instanceof Date &&
+      b.meeting_start_datetime instanceof Date
+    ) {
+      return (
+        a.meeting_start_datetime.getTime() - b.meeting_start_datetime.getTime()
+      );
+    }
+    return 0;
+  });
 
   const grouped = Object.groupBy(sortedEvents, (event) => {
     const start = event.meeting_start_datetime;

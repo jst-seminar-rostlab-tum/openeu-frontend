@@ -44,9 +44,16 @@ export function WeekViewMultiDayEventsRow({
         };
       })
       .sort((a, b) => {
-        const startDiff = a.adjustedStart.getTime() - b.adjustedStart.getTime();
-        if (startDiff !== 0) return startDiff;
-        return b.endIndex - b.startIndex - (a.endIndex - a.startIndex);
+        if (
+          a.adjustedStart instanceof Date &&
+          b.adjustedStart instanceof Date
+        ) {
+          const startDiff =
+            a.adjustedStart.getTime() - b.adjustedStart.getTime();
+          if (startDiff !== 0) return startDiff;
+          return b.endIndex - b.startIndex - (a.endIndex - a.startIndex);
+        }
+        return 0;
       });
   }, [multiDayEvents, weekStart, weekEnd]);
 
