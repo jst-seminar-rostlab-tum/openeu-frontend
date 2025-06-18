@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import { useMeetingCountByCountry } from '@/operations/map/MapOperations';
+import { useCountryMeetingMap } from '@/operations/map/MapOperations';
 
 import MapData from '../../../public/map.geo.json';
 
@@ -14,7 +14,7 @@ const MapComponent = dynamic(() => import('@/components/map/MapComponent'), {
 
 function MapInner() {
   const { meetings } = useMeetingContext();
-  const meetingCountByCountry = useMeetingCountByCountry(meetings);
+  const countryMeetingMap = useCountryMeetingMap(meetings);
 
   return (
     <MapComponent
@@ -22,8 +22,7 @@ function MapInner() {
       zoom={4.25}
       minZoom={4}
       center={[54.5452, 25.11912]}
-      meetingCountByCountry={meetingCountByCountry}
-      meetings={meetings}
+      countryMeetingMap={countryMeetingMap}
     />
   );
 }
