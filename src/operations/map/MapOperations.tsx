@@ -1,10 +1,9 @@
 import * as turf from '@turf/turf';
-import { parseISO } from 'date-fns';
 import * as geojson from 'geojson';
 import { useMemo } from 'react';
 
 import { europeanCountries } from '@/components/map/constants';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 
 const COUNTRY_MAPPINGS = {
@@ -13,12 +12,12 @@ const COUNTRY_MAPPINGS = {
 
 export interface CountryData {
   totalCount: number;
-  meetings: MeetingData[];
+  meetings: Meeting[];
   meetingTypeMap: Record<string, number>;
 }
 
 export function useCountryMeetingMap(
-  meetings: MeetingData[],
+  meetings: Meeting[],
 ): Map<string, CountryData> {
   return useMemo(() => {
     const countryMap = new Map<string, CountryData>();
@@ -51,8 +50,8 @@ export function useCountryMeetingMap(
     countryMap.forEach((data) => {
       data.meetings.sort(
         (a, b) =>
-          parseISO(a.meeting_start_datetime).getTime() -
-          parseISO(b.meeting_start_datetime).getTime(),
+          a.meeting_start_datetime.getTime() -
+          b.meeting_start_datetime.getTime(),
       );
     });
 

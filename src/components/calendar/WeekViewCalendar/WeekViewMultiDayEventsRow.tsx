@@ -4,18 +4,17 @@ import {
   endOfWeek,
   isAfter,
   isBefore,
-  parseISO,
   startOfDay,
   startOfWeek,
 } from 'date-fns';
 import { useMemo } from 'react';
 
 import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 
 interface IProps {
   selectedDate: Date;
-  multiDayEvents: MeetingData[];
+  multiDayEvents: Meeting[];
 }
 
 export function WeekViewMultiDayEventsRow({
@@ -29,8 +28,8 @@ export function WeekViewMultiDayEventsRow({
   const processedEvents = useMemo(() => {
     return multiDayEvents
       .map((event) => {
-        const start = parseISO(event.meeting_start_datetime);
-        const end = parseISO(event.meeting_end_datetime);
+        const start = event.meeting_start_datetime;
+        const end = event.meeting_end_datetime;
         const adjustedStart = isBefore(start, weekStart) ? weekStart : start;
         const adjustedEnd = isAfter(end, weekEnd) ? weekEnd : end;
         const startIndex = differenceInDays(adjustedStart, weekStart);
@@ -45,9 +44,16 @@ export function WeekViewMultiDayEventsRow({
         };
       })
       .sort((a, b) => {
-        const startDiff = a.adjustedStart.getTime() - b.adjustedStart.getTime();
-        if (startDiff !== 0) return startDiff;
-        return b.endIndex - b.startIndex - (a.endIndex - a.startIndex);
+        if (
+          a.adjustedStart instanceof Date &&
+          b.adjustedStart instanceof Date
+        ) {
+          const startDiff =
+            a.adjustedStart.getTime() - b.adjustedStart.getTime();
+          if (startDiff !== 0) return startDiff;
+          return b.endIndex - b.startIndex - (a.endIndex - a.startIndex);
+        }
+        return 0;
       });
   }, [multiDayEvents, weekStart, weekEnd]);
 
@@ -74,8 +80,8 @@ export function WeekViewMultiDayEventsRow({
 
   const hasEventsInWeek = useMemo(() => {
     return multiDayEvents.some((event) => {
-      const start = parseISO(event.meeting_start_datetime);
-      const end = parseISO(event.meeting_end_datetime);
+      const start = event.meeting_start_datetime;
+      const end = event.meeting_end_datetime;
 
       return (
         // Event starts within the week

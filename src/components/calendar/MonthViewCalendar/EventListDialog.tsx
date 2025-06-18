@@ -14,14 +14,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { TMeetingColor } from '@/domain/types/calendar/types';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { cn } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
   date: Date;
-  events: MeetingData[];
+  events: Meeting[];
   MAX_VISIBLE_EVENTS?: number;
   children?: ReactNode;
   endDate?: Date;
@@ -53,7 +52,7 @@ export function EventListDialog({
     </span>
   );
 
-  function eventListEntry(event: MeetingData, index: number) {
+  function eventListEntry(event: Meeting, index: number) {
     const relevanceScore = event.similarity
       ? Math.round(event.similarity * 100)
       : null;
@@ -64,7 +63,7 @@ export function EventListDialog({
             'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
             {
               [dayCellVariants({
-                color: event.color as TMeetingColor,
+                color: event.color,
               })]: true,
             },
           )}
@@ -87,9 +86,9 @@ export function EventListDialog({
                 <MapPin className="shrink-0 w-3 h-3" />
                 <span
                   className="truncate min-w-0 direction-rtl text-left"
-                  title={getMeetingTypeShort(event.location)}
+                  title={getMeetingTypeShort(event.location!)}
                 >
-                  {getMeetingTypeShort(event.location)}
+                  {getMeetingTypeShort(event.location!)}
                 </span>
               </Badge>
             </div>
@@ -106,10 +105,7 @@ export function EventListDialog({
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-center gap-2">
-              <EventBullet
-                color={cellEvents[0]?.color as TMeetingColor}
-                className=""
-              />
+              <EventBullet color={cellEvents[0]?.color} className="" />
               <p className="text-sm font-medium">
                 {title ||
                   (endDate
