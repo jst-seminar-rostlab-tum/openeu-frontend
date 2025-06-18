@@ -10,6 +10,7 @@ interface MapIndicatorProps {
   count: number;
   baseZoom?: number;
   isHighlighted: boolean;
+  onClick?: () => void;
 }
 
 export function MapIndicator({
@@ -17,6 +18,7 @@ export function MapIndicator({
   count,
   baseZoom = 5,
   isHighlighted = false,
+  onClick,
 }: MapIndicatorProps) {
   const [scale, setScale] = useState(1);
 
@@ -62,5 +64,13 @@ export function MapIndicator({
     iconAnchor: [16, 16],
   });
 
-  return <Marker position={position} icon={icon} />;
+  const eventHandlers = onClick
+    ? {
+        click: onClick,
+      }
+    : {};
+
+  return (
+    <Marker position={position} icon={icon} eventHandlers={eventHandlers} />
+  );
 }
