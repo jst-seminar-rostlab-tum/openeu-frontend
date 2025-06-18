@@ -262,6 +262,7 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
+      topic?: string | null;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
