@@ -115,7 +115,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                   const dayEvents = singleDayEvents.filter(
                     (event) =>
                       isSameDay(event.meeting_start_datetime, day) ||
-                      isSameDay(event.meeting_end_datetime!, day),
+                      isSameDay(event.meeting_end_datetime, day),
                   );
                   const groupedEvents = groupEvents(dayEvents);
 

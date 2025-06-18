@@ -9,13 +9,8 @@ export interface MeetingData {
   color?: string;
   similarity?: number;
   exact_location?: string;
-<<<<<<< feature/102-infer-meeting-types
   source_table?: string;
-  topic?: string;
-=======
-  source_table: string;
   source_id: string;
   topic?: string;
   tags?: string[];
->>>>>>> main
 }

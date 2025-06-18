@@ -58,7 +58,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
       events.filter((event) =>
         isWithinInterval(now, {
           start: event.meeting_start_datetime,
-          end: event.meeting_end_datetime!,
+          end: event.meeting_end_datetime,
         }),
       ) || []
     );
@@ -229,7 +229,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                           )}{' '}
                           -
                           {format(
-                            event.meeting_end_datetime!,
+                            event.meeting_end_datetime,
                             use24HourFormat ? 'HH:mm' : 'hh:mm a',
                           )}
                         </span>

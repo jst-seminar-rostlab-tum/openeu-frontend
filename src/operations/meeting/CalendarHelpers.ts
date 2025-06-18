@@ -106,7 +106,7 @@ export function getMonthCellEvents(
   const dayStart = startOfDay(date);
   const eventsForDate: Meeting[] = events.filter((event) => {
     const eventStart = event.meeting_start_datetime;
-    const eventEnd = event.meeting_end_datetime!;
+    const eventEnd = event.meeting_end_datetime;
     return (
       (dayStart >= eventStart && dayStart <= eventEnd) ||
       isSameDay(dayStart, eventStart) ||
@@ -119,7 +119,7 @@ export function getMonthCellEvents(
       position: eventPositions[Number(event.meeting_id)] ?? -1,
       isMultiDay: !isSameDay(
         event.meeting_start_datetime,
-        event.meeting_end_datetime!,
+        event.meeting_end_datetime,
       ),
     }))
     .sort((a, b) => {
@@ -193,11 +193,11 @@ export function calculateMonthEventPositions(
           a.meeting_start_datetime instanceof Date
         ) {
           const aDuration = differenceInDays(
-            a.meeting_end_datetime!,
+            a.meeting_end_datetime,
             a.meeting_start_datetime,
           );
           const bDuration = differenceInDays(
-            b.meeting_end_datetime!,
+            b.meeting_end_datetime,
             b.meeting_start_datetime,
           );
           return (
@@ -224,7 +224,7 @@ export function calculateMonthEventPositions(
 
     sortedEvents.forEach((event) => {
       const eventStart = event.meeting_start_datetime;
-      const eventEnd = event.meeting_end_datetime!;
+      const eventEnd = event.meeting_end_datetime;
       const eventDays = eachDayOfInterval({
         start: eventStart < monthStart ? monthStart : eventStart,
         end: eventEnd > monthEnd ? monthEnd : eventEnd,
@@ -337,7 +337,7 @@ export function groupEvents(dayEvents: Meeting[]) {
 
   const grouped = Object.groupBy(sortedEvents, (event) => {
     const start = event.meeting_start_datetime;
-    const end = event.meeting_end_datetime!;
+    const end = event.meeting_end_datetime;
     return start.toISOString() + '---' + end.toISOString();
   });
 
@@ -349,7 +349,7 @@ export function groupEvents(dayEvents: Meeting[]) {
 
     for (const group of groups) {
       const lastEventInGroup = group[group.length - 1];
-      const lastEventEnd = lastEventInGroup[0].meeting_end_datetime!;
+      const lastEventEnd = lastEventInGroup[0].meeting_end_datetime;
 
       if (eventStart >= lastEventEnd) {
         group.push(value!);

@@ -63,7 +63,7 @@ export function EventBlock({ event, className }: IProps) {
   const { badgeVariant, use24HourFormat } = useMeetingContext();
 
   const start = event.meeting_start_datetime;
-  const end = event.meeting_end_datetime!;
+  const end = event.meeting_end_datetime;
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 

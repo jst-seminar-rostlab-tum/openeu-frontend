@@ -29,11 +29,11 @@ export function RenderGroupedEvents({
             areIntervalsOverlapping(
               {
                 start: events[0].meeting_start_datetime,
-                end: events[0].meeting_end_datetime!,
+                end: events[0].meeting_end_datetime,
               },
               {
                 start: otherEvent[0].meeting_start_datetime,
-                end: otherEvent[0].meeting_end_datetime!,
+                end: otherEvent[0].meeting_end_datetime,
               },
             ),
           ),

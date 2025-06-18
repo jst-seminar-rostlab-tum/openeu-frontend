@@ -70,7 +70,7 @@ export function MonthEventBadge({
 }: IProps) {
   const itemStart = startOfDay(event.meeting_start_datetime);
 
-  const itemEnd = endOfDay(event.meeting_end_datetime!);
+  const itemEnd = endOfDay(event.meeting_end_datetime);
 
   if (cellDate < itemStart || cellDate > itemEnd) return null;
 

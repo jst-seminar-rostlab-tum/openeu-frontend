@@ -39,7 +39,7 @@ interface IProps {
 
 export function EventDetailsDialog({ event, children }: IProps) {
   const startDate = event.meeting_start_datetime;
-  const endDate = event.meeting_end_datetime!;
+  const endDate = event.meeting_end_datetime;
 
   return (
     <Dialog>
@@ -95,7 +95,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <p className="text-sm text-muted-foreground">
                   {format(endDate, 'EEEE dd MMMM')}
                   <span className="mx-1">at</span>
-                  {formatTime(event.meeting_end_datetime!, true)}
+                  {formatTime(event.meeting_end_datetime, true)}
                 </p>
               </div>
             </div>

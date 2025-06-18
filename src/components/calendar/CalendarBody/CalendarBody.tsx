@@ -35,13 +35,13 @@ export function CalendarBody() {
 
   const singleDayEvents = safeEvents.filter((event: Meeting) => {
     const startDate = event.meeting_start_datetime;
-    const endDate = event.meeting_end_datetime!;
+    const endDate = event.meeting_end_datetime;
     return isSameDay(startDate, endDate);
   });
 
   const multiDayEvents = safeEvents.filter((event: Meeting) => {
     const startDate = event.meeting_start_datetime;
-    const endDate = event.meeting_end_datetime!;
+    const endDate = event.meeting_end_datetime;
     return !isSameDay(startDate, endDate);
   });
 
