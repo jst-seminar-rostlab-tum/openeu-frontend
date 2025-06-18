@@ -1,12 +1,12 @@
 import { addHours } from 'date-fns';
 
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { GetMeetingsQueryParams } from '@/domain/hooks/meetingHooks';
 
 const API_URL = 'https://openeu-backend-1.onrender.com/meetings';
 
 export const meetingRepository = {
-  async getMeetings(params: GetMeetingsQueryParams): Promise<Meeting[]> {
+  async getMeetings(params: GetMeetingsQueryParams): Promise<MeetingData[]> {
     const query = params
       ? Object.entries(params)
           .filter((entry) => !!entry[1])
@@ -22,12 +22,12 @@ export const meetingRepository = {
       const data = Array.isArray(response.data) ? response.data : [];
 
       // Handle null end datetime
-      data.forEach((element: Meeting) => {
+      data.forEach((element: MeetingData) => {
         if (element.meeting_end_datetime === null) {
           element.meeting_end_datetime = addHours(
             new Date(element.meeting_start_datetime),
             1.5,
-          );
+          ).toISOString();
         }
       });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { isSameDay } from 'date-fns';
+import { isSameDay, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
 
@@ -9,7 +9,7 @@ import { CalendarDayView } from '@/components/calendar/DayViewCalendar/DayViewCa
 import { CalendarMonthView } from '@/components/calendar/MonthViewCalendar/MonthViewCalendar';
 import { CalendarWeekView } from '@/components/calendar/WeekViewCalendar/WeekViewCalendar';
 import { fadeIn, transition } from '@/domain/animations';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { TCalendarView } from '@/domain/types/calendar/types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
@@ -33,15 +33,15 @@ export function CalendarBody() {
 
   const safeEvents = isError ? [] : meetings;
 
-  const singleDayEvents = safeEvents.filter((event: Meeting) => {
-    const startDate = event.meeting_start_datetime;
-    const endDate = event.meeting_end_datetime;
+  const singleDayEvents = safeEvents.filter((event: MeetingData) => {
+    const startDate = parseISO(event.meeting_start_datetime);
+    const endDate = parseISO(event.meeting_end_datetime);
     return isSameDay(startDate, endDate);
   });
 
-  const multiDayEvents = safeEvents.filter((event: Meeting) => {
-    const startDate = event.meeting_start_datetime;
-    const endDate = event.meeting_end_datetime;
+  const multiDayEvents = safeEvents.filter((event: MeetingData) => {
+    const startDate = parseISO(event.meeting_start_datetime);
+    const endDate = parseISO(event.meeting_end_datetime);
     return !isSameDay(startDate, endDate);
   });
 

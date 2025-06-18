@@ -1,9 +1,9 @@
 import * as XLSX from 'xlsx';
 
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
 
-const filterMeetingsForExport = (meetings: Meeting[]) =>
+const filterMeetingsForExport = (meetings: MeetingData[]) =>
   meetings.map(
     ({
       color: _color,
@@ -20,7 +20,7 @@ const filterMeetingsForExport = (meetings: Meeting[]) =>
   );
 
 export const handleExportXLSX = (
-  meetings: Meeting[],
+  meetings: MeetingData[],
   setDialogOpen: (open: boolean) => void,
 ) => {
   const filteredMeetings = filterMeetingsForExport(meetings);
@@ -33,7 +33,7 @@ export const handleExportXLSX = (
 };
 
 export const handleExportPDF = async (
-  meetings: Meeting[],
+  meetings: MeetingData[],
   setDialogOpen: (open: boolean) => void,
 ) => {
   const { default: jsPDF } = await import('jspdf');

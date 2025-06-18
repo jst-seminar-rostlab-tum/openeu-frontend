@@ -1,9 +1,9 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
-import { endOfDay, isSameDay, startOfDay } from 'date-fns';
+import { endOfDay, isSameDay, parseISO, startOfDay } from 'date-fns';
 
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { cn } from '@/lib/utils';
 import { formatTime } from '@/operations/meeting/CalendarHelpers';
 
@@ -52,7 +52,7 @@ interface IProps
     VariantProps<typeof eventBadgeVariants>,
     'color' | 'multiDayPosition'
   > {
-  event: Meeting;
+  event: MeetingData;
   cellDate: Date;
   eventCurrentDay?: number;
   eventTotalDays?: number;
@@ -68,9 +68,9 @@ export function MonthEventBadge({
   className,
   position: propPosition,
 }: IProps) {
-  const itemStart = startOfDay(event.meeting_start_datetime);
+  const itemStart = startOfDay(parseISO(event.meeting_start_datetime));
 
-  const itemEnd = endOfDay(event.meeting_end_datetime);
+  const itemEnd = endOfDay(parseISO(event.meeting_end_datetime));
 
   if (cellDate < itemStart || cellDate > itemEnd) return null;
 
@@ -96,13 +96,10 @@ export function MonthEventBadge({
     new Date(event.meeting_start_datetime),
     true,
   );
+  const color = event.color as VariantProps<typeof eventBadgeVariants>['color'];
 
   const eventBadgeClasses = cn(
-    eventBadgeVariants({
-      color: event.color,
-      multiDayPosition: position,
-      className,
-    }),
+    eventBadgeVariants({ color, multiDayPosition: position, className }),
   );
 
   return (
