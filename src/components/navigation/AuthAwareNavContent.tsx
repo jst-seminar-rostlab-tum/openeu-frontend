@@ -37,9 +37,12 @@ export function AuthAwareNavContent({
 
   if (!isAuthenticated) {
     return (
-      <Button variant="default" size="sm" onClick={handleSignIn}>
-        Sign In
-      </Button>
+      <div className="flex items-center gap-2">
+        <SettingsPopover />
+        <Button variant="default" size="sm" onClick={handleSignIn}>
+          Sign In
+        </Button>
+      </div>
     );
   }
 
