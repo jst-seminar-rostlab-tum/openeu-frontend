@@ -17,6 +17,7 @@ import {
 } from '@/domain/hooks/meetingHooks';
 import { useUrlSync } from '@/domain/hooks/useCalendarUrlSync';
 import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
+import MapOperations from '@/operations/map/MapOperations';
 import {
   calculateEndDate,
   calculateStartDate,
@@ -60,6 +61,7 @@ interface MeetingProviderProps {
   view?: TCalendarView;
   updateUrl?: boolean;
   excludeUrlParams?: string[];
+  useWeekDefault?: boolean;
 }
 
 export function MeetingProvider({
@@ -67,6 +69,7 @@ export function MeetingProvider({
   view = 'month',
   updateUrl = true,
   excludeUrlParams = [],
+  useWeekDefault = false,
 }: MeetingProviderProps) {
   const { urlState, syncFiltersToUrl } = useUrlSync({
     excludeParams: excludeUrlParams,
@@ -74,7 +77,10 @@ export function MeetingProvider({
 
   // Initialize state from URL (single source of truth pattern)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
-    return urlState.startDate || now;
+    const defaultDate = useWeekDefault
+      ? MapOperations.getCurrentWeekRange().startDate
+      : now;
+    return urlState.startDate || defaultDate;
   });
 
   // Initialize view from URL, fallback to prop
@@ -108,10 +114,21 @@ export function MeetingProvider({
       // Use custom date range from FilterModal
       start = customStart;
       end = customEnd;
+    } else if (urlState.startDate && urlState.endDate) {
+      // Use URL dates if available
+      start = urlState.startDate.toISOString();
+      end = urlState.endDate.toISOString();
     } else {
-      // Use calculated range from selectedDate + view for normal navigation
-      start = calculateStartDate(selectedDate, currentView).toISOString();
-      end = calculateEndDate(selectedDate, currentView).toISOString();
+      // Use default range based on context configuration
+      if (useWeekDefault) {
+        const { startDate: weekStart, endDate: weekEnd } =
+          MapOperations.getCurrentWeekRange();
+        start = weekStart.toISOString();
+        end = weekEnd.toISOString();
+      } else {
+        start = calculateStartDate(selectedDate, currentView).toISOString();
+        end = calculateEndDate(selectedDate, currentView).toISOString();
+      }
     }
 
     return {
@@ -128,6 +145,9 @@ export function MeetingProvider({
     isCustomRange,
     customStart,
     customEnd,
+    urlState.startDate,
+    urlState.endDate,
+    useWeekDefault,
   ]);
 
   useEffect(() => {
