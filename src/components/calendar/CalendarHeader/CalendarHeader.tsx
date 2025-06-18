@@ -24,10 +24,14 @@ import {
   transition,
 } from '@/domain/animations';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
+import { useTopics } from '@/domain/hooks/topicHook';
 
 export function CalendarHeader() {
   const { view, setView, searchQuery, setSearchQuery } = useMeetingContext();
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
+
+  const { data: topicsData = [] } = useTopics();
+  const topicLabels = topicsData.map((topic) => topic.topic);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchText(e.target.value);
@@ -76,7 +80,7 @@ export function CalendarHeader() {
             />
             <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
           </div>
-          <FilterModal showDateDropdown={false} />
+          <FilterModal showDateDropdown={false} topics={topicLabels} />
 
           <Tooltip>
             <TooltipTrigger asChild>

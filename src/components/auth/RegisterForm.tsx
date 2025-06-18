@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MultiSelect } from '@/components/ui/multi-select';
@@ -25,6 +26,7 @@ export function RegisterForm({
 
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+  const [newsletterSignup, setNewsletterSignup] = useState(true);
   const [loading, setLoading] = useState(false);
   const [redraw, setRedraw] = useState(false);
 
@@ -70,7 +72,7 @@ export function RegisterForm({
           />
         </div>
         <div className="grid gap-3">
-          <Label htmlFor="company">Company Description</Label>
+          <Label htmlFor="company-description">Company Description</Label>
           <Input
             id="company-description"
             type="text"
@@ -92,7 +94,7 @@ export function RegisterForm({
               { label: 'Spain', value: 'es' },
               { label: 'Austria', value: 'at' },
               { label: 'Belgium', value: 'be' },
-              { label: 'Poland', value: 'po' },
+              { label: 'Poland', value: 'pl' },
             ]}
             value={selectedCountries}
             onValueChange={setSelectedCountries}
@@ -161,6 +163,27 @@ export function RegisterForm({
             required
             disabled={loading}
           />
+        </div>
+        <div className="grid gap-3">
+          <div className="flex flex-row gap-2 items-center">
+            <input
+              type="hidden"
+              value={newsletterSignup ? 'true' : 'false'}
+              name="subscribed-newsletter"
+            />
+            <Checkbox
+              id="newsletter"
+              checked={newsletterSignup}
+              onCheckedChange={(checked) => {
+                setNewsletterSignup(!!checked);
+                return checked;
+              }}
+              disabled={loading}
+            />
+            <Label htmlFor="newsletter" className="text-sm font-normal">
+              Signup for daily, personalized newsletter
+            </Label>
+          </div>
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? LoadingSpinner() : 'Sign up'}
