@@ -1,7 +1,5 @@
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
-import * as React from 'react';
-import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -17,46 +15,28 @@ export interface DateRangeFilterProps {
   onSelect?: (range: { from?: Date; to?: Date }) => void;
 }
 
-export interface DateRangeFilterHandle {
-  clear: () => void;
-}
-
-export const DateRangeFilter = forwardRef<
-  DateRangeFilterHandle,
-  DateRangeFilterProps
->(({ from, to, onSelect }, ref) => {
-  const [dateRange, setDateRange] = useState<DateRangeFilterProps>({
-    from,
-    to,
-  });
-
-  const hasDateRange = dateRange.from || dateRange.to;
+export function DateRangeFilter({ from, to, onSelect }: DateRangeFilterProps) {
+  const hasDateRange = from || to;
 
   const handleDateRangeChange = (range: { from?: Date; to?: Date }) => {
-    setDateRange(range);
     onSelect?.(range);
   };
 
   const clearFilter = () => {
-    setDateRange({});
     onSelect?.({});
   };
-
-  useImperativeHandle(ref, () => ({
-    clear: clearFilter,
-  }));
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="w-45 border-dashed">
+        <Button variant="outline" size="sm" className="border-dashed">
           <CalendarIcon className="h-4 w-4" />
           <span className="w-full left-3">
             {hasDateRange ? (
               <>
-                {dateRange.from && format(dateRange.from, 'MMM dd')}
-                {dateRange.from && dateRange.to && ' - '}
-                {dateRange.to && format(dateRange.to, 'MMM dd')}
+                {from && format(from, 'MMM dd')}
+                {from && to && ' - '}
+                {to && format(to, 'MMM dd')}
               </>
             ) : (
               <span>Select dates</span>
@@ -68,8 +48,8 @@ export const DateRangeFilter = forwardRef<
         <Calendar
           mode="range"
           selected={{
-            from: dateRange.from,
-            to: dateRange.to,
+            from: from,
+            to: to,
           }}
           onSelect={(range) => {
             handleDateRangeChange({
@@ -90,6 +70,4 @@ export const DateRangeFilter = forwardRef<
       </PopoverContent>
     </Popover>
   );
-});
-
-DateRangeFilter.displayName = 'DateRangeFilter';
+}

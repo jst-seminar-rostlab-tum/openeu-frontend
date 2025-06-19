@@ -1,15 +1,14 @@
 import { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 
+import { DateRangeFilter } from '@/components/DateRangeFilter';
 import { DataTableBulkActions } from '@/components/inbox/BulkActions';
 import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
 import { DataTableViewOptions } from '@/components/inbox/ViewOptions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import ToolbarOperations from '@/operations/toolbar/ToolbarOperations';
-
-import { DateRangeFilter, DateRangeFilterHandle } from '../DateRangeFilter';
+import ToolbarOperations from '@/operations/inbox/ToolbarOperations';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -25,7 +24,6 @@ export function DataTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0;
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
-  const dateFilterRef = useRef<DateRangeFilterHandle>(null);
 
   // Get country options from TanStack Table's faceted values
   const countryOptions = useMemo(() => {
@@ -80,7 +78,20 @@ export function DataTableToolbar<TData>({
         )}
         {table.getColumn('date') && (
           <DateRangeFilter
-            ref={dateFilterRef}
+            from={
+              (
+                table.getColumn('date')?.getFilterValue() as
+                  | { from?: Date; to?: Date }
+                  | undefined
+              )?.from
+            }
+            to={
+              (
+                table.getColumn('date')?.getFilterValue() as
+                  | { from?: Date; to?: Date }
+                  | undefined
+              )?.to
+            }
             onSelect={ToolbarOperations.handleDateRangeChange(
               table.getColumn('date'),
             )}
@@ -89,10 +100,7 @@ export function DataTableToolbar<TData>({
         {isFiltered && (
           <Button
             variant="ghost"
-            onClick={() => {
-              table.resetColumnFilters();
-              dateFilterRef.current?.clear();
-            }}
+            onClick={() => table.resetColumnFilters()}
             className="h-8 px-2 lg:px-3"
           >
             Reset

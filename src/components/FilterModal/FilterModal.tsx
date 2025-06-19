@@ -3,6 +3,10 @@
 import { Funnel } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import {
+  DateRangeFilter,
+  DateRangeFilterProps,
+} from '@/components/DateRangeFilter';
 import { MotionButton } from '@/components/TooltipMotionButton';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,8 +31,6 @@ import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
-
-import { DateRangeFilter, DateRangeFilterProps } from '../DateRangeFilter';
 
 const { now } = getCurrentMonthRange();
 interface FilterModalProps {
