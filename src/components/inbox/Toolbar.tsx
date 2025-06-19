@@ -1,6 +1,6 @@
 import { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { DataTableBulkActions } from '@/components/inbox/BulkActions';
 import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ToolbarOperations from '@/operations/toolbar/ToolbarOperations';
 
-import { DateRangeFilter } from '../DateRangeFilter';
+import { DateRangeFilter, DateRangeFilterHandle } from '../DateRangeFilter';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -25,6 +25,7 @@ export function DataTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0;
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
+  const dateFilterRef = useRef<DateRangeFilterHandle>(null);
 
   // Get country options from TanStack Table's faceted values
   const countryOptions = useMemo(() => {
@@ -79,6 +80,7 @@ export function DataTableToolbar<TData>({
         )}
         {table.getColumn('date') && (
           <DateRangeFilter
+            ref={dateFilterRef}
             onSelect={ToolbarOperations.handleDateRangeChange(
               table.getColumn('date'),
             )}
@@ -87,7 +89,10 @@ export function DataTableToolbar<TData>({
         {isFiltered && (
           <Button
             variant="ghost"
-            onClick={() => table.resetColumnFilters()}
+            onClick={() => {
+              table.resetColumnFilters();
+              dateFilterRef.current?.clear();
+            }}
             className="h-8 px-2 lg:px-3"
           >
             Reset
