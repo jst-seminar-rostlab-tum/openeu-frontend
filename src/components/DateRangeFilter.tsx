@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import * as React from 'react';
-import { useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -17,10 +17,17 @@ export interface DateRangeFilterProps {
   onSelect?: (range: { from?: Date; to?: Date }) => void;
 }
 
-export function DateRangeFilter({ from, to, onSelect }: DateRangeFilterProps) {
+export interface DateRangeFilterHandle {
+  clear: () => void;
+}
+
+export const DateRangeFilter = forwardRef<
+  DateRangeFilterHandle,
+  DateRangeFilterProps
+>(({ from, to, onSelect }, ref) => {
   const [dateRange, setDateRange] = useState<DateRangeFilterProps>({
-    from: from,
-    to: to,
+    from,
+    to,
   });
 
   const hasDateRange = dateRange.from || dateRange.to;
@@ -34,6 +41,10 @@ export function DateRangeFilter({ from, to, onSelect }: DateRangeFilterProps) {
     setDateRange({});
     onSelect?.({});
   };
+
+  useImperativeHandle(ref, () => ({
+    clear: clearFilter,
+  }));
 
   return (
     <Popover>
@@ -79,4 +90,6 @@ export function DateRangeFilter({ from, to, onSelect }: DateRangeFilterProps) {
       </PopoverContent>
     </Popover>
   );
-}
+});
+
+DateRangeFilter.displayName = 'DateRangeFilter';
