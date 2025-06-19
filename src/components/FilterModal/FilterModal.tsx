@@ -38,7 +38,6 @@ interface FilterModalProps {
   showCountryDropdown?: boolean;
   showTopicDropdown?: boolean;
   showDateDropdown?: boolean;
-  initFilterState?: FilterModalState;
 }
 
 export default function FilterModal({
@@ -46,20 +45,16 @@ export default function FilterModal({
   showCountryDropdown = true,
   showTopicDropdown = true,
   showDateDropdown = true,
-  initFilterState = {
+}: FilterModalProps) {
+  const { selectedCountry, setSelectedCountry, setFilters, filters } =
+    useMeetingContext();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [localState, setLocalState] = useState<FilterModalState>({
     startDate: now,
     endDate: now,
     country: '',
     topics: [],
-  },
-}: FilterModalProps) {
-  const [filterState, setFilterState] =
-    useState<FilterModalState>(initFilterState);
-  const { selectedCountry, setSelectedCountry, setFilters, filters } =
-    useMeetingContext();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [localState, setLocalState] =
-    useState<FilterModalState>(initFilterState);
+  });
   const multiSelectRef = useRef<MultiSelectRef>(null);
   const countries = FilterModalOperations.getCountries();
   const topicOptions = topics!.map((topic) => ({
@@ -69,9 +64,15 @@ export default function FilterModal({
 
   useEffect(() => {
     if (dialogOpen) {
-      setLocalState({ ...filterState, country: selectedCountry });
+      // Sync localState with current context filters when dialog opens
+      setLocalState({
+        startDate: filters.start ? new Date(filters.start) : now,
+        endDate: filters.end ? new Date(filters.end) : now,
+        country: selectedCountry,
+        topics: [], // Topics not synced from context yet
+      });
     }
-  }, [dialogOpen, filterState, selectedCountry]);
+  }, [dialogOpen, selectedCountry, filters.start, filters.end]);
 
   const updateLocalState = (updates: Partial<FilterModalState>) => {
     setLocalState((prev) => ({ ...prev, ...updates }));
@@ -109,7 +110,6 @@ export default function FilterModal({
   };
 
   const handleApply = () => {
-    setFilterState(localState);
     setSelectedCountry(localState.country || '');
     // Update CalendarContext filters with new date range
     if (localState.startDate && localState.endDate && showDateDropdown) {
