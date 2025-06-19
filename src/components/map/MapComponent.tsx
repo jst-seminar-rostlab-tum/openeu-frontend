@@ -260,6 +260,7 @@ export default function MapComponent({
           date={new Date()}
           events={selectedCountryMeetings}
           title={`Meetings in ${selectedCountry} (${selectedCountryMeetings.length} events)`}
+          selectedCountry={selectedCountry}
           open={dialogOpen}
           onOpenChange={setDialogOpen}
         />

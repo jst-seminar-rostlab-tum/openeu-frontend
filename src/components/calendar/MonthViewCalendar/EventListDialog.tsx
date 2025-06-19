@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { Building, MapPin } from 'lucide-react';
+import { Building, Calendar, MapPin } from 'lucide-react';
 import React, { ReactNode } from 'react';
 
 import { dayCellVariants } from '@/components/calendar/MonthViewCalendar/DayCell';
@@ -7,9 +7,11 @@ import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
@@ -17,6 +19,7 @@ import { DialogHeader } from '@/components/ui/dialog';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
+import MapOperations from '@/operations/map/MapOperations';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
@@ -27,6 +30,7 @@ interface EventListDialogProps {
   endDate?: Date;
   title?: string;
   open?: boolean;
+  selectedCountry?: string;
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -38,6 +42,7 @@ export function EventListDialog({
   endDate,
   title,
   open,
+  selectedCountry,
   onOpenChange,
 }: EventListDialogProps) {
   const cellEvents = events;
@@ -52,6 +57,16 @@ export function EventListDialog({
       </span>
     </span>
   );
+
+  const handleGoToCalendar = () => {
+    const start = MapOperations.dateToISOString(date);
+    const end = MapOperations.dateToISOString(endDate);
+    const country = selectedCountry || '';
+
+    const params = new URLSearchParams({ start, end, country });
+
+    window.location.href = `/calendar?${params.toString()}`;
+  };
 
   function eventListEntry(event: MeetingData, index: number) {
     const relevanceScore = event.similarity
@@ -122,6 +137,12 @@ export function EventListDialog({
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
           {cellEvents.map((event, index) => eventListEntry(event, index))}
         </div>
+        <DialogFooter>
+          <Button variant="default" onClick={handleGoToCalendar}>
+            <Calendar className="h-5 w-5 pointer-events-none" />
+            Show in Calendar
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
