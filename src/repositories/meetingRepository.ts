@@ -3,7 +3,7 @@ import { addHours } from 'date-fns';
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { GetMeetingsQueryParams } from '@/domain/hooks/meetingHooks';
 
-const API_URL = 'https://openeu-backend-1.onrender.com/meetings';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/meetings`;
 
 export const meetingRepository = {
   async getMeetings(params: GetMeetingsQueryParams): Promise<MeetingData[]> {

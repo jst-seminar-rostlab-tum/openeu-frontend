@@ -1,6 +1,6 @@
 import { Topic } from '@/domain/entities/calendar/generated-types';
 
-const API_URL = 'https://openeu-backend-1.onrender.com/topics';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/topics`;
 
 export const topicRepository = {
   async getTopics(): Promise<Topic[]> {
