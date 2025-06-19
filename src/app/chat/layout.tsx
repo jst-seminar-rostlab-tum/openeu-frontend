@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { ChatProvider } from '@/app/chat/ChatContext';
+import ChatScrollContainer from '@/components/Chat/ChatScrollContainer';
 import ChatSidebar from '@/components/Chat/ChatSidebar';
 import {
   SidebarInset,
@@ -41,9 +42,7 @@ export default function ChatLayout({
               </Tooltip>
             </TooltipProvider>
           </header>
-          <div className="flex-1 relative overflow-y-auto scrollbar-custom p-4 pb-0">
-            {children}
-          </div>
+          <ChatScrollContainer>{children}</ChatScrollContainer>
         </SidebarInset>
       </ChatProvider>
     </SidebarProvider>
