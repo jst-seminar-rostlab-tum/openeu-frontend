@@ -96,6 +96,7 @@ export default function FilterModal({
         start: (defaultState.startDate || now).toISOString(),
         end: (defaultState.endDate || now).toISOString(),
         country: undefined,
+        topics: undefined,
       });
     } else {
       setFilters({
@@ -108,7 +109,6 @@ export default function FilterModal({
   const handleApply = () => {
     setFilterState(localState);
     setSelectedCountry(localState.country || '');
-
     // Update CalendarContext filters with new date range
     if (localState.startDate && localState.endDate && showDateDropdown) {
       setFilters({
@@ -116,11 +116,13 @@ export default function FilterModal({
         start: localState.startDate.toISOString(),
         end: localState.endDate.toISOString(),
         country: localState.country || undefined,
+        topics: localState.topics?.length ? localState.topics : undefined,
       });
     } else {
       setFilters({
         ...filters,
         country: localState.country || undefined,
+        topics: localState.topics || undefined,
       });
     }
 
@@ -189,6 +191,7 @@ export default function FilterModal({
               variant="inverted"
               maxCount={1}
               className={showCountryDropdown ? '' : '!w-full'}
+              modalPopover={true}
             />
           )}
         </div>

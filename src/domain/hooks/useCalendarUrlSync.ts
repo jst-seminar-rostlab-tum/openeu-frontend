@@ -27,6 +27,7 @@ function validateCalendarView(viewParam: string | null): TCalendarView {
 }
 
 interface UrlState {
+  selectedTopics: string[];
   searchQuery: string;
   selectedCountry: string;
   startDate: Date | null;
@@ -53,6 +54,9 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
   const urlState = useMemo((): UrlState => {
     const searchQuery = searchParams.get('q') || '';
     const selectedCountry = searchParams.get('country') || '';
+    const selectedTopics = searchParams.get('topics')
+      ? searchParams.get('topics')!.split(',').filter(Boolean)
+      : [];
 
     // Parse and validate view parameter with fallback
     const view = validateCalendarView(searchParams.get('view'));
@@ -83,6 +87,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
       selectedCountry,
       startDate,
       endDate,
+      selectedTopics,
       view,
     };
   }, [searchParams]);
@@ -99,6 +104,10 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
         start: filters.start || null,
         end: filters.end || null,
         view: view || null,
+        topics:
+          filters.topics && filters.topics.length > 0
+            ? filters.topics.join(',')
+            : null,
       };
 
       // Apply excludeParams filter
