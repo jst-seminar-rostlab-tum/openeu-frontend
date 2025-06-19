@@ -8,11 +8,9 @@ import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
-import MapOperations from '@/operations/map/MapOperations';
 
 export default function MapPage() {
-  const { searchQuery, setSearchQuery, isFetching, filters } =
-    useMeetingContext();
+  const { searchQuery, setSearchQuery, isFetching } = useMeetingContext();
   const [displayValue, setDisplayValue] = useState(searchQuery);
 
   const { data: topicsData = [] } = useTopics();
@@ -29,16 +27,7 @@ export default function MapPage() {
           isFetching={isFetching}
           placeholder="Search meetings..."
         />
-        <FilterModal
-          initFilterState={{
-            startDate: MapOperations.isoStringToDate(filters.start || ''),
-            endDate: MapOperations.isoStringToDate(filters.end || ''),
-            country: '',
-            topics: [],
-          }}
-          showCountryDropdown={false}
-          topics={topicLabels}
-        />
+        <FilterModal showCountryDropdown={false} topics={topicLabels} />
       </Card>
     </div>
   );
