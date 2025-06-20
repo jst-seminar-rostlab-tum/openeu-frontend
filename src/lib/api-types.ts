@@ -251,7 +251,7 @@ export interface components {
        */
       meeting_start_datetime: string;
       /** Meeting End Datetime */
-      meeting_end_datetime?: string | null;
+      meeting_end_datetime: string;
       /** Location */
       location?: string | null;
       /** Exact Location */
@@ -262,6 +262,8 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
+      /** Topics */
+      topic?: string | null;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
