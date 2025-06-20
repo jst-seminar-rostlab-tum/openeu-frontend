@@ -1,10 +1,20 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Compass } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
 
 export default function InterestsForm() {
@@ -23,46 +33,96 @@ export default function InterestsForm() {
     { label: 'Poland', value: 'pl' },
   ];
 
-  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const interestsSchema = z.object({
+    countries: z
+      .array(z.string())
+      .min(1, { message: 'At least one country must be selected.' }),
+    topics: z
+      .array(z.string())
+      .min(1, { message: 'At least one topic must be selected.' }),
+  });
+
+  const form = useForm<z.infer<typeof interestsSchema>>({
+    resolver: zodResolver(interestsSchema),
+    defaultValues: {
+      countries: [],
+      topics: [],
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof interestsSchema>) {
+    console.log(values);
+  }
 
   return (
-    <div className="grid gap-5 pt-3">
-      <Card>
-        <CardHeader>
-          <div className="flex flex-row gap-2 align-text-center">
-            <Compass />
-            <h2 className="text-lg font-semibold">Interests</h2>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-5">
-            <div className="flex flex-col gap-3">
-              <Label className="text-sm font-medium">Countries</Label>
-              <MultiSelect
-                options={countries}
-                value={selectedCountries}
-                onValueChange={setSelectedCountries}
-                placeholder="Select countries"
-                variant="inverted"
+    <Form {...form}>
+      <form className="grid gap-5 pt-3" onSubmit={form.handleSubmit(onSubmit)}>
+        <Card>
+          <CardHeader>
+            <div className="flex flex-row gap-2 align-text-center">
+              <Compass />
+              <h2 className="text-lg font-semibold">Interests</h2>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-5">
+              <FormField
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex flex-col gap-3">
+                      <FormLabel className="text-sm font-medium">
+                        Countries
+                      </FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          options={countries}
+                          onValueChange={(data: string[]) =>
+                            form.setValue('countries', data)
+                          }
+                          placeholder="Select countries"
+                          variant="inverted"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+                name="countries"
+              />
+              <FormField
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex flex-col gap-3">
+                      <FormLabel className="text-sm font-medium">
+                        Topics
+                      </FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          options={topics}
+                          onValueChange={(data: string[]) =>
+                            form.setValue('topics', data)
+                          }
+                          placeholder="Select topics"
+                          variant="inverted"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+                name="topics"
               />
             </div>
-            <div className="flex flex-col gap-3">
-              <Label className="text-sm font-medium">Topics</Label>
-              <MultiSelect
-                options={topics}
-                value={selectedTopics}
-                onValueChange={setSelectedTopics}
-                placeholder="Select topics"
-                variant="inverted"
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <div className="flex justify-end">
-        <Button className="w-[8rem]">Save changes</Button>
-      </div>
-    </div>
+          </CardContent>
+        </Card>
+        <div className="flex justify-end">
+          <Button type="submit" className="w-[8rem]">
+            Save changes
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

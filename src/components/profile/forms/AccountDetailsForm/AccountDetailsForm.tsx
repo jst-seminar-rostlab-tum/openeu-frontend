@@ -1,103 +1,182 @@
-import { AvatarFallback } from '@radix-ui/react-avatar';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Building, User as UserIcon } from 'lucide-react';
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useProfileContext } from '@/domain/hooks/profileHook';
-import { extractInitials, getDisplayName } from '@/lib/utils';
 
 export default function AccountDetailsForm() {
-  const { isLoading, user } = useProfileContext();
+  const { user } = useProfileContext();
 
-  if (isLoading || !user) return;
+  const accountDetailsSchema = z.object({
+    picture: z.instanceof(File).optional(),
+    name: z.string().min(2),
+    surname: z.string().min(2),
+    email: z.string().email(),
+    company_name: z.string().min(2),
+    company_description: z.string().min(2),
+  });
 
-  const userData = {
-    email: user.email,
-    name: getDisplayName(user),
-    image: user.user_metadata?.avatar_url as string | undefined,
-  };
+  const form = useForm<z.infer<typeof accountDetailsSchema>>({
+    resolver: zodResolver(accountDetailsSchema),
+    defaultValues: {
+      name: '',
+      surname: '',
+      email: '',
+      company_name: '',
+      company_description: '',
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof accountDetailsSchema>) {
+    console.log(values);
+  }
+
+  if (!user) return;
 
   return (
-    <div className="grid gap-5 pt-3">
-      <Card>
-        <CardHeader>
-          <CardTitle>
+    <Form {...form}>
+      <form className="grid gap-5 pt-3" onSubmit={form.handleSubmit(onSubmit)}>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <div className="flex flex-row gap-2 align-text-center">
+                <UserIcon />
+                <h2 className="text-lg font-semibold">Profile Details</h2>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-5">
+              <div className="flex flex-col gap-3">
+                <FormField
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium" htmlFor="name">
+                        First name
+                      </FormLabel>
+                      <FormControl>
+                        <Input id="name" type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                  name="name"
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <FormField
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        className="text-sm font-medium"
+                        htmlFor="surname"
+                      >
+                        Last name
+                      </FormLabel>
+                      <FormControl>
+                        <Input id="surname" type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                  name="surname"
+                />
+              </div>
+              <div className="flex flex-col gap-3 col-span-2">
+                <FormField
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        className="text-sm font-medium"
+                        htmlFor="email"
+                      >
+                        E-Mail
+                      </FormLabel>
+                      <FormControl>
+                        <Input id="email" type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                  name="email"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
             <div className="flex flex-row gap-2 align-text-center">
-              <UserIcon />
-              <h2 className="text-lg font-semibold">Profile Details</h2>
+              <Building />
+              <h2 className="text-lg font-semibold">Company Details</h2>
             </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-row justify-between gap-2">
-            <Avatar className="flex flex-col justify-center items-center outline-1 size-16 my-auto">
-              <AvatarImage src={userData.image} alt={userData.name} />
-              <AvatarFallback>{extractInitials(userData.name)}</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="picture" className="text-sm font-medium">
-                Upload avatar
-              </Label>
-              <Input id="picture" type="file" />
-              <p className="text-xs text-muted-foreground">
-                Recommended size: 400x400px. Max file size: 5MB.
-              </p>
-              <p className="text-xs text-muted-foreground"></p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-5">
+              <div className="flex flex-col gap-3">
+                <FormField
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        className="text-sm font-medium"
+                        htmlFor="company_name"
+                      >
+                        Company name
+                      </FormLabel>
+                      <FormControl>
+                        <Input id="company_name" type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                  name="company_name"
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <FormField
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        className="text-sm font-medium"
+                        htmlFor="company_description"
+                      >
+                        Company details
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          id="company_description"
+                          type="text"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                  name="company_description"
+                />
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-5 pt-4">
-            <div className="flex flex-col gap-3">
-              <Label className="text-sm font-medium" htmlFor="name">
-                First name
-              </Label>
-              <Input id="name" type="text" />
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label className="text-sm font-medium" htmlFor="surname">
-                Last name
-              </Label>
-              <Input id="surname" type="text" />
-            </div>
-            <div className="flex flex-col gap-3 col-span-2">
-              <Label className="text-sm font-medium" htmlFor="email">
-                E-Mail
-              </Label>
-              <Input id="email" type="email" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-row gap-2 align-text-center">
-            <Building />
-            <h2 className="text-lg font-semibold">Company Details</h2>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-5">
-            <div className="flex flex-col gap-3">
-              <Label className="text-sm font-medium" htmlFor="name">
-                Company name
-              </Label>
-              <Input id="name" type="text" />
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label className="text-sm font-medium" htmlFor="surname">
-                Company details
-              </Label>
-              <Input id="surname" type="text" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <div className="flex justify-end">
-        <Button className="w-[8rem]">Save changes</Button>
-      </div>
-    </div>
+          </CardContent>
+        </Card>
+        <div className="flex justify-end">
+          <Button type="submit" className="w-[8rem]">
+            Save changes
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
