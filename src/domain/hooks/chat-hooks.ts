@@ -12,9 +12,6 @@ import {
 import { useAuth } from '@/domain/hooks/useAuth';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend-1.onrender.com';
-
 // Query Keys
 export const chatQueryKeys = {
   sessions: (userId: string) => ['chat-sessions', userId] as const,
@@ -24,7 +21,7 @@ export const chatQueryKeys = {
 // Fetch functions using generated types directly
 async function fetchChatSessions(userId: string): Promise<ChatSession[]> {
   const response = await fetch(
-    `${API_BASE_URL}/chat/sessions?user_id=${userId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/chat/sessions?user_id=${userId}`,
   );
   if (!response.ok) {
     throw new Error('Failed to fetch chat sessions');
@@ -33,7 +30,9 @@ async function fetchChatSessions(userId: string): Promise<ChatSession[]> {
 }
 
 async function fetchChatMessages(sessionId: string): Promise<Message[]> {
-  const response = await fetch(`${API_BASE_URL}/chat/sessions/${sessionId}`);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/chat/sessions/${sessionId}`,
+  );
   if (!response.ok) {
     throw new Error('Failed to fetch chat messages');
   }
@@ -45,7 +44,7 @@ async function sendStreamingMessage(
   request: SendMessageRequest,
   onStreamUpdate?: (content: string) => void,
 ): Promise<string> {
-  const response = await fetch(`${API_BASE_URL}/chat/`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
