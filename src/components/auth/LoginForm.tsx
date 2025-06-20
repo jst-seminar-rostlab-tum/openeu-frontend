@@ -70,9 +70,9 @@ export function LoginForm({
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? LoadingSpinner() : 'Sign in'}
                 </Button>
-                <Button onClick={loginWithGoogle}>
+                <Button onClick={loginWithGoogle} type="button">
                   <IoLogoGoogle />
-                  Sign In with Google
+                  Sign in with Google
                 </Button>
               </div>
             </div>

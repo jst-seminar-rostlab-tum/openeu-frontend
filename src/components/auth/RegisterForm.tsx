@@ -3,6 +3,7 @@
 import { Radio, RadioGroup } from '@headlessui/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { IoLogoGoogle } from 'react-icons/io';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { loginWithGoogle } from '@/domain/actions/login-with-google';
 import { signup } from '@/domain/actions/register';
 import { cn } from '@/lib/utils';
 
@@ -185,9 +187,15 @@ export function RegisterForm({
             </Label>
           </div>
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? LoadingSpinner() : 'Sign up'}
-        </Button>
+        <div className="flex flex-col gap-3">
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? LoadingSpinner() : 'Sign up'}
+          </Button>
+          <Button onClick={loginWithGoogle} type="button">
+            <IoLogoGoogle />
+            Sign up with Google
+          </Button>
+        </div>
       </div>
       <div className="text-center text-sm">
         Already have an account?{' '}
