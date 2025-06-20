@@ -18,7 +18,9 @@ import { Input } from '@/components/ui/input';
 import { useProfileContext } from '@/domain/hooks/profileHook';
 
 export default function SecurityForm() {
-  const { updatePassword } = useProfileContext();
+  const { user } = useProfileContext();
+  const { updatePassword, linkGoogleAccount, unlinkGoogleAccount } =
+    useProfileContext();
 
   const passwordTooShortError = {
     message: 'The password must contain at least 8 character(s).',
@@ -55,90 +57,113 @@ export default function SecurityForm() {
     updatePassword(values.new_password);
   }
 
-  return (
-    <Form {...form}>
-      <form className="grid gap-5 pt-3" onSubmit={form.handleSubmit(onSubmit)}>
-        <Card>
-          <CardHeader>
-            <div className="flex flex-row gap-2 align-text-center">
-              <Lock />
-              <h2 className="text-lg font-semibold">Security</h2>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-3">
-              <FormField
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      htmlFor="new_password"
-                      className="text-sm font-medium"
-                    >
-                      New password
-                    </FormLabel>
-                    <FormControl>
-                      <Input id="new_password" type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-                name="new_password"
-              />
+  const googleAction = (isLinked: boolean) => {
+    if (isLinked) {
+      unlinkGoogleAccount();
+    } else {
+      linkGoogleAccount();
+    }
+  };
 
-              <FormField
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      htmlFor="confirm_new_password"
-                      className="text-sm font-medium"
-                    >
-                      Confirm new password
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        id="confirm_new_password"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-                name="confirm_new_password"
-              />
-            </div>
-          </CardContent>
-        </Card>
-        <div className="flex justify-end">
-          <Button type="submit" className="w-[8rem]">
-            Save changes
-          </Button>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>
+  if (!user) return;
+
+  const googleIdentity = user.identities?.find(
+    (identity) => identity.provider === 'google',
+  );
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const email = googleIdentity?.email;
+  return (
+    <div className="grid gap-5 pt-3">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Card>
+            <CardHeader>
               <div className="flex flex-row gap-2 align-text-center">
-                <Globe />
-                <h2 className="text-lg font-semibold">Connected Accounts</h2>
+                <Lock />
+                <h2 className="text-lg font-semibold">Security</h2>
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-row justify-between">
-              <div className="flex gap-3">
-                <div className="flex justify-center items-center rounded-full bg-muted size-10">
-                  <IoLogoGoogle className="size-6" />
-                </div>
-                <div className="flex flex-col">
-                  <p className="font-medium">Google</p>
-                  <p className="text-muted-foreground">Not connected</p>
-                </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-3">
+                <FormField
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        htmlFor="new_password"
+                        className="text-sm font-medium"
+                      >
+                        New password
+                      </FormLabel>
+                      <FormControl>
+                        <Input id="new_password" type="password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                  name="new_password"
+                />
+
+                <FormField
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        htmlFor="confirm_new_password"
+                        className="text-sm font-medium"
+                      >
+                        Confirm new password
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          id="confirm_new_password"
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                  name="confirm_new_password"
+                />
               </div>
-              <Button>Connect</Button>
+            </CardContent>
+          </Card>
+          <div className="flex justify-end pt-4">
+            <Button type="submit" className="w-[8rem]">
+              Save changes
+            </Button>
+          </div>
+        </form>
+      </Form>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <div className="flex flex-row gap-2 align-text-center">
+              <Globe />
+              <h2 className="text-lg font-semibold">Connected Accounts</h2>
             </div>
-          </CardContent>
-        </Card>
-      </form>
-    </Form>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-row justify-between">
+            <div className="flex gap-3">
+              <div className="flex justify-center items-center rounded-full bg-muted size-10">
+                <IoLogoGoogle className="size-6" />
+              </div>
+              <div className="flex flex-col">
+                <p className="font-medium">Google</p>
+                <p className="text-muted-foreground">
+                  {googleIdentity ? email : 'Not connected'}
+                </p>
+              </div>
+            </div>
+            <Button onClick={() => googleAction(!!googleIdentity)}>
+              {!googleIdentity ? 'Link' : 'Unlink'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
