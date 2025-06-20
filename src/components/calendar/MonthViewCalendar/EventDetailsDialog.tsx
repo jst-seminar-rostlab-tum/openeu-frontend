@@ -5,15 +5,17 @@ import {
   Building,
   Calendar,
   CalendarOff,
+  CalendarPlus,
   ExternalLink,
   MapPin,
   Scale,
   Tag,
   Text,
 } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { TagBadge } from '@/components/calendar/TagBadge';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +28,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { loginWithGoogle } from '@/domain/actions/login-with-google';
+import { saveToCalendar } from '@/domain/actions/save-to-calendar';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import {
   formatTime,
@@ -40,6 +44,8 @@ interface IProps {
 export function EventDetailsDialog({ event, children }: IProps) {
   const startDate = parseISO(event.meeting_start_datetime);
   const endDate = parseISO(event.meeting_end_datetime);
+
+  const [calendarLoading, setCalendarLoading] = useState(false);
 
   return (
     <Dialog>
@@ -148,6 +154,33 @@ export function EventDetailsDialog({ event, children }: IProps) {
               </a>
             </Button>
           )}
+          <Button
+            variant="default"
+            asChild
+            onClick={() => {
+              setCalendarLoading(true);
+              saveToCalendar(
+                `${event.title} (${getMeetingType(event.source_table)})`,
+                event.description,
+                event.location,
+                event.meeting_start_datetime,
+                event.meeting_end_datetime,
+              ).then(async (needsGoogleAuth: boolean) => {
+                if (needsGoogleAuth) {
+                  await loginWithGoogle();
+                  setCalendarLoading(false);
+                } else {
+                  setCalendarLoading(false);
+                }
+              });
+            }}
+            disabled={calendarLoading}
+          >
+            <p>
+              {calendarLoading ? LoadingSpinner() : 'Add to calendar'}
+              <CalendarPlus className="size-4" />
+            </p>
+          </Button>
           <DialogClose asChild>
             <Button variant="outline">Close</Button>
           </DialogClose>
