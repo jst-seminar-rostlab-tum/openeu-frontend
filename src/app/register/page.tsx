@@ -16,9 +16,10 @@ export default async function Page(props: {
           <Image
             src="/project-europe-no-bg.png"
             alt="Project Europe"
-            className="object-fit dark:brightness-[0.2] dark:grayscale mb-20 dark:invert"
-            width={450}
-            height={149}
+            width={300}
+            height={300}
+            className="mb-12 object-fit dark:invert dark:brightness-[0.2} dark:grayscale"
+            priority
           />
           <p className="font-light text-lg text-center px-10">
             OpenEU transforms how citizens, businesses, and organizations engage
