@@ -1,6 +1,5 @@
 import { AvatarFallback } from '@radix-ui/react-avatar';
-import { User } from '@supabase/auth-js';
-import { Building, Upload, User as UserIcon } from 'lucide-react';
+import { Building, User as UserIcon } from 'lucide-react';
 import React from 'react';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
@@ -8,13 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useProfileContext } from '@/domain/hooks/profileHook';
 import { extractInitials, getDisplayName } from '@/lib/utils';
 
-interface AccountDetailsProps {
-  user: User;
-}
+export default function AccountDetailsForm() {
+  const { isLoading, user } = useProfileContext();
 
-export default function AccountDetailsForm({ user }: AccountDetailsProps) {
+  if (isLoading || !user) return;
+
   const userData = {
     email: user.email,
     name: getDisplayName(user),
@@ -33,16 +33,16 @@ export default function AccountDetailsForm({ user }: AccountDetailsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-row gap-2 gap-8">
-            <Avatar className="flex justify-center items-center outline outline-1 size-16 my-auto">
+          <div className="flex flex-row justify-between gap-2">
+            <Avatar className="flex flex-col justify-center items-center outline-1 size-16 my-auto">
               <AvatarImage src={userData.image} alt={userData.name} />
               <AvatarFallback>{extractInitials(userData.name)}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col gap-1">
-              <h3 className="text-sm font-medium">Upload avatar</h3>
-              <Button size="sm" className="w-[8rem]">
-                <Upload /> Upload
-              </Button>
+              <Label htmlFor="picture" className="text-sm font-medium">
+                Upload avatar
+              </Label>
+              <Input id="picture" type="file" />
               <p className="text-xs text-muted-foreground">
                 Recommended size: 400x400px. Max file size: 5MB.
               </p>
