@@ -45,17 +45,21 @@ export default function ProfileContent() {
     },
   ];
 
-  const buildTabList = (category: ProfileCategory) => {
+  const buildTabList = (category: ProfileCategory, index: number) => {
     return (
-      <TabsTrigger value={category.id}>
+      <TabsTrigger value={category.id} key={index}>
         {category.icon}
         {category.name}
       </TabsTrigger>
     );
   };
 
-  const buildTabContent = (category: ProfileCategory) => {
-    return <TabsContent value={category.id}>{category.component}</TabsContent>;
+  const buildTabContent = (category: ProfileCategory, index: number) => {
+    return (
+      <TabsContent value={category.id} key={index}>
+        {category.component}
+      </TabsContent>
+    );
   };
 
   return (
