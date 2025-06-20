@@ -1,14 +1,17 @@
 'use client';
 
+import { debounce } from '@nextui-org/shared-utils';
 import { User } from '@supabase/supabase-js';
 import { motion } from 'framer-motion';
 import { MoveUpRight } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Section } from '@/components/section';
 import { Button } from '@/components/ui/button';
 import { getFirstName } from '@/lib/utils';
 import HomeOperations from '@/operations/home/HomeOperations';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface LoggedInLandingProps {
   user: User;
@@ -17,6 +20,31 @@ interface LoggedInLandingProps {
 export default function LoggedInLanding({ user }: LoggedInLandingProps) {
   const firstName = getFirstName(user);
   const features = HomeOperations.getFeatures();
+  const [hasShowToast, setHasShowToast] = useState(false);
+
+  const debouncedShowToast = useMemo(
+    () =>
+      debounce(() => {
+        if (user.user_metadata['incompleteProfile'] && !hasShowToast) {
+          ToastOperations.showInfo({
+            title: 'Finish your profile to unlock all features',
+            message: (
+              <p>
+                <Link href="/profile">
+                  Click <b>here</b> to complete your profile.
+                </Link>
+              </p>
+            ),
+          });
+          setHasShowToast(true);
+        }
+      }, 100),
+    [hasShowToast, user.user_metadata],
+  );
+
+  useEffect(() => {
+    debouncedShowToast();
+  }, [debouncedShowToast]);
 
   return (
     <main className="min-h-[calc(100vh-48px)] bg-white dark:bg-black text-black dark:text-white relative overflow-hidden">

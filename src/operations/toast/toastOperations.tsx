@@ -8,8 +8,8 @@ enum ToastType {
 }
 
 interface ToastConfig {
-  title: string;
-  message: string;
+  title: React.ReactNode | string;
+  message: React.ReactNode | string;
 }
 
 const TOAST_STYLES: Record<ToastType, string> = {
