@@ -251,7 +251,7 @@ export interface components {
        */
       meeting_start_datetime: string;
       /** Meeting End Datetime */
-      meeting_end_datetime: string;
+      meeting_end_datetime: string | null;
       /** Location */
       location?: string | null;
       /** Exact Location */
