@@ -11,18 +11,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { signup } from '@/domain/actions/register';
+import { useTopics } from '@/domain/hooks/topicHook';
 import { cn } from '@/lib/utils';
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
-  const topics = [
-    { name: 'Topic 1' },
-    { name: 'Topic 2' },
-    { name: 'Topic 3' },
-    { name: 'Topic 4' },
-  ];
+  const topics = useTopics();
 
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
@@ -103,9 +99,9 @@ export function RegisterForm({
             disabled={loading}
           />
         </div>
-        <div className="hidden gap-3">
+        <div className="gap-3">
           <Label>Topics</Label>
-          <input type="hidden" value={selectedTopics.join(',')} name="topics" />
+          <input value={selectedTopics.join(',')} name="topics" readOnly />
           <RadioGroup
             disabled={loading}
             value={selectedTopics}
@@ -125,18 +121,18 @@ export function RegisterForm({
             }}
             className="mt-2 grid grid-cols-3 gap-3"
           >
-            {topics.map((option: { name: string }) => (
+            {topics.data?.map((option: { topic: string; id: string }) => (
               <Radio
-                key={option.name}
-                value={option.name}
+                key={option.id}
+                value={option.topic}
                 className={cn(
                   'cursor-pointer focus:outline-none flex items-center justify-center rounded-md px-3 py-3 text-sm ring-1 ring-gray-300 hover:bg-gray-50 data-[focus]:data-[checked]:ring-2 data-[focus]:ring-2 data-[focus]:ring-primary data-[focus]:ring-offset-2 sm:flex-1 [&:not([data-focus])]:[&:not([data-checked])]:ring-inset',
-                  selectedTopics.includes(option.name)
+                  selectedTopics.includes(option.topic)
                     ? ' bg-primary text-white ring-0 hover:bg-primary'
                     : '',
                 )}
               >
-                {option.name}
+                {option.topic}
               </Radio>
             ))}
           </RadioGroup>
