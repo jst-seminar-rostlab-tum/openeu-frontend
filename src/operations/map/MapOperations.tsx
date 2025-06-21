@@ -1,5 +1,11 @@
 import * as turf from '@turf/turf';
-import { parseISO } from 'date-fns';
+import {
+  endOfWeek,
+  formatISO,
+  parseISO,
+  startOfDay,
+  startOfWeek,
+} from 'date-fns';
 import * as geojson from 'geojson';
 import { useMemo } from 'react';
 
@@ -100,3 +106,42 @@ export const getLargestPolygon = (feature: geojson.Feature) => {
 
   return largestPolygon;
 };
+
+export default class MapOperations {
+  /**
+   * Converts a Date to ISO string format
+   * Uses date-fns for reliable formatting
+   */
+  static dateToISOString(date?: Date): string {
+    if (!date) return '';
+    return formatISO(date);
+  }
+
+  /**
+   * Parses ISO string to Date with fallback to current date
+   * Uses date-fns for reliable parsing
+   */
+  static isoStringToDate(iso: string): Date {
+    try {
+      return parseISO(iso);
+    } catch {
+      return startOfDay(new Date());
+    }
+  }
+
+  /**
+   * Gets current week range (Monday to Sunday)
+   * Uses date-fns for accurate week calculations
+   */
+  static getCurrentWeekRange(): {
+    startDate: Date;
+    endDate: Date;
+  } {
+    const now = new Date();
+
+    return {
+      startDate: startOfWeek(now, { weekStartsOn: 1 }), // Monday
+      endDate: endOfWeek(now, { weekStartsOn: 1 }), // Sunday
+    };
+  }
+}

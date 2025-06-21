@@ -2,12 +2,13 @@ import { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
 import { useMemo } from 'react';
 
+import { DateRangeFilter } from '@/components/DateRangeFilter';
 import { DataTableBulkActions } from '@/components/inbox/BulkActions';
-import { DataTableDateRangeFilter } from '@/components/inbox/DateRangeFilter';
 import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
 import { DataTableViewOptions } from '@/components/inbox/ViewOptions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import ToolbarOperations from '@/operations/inbox/ToolbarOperations';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -76,9 +77,24 @@ export function DataTableToolbar<TData>({
           />
         )}
         {table.getColumn('date') && (
-          <DataTableDateRangeFilter
-            column={table.getColumn('date')}
-            title="Date Range"
+          <DateRangeFilter
+            from={
+              (
+                table.getColumn('date')?.getFilterValue() as
+                  | { from?: Date; to?: Date }
+                  | undefined
+              )?.from
+            }
+            to={
+              (
+                table.getColumn('date')?.getFilterValue() as
+                  | { from?: Date; to?: Date }
+                  | undefined
+              )?.to
+            }
+            onSelect={ToolbarOperations.handleDateRangeChange(
+              table.getColumn('date'),
+            )}
           />
         )}
         {isFiltered && (

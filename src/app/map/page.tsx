@@ -27,7 +27,7 @@ export default function MapPage() {
           isFetching={isFetching}
           placeholder="Search meetings..."
         />
-        <FilterModal topics={topicLabels} showCountryDropdown={false} />
+        <FilterModal showCountryDropdown={false} topics={topicLabels} />
       </Card>
     </div>
   );
