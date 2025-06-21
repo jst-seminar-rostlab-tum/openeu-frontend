@@ -122,10 +122,6 @@ export function MeetingProvider({
   const filters = useMemo((): GetMeetingsQueryParams => {
     let start: string;
     let end: string;
-    console.log(
-      'selectedInstitutions in filters in meeting context',
-      selectedInstitutions,
-    );
 
     if (isCustomRange && customStart && customEnd) {
       // Use custom date range from FilterModal
