@@ -1,7 +1,7 @@
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 
 interface RelevanceScoreProps {
-  meeting: MeetingData;
+  meeting: Meeting;
   type: 'bar' | 'circle';
   textClassName?: string;
 }

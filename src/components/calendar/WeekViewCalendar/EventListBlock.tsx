@@ -4,7 +4,7 @@ import { differenceInMinutes, parseISO } from 'date-fns';
 import type { HTMLAttributes } from 'react';
 
 import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
 import {
@@ -53,7 +53,7 @@ const calendarWeekEventCardVariants = cva(
 interface IProps
   extends HTMLAttributes<HTMLDivElement>,
     Omit<VariantProps<typeof calendarWeekEventCardVariants>, 'color'> {
-  events: MeetingData[];
+  events: Meeting[];
 }
 
 export function EventListBlock({ events, className }: IProps) {
