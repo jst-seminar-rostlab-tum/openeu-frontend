@@ -43,6 +43,7 @@ Create a file called `.env` in the root of the project and populate it with the 
 ```
 NEXT_PUBLIC_SUPABASE_URL="YOUR_SUPABASE_URL"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
+NEXT_PUBLIC_API_URL="https://openeu-backend-1.onrender.com"
 ```
 
 Get the API Key from Notion
