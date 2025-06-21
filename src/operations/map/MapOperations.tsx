@@ -10,7 +10,7 @@ import * as geojson from 'geojson';
 import { useMemo } from 'react';
 
 import { europeanCountries } from '@/components/map/constants';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 
 const COUNTRY_MAPPINGS = {
@@ -19,12 +19,12 @@ const COUNTRY_MAPPINGS = {
 
 export interface CountryData {
   totalCount: number;
-  meetings: MeetingData[];
+  meetings: Meeting[];
   meetingTypeMap: Record<string, number>;
 }
 
 export function useCountryMeetingMap(
-  meetings: MeetingData[],
+  meetings: Meeting[],
 ): Map<string, CountryData> {
   return useMemo(() => {
     const countryMap = new Map<string, CountryData>();
