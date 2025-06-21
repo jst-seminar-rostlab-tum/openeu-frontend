@@ -1,5 +1,8 @@
 import { FilterModalState } from '@/domain/entities/FilterModalState';
-import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
+import {
+  getCurrentMonthRange,
+  MEETING_TYPE_MAPPING,
+} from '@/operations/meeting/CalendarHelpers';
 const { now } = getCurrentMonthRange();
 
 export default class FilterModalOperations {
@@ -36,12 +39,20 @@ export default class FilterModalOperations {
     ];
   }
 
+  static getInstitutions(): { label: string; value: string }[] {
+    return Object.values(MEETING_TYPE_MAPPING).map((institution) => ({
+      label: institution,
+      value: institution,
+    }));
+  }
+
   static getDefaultState(): FilterModalState {
     return {
       startDate: now,
       endDate: now,
       country: '',
       topics: [],
+      institutions: [],
     };
   }
 

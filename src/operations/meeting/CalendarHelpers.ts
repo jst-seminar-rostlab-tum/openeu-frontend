@@ -310,6 +310,18 @@ export function getMeetingTypeShort(sourceTable?: string): string {
   );
 }
 
+export function getSourceTableFromInstitution(institutionName: string): string {
+  const reverseMapping = Object.fromEntries(
+    Object.entries(MEETING_TYPE_MAPPING).map(([key, value]) => [value, key]),
+  );
+
+  return reverseMapping[institutionName] || institutionName;
+}
+
+export function getInstitutionFromSourceTable(sourceTable: string): string {
+  return MEETING_TYPE_MAPPING[sourceTable] || sourceTable;
+}
+
 export function groupEvents(dayEvents: Meeting[]) {
   const sortedEvents = dayEvents.sort(
     (a, b) =>

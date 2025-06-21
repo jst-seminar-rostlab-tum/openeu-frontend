@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
 import { TCalendarView } from '@/domain/types/calendar/types';
+import { getInstitutionFromSourceTable } from '@/operations/meeting/CalendarHelpers';
 
 import { GetMeetingsQueryParams } from './meetingHooks';
 
@@ -30,6 +31,7 @@ interface UrlState {
   selectedTopics: string[];
   searchQuery: string;
   selectedCountry: string;
+  selectedInstitutions: string[];
   startDate: Date | null;
   endDate: Date | null;
   view: TCalendarView;
@@ -56,6 +58,13 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
     const selectedCountry = searchParams.get('country') || '';
     const selectedTopics = searchParams.get('topics')
       ? searchParams.get('topics')!.split(',').filter(Boolean)
+      : [];
+    const selectedInstitutions = searchParams.get('source_table')
+      ? searchParams
+          .get('source_table')!
+          .split(',')
+          .filter(Boolean)
+          .map(getInstitutionFromSourceTable)
       : [];
 
     // Parse and validate view parameter with fallback
@@ -88,6 +97,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
       startDate,
       endDate,
       selectedTopics,
+      selectedInstitutions,
       view,
     };
   }, [searchParams]);
@@ -96,7 +106,6 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
   const syncFiltersToUrl = useCallback(
     (filters: GetMeetingsQueryParams, view?: TCalendarView) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
-
       // Batch all parameter updates into single operation
       const updates: Record<string, string | null> = {
         q: filters.query || null,
@@ -107,6 +116,10 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
         topics:
           filters.topics && filters.topics.length > 0
             ? filters.topics.join(',')
+            : null,
+        source_table:
+          filters.source_table && filters.source_table.length > 0
+            ? filters.source_table.join(',')
             : null,
       };
 
