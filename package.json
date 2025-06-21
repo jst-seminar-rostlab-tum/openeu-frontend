@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "format:fix": "prettier .",
     "prepare": "husky",
-    "api:fetch": "curl -s https://openeu-backend.onrender.com/openapi.json -o src/lib/openapi.json",
+    "api:fetch": "curl -s https://openeu-backend-1.onrender.com/openapi.json -o src/lib/openapi.json",
     "api:types": "npx openapi-typescript src/lib/openapi.json -o src/lib/api-types.ts",
     "api:update": "npm run api:fetch && npm run api:types"
   },
@@ -53,6 +53,8 @@
     "eslint-plugin-prettier": "^5.4.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "framer-motion": "^12.15.0",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "lucide-react": "^0.511.0",
@@ -69,7 +71,8 @@
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
     "tailwind-variants": "^1.0.0",
-    "tanstack": "^1.0.0"
+    "tanstack": "^1.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
@@ -80,6 +83,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/xlsx": "^0.0.36",
     "eslint": "^9",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "15.3.2",

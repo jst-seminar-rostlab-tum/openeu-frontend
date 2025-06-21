@@ -10,13 +10,14 @@ import {
 } from 'date-fns';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import {
   GetMeetingsQueryParams,
   useMeetings,
 } from '@/domain/hooks/meetingHooks';
 import { useUrlSync } from '@/domain/hooks/useCalendarUrlSync';
 import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
+import MapOperations from '@/operations/map/MapOperations';
 import {
   calculateEndDate,
   calculateStartDate,
@@ -35,8 +36,10 @@ export interface IMeetingContext {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
+  selectedTopics: string[];
+  setSelectedTopics: (topics: string[]) => void;
   setSelectedCountry: (country: string) => void;
-  meetings: MeetingData[];
+  meetings: Meeting[];
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
@@ -45,7 +48,7 @@ export interface IMeetingContext {
   filters: GetMeetingsQueryParams;
   setFilters: (filters: GetMeetingsQueryParams) => void;
   getEventsCount: (
-    events?: MeetingData[],
+    events?: Meeting[],
     selectedDate?: Date,
     view?: TCalendarView,
   ) => number;
@@ -60,6 +63,7 @@ interface MeetingProviderProps {
   view?: TCalendarView;
   updateUrl?: boolean;
   excludeUrlParams?: string[];
+  useWeekDefault?: boolean;
 }
 
 export function MeetingProvider({
@@ -67,6 +71,7 @@ export function MeetingProvider({
   view = 'month',
   updateUrl = true,
   excludeUrlParams = [],
+  useWeekDefault = false,
 }: MeetingProviderProps) {
   const { urlState, syncFiltersToUrl } = useUrlSync({
     excludeParams: excludeUrlParams,
@@ -74,7 +79,10 @@ export function MeetingProvider({
 
   // Initialize state from URL (single source of truth pattern)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
-    return urlState.startDate || now;
+    const defaultDate = useWeekDefault
+      ? MapOperations.getCurrentWeekRange().startDate
+      : now;
+    return urlState.startDate || defaultDate;
   });
 
   // Initialize view from URL, fallback to prop
@@ -86,6 +94,10 @@ export function MeetingProvider({
   const [selectedCountry, setSelectedCountry] = useState<string>(
     urlState.selectedCountry,
   );
+  const [selectedTopics, setSelectedTopics] = useState<string[]>(
+    urlState.selectedTopics || [],
+  );
+
   const [selectedColors] = useState<TMeetingColor[]>([]);
 
   // Track if we're using a custom date range (from FilterModal)
@@ -108,10 +120,21 @@ export function MeetingProvider({
       // Use custom date range from FilterModal
       start = customStart;
       end = customEnd;
+    } else if (urlState.startDate && urlState.endDate) {
+      // Use URL dates if available
+      start = urlState.startDate.toISOString();
+      end = urlState.endDate.toISOString();
     } else {
-      // Use calculated range from selectedDate + view for normal navigation
-      start = calculateStartDate(selectedDate, currentView).toISOString();
-      end = calculateEndDate(selectedDate, currentView).toISOString();
+      // Use default range based on context configuration
+      if (useWeekDefault) {
+        const { startDate: weekStart, endDate: weekEnd } =
+          MapOperations.getCurrentWeekRange();
+        start = weekStart.toISOString();
+        end = weekEnd.toISOString();
+      } else {
+        start = calculateStartDate(selectedDate, currentView).toISOString();
+        end = calculateEndDate(selectedDate, currentView).toISOString();
+      }
     }
 
     return {
@@ -119,6 +142,7 @@ export function MeetingProvider({
       end,
       query: searchQuery || undefined,
       country: selectedCountry || undefined,
+      topics: selectedTopics.length > 0 ? selectedTopics : undefined,
     };
   }, [
     selectedDate,
@@ -128,6 +152,9 @@ export function MeetingProvider({
     isCustomRange,
     customStart,
     customEnd,
+    urlState.startDate,
+    urlState.endDate,
+    useWeekDefault,
   ]);
 
   useEffect(() => {
@@ -193,6 +220,10 @@ export function MeetingProvider({
     setSelectedCountry(country);
   };
 
+  const handleSetSelectedTopics = (topics: string[]) => {
+    setSelectedTopics(topics);
+  };
+
   const handleSetFilters = (newFilters: GetMeetingsQueryParams) => {
     // Update basic state
     if (newFilters.query !== undefined) {
@@ -205,6 +236,10 @@ export function MeetingProvider({
       setSelectedDate(new Date(newFilters.start));
     }
 
+    if (newFilters.topics != undefined) {
+      setSelectedTopics(newFilters.topics || []);
+    }
+
     // Handle custom date ranges from FilterModal
     if (newFilters.start && newFilters.end) {
       setIsCustomRange(true);
@@ -214,7 +249,7 @@ export function MeetingProvider({
   };
 
   function getEventsCount(
-    eventsParam: MeetingData[] = meetings,
+    eventsParam: Meeting[] = meetings,
     selectedDateParam: Date = selectedDate,
     viewParam: TCalendarView = currentView,
   ): number {
@@ -242,6 +277,8 @@ export function MeetingProvider({
     setSearchQuery: handleSetSearchQuery,
     selectedCountry,
     setSelectedCountry: handleSetSelectedCountry,
+    selectedTopics,
+    setSelectedTopics: handleSetSelectedTopics,
     meetings,
     isLoading,
     isFetching,

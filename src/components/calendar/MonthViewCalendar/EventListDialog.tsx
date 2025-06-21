@@ -14,17 +14,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
   date: Date;
-  events: MeetingData[];
+  events: Meeting[];
   MAX_VISIBLE_EVENTS?: number;
   children?: ReactNode;
   endDate?: Date;
+  title?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function EventListDialog({
@@ -33,6 +36,9 @@ export function EventListDialog({
   MAX_VISIBLE_EVENTS = 3,
   children,
   endDate,
+  title,
+  open,
+  onOpenChange,
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
@@ -47,7 +53,7 @@ export function EventListDialog({
     </span>
   );
 
-  function eventListEntry(event: MeetingData, index: number) {
+  function eventListEntry(event: Meeting, index: number) {
     const relevanceScore = event.similarity
       ? Math.round(event.similarity * 100)
       : null;
@@ -81,9 +87,11 @@ export function EventListDialog({
                 <MapPin className="shrink-0 w-3 h-3" />
                 <span
                   className="truncate min-w-0 direction-rtl text-left"
-                  title={getMeetingTypeShort(event.location)}
+                  title={getMeetingTypeShort(
+                    event.location ? event.location : 'No location specified',
+                  )}
                 >
-                  {getMeetingTypeShort(event.location)}
+                  {event.location && getMeetingTypeShort(event.location)}
                 </span>
               </Badge>
             </div>
@@ -94,7 +102,7 @@ export function EventListDialog({
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children || defaultTrigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -105,9 +113,10 @@ export function EventListDialog({
                 className=""
               />
               <p className="text-sm font-medium">
-                {endDate
-                  ? `Events during ${format(date, 'HH:mm')} - ${format(endDate, 'HH:mm')}`
-                  : `Events on ${format(date, 'EEEE, MMMM d, yyyy')}`}
+                {title ||
+                  (endDate
+                    ? `Events during ${format(date, 'HH:mm')} - ${format(endDate, 'HH:mm')}`
+                    : `Events on ${format(date, 'EEEE, MMMM d, yyyy')}`)}
               </p>
             </div>
           </DialogTitle>

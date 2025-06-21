@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { GeoJSON, MapContainer, Pane, SVGOverlay } from 'react-leaflet';
 
+import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
 import {
   countryBaseStyle,
   countryBorderStyle,
@@ -19,14 +20,16 @@ import { MapIndicator } from '@/components/map/MapIndicator';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
-import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
+import {
+  CountryData,
+  filterNonEUCountries,
+  getCapitalCoordinates,
+  getLargestPolygon,
+} from '@/operations/map/MapOperations';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
-
-type MeetingCountByCountry = typeof meetingsPerCountry;
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface MapProps {
   mapData: geojson.FeatureCollection;
@@ -34,26 +37,7 @@ interface MapProps {
   zoom?: number;
   minZoom?: number;
   maxZoom?: number;
-  meetingCountByCountry: MeetingCountByCountry;
-  meetings: MeetingData[];
-}
-
-function getMeetingStats(countryName: string, meetings?: MeetingData[]) {
-  if (!meetings || !countryName) return { counts: {} };
-
-  // Special case: meetings with location "European Union" are matched to Belgium
-  const filtered = meetings.filter(
-    (m) =>
-      m.location === countryName ||
-      (m.location === 'European Union' && countryName === 'Belgium'),
-  );
-
-  const counts: Record<string, number> = {};
-  for (const meeting of filtered) {
-    counts[meeting.source_table] = (counts[meeting.source_table] || 0) + 1;
-  }
-
-  return { counts };
+  countryMeetingMap: Map<string, CountryData>;
 }
 
 export default function MapComponent({
@@ -62,8 +46,7 @@ export default function MapComponent({
   zoom,
   minZoom,
   maxZoom,
-  meetingCountByCountry,
-  meetings,
+  countryMeetingMap,
 }: MapProps) {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
@@ -73,6 +56,27 @@ export default function MapComponent({
     null,
   );
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const selectedCountryMeetings = selectedCountry
+    ? (countryMeetingMap.get(selectedCountry)?.meetings ?? [])
+    : [];
+
+  const handleCountryClick = (countryName: string) => {
+    const countryData = countryMeetingMap.get(countryName);
+    const meetingCount = countryData?.totalCount ?? 0;
+
+    if (meetingCount === 0) {
+      ToastOperations.showError({
+        title: 'No meetings found',
+        message: `There are no meetings scheduled in ${countryName}.`,
+      });
+    } else {
+      setSelectedCountry(countryName);
+      setDialogOpen(true);
+    }
+  };
 
   const onEachFeature = (feature: geojson.Feature, layer: Layer) => {
     layer.on({
@@ -92,54 +96,20 @@ export default function MapComponent({
           y: e.originalEvent.clientY,
         });
       },
+      click: () => {
+        const countryName = feature.properties?.name;
+        if (countryName && europeanCountries.includes(countryName)) {
+          handleCountryClick(countryName);
+        }
+      },
     });
   };
 
-  const filterNonEUCountries = (feature: geojson.Feature): boolean =>
-    !!feature.properties && europeanCountries.includes(feature.properties.name);
   const styleFeatures = (feature?: geojson.Feature) => ({
     opacity: 0,
     fillOpacity:
       feature?.properties?.name === hoveredFeature?.properties?.name ? 1 : 0.2,
   });
-
-  const getCapitalCoordinates = (
-    countryName: string,
-  ): [number, number] | null => {
-    const capitals: { [key: string]: [number, number] } = {
-      Germany: [51.1657, 10.4515], // Example for Germany
-      France: [48.8566, 2.3522], // Example for France
-      // Add more countries and their capitals as needed
-    };
-
-    return capitals[countryName] || null;
-  };
-
-  const getLargestPolygon = (feature: geojson.Feature) => {
-    let largestArea = 0;
-    let largestPolygon = null;
-
-    // Check if the geometry is MultiPolygon or Polygon
-    if (feature.geometry.type === 'MultiPolygon') {
-      feature.geometry.coordinates.forEach((polygonCoords) => {
-        const polygon = turf.polygon(polygonCoords);
-        const area = turf.area(polygon);
-        if (area > largestArea) {
-          largestArea = area;
-          largestPolygon = polygon;
-        }
-      });
-    } else if (feature.geometry.type === 'Polygon') {
-      const polygon = turf.polygon(feature.geometry.coordinates);
-      const area = turf.area(polygon);
-      if (area > largestArea) {
-        largestArea = area;
-        largestPolygon = polygon;
-      }
-    }
-
-    return largestPolygon;
-  };
 
   return (
     <MapContainer
@@ -190,40 +160,49 @@ export default function MapComponent({
         style={styleFeatures}
       />
       {hoveredFeature && (
-        <TooltipProvider>
-          <Tooltip open>
-            <TooltipTrigger asChild />
-            <TooltipContent
-              className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit whitespace-nowrap`}
-              style={{
-                position: 'fixed',
-                left: tooltipPosition.x + 10,
-                top: tooltipPosition.y - 30,
-                pointerEvents: 'none',
-              }}
-            >
-              {(() => {
-                const countryName = hoveredFeature.properties?.name;
-                const { counts } = getMeetingStats(countryName, meetings);
+        <Tooltip open>
+          <TooltipTrigger asChild />
+          <TooltipContent
+            className={`${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} p-2 rounded shadow min-w-fit whitespace-nowrap`}
+            style={{
+              position: 'fixed',
+              left: tooltipPosition.x + 10,
+              top: tooltipPosition.y - 30,
+              pointerEvents: 'none',
+            }}
+          >
+            {(() => {
+              const countryName = hoveredFeature.properties?.name;
+              const countryData = countryMeetingMap.get(countryName);
+              const meetingCount = countryData?.totalCount ?? 0;
 
-                return (
-                  <>
-                    <p className="text-sm font-semibold">{countryName}</p>
-                    {Object.keys(counts).length > 0 && (
-                      <ul className="mt-2 text-sm">
-                        {Object.entries(counts).map(([type, count]) => (
-                          <li key={type}>
-                            {getMeetingType(type)}: {count}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </>
-                );
-              })()}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+              return (
+                <>
+                  <p className="text-sm font-semibold">{countryName}</p>
+                  {meetingCount > 0 && (
+                    <>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Total: {meetingCount}
+                      </p>
+                      {Object.entries(countryData?.meetingTypeMap ?? {})
+                        .length > 0 && (
+                        <ul className="mt-1 text-xs space-y-0.5">
+                          {Object.entries(
+                            countryData?.meetingTypeMap ?? {},
+                          ).map(([type, count]) => (
+                            <li key={type}>
+                              {getMeetingType(type)}: {count}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  )}
+                </>
+              );
+            })()}
+          </TooltipContent>
+        </Tooltip>
       )}
 
       {/* MapIndicators */}
@@ -254,12 +233,10 @@ export default function MapComponent({
           }
 
           const countryName = feature.properties?.name ?? '';
-
           const isHighlighted =
             hoveredFeature?.properties?.name === countryName;
-
-          const countForThisCountry =
-            meetingCountByCountry.get(countryName) ?? 0;
+          const countryData = countryMeetingMap.get(countryName);
+          const countForThisCountry = countryData?.totalCount ?? 0;
 
           return (
             <MapIndicator
@@ -268,9 +245,25 @@ export default function MapComponent({
               count={countForThisCountry}
               baseZoom={zoom}
               isHighlighted={isHighlighted}
+              onClick={
+                countForThisCountry > 0
+                  ? () => handleCountryClick(countryName)
+                  : undefined
+              }
             />
           );
         })}
+
+      {/* Country click dialog */}
+      {selectedCountry && selectedCountryMeetings.length > 0 && (
+        <EventListDialog
+          date={new Date()}
+          events={selectedCountryMeetings}
+          title={`Meetings in ${selectedCountry} (${selectedCountryMeetings.length} events)`}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
     </MapContainer>
   );
 }

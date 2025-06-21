@@ -6,6 +6,7 @@ import React from 'react';
 
 import NavBar from '@/components/navigation/NavBar';
 import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { AuthProvider } from '@/domain/hooks/useAuth';
 import { getUser } from '@/lib/dal';
 import ReactQueryProvider from '@/lib/provider/ReactQueryProvider';
@@ -37,9 +38,13 @@ export default async function RootLayout({
         >
           <ReactQueryProvider>
             <AuthProvider initialUser={user}>
-              <NavBar />
-              <main className="mt-12 min-h-[calc(100vh-3rem)]">{children}</main>
-              <Toaster />
+              <TooltipProvider>
+                <NavBar />
+                <main className="mt-12 min-h-[calc(100vh-3rem)]">
+                  {children}
+                </main>
+                <Toaster />
+              </TooltipProvider>
             </AuthProvider>
           </ReactQueryProvider>
         </ThemeProvider>
