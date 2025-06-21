@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { CalendarRange, Columns, Grid2X2, Grid3X3, Search } from 'lucide-react';
 import * as React from 'react';
+import debounce from 'lodash/debounce';
 
 import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
@@ -33,8 +34,12 @@ export function CalendarHeader() {
   const { data: topicsData = [] } = useTopics();
   const topicLabels = topicsData.map((topic) => topic.topic);
 
+  const [suggestions, setSuggestions] = React.useState<string[]>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchText(e.target.value);
+    fetchSuggestions(e.target.value);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -43,6 +48,29 @@ export function CalendarHeader() {
       setSearchQuery(localSearchText);
     }
   };
+  const fetchSuggestions = React.useCallback(
+    debounce(async (input: string) => {
+      if (input.length < 2) {
+        setSuggestions([]);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `http://127.0.0.1:3000/suggestions?query=${encodeURIComponent(input)}`,
+        );
+        const json = await res.json();
+        setSuggestions(json.data.map((s: any) => s.title)); // adjust if needed
+      } catch (err) {
+        console.error('Failed to fetch suggestions', err);
+        setSuggestions([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300),
+    [],
+  );
 
   React.useEffect(() => {
     setLocalSearchText(searchQuery);
@@ -72,12 +100,29 @@ export function CalendarHeader() {
           <div className="relative flex items-center">
             <Input
               type="search"
-              placeholder="Search"
+              placeholder="Search here..."
               className="pl-8"
               value={localSearchText}
               onChange={onChange}
               onKeyDown={onKeyDown}
             />
+            {suggestions.length > 0 && (
+              <ul className="absolute top-full mt-1 z-10 w-full bg-white border border-gray-200 rounded shadow max-h-60 overflow-y-auto">
+                {suggestions.map((title, i) => (
+                  <li
+                    key={i}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                    onClick={() => {
+                      setSearchQuery(title); // This triggers actual search
+                      setSuggestions([]); // Hide suggestions
+                    }}
+                  >
+                    {title}
+                  </li>
+                ))}
+              </ul>
+            )}
+
             <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
           </div>
           <FilterModal showDateDropdown={false} topics={topicLabels} />
