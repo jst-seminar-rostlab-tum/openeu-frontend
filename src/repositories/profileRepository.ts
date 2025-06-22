@@ -1,4 +1,7 @@
-import { ProfileData } from '@/domain/entities/profile/generated-types';
+import {
+  ProfileData,
+  ProfileUpdate,
+} from '@/domain/entities/profile/generated-types';
 
 const API_URL = 'https://openeu-backend-1.onrender.com/profile';
 const API_URL_LOCAL = 'http://localhost:3000/profile';
@@ -37,6 +40,26 @@ export const profileRepository = {
         headers: {
           'Content-Type': 'application/json',
         },
+      });
+      if (!res.ok) {
+        throw new Error('Failed to get profile');
+      }
+      return await res.json();
+    } catch {
+      return false;
+    }
+  },
+  async updateProfile(
+    profileId: string,
+    data: ProfileUpdate,
+  ): Promise<ProfileData | false> {
+    try {
+      const res = await fetch(`${API_URL_LOCAL}/${profileId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
       if (!res.ok) {
         throw new Error('Failed to get profile');

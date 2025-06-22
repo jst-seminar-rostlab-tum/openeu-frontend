@@ -16,7 +16,7 @@ interface ProfileCategory {
 }
 
 export default function ProfileContent() {
-  const { isLoadingUser } = useProfileContext();
+  const { isLoadingProfile } = useProfileContext();
 
   const categories: ProfileCategory[] = [
     {
@@ -74,8 +74,8 @@ export default function ProfileContent() {
         </div>
         <Tabs defaultValue={categories[0].id}>
           <TabsList>{categories.map(buildTabList)}</TabsList>
-          {isLoadingUser && <ProfileSkeleton />}
-          {!isLoadingUser && categories.map(buildTabContent)}
+          {isLoadingProfile && <ProfileSkeleton />}
+          {!isLoadingProfile && categories.map(buildTabContent)}
         </Tabs>
       </div>
     </div>

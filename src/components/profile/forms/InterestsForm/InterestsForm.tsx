@@ -17,9 +17,10 @@ import {
 } from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function InterestsForm() {
-  const { profile } = useProfileContext();
+  const { profile, updateProfile } = useProfileContext();
 
   const topics = [
     { label: 'Topic 1', value: 'Topic 1' },
@@ -38,30 +39,38 @@ export default function InterestsForm() {
 
   const interestsSchema = z.object({
     countries: z.array(z.string()),
-    //      .min(1, { message: 'At least one country must be selected.' }),
-    topics: z.array(z.string()),
-    //      .min(1, { message: 'At least one topic must be selected.' }),
+    topic_list: z.array(z.string()),
   });
 
   const form = useForm<z.infer<typeof interestsSchema>>({
     resolver: zodResolver(interestsSchema),
     defaultValues: {
       countries: [],
-      topics: [],
+      topic_list: [],
     },
   });
 
   useEffect(() => {
     if (profile && profile.name) {
       form.setValue('countries', []);
-      form.setValue('topics', profile.topic_list);
+      form.setValue('topic_list', profile.topic_list);
     }
   }, [form, profile]);
 
   function onSubmit(values: z.infer<typeof interestsSchema>) {
-    //TODO: placeholder remove
-    // eslint-disable-next-line
-    console.log(values);
+    updateProfile({ topic_list: values.topic_list })
+      .then(() =>
+        ToastOperations.showSuccess({
+          title: 'Profile updated',
+          message: 'Your profile was updated successfully.',
+        }),
+      )
+      .catch((e) =>
+        ToastOperations.showError({
+          title: "Profile couldn't be updated",
+          message: e.message,
+        }),
+      );
   }
 
   return (
@@ -111,7 +120,7 @@ export default function InterestsForm() {
                         <MultiSelect
                           options={topics}
                           onValueChange={(data: string[]) =>
-                            form.setValue('topics', data)
+                            form.setValue('topic_list', data)
                           }
                           placeholder="Select topics"
                           variant="inverted"

@@ -16,9 +16,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function NotificationsForm() {
-  const { profile } = useProfileContext();
+  const { profile, updateProfile } = useProfileContext();
 
   const notificationSchema = z.object({
     subscribed_newsletter: z.boolean(),
@@ -32,9 +33,19 @@ export default function NotificationsForm() {
   });
 
   function onSubmit(values: z.infer<typeof notificationSchema>) {
-    //TODO: placeholder remove
-    // eslint-disable-next-line
-    console.log(values);
+    updateProfile({ ...values })
+      .then(() =>
+        ToastOperations.showSuccess({
+          title: 'Profile updated',
+          message: 'Your profile was updated successfully.',
+        }),
+      )
+      .catch((e) =>
+        ToastOperations.showError({
+          title: "Profile couldn't be updated",
+          message: e.message,
+        }),
+      );
   }
 
   useEffect(() => {

@@ -14,6 +14,7 @@ export const useProfile = (userId?: string) =>
   useQuery<ProfileData | false>({
     queryKey: ['profile', userId],
     queryFn: () => profileRepository.getProfile(userId),
+    enabled: true,
   });
 
 export function useProfileContext(): IProfileContext {

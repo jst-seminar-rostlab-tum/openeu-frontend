@@ -16,9 +16,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function AccountDetailsForm() {
-  const { user, profile } = useProfileContext();
+  const { user, profile, updateProfile } = useProfileContext();
 
   const accountDetailsSchema = z.object({
     name: z.string().min(2),
@@ -47,9 +48,19 @@ export default function AccountDetailsForm() {
   }, [form, profile]);
 
   function onSubmit(values: z.infer<typeof accountDetailsSchema>) {
-    //TODO: placeholder remove
-    // eslint-disable-next-line
-    console.log(values);
+    updateProfile({ ...values })
+      .then(() =>
+        ToastOperations.showSuccess({
+          title: 'Profile updated',
+          message: 'Your profile was updated successfully.',
+        }),
+      )
+      .catch((e) =>
+        ToastOperations.showError({
+          title: "Profile couldn't be updated",
+          message: e.message,
+        }),
+      );
   }
 
   if (!user) return;
