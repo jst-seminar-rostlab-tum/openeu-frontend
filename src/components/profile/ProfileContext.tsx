@@ -37,7 +37,11 @@ export default function ProfileProvider({
 }) {
   const { loading: isLoadingUser, user } = useAuth();
   const client = createClient();
-  const { data: profile, isLoading: isLoadingProfile } = useProfile(user?.id);
+  const {
+    data: profile,
+    isLoading: isLoadingProfile,
+    refetch,
+  } = useProfile(user?.id, !isLoadingUser);
 
   const updatePassword = async (password: string) => {
     await client.auth.updateUser({ password });
@@ -82,7 +86,7 @@ export default function ProfileProvider({
   const createProfile = async (data: ProfileData) => {
     const profile = await profileRepository.createProfile(data);
     if (!profile) return;
-    await client.auth.refreshSession();
+    await refetch();
   };
 
   const updateProfile = async (data: ProfileUpdate) => {

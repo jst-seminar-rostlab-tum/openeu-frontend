@@ -10,11 +10,11 @@ import {
 import { ProfileData } from '@/domain/entities/profile/generated-types';
 import { profileRepository } from '@/repositories/profileRepository';
 
-export const useProfile = (userId?: string) =>
+export const useProfile = (userId?: string, enabled?: boolean) =>
   useQuery<ProfileData | false>({
     queryKey: ['profile', userId],
     queryFn: () => profileRepository.getProfile(userId),
-    enabled: true,
+    enabled: enabled ?? false,
   });
 
 export function useProfileContext(): IProfileContext {

@@ -4,7 +4,6 @@ import {
 } from '@/domain/entities/profile/generated-types';
 
 const API_URL = 'https://openeu-backend-1.onrender.com/profile';
-const API_URL_LOCAL = 'http://localhost:3000/profile';
 
 export const profileRepository = {
   async createProfile(profileData: ProfileData): Promise<string> {
@@ -35,7 +34,7 @@ export const profileRepository = {
   async getProfile(profileId?: string): Promise<ProfileData | false> {
     if (!profileId) return false;
     try {
-      const res = await fetch(`${API_URL_LOCAL}/${profileId}`, {
+      const res = await fetch(`${API_URL}/${profileId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +53,7 @@ export const profileRepository = {
     data: ProfileUpdate,
   ): Promise<ProfileData | false> {
     try {
-      const res = await fetch(`${API_URL_LOCAL}/${profileId}`, {
+      const res = await fetch(`${API_URL}/${profileId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
