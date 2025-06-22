@@ -1,5 +1,5 @@
 import { Notification } from '@/domain/entities/notifications/generated-types';
-
+import { ToastOperations } from '@/operations/toast/toastOperations';
 const API_URL = 'https://openeu-backend-1.onrender.com';
 
 export async function fetchBackendNotifications(
@@ -8,6 +8,10 @@ export async function fetchBackendNotifications(
   try {
     const response = await fetch(`${API_URL}/notifications/${userId}`);
     if (!response.ok) {
+      ToastOperations.showError({
+        title: 'Error fetching notifications',
+        message: `HTTP error! status: ${response.status}`,
+      });
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const res: { data: Notification[] } = await response.json();

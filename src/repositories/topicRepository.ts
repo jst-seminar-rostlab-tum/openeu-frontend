@@ -1,5 +1,5 @@
 import { Topic } from '@/domain/entities/calendar/generated-types';
-
+import { ToastOperations } from '@/operations/toast/toastOperations';
 const API_URL = 'https://openeu-backend-1.onrender.com/topics';
 
 export const topicRepository = {
@@ -7,6 +7,10 @@ export const topicRepository = {
     try {
       const res = await fetch(API_URL);
       if (!res.ok) {
+        ToastOperations.showError({
+          title: 'Error fetching topic',
+          message: `HTTP error! status: ${res.status}`,
+        });
         throw new Error('Failed to fetch topics');
       }
 

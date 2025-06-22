@@ -2,6 +2,7 @@ import { addHours } from 'date-fns';
 
 import { MeetingData } from '@/domain/entities/calendar/MeetingData';
 import { GetMeetingsQueryParams } from '@/domain/hooks/meetingHooks';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 const API_URL = 'https://openeu-backend-1.onrender.com/meetings';
 
@@ -16,6 +17,10 @@ export const meetingRepository = {
     try {
       const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`);
       if (!res.ok) {
+        ToastOperations.showError({
+          title: 'Error fetching meetings',
+          message: `HTTP error! status: ${res.status}`,
+        });
         throw new Error('Failed to fetch meetings');
       }
       const response = await res.json();

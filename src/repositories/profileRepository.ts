@@ -1,5 +1,5 @@
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
-
+import { ToastOperations } from '@/operations/toast/toastOperations';
 const API_URL = 'https://openeu-backend-1.onrender.com/profile';
 
 export const profileRepository = {
@@ -21,6 +21,10 @@ export const profileRepository = {
         }),
       });
       if (!res.ok) {
+        ToastOperations.showError({
+          title: 'Error fetching proffile',
+          message: `HTTP error! status: ${res.status}`,
+        });
         throw new Error('Failed to create profile');
       }
       return 'success';
