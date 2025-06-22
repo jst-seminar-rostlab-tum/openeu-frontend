@@ -56,10 +56,10 @@ export async function signup(formData: FormData) {
       id: data.user.id,
       name: name,
       surname: surname,
-      companyName: company,
-      companyDescription: companyDescription,
-      topicList: topics.split(','),
-      subscribedNewsletter: subscribedNewsletter === 'true',
+      company_name: company,
+      company_description: companyDescription,
+      topic_list: topics.split(','),
+      subscribed_newsletter: subscribedNewsletter === 'true',
     });
   }
 
