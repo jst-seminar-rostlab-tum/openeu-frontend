@@ -6,7 +6,7 @@ import NotificationsForm from '@/components/profile/forms/NotificationsForm/Noti
 import ProfileSkeleton from '@/components/profile/forms/ProfileSkeleton/ProfileSkeleton';
 import SecurityForm from '@/components/profile/forms/SecurityForm/SecurityForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useProfileContext } from '@/domain/hooks/profileHook';
+import { useProfileContext } from '@/domain/hooks/profileHooks';
 
 interface ProfileCategory {
   name: string;
@@ -16,7 +16,7 @@ interface ProfileCategory {
 }
 
 export default function ProfileContent() {
-  const { isLoading } = useProfileContext();
+  const { isLoadingUser } = useProfileContext();
 
   const categories: ProfileCategory[] = [
     {
@@ -74,8 +74,8 @@ export default function ProfileContent() {
         </div>
         <Tabs defaultValue={categories[0].id}>
           <TabsList>{categories.map(buildTabList)}</TabsList>
-          {isLoading && <ProfileSkeleton />}
-          {!isLoading && categories.map(buildTabContent)}
+          {isLoadingUser && <ProfileSkeleton />}
+          {!isLoadingUser && categories.map(buildTabContent)}
         </Tabs>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bell } from 'lucide-react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -14,22 +15,33 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { useProfileContext } from '@/domain/hooks/profileHooks';
 
 export default function NotificationsForm() {
+  const { profile } = useProfileContext();
+
   const notificationSchema = z.object({
-    notification_enabled: z.boolean(),
+    subscribed_newsletter: z.boolean(),
   });
 
   const form = useForm<z.infer<typeof notificationSchema>>({
     resolver: zodResolver(notificationSchema),
     defaultValues: {
-      notification_enabled: true,
+      subscribed_newsletter: true,
     },
   });
 
   function onSubmit(values: z.infer<typeof notificationSchema>) {
+    //TODO: placeholder remove
+    // eslint-disable-next-line
     console.log(values);
   }
+
+  useEffect(() => {
+    if (profile && profile.name) {
+      form.setValue('subscribed_newsletter', profile.subscribed_newsletter);
+    }
+  }, [form, profile]);
 
   return (
     <Form {...form}>
@@ -47,16 +59,23 @@ export default function NotificationsForm() {
                 <FormItem>
                   <div className="flex gap-3">
                     <FormControl>
-                      <Checkbox id="enable_notifications" {...field} />
+                      <Checkbox
+                        id="subscribed_newsletter"
+                        {...field}
+                        onCheckedChange={(value) =>
+                          form.setValue('subscribed_newsletter', !!value)
+                        }
+                        defaultChecked={form.getValues('subscribed_newsletter')}
+                      />
                     </FormControl>
-                    <FormLabel htmlFor="enable_notifications">
+                    <FormLabel htmlFor="subscribed_newsletter">
                       Receive a daily personalized newsletter
                     </FormLabel>
                     <FormMessage />
                   </div>
                 </FormItem>
               )}
-              name="enable_notifications"
+              name="subscribed_newsletter"
             />
           </CardContent>
         </Card>

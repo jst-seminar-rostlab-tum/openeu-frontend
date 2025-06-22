@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building, User as UserIcon } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -15,16 +15,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useProfileContext } from '@/domain/hooks/profileHook';
+import { useProfileContext } from '@/domain/hooks/profileHooks';
 
 export default function AccountDetailsForm() {
-  const { user } = useProfileContext();
+  const { user, profile } = useProfileContext();
 
   const accountDetailsSchema = z.object({
-    picture: z.instanceof(File).optional(),
     name: z.string().min(2),
     surname: z.string().min(2),
-    email: z.string().email(),
     company_name: z.string().min(2),
     company_description: z.string().min(2),
   });
@@ -32,15 +30,25 @@ export default function AccountDetailsForm() {
   const form = useForm<z.infer<typeof accountDetailsSchema>>({
     resolver: zodResolver(accountDetailsSchema),
     defaultValues: {
-      name: '',
-      surname: '',
-      email: '',
-      company_name: '',
-      company_description: '',
+      name: profile ? profile.name : '',
+      surname: profile ? profile.surname : '',
+      company_name: profile ? profile.company_name : '',
+      company_description: profile ? profile.company_description : '',
     },
   });
 
+  useEffect(() => {
+    if (profile && profile.name) {
+      form.setValue('name', profile.name);
+      form.setValue('surname', profile.surname);
+      form.setValue('company_name', profile.company_name);
+      form.setValue('company_description', profile.company_description);
+    }
+  }, [form, profile]);
+
   function onSubmit(values: z.infer<typeof accountDetailsSchema>) {
+    //TODO: placeholder remove
+    // eslint-disable-next-line
     console.log(values);
   }
 
@@ -106,7 +114,13 @@ export default function AccountDetailsForm() {
                         E-Mail
                       </FormLabel>
                       <FormControl>
-                        <Input id="email" type="email" {...field} />
+                        <Input
+                          id="email"
+                          type="email"
+                          {...field}
+                          value={user?.email}
+                          disabled
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

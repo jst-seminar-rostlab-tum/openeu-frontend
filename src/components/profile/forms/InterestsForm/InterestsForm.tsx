@@ -1,7 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Compass } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -16,8 +16,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { useProfileContext } from '@/domain/hooks/profileHooks';
 
 export default function InterestsForm() {
+  const { profile } = useProfileContext();
+
   const topics = [
     { label: 'Topic 1', value: 'Topic 1' },
     { label: 'Topic 2', value: 'Topic 2' },
@@ -34,12 +37,10 @@ export default function InterestsForm() {
   ];
 
   const interestsSchema = z.object({
-    countries: z
-      .array(z.string())
-      .min(1, { message: 'At least one country must be selected.' }),
-    topics: z
-      .array(z.string())
-      .min(1, { message: 'At least one topic must be selected.' }),
+    countries: z.array(z.string()),
+    //      .min(1, { message: 'At least one country must be selected.' }),
+    topics: z.array(z.string()),
+    //      .min(1, { message: 'At least one topic must be selected.' }),
   });
 
   const form = useForm<z.infer<typeof interestsSchema>>({
@@ -50,7 +51,16 @@ export default function InterestsForm() {
     },
   });
 
+  useEffect(() => {
+    if (profile && profile.name) {
+      form.setValue('countries', []);
+      form.setValue('topics', profile.topic_list);
+    }
+  }, [form, profile]);
+
   function onSubmit(values: z.infer<typeof interestsSchema>) {
+    //TODO: placeholder remove
+    // eslint-disable-next-line
     console.log(values);
   }
 

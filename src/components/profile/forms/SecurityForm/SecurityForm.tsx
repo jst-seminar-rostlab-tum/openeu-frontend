@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useProfileContext } from '@/domain/hooks/profileHook';
+import { useProfileContext } from '@/domain/hooks/profileHooks';
 
 export default function SecurityForm() {
   const { user } = useProfileContext();
