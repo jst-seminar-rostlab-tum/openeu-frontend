@@ -11,14 +11,14 @@ import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventLi
 import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
 import { staggerContainer, transition } from '@/domain/animations';
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
 import { getMonthCellEvents } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
   cell: CalendarCell;
-  events: MeetingData[];
+  events: Meeting[];
   eventPositions: Record<string, number>;
 }
 
