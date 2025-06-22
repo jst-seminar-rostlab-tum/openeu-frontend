@@ -239,6 +239,7 @@ export default function FilterModal({
             placeholder="Institutions"
             variant="inverted"
             modalPopover={true}
+            maxCount={1}
           />
         </div>
         <DialogFooter className="!flex-row !justify-between">
