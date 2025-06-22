@@ -3,7 +3,7 @@ import {
   ProfileUpdate,
 } from '@/domain/entities/profile/generated-types';
 
-const API_URL = 'https://openeu-backend-1.onrender.com/profile';
+const API_URL = 'http://localhost:3000/profile';
 
 export const profileRepository = {
   async createProfile(profileData: ProfileData): Promise<string> {

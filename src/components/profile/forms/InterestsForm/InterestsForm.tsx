@@ -1,4 +1,3 @@
-'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Compass } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
