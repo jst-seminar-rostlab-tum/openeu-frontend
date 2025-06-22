@@ -1,7 +1,12 @@
 import React from 'react';
 
-import Profile from '@/components/profile/Profile';
+import ProfileContent from '@/components/profile/ProfileContent';
+import ProfileProvider from '@/components/profile/ProfileContext';
 
 export default function ProfilePage() {
-  return <Profile />;
+  return (
+    <ProfileProvider>
+      <ProfileContent />
+    </ProfileProvider>
+  );
 }
