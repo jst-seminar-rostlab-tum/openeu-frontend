@@ -8,8 +8,8 @@ import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigato
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
 import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
-import SelectedFilterBadge from '@/components/FilterModal/SelectedFilterBadge';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
+import { Badge } from '@/components/ui/badge';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
@@ -26,26 +26,17 @@ import {
 } from '@/domain/animations';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
-import { FilterData } from '@/operations/filter-modal/FilterModalOperations';
 
 export function CalendarHeader() {
-  const { view, setView, searchQuery, setSearchQuery } = useMeetingContext();
+  const { view, setView, searchQuery, setSearchQuery, filters } =
+    useMeetingContext();
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
-  const [filterData, setFilterData] = React.useState<FilterData>({
-    country: '',
-    dateRange: '',
-    topics: '',
-  });
 
   const { data: topicsData = [] } = useTopics();
   const topicLabels = topicsData.map((topic) => topic.topic);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchText(e.target.value);
-  };
-
-  const handleFilterSelectForBadge = (newData: FilterData) => {
-    setFilterData(newData);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -81,11 +72,27 @@ export function CalendarHeader() {
       >
         <div className="options flex-wrap flex items-center gap-4 md:gap-2">
           <div className="flex flex-wrap gap-2">
-            {filterData &&
-              Object.entries(filterData).map(([key, value]) => {
-                if (value == '') return null;
+            {filters.country && (
+              <Badge
+                variant="secondary"
+                className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+              >
+                {filters.country}
+              </Badge>
+            )}
+            {filters.topics &&
+              Object.entries(filters.topics).map(([key, value]) => {
+                if (value === undefined) return null;
 
-                return <SelectedFilterBadge key={key} value={value} />;
+                return (
+                  <Badge
+                    key={key}
+                    variant="secondary"
+                    className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+                  >
+                    {value}
+                  </Badge>
+                );
               })}
           </div>
           <div className="relative flex items-center">
@@ -99,11 +106,7 @@ export function CalendarHeader() {
             />
             <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
           </div>
-          <FilterModal
-            showDateDropdown={false}
-            topics={topicLabels}
-            onSelect={handleFilterSelectForBadge}
-          />
+          <FilterModal showDateDropdown={false} topics={topicLabels} />
           <Tooltip>
             <TooltipTrigger asChild>
               <MotionButton

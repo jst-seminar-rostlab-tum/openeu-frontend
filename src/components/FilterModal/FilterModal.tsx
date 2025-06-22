@@ -29,11 +29,7 @@ import {
 import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import { DateHelper } from '@/operations/date/DateHelper';
-import FilterModalOperations, {
-  FilterData,
-} from '@/operations/filter-modal/FilterModalOperations';
-import MapOperations from '@/operations/map/MapOperations';
+import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
 import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 
 const { now } = getCurrentMonthRange();
@@ -42,7 +38,6 @@ interface FilterModalProps {
   showCountryDropdown?: boolean;
   showTopicDropdown?: boolean;
   showDateDropdown?: boolean;
-  onSelect?: (data: FilterData) => void;
 }
 
 export default function FilterModal({
@@ -50,7 +45,6 @@ export default function FilterModal({
   showCountryDropdown = true,
   showTopicDropdown = true,
   showDateDropdown = true,
-  onSelect,
 }: FilterModalProps) {
   const { selectedCountry, setSelectedCountry, setFilters, filters } =
     useMeetingContext();
@@ -97,11 +91,6 @@ export default function FilterModal({
     const defaultState = FilterModalOperations.getDefaultState();
     setLocalState(defaultState);
     setSelectedCountry('');
-    onSelect?.({
-      country: '',
-      dateRange: '',
-      topics: '',
-    });
 
     // Reset CalendarContext filters to default date range
     if (showDateDropdown) {
@@ -139,18 +128,6 @@ export default function FilterModal({
       });
     }
 
-    onSelect?.({
-      country: showCountryDropdown ? localState.country || '' : '',
-      topics: showTopicDropdown
-        ? MapOperations.topicsToFilterBadge(localState.topics) || ''
-        : '',
-      dateRange: showDateDropdown
-        ? DateHelper.dateRangeToString(
-            localState.startDate,
-            localState.endDate,
-          ) || ''
-        : '',
-    });
     setDialogOpen(false);
   };
 

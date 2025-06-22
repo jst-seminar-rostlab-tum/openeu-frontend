@@ -20,8 +20,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-import SelectedFilterBadge from '../FilterModal/SelectedFilterBadge';
-
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
@@ -117,10 +115,13 @@ export function DataTableFacetedFilter<TData, TValue>({
               options
                 .filter((option) => selectedValues.has(option.value))
                 .map((option) => (
-                  <SelectedFilterBadge
+                  <Badge
                     key={option.value}
-                    value={option.label}
-                  />
+                    variant="secondary"
+                    className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+                  >
+                    {option.label}
+                  </Badge>
                 ))
             )}
           </div>
