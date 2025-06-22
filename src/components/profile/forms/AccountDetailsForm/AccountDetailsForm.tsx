@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building, User as UserIcon } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -20,6 +21,7 @@ import { useProfileContext } from '@/domain/hooks/profileHooks';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function AccountDetailsForm() {
+  const [loading, setLoading] = useState(false);
   const { user, userHasNoProfile, profile, createProfile, updateProfile } =
     useProfileContext();
 
@@ -50,6 +52,7 @@ export default function AccountDetailsForm() {
   }, [form, profile]);
 
   function onSubmit(values: z.infer<typeof accountDetailsSchema>) {
+    setLoading(true);
     if (userHasNoProfile) {
       if (!user?.id) {
         ToastOperations.showError({
@@ -77,7 +80,8 @@ export default function AccountDetailsForm() {
             title: "Profile couldn't be created.",
             message: e.message,
           }),
-        );
+        )
+        .finally(() => setLoading(false));
     } else {
       updateProfile({ ...values })
         .then(() =>
@@ -91,7 +95,8 @@ export default function AccountDetailsForm() {
             title: "Profile couldn't be updated.",
             message: e.message,
           }),
-        );
+        )
+        .finally(() => setLoading(false));
     }
   }
 
@@ -229,8 +234,14 @@ export default function AccountDetailsForm() {
           </CardContent>
         </Card>
         <div className="flex justify-end">
-          <Button type="submit" className="w-[8rem]">
-            {userHasNoProfile ? 'Create profile' : 'Save changes'}
+          <Button type="submit" className="w-[8rem]" disabled={loading}>
+            {loading ? (
+              <LoadingSpinner />
+            ) : userHasNoProfile ? (
+              'Create profile'
+            ) : (
+              'Save changes'
+            )}
           </Button>
         </div>
       </form>

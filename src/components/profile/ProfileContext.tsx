@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@supabase/supabase-js';
+import { User, UserResponse } from '@supabase/supabase-js';
 import { createContext } from 'react';
 
 import {
@@ -19,7 +19,7 @@ export interface IProfileContext {
   isLoadingProfile: boolean;
   userHasNoProfile: boolean;
   profile: ProfileData | false;
-  updatePassword: (newPassword: string) => void;
+  updatePassword: (newPassword: string) => Promise<UserResponse>;
   linkGoogleAccount: () => void;
   unlinkGoogleAccount: () => void;
   createProfile: (data: ProfileData) => Promise<void>;
@@ -44,7 +44,7 @@ export default function ProfileProvider({
   } = useProfile(user?.id, !isLoadingUser);
 
   const updatePassword = async (password: string) => {
-    await client.auth.updateUser({ password });
+    return client.auth.updateUser({ password });
   };
 
   const linkGoogleAccount = async () => {

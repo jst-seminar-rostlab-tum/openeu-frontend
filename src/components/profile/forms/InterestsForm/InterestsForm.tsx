@@ -1,10 +1,11 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Compass } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
@@ -20,6 +21,7 @@ import { useProfileContext } from '@/domain/hooks/profileHooks';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function InterestsForm() {
+  const [loading, setLoading] = useState(false);
   const { profile, updateProfile } = useProfileContext();
 
   const topics = [
@@ -58,6 +60,7 @@ export default function InterestsForm() {
   }, [form, profile]);
 
   function onSubmit(values: z.infer<typeof interestsSchema>) {
+    setLoading(true);
     updateProfile({ topic_list: values.topic_list })
       .then(() =>
         ToastOperations.showSuccess({
@@ -70,7 +73,8 @@ export default function InterestsForm() {
           title: "Profile couldn't be updated",
           message: e.message,
         }),
-      );
+      )
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -137,8 +141,8 @@ export default function InterestsForm() {
           </CardContent>
         </Card>
         <div className="flex justify-end">
-          <Button type="submit" className="w-[8rem]">
-            Save changes
+          <Button type="submit" className="w-[8rem]" disabled={loading}>
+            {loading ? <LoadingSpinner /> : 'Save changes'}
           </Button>
         </div>
       </form>

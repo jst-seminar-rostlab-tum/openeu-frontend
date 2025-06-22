@@ -1,9 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { UserResponse } from '@supabase/supabase-js';
 import { Globe, Lock } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoLogoGoogle } from 'react-icons/io';
 import { z } from 'zod';
 
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -16,8 +19,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function SecurityForm() {
+  const [loading, setLoading] = useState(false);
   const { user } = useProfileContext();
   const { updatePassword, linkGoogleAccount, unlinkGoogleAccount } =
     useProfileContext();
@@ -53,8 +58,31 @@ export default function SecurityForm() {
     },
   });
 
+  const handleUserResponse = (response: UserResponse) => {
+    if (response.error) {
+      ToastOperations.showError({
+        title: 'Password could not be changed',
+        message: response.error.message,
+      });
+    } else {
+      ToastOperations.showSuccess({
+        title: 'Password was changed',
+        message: 'Your password was successfully changed.',
+      });
+    }
+  };
+
   function onSubmit(values: z.infer<typeof securitySchema>) {
-    updatePassword(values.new_password);
+    setLoading(true);
+    updatePassword(values.new_password)
+      .then(handleUserResponse)
+      .catch((reason) =>
+        ToastOperations.showError({
+          title: 'Password could not be changed',
+          message: reason.message,
+        }),
+      )
+      .finally(() => setLoading(false));
   }
 
   const googleAction = (isLinked: boolean) => {
@@ -130,8 +158,8 @@ export default function SecurityForm() {
             </CardContent>
           </Card>
           <div className="flex justify-end pt-4">
-            <Button type="submit" className="w-[8rem]">
-              Save changes
+            <Button type="submit" className="w-[8rem]" disabled={loading}>
+              {loading ? <LoadingSpinner /> : 'Save changes'}
             </Button>
           </div>
         </form>

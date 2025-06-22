@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bell } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,6 +20,7 @@ import { useProfileContext } from '@/domain/hooks/profileHooks';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function NotificationsForm() {
+  const [loading, setLoading] = useState(false);
   const { profile, updateProfile } = useProfileContext();
 
   const notificationSchema = z.object({
@@ -33,6 +35,7 @@ export default function NotificationsForm() {
   });
 
   function onSubmit(values: z.infer<typeof notificationSchema>) {
+    setLoading(true);
     updateProfile({ ...values })
       .then(() =>
         ToastOperations.showSuccess({
@@ -45,7 +48,8 @@ export default function NotificationsForm() {
           title: "Profile couldn't be updated",
           message: e.message,
         }),
-      );
+      )
+      .finally(() => setLoading(false));
   }
 
   useEffect(() => {
@@ -91,8 +95,8 @@ export default function NotificationsForm() {
           </CardContent>
         </Card>
         <div className="flex justify-end">
-          <Button type="submit" className="w-[8rem]">
-            Save changes
+          <Button type="submit" className="w-[8rem]" disabled={loading}>
+            {loading ? <LoadingSpinner /> : 'Save changes'}
           </Button>
         </div>
       </form>
