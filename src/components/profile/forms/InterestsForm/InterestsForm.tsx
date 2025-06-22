@@ -22,14 +22,12 @@ import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function InterestsForm() {
   const [loading, setLoading] = useState(false);
-  const { profile, updateProfile } = useProfileContext();
+  const { profile, updateProfile, topics } = useProfileContext();
 
-  const topics = [
-    { label: 'Topic 1', value: 'Topic 1' },
-    { label: 'Topic 2', value: 'Topic 2' },
-    { label: 'Topic 3', value: 'Topic 3' },
-    { label: 'Topic 4', value: 'Topic 4' },
-  ];
+  const options = topics.map((topic) => ({
+    label: topic.topic,
+    value: topic.id,
+  }));
 
   const countries = [
     { label: 'Germany', value: 'de' },
@@ -122,7 +120,7 @@ export default function InterestsForm() {
                       </FormLabel>
                       <FormControl>
                         <MultiSelect
-                          options={topics}
+                          options={options}
                           onValueChange={(data: string[]) =>
                             form.setValue('topic_list', data)
                           }

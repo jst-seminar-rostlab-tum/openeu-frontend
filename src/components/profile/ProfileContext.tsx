@@ -3,11 +3,13 @@
 import { User, UserResponse } from '@supabase/supabase-js';
 import { createContext } from 'react';
 
+import { Topic } from '@/domain/entities/calendar/generated-types';
 import {
   ProfileData,
   ProfileUpdate,
 } from '@/domain/entities/profile/generated-types';
 import { useProfile } from '@/domain/hooks/profileHooks';
+import { useTopics } from '@/domain/hooks/topicHook';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { createClient } from '@/lib/supabase/client';
 import { ToastOperations } from '@/operations/toast/toastOperations';
@@ -19,6 +21,7 @@ export interface IProfileContext {
   isLoadingProfile: boolean;
   userHasNoProfile: boolean;
   profile: ProfileData | false;
+  topics: Topic[];
   updatePassword: (newPassword: string) => Promise<UserResponse>;
   linkGoogleAccount: () => void;
   unlinkGoogleAccount: () => void;
@@ -42,6 +45,8 @@ export default function ProfileProvider({
     isLoading: isLoadingProfile,
     refetch,
   } = useProfile(user?.id, !isLoadingUser);
+
+  const { data: topics } = useTopics();
 
   const updatePassword = async (password: string) => {
     return client.auth.updateUser({ password });
@@ -106,6 +111,7 @@ export default function ProfileProvider({
     isLoadingProfile,
     userHasNoProfile,
     profile: profile ?? false,
+    topics: topics ?? [],
     updatePassword,
     linkGoogleAccount,
     unlinkGoogleAccount,
