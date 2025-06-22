@@ -7,16 +7,23 @@ import { suggestionRepository } from '@/repositories/suggestionRepository';
 
 export const useDebouncedSuggestions = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchSuggestions = useCallback(
     debounce(async (input: string) => {
       if (input.length < 2) {
         setSuggestions([]);
+        setIsLoading(false);
         return;
       }
 
-      const results = await suggestionRepository.getSuggestions(input);
-      setSuggestions(results);
+      setIsLoading(true);
+      try {
+        const results = await suggestionRepository.getSuggestions(input);
+        setSuggestions(results);
+      } finally {
+        setIsLoading(false);
+      }
     }, 300),
     [],
   );
@@ -25,6 +32,7 @@ export const useDebouncedSuggestions = () => {
 
   return {
     suggestions,
+    isLoading,
     fetchSuggestions,
     clearSuggestions,
   };

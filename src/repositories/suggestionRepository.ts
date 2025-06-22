@@ -1,6 +1,8 @@
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/suggestions`;
+
 interface Suggestion {
   title: string;
+  similarity: number;
 }
 export const suggestionRepository = {
   async getSuggestions(query: string): Promise<string[]> {
