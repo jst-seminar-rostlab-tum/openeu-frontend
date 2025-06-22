@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { securitySchema } from '@/domain/schemas/profile';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function SecurityForm() {
@@ -26,29 +27,6 @@ export default function SecurityForm() {
   const { user } = useProfileContext();
   const { updatePassword, linkGoogleAccount, unlinkGoogleAccount } =
     useProfileContext();
-
-  const passwordTooShortError = {
-    message: 'The password must contain at least 8 character(s).',
-  };
-  const passwordTooLongError = {
-    message: 'The password must contain at most 32 character(s).',
-  };
-
-  const securitySchema = z
-    .object({
-      new_password: z
-        .string()
-        .min(8, passwordTooShortError)
-        .max(32, passwordTooLongError),
-      confirm_new_password: z
-        .string()
-        .min(8, passwordTooShortError)
-        .max(32, passwordTooLongError),
-    })
-    .refine((data) => data.new_password === data.confirm_new_password, {
-      message: "The Passwords don't match",
-      path: ['confirm_new_password'],
-    });
 
   const form = useForm<z.infer<typeof securitySchema>>({
     resolver: zodResolver(securitySchema),

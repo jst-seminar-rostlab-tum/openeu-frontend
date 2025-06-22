@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { interestsSchema } from '@/domain/schemas/profile';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function InterestsForm() {
@@ -36,11 +37,6 @@ export default function InterestsForm() {
     { label: 'Belgium', value: 'be' },
     { label: 'Poland', value: 'pl' },
   ];
-
-  const interestsSchema = z.object({
-    countries: z.array(z.string()),
-    topic_list: z.array(z.string()),
-  });
 
   const form = useForm<z.infer<typeof interestsSchema>>({
     resolver: zodResolver(interestsSchema),

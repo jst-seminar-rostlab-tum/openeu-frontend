@@ -17,15 +17,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { notificationSchema } from '@/domain/schemas/profile';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function NotificationsForm() {
   const [loading, setLoading] = useState(false);
   const { profile, updateProfile } = useProfileContext();
-
-  const notificationSchema = z.object({
-    subscribed_newsletter: z.boolean(),
-  });
 
   const form = useForm<z.infer<typeof notificationSchema>>({
     resolver: zodResolver(notificationSchema),

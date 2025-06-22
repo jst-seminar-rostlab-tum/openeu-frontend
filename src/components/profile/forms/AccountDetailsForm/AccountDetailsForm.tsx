@@ -18,19 +18,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { ProfileData } from '@/domain/entities/profile/generated-types';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { accountDetailsSchema } from '@/domain/schemas/profile';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function AccountDetailsForm() {
   const [loading, setLoading] = useState(false);
   const { user, userHasNoProfile, profile, createProfile, updateProfile } =
     useProfileContext();
-
-  const accountDetailsSchema = z.object({
-    name: z.string().min(2),
-    surname: z.string().min(2),
-    company_name: z.string().min(2),
-    company_description: z.string().min(2),
-  });
 
   const form = useForm<z.infer<typeof accountDetailsSchema>>({
     resolver: zodResolver(accountDetailsSchema),
