@@ -13,10 +13,11 @@ interface ProfileCategory {
   id: string;
   icon: React.ReactNode;
   component: React.ReactNode;
+  disabled: boolean;
 }
 
 export default function ProfileContent() {
-  const { isLoadingProfile } = useProfileContext();
+  const { isLoadingProfile, userHasNoProfile } = useProfileContext();
 
   const categories: ProfileCategory[] = [
     {
@@ -24,30 +25,34 @@ export default function ProfileContent() {
       id: 'account',
       icon: <User />,
       component: <AccountDetailsForm />,
+      disabled: false,
     },
     {
       name: 'Interests',
       id: 'interests',
       icon: <Compass />,
       component: <InterestsForm />,
+      disabled: userHasNoProfile,
     },
     {
       name: 'Security',
       id: 'security',
       icon: <Lock />,
       component: <SecurityForm />,
+      disabled: userHasNoProfile,
     },
     {
       name: 'Notifications',
       id: 'notifications',
       icon: <Bell />,
       component: <NotificationsForm />,
+      disabled: userHasNoProfile,
     },
   ];
 
   const buildTabList = (category: ProfileCategory, index: number) => {
     return (
-      <TabsTrigger value={category.id} key={index}>
+      <TabsTrigger value={category.id} key={index} disabled={category.disabled}>
         {category.icon}
         {category.name}
       </TabsTrigger>

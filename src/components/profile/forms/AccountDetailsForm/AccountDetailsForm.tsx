@@ -15,11 +15,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { ProfileData } from '@/domain/entities/profile/generated-types';
 import { useProfileContext } from '@/domain/hooks/profileHooks';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function AccountDetailsForm() {
-  const { user, profile, updateProfile } = useProfileContext();
+  const { user, userHasNoProfile, profile, createProfile, updateProfile } =
+    useProfileContext();
 
   const accountDetailsSchema = z.object({
     name: z.string().min(2),
@@ -48,19 +50,49 @@ export default function AccountDetailsForm() {
   }, [form, profile]);
 
   function onSubmit(values: z.infer<typeof accountDetailsSchema>) {
-    updateProfile({ ...values })
-      .then(() =>
-        ToastOperations.showSuccess({
-          title: 'Profile updated',
-          message: 'Your profile was updated successfully.',
-        }),
-      )
-      .catch((e) =>
+    if (userHasNoProfile) {
+      if (!user?.id) {
         ToastOperations.showError({
-          title: "Profile couldn't be updated",
-          message: e.message,
-        }),
-      );
+          title: "Profile couldn't be created.",
+          message: 'User ID is missing.',
+        });
+        return;
+      }
+
+      const profileData: ProfileData = {
+        ...values,
+        id: user?.id,
+        topic_list: [],
+        subscribed_newsletter: true,
+      };
+      createProfile(profileData)
+        .then(() =>
+          ToastOperations.showSuccess({
+            title: 'Profile created',
+            message: 'Your profile was created successfully.',
+          }),
+        )
+        .catch((e) =>
+          ToastOperations.showError({
+            title: "Profile couldn't be created.",
+            message: e.message,
+          }),
+        );
+    } else {
+      updateProfile({ ...values })
+        .then(() =>
+          ToastOperations.showSuccess({
+            title: 'Profile updated',
+            message: 'Your profile was updated successfully.',
+          }),
+        )
+        .catch((e) =>
+          ToastOperations.showError({
+            title: "Profile couldn't be updated.",
+            message: e.message,
+          }),
+        );
+    }
   }
 
   if (!user) return;
@@ -198,7 +230,7 @@ export default function AccountDetailsForm() {
         </Card>
         <div className="flex justify-end">
           <Button type="submit" className="w-[8rem]">
-            Save changes
+            {userHasNoProfile ? 'Create profile' : 'Save changes'}
           </Button>
         </div>
       </form>

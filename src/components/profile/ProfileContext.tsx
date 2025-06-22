@@ -17,10 +17,12 @@ export interface IProfileContext {
   isLoadingUser: boolean;
   user: User | null;
   isLoadingProfile: boolean;
+  userHasNoProfile: boolean;
   profile: ProfileData | false;
   updatePassword: (newPassword: string) => void;
   linkGoogleAccount: () => void;
   unlinkGoogleAccount: () => void;
+  createProfile: (data: ProfileData) => Promise<void>;
   updateProfile: (data: ProfileUpdate) => Promise<void>;
 }
 
@@ -77,6 +79,12 @@ export default function ProfileProvider({
     });
   };
 
+  const createProfile = async (data: ProfileData) => {
+    const profile = await profileRepository.createProfile(data);
+    if (!profile) return;
+    await client.auth.refreshSession();
+  };
+
   const updateProfile = async (data: ProfileUpdate) => {
     if (!user?.id) return;
 
@@ -86,14 +94,18 @@ export default function ProfileProvider({
     await client.auth.refreshSession();
   };
 
+  const userHasNoProfile = profile === false;
+
   const value: IProfileContext = {
     isLoadingUser,
     user,
     isLoadingProfile,
+    userHasNoProfile,
     profile: profile ?? false,
     updatePassword,
     linkGoogleAccount,
     unlinkGoogleAccount,
+    createProfile,
     updateProfile,
   };
 
