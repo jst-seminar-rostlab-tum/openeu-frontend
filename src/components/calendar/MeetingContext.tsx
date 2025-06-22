@@ -17,7 +17,7 @@ import {
 } from '@/domain/hooks/meetingHooks';
 import { useUrlSync } from '@/domain/hooks/useCalendarUrlSync';
 import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
-import MapOperations from '@/operations/map/MapOperations';
+import { DateHelper } from '@/operations/date/DateHelper';
 import {
   calculateEndDate,
   calculateStartDate,
@@ -80,7 +80,7 @@ export function MeetingProvider({
   // Initialize state from URL (single source of truth pattern)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const defaultDate = useWeekDefault
-      ? MapOperations.getCurrentWeekRange().startDate
+      ? DateHelper.getCurrentWeekRange().startDate
       : now;
     return urlState.startDate || defaultDate;
   });
@@ -128,7 +128,7 @@ export function MeetingProvider({
       // Use default range based on context configuration
       if (useWeekDefault) {
         const { startDate: weekStart, endDate: weekEnd } =
-          MapOperations.getCurrentWeekRange();
+          DateHelper.getCurrentWeekRange();
         start = weekStart.toISOString();
         end = weekEnd.toISOString();
       } else {
