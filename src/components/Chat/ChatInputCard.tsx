@@ -2,40 +2,30 @@
 
 import { KeyboardEvent, useState } from 'react';
 
+import { useChatContext } from '@/app/chat/ChatContext';
 import { ChatToolbar } from '@/components/Chat/ChatToolbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import ChatOperations from '@/operations/chat/ToolbarOperations';
 
-interface ChatInputCardProps {
-  onSendMessage: (message: string) => void;
-  onAddFile?: () => void;
-  onSettings?: () => void;
-}
-
-export default function ChatInputCard({
-  onSendMessage,
-  onAddFile,
-  onSettings,
-}: ChatInputCardProps) {
+export default function ChatInputCard() {
   const [input, setInput] = useState('');
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      const trimmedValue = input.trim();
-      if (!trimmedValue) return;
-
-      onSendMessage(trimmedValue);
-      setInput('');
-    }
-  };
+  const { sendMessage } = useChatContext();
 
   const handleSubmit = () => {
     const trimmedValue = input.trim();
     if (!trimmedValue) return;
 
-    onSendMessage(trimmedValue);
+    sendMessage(trimmedValue);
     setInput('');
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
   };
 
   return (
@@ -52,8 +42,8 @@ export default function ChatInputCard({
         <ChatToolbar
           onSubmit={handleSubmit}
           disabled={!input.trim()}
-          onAddFile={onAddFile}
-          onSettings={onSettings}
+          onAddFile={ChatOperations.handleAddFile}
+          onSettings={ChatOperations.handleSettings}
         />
       </CardContent>
     </Card>

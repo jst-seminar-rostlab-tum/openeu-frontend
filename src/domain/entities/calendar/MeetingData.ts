@@ -6,10 +6,11 @@ export interface MeetingData {
   meeting_end_datetime: string;
   location: string;
   description: string;
-  tags: string[];
   color?: string;
   similarity?: number;
   exact_location?: string;
   source_table: string;
   source_id: string;
+  topic?: string;
+  tags?: string[];
 }

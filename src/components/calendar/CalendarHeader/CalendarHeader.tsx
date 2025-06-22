@@ -6,6 +6,7 @@ import * as React from 'react';
 
 import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
+import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
 import SelectedFilterBadge from '@/components/FilterModal/SelectedFilterBadge';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
@@ -24,6 +25,7 @@ import {
   transition,
 } from '@/domain/animations';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
+import { useTopics } from '@/domain/hooks/topicHook';
 import { FilterData } from '@/operations/filter-modal/FilterModalOperations';
 
 export function CalendarHeader() {
@@ -34,6 +36,9 @@ export function CalendarHeader() {
     dateRange: '',
     topics: '',
   });
+
+  const { data: topicsData = [] } = useTopics();
+  const topicLabels = topicsData.map((topic) => topic.topic);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchText(e.target.value);
@@ -96,9 +101,9 @@ export function CalendarHeader() {
           </div>
           <FilterModal
             showDateDropdown={false}
+            topics={topicLabels}
             onSelect={handleFilterSelectForBadge}
           />
-
           <Tooltip>
             <TooltipTrigger asChild>
               <MotionButton
@@ -169,6 +174,7 @@ export function CalendarHeader() {
               </Toggle>
             </TooltipButton>
           </ButtonGroup>
+          <ExportModal />
         </div>
       </motion.div>
     </div>

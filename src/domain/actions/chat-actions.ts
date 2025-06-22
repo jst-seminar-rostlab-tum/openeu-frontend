@@ -9,9 +9,6 @@ import {
   CreateSessionResponse,
 } from '../entities/chat/generated-types';
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend-1.onrender.com';
-
 export async function createChatSession(
   data: Omit<CreateSessionRequest, 'user_id'>,
 ): Promise<CreateSessionResponse> {
@@ -24,13 +21,16 @@ export async function createChatSession(
       user_id: user.id, // Use real authenticated user ID
     };
 
-    const response = await fetch(`${API_BASE_URL}/chat/start`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/chat/start`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
       },
-      body: JSON.stringify(requestData),
-    });
+    );
 
     if (!response.ok) {
       // Get the response text for better error debugging

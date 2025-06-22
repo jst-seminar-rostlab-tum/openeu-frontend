@@ -8,9 +8,8 @@ import Map from '@/components/map/Map';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
+import { useTopics } from '@/domain/hooks/topicHook';
 import { FilterData } from '@/operations/filter-modal/FilterModalOperations';
-
-const topics = ['topic 1', 'topic 2', 'topic 3', 'topic 4'];
 
 export default function MapPage() {
   const { searchQuery, setSearchQuery, isFetching } = useMeetingContext();
@@ -24,6 +23,9 @@ export default function MapPage() {
   const handleFilterSelectForBadge = (newData: FilterData) => {
     setFilterData(newData);
   };
+
+  const { data: topicsData = [] } = useTopics();
+  const topicLabels = topicsData.map((topic) => topic.topic);
 
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
@@ -47,9 +49,8 @@ export default function MapPage() {
             placeholder="Search meetings..."
           />
           <FilterModal
-            topics={topics}
+            topics={topicLabels}
             showCountryDropdown={false}
-            showTopicDropdown={false}
             onSelect={handleFilterSelectForBadge}
           />
         </Card>
