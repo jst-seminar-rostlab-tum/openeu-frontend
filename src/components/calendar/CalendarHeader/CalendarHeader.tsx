@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { CalendarRange, Columns, Grid2X2, Grid3X3, Search } from 'lucide-react';
 import * as React from 'react';
-import debounce from 'lodash/debounce';
 
 import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
@@ -25,17 +24,18 @@ import {
   transition,
 } from '@/domain/animations';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
+import { useDebouncedSuggestions } from '@/domain/hooks/suggestionHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
 
 export function CalendarHeader() {
+  const { suggestions, fetchSuggestions, clearSuggestions } =
+    useDebouncedSuggestions();
+
   const { view, setView, searchQuery, setSearchQuery } = useMeetingContext();
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
 
   const { data: topicsData = [] } = useTopics();
   const topicLabels = topicsData.map((topic) => topic.topic);
-
-  const [suggestions, setSuggestions] = React.useState<string[]>([]);
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchText(e.target.value);
@@ -46,31 +46,9 @@ export function CalendarHeader() {
     if (e.key === 'Enter') {
       e.preventDefault();
       setSearchQuery(localSearchText);
+      clearSuggestions();
     }
   };
-  const fetchSuggestions = React.useCallback(
-    debounce(async (input: string) => {
-      if (input.length < 2) {
-        setSuggestions([]);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        const res = await fetch(
-          `http://127.0.0.1:3000/suggestions?query=${encodeURIComponent(input)}`,
-        );
-        const json = await res.json();
-        setSuggestions(json.data.map((s: any) => s.title)); // adjust if needed
-      } catch (err) {
-        console.error('Failed to fetch suggestions', err);
-        setSuggestions([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 300),
-    [],
-  );
 
   React.useEffect(() => {
     setLocalSearchText(searchQuery);
@@ -113,8 +91,8 @@ export function CalendarHeader() {
                     key={i}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                     onClick={() => {
-                      setSearchQuery(title); // This triggers actual search
-                      setSuggestions([]); // Hide suggestions
+                      setSearchQuery(title);
+                      clearSuggestions();
                     }}
                   >
                     {title}
