@@ -1,16 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CalendarRange, Columns, Grid2X2, Grid3X3, Search } from 'lucide-react';
+import { CalendarRange, Columns, Grid2X2, Grid3X3 } from 'lucide-react';
 import * as React from 'react';
 
 import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigator';
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
 import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
+import { SmartSearch } from '@/components/SmartSearch/SmartSearch';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
 import { ButtonGroup } from '@/components/ui/button-group';
-import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
 import {
   Tooltip,
@@ -24,31 +24,14 @@ import {
   transition,
 } from '@/domain/animations';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import { useDebouncedSuggestions } from '@/domain/hooks/suggestionHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
 
 export function CalendarHeader() {
-  const { suggestions, fetchSuggestions, clearSuggestions } =
-    useDebouncedSuggestions();
-
   const { view, setView, searchQuery, setSearchQuery } = useMeetingContext();
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
 
   const { data: topicsData = [] } = useTopics();
   const topicLabels = topicsData.map((topic) => topic.topic);
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalSearchText(e.target.value);
-    fetchSuggestions(e.target.value);
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      setSearchQuery(localSearchText);
-      clearSuggestions();
-    }
-  };
 
   React.useEffect(() => {
     setLocalSearchText(searchQuery);
@@ -75,34 +58,12 @@ export function CalendarHeader() {
         transition={transition}
       >
         <div className="options flex-wrap flex items-center gap-4 md:gap-2">
-          <div className="relative flex items-center">
-            <Input
-              type="search"
-              placeholder="Search here..."
-              className="pl-8"
-              value={localSearchText}
-              onChange={onChange}
-              onKeyDown={onKeyDown}
-            />
-            {suggestions.length > 0 && (
-              <ul className="absolute top-full mt-1 z-10 w-full bg-white border border-gray-200 rounded shadow max-h-60 overflow-y-auto">
-                {suggestions.map((title, i) => (
-                  <li
-                    key={i}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                    onClick={() => {
-                      setSearchQuery(title);
-                      clearSuggestions();
-                    }}
-                  >
-                    {title}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
-          </div>
+          <SmartSearch
+            value={localSearchText}
+            onValueChange={setLocalSearchText}
+            onSearch={(val) => setSearchQuery(val)}
+            placeholder="Search meetings..."
+          />
           <FilterModal showDateDropdown={false} topics={topicLabels} />
 
           <Tooltip>
