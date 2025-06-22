@@ -15,7 +15,7 @@ interface SmartSearchProps {
   isLoading?: boolean;
 }
 
-export const SmartSearch: React.FC<SmartSearchProps> = ({
+export const SuggestedSearch: React.FC<SmartSearchProps> = ({
   value,
   onValueChange,
   onSearch,

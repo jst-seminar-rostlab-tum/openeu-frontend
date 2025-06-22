@@ -8,7 +8,7 @@ import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigato
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
 import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
-import { SmartSearch } from '@/components/SmartSearch/SmartSearch';
+import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Toggle } from '@/components/ui/toggle';
@@ -58,7 +58,7 @@ export function CalendarHeader() {
         transition={transition}
       >
         <div className="options flex-wrap flex items-center gap-4 md:gap-2">
-          <SmartSearch
+          <SuggestedSearch
             value={localSearchText}
             onValueChange={setLocalSearchText}
             onSearch={(val) => setSearchQuery(val)}

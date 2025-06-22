@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/map/Map';
-import { SmartSearch } from '@/components/SmartSearch/SmartSearch';
+import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
 import { Card } from '@/components/ui/card';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
@@ -20,7 +20,7 @@ export default function MapPage() {
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
       <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
-        <SmartSearch
+        <SuggestedSearch
           value={displayValue}
           onValueChange={setDisplayValue}
           onSearch={setSearchQuery}
