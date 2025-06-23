@@ -36,15 +36,15 @@ export function SuggestedSearch({
   const loading = isLoading ?? internalLoading;
   const [localSearchText, setLocalSearchText] = useState(value);
   const [open, setOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1); // 👈 new state
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const input = e.target.value;
       setLocalSearchText(input);
+      setHighlightedIndex(-1); // reset highlight on input change
       onValueChange(input);
       fetchSuggestions(input);
-
-      // Automatically show dropdown if input is long enough
       setOpen(input.length >= 2);
     },
     [onValueChange, fetchSuggestions],
@@ -52,14 +52,36 @@ export function SuggestedSearch({
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
+      if (e.key === 'ArrowDown') {
         e.preventDefault();
-        onSearch?.(localSearchText);
+        setHighlightedIndex((prev) =>
+          Math.min(prev + 1, suggestions.length - 1),
+        );
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const selected =
+          highlightedIndex >= 0 && suggestions[highlightedIndex]
+            ? suggestions[highlightedIndex]
+            : localSearchText;
+
+        setLocalSearchText(selected);
+        onValueChange(selected);
+        onSearch?.(selected);
         clearSuggestions();
-        setOpen(false); // Close the popover
+        setOpen(false);
       }
     },
-    [onSearch, localSearchText, clearSuggestions],
+    [
+      highlightedIndex,
+      suggestions,
+      localSearchText,
+      onSearch,
+      onValueChange,
+      clearSuggestions,
+    ],
   );
 
   const onSelectSuggestion = (title: string) => {
@@ -104,7 +126,12 @@ export function SuggestedSearch({
                 {suggestions.map((title, i) => (
                   <div
                     key={i}
-                    className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                    className={`flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none ${
+                      i === highlightedIndex
+                        ? 'bg-accent text-accent-foreground'
+                        : 'hover:bg-accent hover:text-accent-foreground'
+                    }`}
+                    onMouseEnter={() => setHighlightedIndex(i)}
                     onClick={() => onSelectSuggestion(title)}
                   >
                     <span className="truncate">{title}</span>
