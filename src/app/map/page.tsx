@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/map/Map';
+import PersonalizeSwitch from '@/components/PersonalizeSwitch/PersonalizeSwitch';
 import { SearchBar } from '@/components/SearchBar/SearchBar';
 import { Card } from '@/components/ui/card';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
@@ -28,6 +29,7 @@ export default function MapPage() {
           placeholder="Search meetings..."
         />
         <FilterModal showCountryDropdown={false} topics={topicLabels} />
+        <PersonalizeSwitch />
       </Card>
     </div>
   );
