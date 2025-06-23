@@ -1,7 +1,9 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserResponse } from '@supabase/supabase-js';
+import { UserIdentity, UserResponse } from '@supabase/supabase-js';
 import { Globe, Lock } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoLogoGoogle } from 'react-icons/io';
 import { z } from 'zod';
@@ -18,15 +20,18 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useProfileContext } from '@/domain/hooks/profileHooks';
+import {
+  linkGoogleAccount,
+  unlinkGoogleAccount,
+  updatePassword,
+} from '@/domain/actions/profile';
 import { securitySchema } from '@/domain/schemas/profile';
+import { createClient } from '@/lib/supabase/client';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function SecurityForm() {
   const [loading, setLoading] = useState(false);
-  const { user } = useProfileContext();
-  const { updatePassword, linkGoogleAccount, unlinkGoogleAccount } =
-    useProfileContext();
+  const client = createClient();
 
   const form = useForm<z.infer<typeof securitySchema>>({
     resolver: zodResolver(securitySchema),
@@ -65,15 +70,46 @@ export default function SecurityForm() {
 
   const googleAction = (isLinked: boolean) => {
     if (isLinked) {
-      unlinkGoogleAccount();
+      unlinkGoogleAccount()
+        .then(() =>
+          ToastOperations.showSuccess({
+            title: 'Success',
+            message: 'Your google account was successfully unlinked!',
+          }),
+        )
+        .catch((reason) =>
+          ToastOperations.showError({
+            title: 'Error',
+            message: reason.message ?? 'Unknown error',
+          }),
+        )
+        .finally(fetchIdentities);
     } else {
-      linkGoogleAccount();
+      linkGoogleAccount()
+        .then(() =>
+          ToastOperations.showInfo({
+            title: 'Started Google linking',
+            message: 'You will be redirected to Google Sign in soon.',
+          }),
+        )
+        .catch((reason) =>
+          ToastOperations.showError({
+            title: 'Error',
+            message: reason.message ?? 'Unknown error',
+          }),
+        );
     }
   };
 
-  if (!user) return;
+  const [userIdentities, setUserIdentities] = useState<UserIdentity[]>([]);
+  const fetchIdentities = () => {
+    client.auth
+      .getUserIdentities()
+      .then(({ data }) => setUserIdentities(data?.identities ?? []));
+  };
+  useMemo(fetchIdentities, [client.auth]);
 
-  const googleIdentity = user.identities?.find(
+  const googleIdentity = userIdentities.find(
     (identity) => identity.provider === 'google',
   );
 

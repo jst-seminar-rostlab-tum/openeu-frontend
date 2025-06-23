@@ -1,13 +1,14 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bell } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -16,24 +17,38 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { useProfileContext } from '@/domain/hooks/profileHooks';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { updateProfile } from '@/domain/actions/profile';
 import { notificationSchema } from '@/domain/schemas/profile';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
-export default function NotificationsForm() {
+export interface NotificationsFormProps {
+  userId: string;
+  newsletter_frequency: 'daily' | 'weekly' | 'none';
+}
+
+export default function NotificationsForm({
+  userId,
+  newsletter_frequency,
+}: NotificationsFormProps) {
   const [loading, setLoading] = useState(false);
-  const { profile, updateProfile } = useProfileContext();
 
   const form = useForm<z.infer<typeof notificationSchema>>({
     resolver: zodResolver(notificationSchema),
     defaultValues: {
-      subscribed_newsletter: true,
+      newsletter_frequency,
     },
   });
 
   function onSubmit(values: z.infer<typeof notificationSchema>) {
     setLoading(true);
-    updateProfile({ ...values })
+    updateProfile(userId, { ...values })
       .then(() =>
         ToastOperations.showSuccess({
           title: 'Profile updated',
@@ -49,12 +64,6 @@ export default function NotificationsForm() {
       .finally(() => setLoading(false));
   }
 
-  useEffect(() => {
-    if (profile && profile.name) {
-      form.setValue('subscribed_newsletter', profile.subscribed_newsletter);
-    }
-  }, [form, profile]);
-
   return (
     <Form {...form}>
       <form className="grid gap-5 pt-3" onSubmit={form.handleSubmit(onSubmit)}>
@@ -69,25 +78,34 @@ export default function NotificationsForm() {
             <FormField
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex gap-3">
-                    <FormControl>
-                      <Checkbox
-                        id="subscribed_newsletter"
-                        {...field}
-                        onCheckedChange={(value) =>
-                          form.setValue('subscribed_newsletter', !!value)
-                        }
-                        defaultChecked={form.getValues('subscribed_newsletter')}
-                      />
-                    </FormControl>
-                    <FormLabel htmlFor="subscribed_newsletter">
-                      Receive a daily personalized newsletter
+                  <div className="flex justify-between">
+                    <FormLabel htmlFor="newsletter_frequency">
+                      Frequency of personalized newsletter
                     </FormLabel>
-                    <FormMessage />
+                    <FormControl>
+                      <Select
+                        {...field}
+                        onValueChange={(value) =>
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-expect-error
+                          form.setValue('newsletter_frequency', value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Daily" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="daily">Daily</SelectItem>
+                          <SelectItem value="weekly">Weekly</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
                   </div>
+                  <FormMessage />
                 </FormItem>
               )}
-              name="subscribed_newsletter"
+              name="newsletter_frequency"
             />
           </CardContent>
         </Card>

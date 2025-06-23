@@ -1,6 +1,8 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building, User as UserIcon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -16,51 +18,50 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { createProfile, updateProfile } from '@/domain/actions/profile';
 import { ProfileData } from '@/domain/entities/profile/generated-types';
-import { useProfileContext } from '@/domain/hooks/profileHooks';
 import { accountDetailsSchema } from '@/domain/schemas/profile';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
-export default function AccountDetailsForm() {
+export interface AccountDetailsFormProps {
+  userHasNoProfile: boolean;
+  userId: string;
+  email: string;
+  name?: string;
+  surname?: string;
+  company_name?: string;
+  company_description?: string;
+}
+
+export default function AccountDetailsForm({
+  userHasNoProfile,
+  userId,
+  email,
+  name,
+  surname,
+  company_name,
+  company_description,
+}: AccountDetailsFormProps) {
   const [loading, setLoading] = useState(false);
-  const { user, userHasNoProfile, profile, createProfile, updateProfile } =
-    useProfileContext();
 
   const form = useForm<z.infer<typeof accountDetailsSchema>>({
     resolver: zodResolver(accountDetailsSchema),
     defaultValues: {
-      name: profile ? profile.name : '',
-      surname: profile ? profile.surname : '',
-      company_name: profile ? profile.company_name : '',
-      company_description: profile ? profile.company_description : '',
+      name,
+      surname,
+      company_name,
+      company_description,
     },
   });
-
-  useEffect(() => {
-    if (profile && profile.name) {
-      form.setValue('name', profile.name);
-      form.setValue('surname', profile.surname);
-      form.setValue('company_name', profile.company_name);
-      form.setValue('company_description', profile.company_description);
-    }
-  }, [form, profile]);
 
   function onSubmit(values: z.infer<typeof accountDetailsSchema>) {
     setLoading(true);
     if (userHasNoProfile) {
-      if (!user?.id) {
-        ToastOperations.showError({
-          title: "Profile couldn't be created.",
-          message: 'User ID is missing.',
-        });
-        return;
-      }
-
       const profileData: ProfileData = {
         ...values,
-        id: user?.id,
+        id: userId,
         topic_list: [],
-        subscribed_newsletter: true,
+        newsletter_frequency: 'daily',
       };
       createProfile(profileData)
         .then(() =>
@@ -77,7 +78,7 @@ export default function AccountDetailsForm() {
         )
         .finally(() => setLoading(false));
     } else {
-      updateProfile({ ...values })
+      updateProfile(userId, { ...values })
         .then(() =>
           ToastOperations.showSuccess({
             title: 'Profile updated',
@@ -93,8 +94,6 @@ export default function AccountDetailsForm() {
         .finally(() => setLoading(false));
     }
   }
-
-  if (!user) return;
 
   return (
     <Form {...form}>
@@ -147,7 +146,7 @@ export default function AccountDetailsForm() {
               </div>
               <div className="flex flex-col gap-3 col-span-2">
                 <FormField
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel
                         className="text-sm font-medium"
@@ -156,13 +155,7 @@ export default function AccountDetailsForm() {
                         E-Mail
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          id="email"
-                          type="email"
-                          {...field}
-                          value={user?.email}
-                          disabled
-                        />
+                        <Input id="email" type="email" value={email} disabled />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

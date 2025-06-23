@@ -31,7 +31,11 @@ export const securitySchema = z
   });
 
 export const notificationSchema = z.object({
-  subscribed_newsletter: z.boolean(),
+  newsletter_frequency: z.union([
+    z.literal('daily'),
+    z.literal('weekly'),
+    z.literal('none'),
+  ]),
 });
 
 export const interestsSchema = z.object({

@@ -1,6 +1,8 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Compass } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -16,17 +18,27 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { useProfileContext } from '@/domain/hooks/profileHooks';
+import { updateProfile } from '@/domain/actions/profile';
+import { Topic } from '@/domain/entities/calendar/generated-types';
 import { interestsSchema } from '@/domain/schemas/profile';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
-export default function InterestsForm() {
+export interface InterestsFormProps {
+  userId: string;
+  selectedTopics: string[];
+  topics: Topic[];
+}
+
+export default function InterestsForm({
+  userId,
+  selectedTopics,
+  topics,
+}: InterestsFormProps) {
   const [loading, setLoading] = useState(false);
-  const { profile, updateProfile, topics } = useProfileContext();
 
   const options = topics.map((topic) => ({
     label: topic.topic,
-    value: topic.id,
+    value: topic.topic,
   }));
 
   const countries = [
@@ -41,20 +53,13 @@ export default function InterestsForm() {
     resolver: zodResolver(interestsSchema),
     defaultValues: {
       countries: [],
-      topic_list: [],
+      topic_list: selectedTopics,
     },
   });
 
-  useEffect(() => {
-    if (profile && profile.name) {
-      form.setValue('countries', []);
-      form.setValue('topic_list', profile.topic_list);
-    }
-  }, [form, profile]);
-
   function onSubmit(values: z.infer<typeof interestsSchema>) {
     setLoading(true);
-    updateProfile({ topic_list: values.topic_list })
+    updateProfile(userId, { topic_list: values.topic_list })
       .then(() =>
         ToastOperations.showSuccess({
           title: 'Profile updated',
@@ -121,6 +126,7 @@ export default function InterestsForm() {
                           }
                           placeholder="Select topics"
                           variant="inverted"
+                          defaultValue={selectedTopics}
                           {...field}
                         />
                       </FormControl>
