@@ -1,4 +1,5 @@
 import { FilterModalState } from '@/domain/entities/FilterModalState';
+import { getCurrentWeekRange } from '@/lib/formatters';
 import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
 const { now } = getCurrentMonthRange();
 
@@ -36,7 +37,17 @@ export default class FilterModalOperations {
     ];
   }
 
-  static getDefaultState(): FilterModalState {
+  static getDefaultState(useWeekDefault = false): FilterModalState {
+    if (useWeekDefault) {
+      const { startDate, endDate } = getCurrentWeekRange();
+      return {
+        startDate,
+        endDate,
+        country: '',
+        topics: [],
+      };
+    }
+
     return {
       startDate: now,
       endDate: now,

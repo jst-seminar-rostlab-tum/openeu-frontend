@@ -59,7 +59,11 @@ export default function MapPage() {
             isFetching={isFetching}
             placeholder="Search meetings..."
           />
-          <FilterModal topics={topicLabels} showCountryDropdown={false} />
+          <FilterModal
+            topics={topicLabels}
+            showCountryDropdown={false}
+            useWeekDefault={true}
+          />
         </Card>
       </div>
     </div>

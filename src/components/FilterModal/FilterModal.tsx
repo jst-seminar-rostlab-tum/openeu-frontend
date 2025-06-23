@@ -38,6 +38,7 @@ interface FilterModalProps {
   showCountryDropdown?: boolean;
   showTopicDropdown?: boolean;
   showDateDropdown?: boolean;
+  useWeekDefault?: boolean;
 }
 
 export default function FilterModal({
@@ -45,9 +46,16 @@ export default function FilterModal({
   showCountryDropdown = true,
   showTopicDropdown = true,
   showDateDropdown = true,
+  useWeekDefault = false,
 }: FilterModalProps) {
-  const { selectedCountry, setSelectedCountry, setFilters, filters } =
-    useMeetingContext();
+  const {
+    selectedCountry,
+    setSelectedCountry,
+    setFilters,
+    filters,
+    selectedTopics,
+    setSelectedTopics,
+  } = useMeetingContext();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>({
     startDate: now,
@@ -69,10 +77,10 @@ export default function FilterModal({
         startDate: filters.start ? new Date(filters.start) : now,
         endDate: filters.end ? new Date(filters.end) : now,
         country: selectedCountry,
-        topics: [], // Topics not synced from context yet
+        topics: selectedTopics || [],
       });
     }
-  }, [dialogOpen, selectedCountry, filters.start, filters.end]);
+  }, [dialogOpen, selectedCountry, filters.start, filters.end, selectedTopics]);
 
   const updateLocalState = (updates: Partial<FilterModalState>) => {
     setLocalState((prev) => ({ ...prev, ...updates }));
@@ -88,11 +96,11 @@ export default function FilterModal({
 
   const handleClear = () => {
     multiSelectRef.current?.clearHandler();
-    const defaultState = FilterModalOperations.getDefaultState();
+    const defaultState = FilterModalOperations.getDefaultState(useWeekDefault);
     setLocalState(defaultState);
     setSelectedCountry('');
+    setSelectedTopics([]);
 
-    // Reset CalendarContext filters to default date range
     if (showDateDropdown) {
       setFilters({
         ...filters,
@@ -105,12 +113,15 @@ export default function FilterModal({
       setFilters({
         ...filters,
         country: undefined,
+        topics: undefined,
       });
     }
   };
 
   const handleApply = () => {
     setSelectedCountry(localState.country || '');
+    setSelectedTopics(localState.topics || []);
+
     // Update CalendarContext filters with new date range
     if (localState.startDate && localState.endDate && showDateDropdown) {
       setFilters({
@@ -124,7 +135,7 @@ export default function FilterModal({
       setFilters({
         ...filters,
         country: localState.country || undefined,
-        topics: localState.topics || undefined,
+        topics: localState.topics?.length ? localState.topics : undefined,
       });
     }
 
