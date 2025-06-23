@@ -262,6 +262,8 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
+      /** Topics */
+      topic?: string | null;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
@@ -416,8 +418,6 @@ export interface operations {
         topics?: string[] | null;
         /** @description Filter by country (e.g., 'Austria', 'European Union') */
         country?: string | null;
-        /** @description Filter by source table(s) (repeat or comma-separated) */
-        source_table?: string[] | null;
       };
       header?: never;
       path?: never;
