@@ -5,5 +5,5 @@ export interface ProfileData {
   companyName: string;
   companyDescription: string;
   topicList: string[];
-  subscribedNewsletter: boolean;
+  newsletterFrequency: 'daily' | 'weekly' | 'none';
 }
