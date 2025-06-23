@@ -10,7 +10,7 @@ import {
 } from 'date-fns';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import {
   GetMeetingsQueryParams,
   useMeetings,
@@ -23,6 +23,8 @@ import {
   calculateStartDate,
   getColorFromId,
   getCurrentMonthRange,
+  getInstitutionFromSourceTable,
+  getSourceTableFromInstitution,
 } from '@/operations/meeting/CalendarHelpers';
 
 const { now } = getCurrentMonthRange();
@@ -38,10 +40,12 @@ export interface IMeetingContext {
   selectedCountry: string;
   selectedUserId: string;
   selectedTopics: string[];
+  selectedInstitutions: string[];
   setSelectedTopics: (topics: string[]) => void;
   setSelectedCountry: (country: string) => void;
+  setSelectedInstitutions: (institutions: string[]) => void;
   setSelectedUserId: (user_id: string) => void;
-  meetings: MeetingData[];
+  meetings: Meeting[];
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
@@ -50,7 +54,7 @@ export interface IMeetingContext {
   filters: GetMeetingsQueryParams;
   setFilters: (filters: GetMeetingsQueryParams) => void;
   getEventsCount: (
-    events?: MeetingData[],
+    events?: Meeting[],
     selectedDate?: Date,
     view?: TCalendarView,
   ) => number;
@@ -102,6 +106,9 @@ export function MeetingProvider({
   const [selectedTopics, setSelectedTopics] = useState<string[]>(
     urlState.selectedTopics || [],
   );
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>(
+    urlState.selectedInstitutions || [],
+  );
 
   const [selectedColors] = useState<TMeetingColor[]>([]);
 
@@ -148,6 +155,10 @@ export function MeetingProvider({
       query: searchQuery || undefined,
       country: selectedCountry || undefined,
       topics: selectedTopics.length > 0 ? selectedTopics : undefined,
+      source_table:
+        selectedInstitutions.length > 0
+          ? selectedInstitutions.map(getSourceTableFromInstitution)
+          : undefined,
       user_id: selectedUserId || undefined,
     };
   }, [
@@ -235,6 +246,10 @@ export function MeetingProvider({
     setSelectedTopics(topics);
   };
 
+  const handleSetSelectedInstitutions = (institutions: string[]) => {
+    setSelectedInstitutions(institutions);
+  };
+
   const handleSetFilters = (newFilters: GetMeetingsQueryParams) => {
     // Update basic state
     if (newFilters.query !== undefined) {
@@ -254,6 +269,12 @@ export function MeetingProvider({
       setSelectedTopics(newFilters.topics || []);
     }
 
+    if (newFilters.source_table != undefined) {
+      setSelectedInstitutions(
+        newFilters.source_table.map(getInstitutionFromSourceTable) || [],
+      );
+    }
+
     // Handle custom date ranges from FilterModal
     if (newFilters.start && newFilters.end) {
       setIsCustomRange(true);
@@ -263,7 +284,7 @@ export function MeetingProvider({
   };
 
   function getEventsCount(
-    eventsParam: MeetingData[] = meetings,
+    eventsParam: Meeting[] = meetings,
     selectedDateParam: Date = selectedDate,
     viewParam: TCalendarView = currentView,
   ): number {
@@ -295,6 +316,8 @@ export function MeetingProvider({
     setSelectedUserId: handleSetSelectedUserId,
     selectedTopics,
     setSelectedTopics: handleSetSelectedTopics,
+    selectedInstitutions,
+    setSelectedInstitutions: handleSetSelectedInstitutions,
     meetings,
     isLoading,
     isFetching,

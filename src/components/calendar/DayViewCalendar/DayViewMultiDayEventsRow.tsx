@@ -7,11 +7,11 @@ import {
 } from 'date-fns';
 
 import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 
 interface IProps {
   selectedDate: Date;
-  multiDayEvents: MeetingData[];
+  multiDayEvents: Meeting[];
 }
 
 export function DayViewMultiDayEventsRow({

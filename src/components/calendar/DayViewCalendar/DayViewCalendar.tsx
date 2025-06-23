@@ -8,13 +8,13 @@ import { DroppableArea } from '@/components/calendar/MonthViewCalendar/Droppable
 import { CalendarTimeline } from '@/components/calendar/WeekViewCalendar/CalendarTimeline';
 import { RenderGroupedEvents } from '@/components/calendar/WeekViewCalendar/RenderGroupedEvents';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { groupEvents } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
-  singleDayEvents: MeetingData[];
-  multiDayEvents: MeetingData[];
+  singleDayEvents: Meeting[];
+  multiDayEvents: Meeting[];
 }
 
 export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
@@ -51,7 +51,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
     };
   }, []);
 
-  const getCurrentEvents = (events: MeetingData[]) => {
+  const getCurrentEvents = (events: Meeting[]) => {
     const now = new Date();
 
     return (

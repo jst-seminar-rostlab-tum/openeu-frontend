@@ -7,7 +7,7 @@ import React, { HTMLAttributes } from 'react';
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
 import {
@@ -57,7 +57,7 @@ const calendarWeekEventCardVariants = cva(
 interface IProps
   extends HTMLAttributes<HTMLDivElement>,
     Omit<VariantProps<typeof calendarWeekEventCardVariants>, 'color'> {
-  event: MeetingData;
+  event: Meeting;
 }
 
 export function EventBlock({ event, className }: IProps) {
@@ -128,9 +128,11 @@ export function EventBlock({ event, className }: IProps) {
           <MapPin className="shrink-0 w-3 h-3" />
           <span
             className="truncate min-w-0 direction-rtl text-left"
-            title={getMeetingTypeShort(event.location)}
+            title={getMeetingTypeShort(
+              event.location ? event.location : 'No location specified',
+            )}
           >
-            {getMeetingTypeShort(event.location)}
+            {event.location && getMeetingTypeShort(event.location)}
           </span>
         </Badge>
       </div>

@@ -17,7 +17,7 @@ export const profileRepository = {
           company_name: profileData.companyName,
           company_description: profileData.companyDescription,
           topic_list: profileData.topicList,
-          subscribed_newsletter: profileData.subscribedNewsletter,
+          newsletter_frequency: profileData.newsletterFrequency,
         }),
       });
       if (!res.ok) {

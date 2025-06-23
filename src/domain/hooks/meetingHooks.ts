@@ -7,7 +7,7 @@ import {
   IMeetingContext,
   MeetingContext,
 } from '@/components/calendar/MeetingContext';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
 export interface GetMeetingsQueryParams {
@@ -24,10 +24,12 @@ export interface GetMeetingsQueryParams {
   topics?: string[] | null;
   /** @description User ID for personalized meeting recommendations */
   user_id?: string | null;
+  /** @description List of source table names (repeat or comma-separated) */
+  source_table?: string[] | null;
 }
 
 export const useMeetings = (props: GetMeetingsQueryParams, enabled = true) =>
-  useQuery<MeetingData[]>({
+  useQuery<Meeting[]>({
     queryKey: ['meetings', props],
     queryFn: () => meetingRepository.getMeetings(props),
     enabled,

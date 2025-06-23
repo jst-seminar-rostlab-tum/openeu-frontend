@@ -26,14 +26,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import {
   formatTime,
   getMeetingType,
 } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {
-  event: MeetingData;
+  event: Meeting;
   children: ReactNode;
 }
 
@@ -58,7 +58,9 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <TagBadge className="max-w-full mt-1">
                   <span
                     className="truncate direction-rtl text-left"
-                    title={event.location}
+                    title={
+                      event.location ? event.location : 'No location specified'
+                    }
                   >
                     {event.location}
                   </span>
