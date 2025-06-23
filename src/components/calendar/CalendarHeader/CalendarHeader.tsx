@@ -10,6 +10,7 @@ import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
 import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
+import { Badge } from '@/components/ui/badge';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Toggle } from '@/components/ui/toggle';
 import {
@@ -25,9 +26,11 @@ import {
 } from '@/domain/animations';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
+import { formatTopicsForDisplay } from '@/lib/formatters';
 
 export function CalendarHeader() {
-  const { view, setView, searchQuery, setSearchQuery } = useMeetingContext();
+  const { view, setView, searchQuery, setSearchQuery, filters } =
+    useMeetingContext();
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
 
   const { data: topicsData = [] } = useTopics();
@@ -64,8 +67,30 @@ export function CalendarHeader() {
             onSearch={(val) => setSearchQuery(val)}
             placeholder="Search meetings..."
           />
-          <FilterModal showDateDropdown={false} topics={topicLabels} />
+          <div className="flex flex-wrap gap-2">
+            {filters.country && (
+              <Badge
+                variant="secondary"
+                className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+              >
+                {filters.country}
+              </Badge>
+            )}
+            {(() => {
+              const topicDisplay = formatTopicsForDisplay(filters.topics);
+              if (!topicDisplay) return null;
 
+              return (
+                <Badge
+                  variant="secondary"
+                  className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+                >
+                  {topicDisplay.displayText}
+                </Badge>
+              );
+            })()}
+          </div>
+          <FilterModal showDateDropdown={false} topics={topicLabels} />
           <Tooltip>
             <TooltipTrigger asChild>
               <MotionButton
