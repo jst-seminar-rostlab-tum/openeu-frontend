@@ -111,6 +111,20 @@
               "title": "Country"
             },
             "description": "Filter by country (e.g., 'Austria', 'European Union')"
+          },
+          {
+            "name": "source_table",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "type": "array", "items": { "type": "string" } },
+                { "type": "null" }
+              ],
+              "description": "Filter by source table(s) (repeat or comma-separated)",
+              "title": "Source Table"
+            },
+            "description": "Filter by source table(s) (repeat or comma-separated)"
           }
         ],
         "responses": {
@@ -612,9 +626,10 @@
             "type": "array",
             "title": "Topic List"
           },
-          "subscribed_newsletter": {
-            "type": "boolean",
-            "title": "Subscribed Newsletter"
+          "newsletter_frequency": {
+            "type": "string",
+            "enum": ["daily", "weekly", "none"],
+            "title": "Newsletter Frequency"
           }
         },
         "type": "object",
@@ -625,7 +640,7 @@
           "company_name",
           "company_description",
           "topic_list",
-          "subscribed_newsletter"
+          "newsletter_frequency"
         ],
         "title": "ProfileCreate"
       },

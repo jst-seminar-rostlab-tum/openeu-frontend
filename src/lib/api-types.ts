@@ -251,7 +251,7 @@ export interface components {
        */
       meeting_start_datetime: string;
       /** Meeting End Datetime */
-      meeting_end_datetime: string | null;
+      meeting_end_datetime?: string | null;
       /** Location */
       location?: string | null;
       /** Exact Location */
@@ -262,8 +262,6 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
-      /** Topics */
-      topic?: string | null;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
@@ -331,8 +329,11 @@ export interface components {
       company_description: string;
       /** Topic List */
       topic_list: string[];
-      /** Subscribed Newsletter */
-      subscribed_newsletter: boolean;
+      /**
+       * Newsletter Frequency
+       * @enum {string}
+       */
+      newsletter_frequency: 'daily' | 'weekly' | 'none';
     };
     /** SessionsResponseModel */
     SessionsResponseModel: {
@@ -415,6 +416,8 @@ export interface operations {
         topics?: string[] | null;
         /** @description Filter by country (e.g., 'Austria', 'European Union') */
         country?: string | null;
+        /** @description Filter by source table(s) (repeat or comma-separated) */
+        source_table?: string[] | null;
       };
       header?: never;
       path?: never;
