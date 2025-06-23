@@ -22,8 +22,8 @@ export const profileRepository = {
       });
       if (!res.ok) {
         ToastOperations.showError({
-          title: 'Error fetching proffile',
-          message: `HTTP error! status: ${res.status}`,
+          title: 'Error fetching profile',
+          message: `'Failed to fetch profile. Please try again later.'`,
         });
         throw new Error('Failed to create profile');
       }

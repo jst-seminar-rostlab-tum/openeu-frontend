@@ -10,7 +10,7 @@ export async function fetchBackendNotifications(
     if (!response.ok) {
       ToastOperations.showError({
         title: 'Error fetching notifications',
-        message: `HTTP error! status: ${response.status}`,
+        message: `'Failed to fetch notifications. Please try again later.'`,
       });
       throw new Error(`HTTP error! status: ${response.status}`);
     }

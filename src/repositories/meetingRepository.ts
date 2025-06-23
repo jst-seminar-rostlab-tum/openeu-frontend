@@ -19,7 +19,7 @@ export const meetingRepository = {
       if (!res.ok) {
         ToastOperations.showError({
           title: 'Error fetching meetings',
-          message: `HTTP error! status: ${res.status}`,
+          message: `'Failed to fetch meetings. Please try again later.'`,
         });
         throw new Error('Failed to fetch meetings');
       }
