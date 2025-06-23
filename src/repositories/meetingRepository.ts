@@ -10,7 +10,11 @@ export const meetingRepository = {
     const query = params
       ? Object.entries(params)
           .filter((entry) => !!entry[1])
-          .map((entry) => `${entry[0]}=${entry[1]}`)
+          .map((entry) => {
+            const [key, value] = entry;
+            const paramValue = Array.isArray(value) ? value.join(',') : value;
+            return `${key}=${paramValue}`;
+          })
           .join('&')
       : undefined;
     try {

@@ -23,6 +23,8 @@ import {
   calculateStartDate,
   getColorFromId,
   getCurrentMonthRange,
+  getInstitutionFromSourceTable,
+  getSourceTableFromInstitution,
 } from '@/operations/meeting/CalendarHelpers';
 
 const { now } = getCurrentMonthRange();
@@ -37,8 +39,10 @@ export interface IMeetingContext {
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
   selectedTopics: string[];
+  selectedInstitutions: string[];
   setSelectedTopics: (topics: string[]) => void;
   setSelectedCountry: (country: string) => void;
+  setSelectedInstitutions: (institutions: string[]) => void;
   meetings: Meeting[];
   isLoading: boolean;
   isFetching: boolean;
@@ -97,6 +101,9 @@ export function MeetingProvider({
   const [selectedTopics, setSelectedTopics] = useState<string[]>(
     urlState.selectedTopics || [],
   );
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>(
+    urlState.selectedInstitutions || [],
+  );
 
   const [selectedColors] = useState<TMeetingColor[]>([]);
 
@@ -143,6 +150,10 @@ export function MeetingProvider({
       query: searchQuery || undefined,
       country: selectedCountry || undefined,
       topics: selectedTopics.length > 0 ? selectedTopics : undefined,
+      source_table:
+        selectedInstitutions.length > 0
+          ? selectedInstitutions.map(getSourceTableFromInstitution)
+          : undefined,
     };
   }, [
     selectedDate,
@@ -224,6 +235,10 @@ export function MeetingProvider({
     setSelectedTopics(topics);
   };
 
+  const handleSetSelectedInstitutions = (institutions: string[]) => {
+    setSelectedInstitutions(institutions);
+  };
+
   const handleSetFilters = (newFilters: GetMeetingsQueryParams) => {
     // Update basic state
     if (newFilters.query !== undefined) {
@@ -238,6 +253,12 @@ export function MeetingProvider({
 
     if (newFilters.topics != undefined) {
       setSelectedTopics(newFilters.topics || []);
+    }
+
+    if (newFilters.source_table != undefined) {
+      setSelectedInstitutions(
+        newFilters.source_table.map(getInstitutionFromSourceTable) || [],
+      );
     }
 
     // Handle custom date ranges from FilterModal
@@ -279,6 +300,8 @@ export function MeetingProvider({
     setSelectedCountry: handleSetSelectedCountry,
     selectedTopics,
     setSelectedTopics: handleSetSelectedTopics,
+    selectedInstitutions,
+    setSelectedInstitutions: handleSetSelectedInstitutions,
     meetings,
     isLoading,
     isFetching,
