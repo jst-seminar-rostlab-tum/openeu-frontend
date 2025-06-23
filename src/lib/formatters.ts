@@ -64,3 +64,29 @@ export function dateRangeToString(from?: Date, to?: Date): string {
 
   return result;
 }
+
+/**
+ * Formats topic filters for display, showing first topic + count if multiple
+ * @param topics Array of topic strings
+ * @returns Object with display text and whether there are multiple topics
+ */
+export function formatTopicsForDisplay(topics?: string[] | null): {
+  displayText: string;
+  hasMultiple: boolean;
+} | null {
+  if (!topics || topics.length === 0) {
+    return null;
+  }
+
+  if (topics.length === 1) {
+    return {
+      displayText: topics[0],
+      hasMultiple: false,
+    };
+  }
+
+  return {
+    displayText: `${topics[0]} + ${topics.length - 1}`,
+    hasMultiple: true,
+  };
+}

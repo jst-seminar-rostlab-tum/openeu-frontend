@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
-import { dateRangeToString } from '@/lib/formatters';
+import { dateRangeToString, formatTopicsForDisplay } from '@/lib/formatters';
 
 export default function MapPage() {
   const { searchQuery, setSearchQuery, isFetching, filters } =
@@ -24,20 +24,19 @@ export default function MapPage() {
       <Map />
       <div className="absolute top-16 left-4 right-4 z-10 flex justify-end items-center px-2 gap-2">
         <div className="flex flex-wrap gap-2">
-          {filters.topics &&
-            Object.entries(filters.topics).map(([key, value]) => {
-              if (value === undefined) return null;
+          {(() => {
+            const topicDisplay = formatTopicsForDisplay(filters.topics);
+            if (!topicDisplay) return null;
 
-              return (
-                <Badge
-                  key={key}
-                  variant="secondary"
-                  className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
-                >
-                  {value}
-                </Badge>
-              );
-            })}
+            return (
+              <Badge
+                variant="secondary"
+                className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+              >
+                {topicDisplay.displayText}
+              </Badge>
+            );
+          })()}
           {filters.start && filters.end && (
             <Badge
               variant="secondary"

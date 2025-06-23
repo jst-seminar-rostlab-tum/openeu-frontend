@@ -26,6 +26,7 @@ import {
 } from '@/domain/animations';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
+import { formatTopicsForDisplay } from '@/lib/formatters';
 
 export function CalendarHeader() {
   const { view, setView, searchQuery, setSearchQuery, filters } =
@@ -80,20 +81,19 @@ export function CalendarHeader() {
                 {filters.country}
               </Badge>
             )}
-            {filters.topics &&
-              Object.entries(filters.topics).map(([key, value]) => {
-                if (value === undefined) return null;
+            {(() => {
+              const topicDisplay = formatTopicsForDisplay(filters.topics);
+              if (!topicDisplay) return null;
 
-                return (
-                  <Badge
-                    key={key}
-                    variant="secondary"
-                    className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
-                  >
-                    {value}
-                  </Badge>
-                );
-              })}
+              return (
+                <Badge
+                  variant="secondary"
+                  className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+                >
+                  {topicDisplay.displayText}
+                </Badge>
+              );
+            })()}
           </div>
           <div className="relative flex items-center">
             <Input
