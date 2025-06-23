@@ -6,10 +6,16 @@ import React, { useState } from 'react';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MultiSelect } from '@/components/ui/multi-select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { signup } from '@/domain/actions/register';
 import { cn } from '@/lib/utils';
 
@@ -26,7 +32,6 @@ export function RegisterForm({
 
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-  const [newsletterSignup, setNewsletterSignup] = useState(true);
   const [loading, setLoading] = useState(false);
   const [redraw, setRedraw] = useState(false);
 
@@ -164,26 +169,28 @@ export function RegisterForm({
             disabled={loading}
           />
         </div>
-        <div className="grid gap-3">
-          <div className="flex flex-row gap-2 items-center">
-            <input
-              type="hidden"
-              value={newsletterSignup ? 'true' : 'false'}
-              name="subscribed-newsletter"
-            />
-            <Checkbox
-              id="newsletter"
-              checked={newsletterSignup}
-              onCheckedChange={(checked) => {
-                setNewsletterSignup(!!checked);
-                return checked;
-              }}
-              disabled={loading}
-            />
-            <Label htmlFor="newsletter" className="text-sm font-normal">
-              Signup for daily, personalized newsletter
-            </Label>
-          </div>
+        <div className="overflow-x-auto">
+          <Label htmlFor="newsletter-frequency">Newsletter</Label>
+          <Select
+            name="newsletter-frequency"
+            defaultValue="daily"
+            disabled={loading}
+          >
+            <SelectTrigger className="w-full mt-3">
+              <SelectValue placeholder="Newsletter frequency" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="daily">
+                Sign up for daily, personalized newsletter
+              </SelectItem>
+              <SelectItem value="weekly">
+                Sign up for weekly, personalized newsletter
+              </SelectItem>
+              <SelectItem value="none">
+                Do not sign up for newsletter
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? LoadingSpinner() : 'Sign up'}

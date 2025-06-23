@@ -30,7 +30,10 @@ import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import FilterModalOperations from '@/operations/filter-modal/FilterModalOperations';
-import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
+import {
+  getCurrentMonthRange,
+  getSourceTableFromInstitution,
+} from '@/operations/meeting/CalendarHelpers';
 
 const { now } = getCurrentMonthRange();
 interface FilterModalProps {
@@ -50,11 +53,13 @@ export default function FilterModal({
 }: FilterModalProps) {
   const {
     selectedCountry,
-    setSelectedCountry,
-    setFilters,
-    filters,
     selectedTopics,
     setSelectedTopics,
+    selectedInstitutions,
+    setSelectedCountry,
+    setSelectedInstitutions,
+    setFilters,
+    filters,
   } = useMeetingContext();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [localState, setLocalState] = useState<FilterModalState>({
@@ -62,13 +67,16 @@ export default function FilterModal({
     endDate: now,
     country: '',
     topics: [],
+    institutions: [],
   });
   const multiSelectRef = useRef<MultiSelectRef>(null);
+  const multiSelectRefInstitutions = useRef<MultiSelectRef>(null);
   const countries = FilterModalOperations.getCountries();
   const topicOptions = topics!.map((topic) => ({
     label: topic,
     value: topic,
   }));
+  const institutions = FilterModalOperations.getInstitutions();
 
   useEffect(() => {
     if (dialogOpen) {
@@ -78,9 +86,17 @@ export default function FilterModal({
         endDate: filters.end ? new Date(filters.end) : now,
         country: selectedCountry,
         topics: selectedTopics || [],
+        institutions: selectedInstitutions,
       });
     }
-  }, [dialogOpen, selectedCountry, filters.start, filters.end, selectedTopics]);
+  }, [
+    dialogOpen,
+    selectedCountry,
+    selectedInstitutions,
+    selectedTopics,
+    filters.start,
+    filters.end,
+  ]);
 
   const updateLocalState = (updates: Partial<FilterModalState>) => {
     setLocalState((prev) => ({ ...prev, ...updates }));
@@ -94,12 +110,18 @@ export default function FilterModal({
     updateLocalState({ topics: selectedTopics });
   };
 
+  const handleInstitutionsChange = (selectedInstitutions: string[]) => {
+    updateLocalState({ institutions: selectedInstitutions });
+  };
+
   const handleClear = () => {
     multiSelectRef.current?.clearHandler();
+    multiSelectRefInstitutions.current?.clearHandler();
     const defaultState = FilterModalOperations.getDefaultState(useWeekDefault);
     setLocalState(defaultState);
     setSelectedCountry('');
     setSelectedTopics([]);
+    setSelectedInstitutions([]);
 
     if (showDateDropdown) {
       setFilters({
@@ -108,12 +130,14 @@ export default function FilterModal({
         end: (defaultState.endDate || now).toISOString(),
         country: undefined,
         topics: undefined,
+        source_table: undefined,
       });
     } else {
       setFilters({
         ...filters,
         country: undefined,
         topics: undefined,
+        source_table: undefined,
       });
     }
   };
@@ -121,7 +145,7 @@ export default function FilterModal({
   const handleApply = () => {
     setSelectedCountry(localState.country || '');
     setSelectedTopics(localState.topics || []);
-
+    setSelectedInstitutions(localState.institutions || []);
     // Update CalendarContext filters with new date range
     if (localState.startDate && localState.endDate && showDateDropdown) {
       setFilters({
@@ -130,12 +154,18 @@ export default function FilterModal({
         end: localState.endDate.toISOString(),
         country: localState.country || undefined,
         topics: localState.topics?.length ? localState.topics : undefined,
+        source_table: localState.institutions?.length
+          ? localState.institutions.map(getSourceTableFromInstitution)
+          : undefined,
       });
     } else {
       setFilters({
         ...filters,
         country: localState.country || undefined,
         topics: localState.topics?.length ? localState.topics : undefined,
+        source_table: localState.institutions?.length
+          ? localState.institutions.map(getSourceTableFromInstitution)
+          : undefined,
       });
     }
 
@@ -207,6 +237,17 @@ export default function FilterModal({
               modalPopover={true}
             />
           )}
+          <MultiSelect
+            ref={multiSelectRefInstitutions}
+            options={institutions}
+            value={localState.institutions}
+            defaultValue={localState.institutions}
+            onValueChange={handleInstitutionsChange}
+            placeholder="Institutions"
+            variant="inverted"
+            modalPopover={true}
+            maxCount={1}
+          />
         </div>
         <DialogFooter className="!flex-row !justify-between">
           <Button variant="link" onClick={handleClear} className="underline">

@@ -3,4 +3,5 @@ export interface FilterModalState {
   endDate?: Date;
   country?: string;
   topics: string[];
+  institutions?: string[];
 }
