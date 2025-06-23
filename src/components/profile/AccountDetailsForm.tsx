@@ -108,7 +108,7 @@ export default function AccountDetailsForm({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="flex flex-col gap-3">
                 <FormField
                   render={({ field }) => (
@@ -144,7 +144,7 @@ export default function AccountDetailsForm({
                   name="surname"
                 />
               </div>
-              <div className="flex flex-col gap-3 col-span-2">
+              <div className="flex flex-col gap-3 sm:col-span-2">
                 <FormField
                   render={() => (
                     <FormItem>
@@ -174,7 +174,7 @@ export default function AccountDetailsForm({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="flex flex-col gap-3">
                 <FormField
                   render={({ field }) => (
@@ -221,7 +221,11 @@ export default function AccountDetailsForm({
           </CardContent>
         </Card>
         <div className="flex justify-end">
-          <Button type="submit" className="w-[8rem]" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full sm:w-[8rem]"
+            disabled={loading}
+          >
             {loading ? (
               <LoadingSpinner />
             ) : userHasNoProfile ? (

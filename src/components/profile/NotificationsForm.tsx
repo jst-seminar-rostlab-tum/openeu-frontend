@@ -78,8 +78,11 @@ export default function NotificationsForm({
             <FormField
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex justify-between">
-                    <FormLabel htmlFor="newsletter_frequency">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0">
+                    <FormLabel
+                      htmlFor="newsletter_frequency"
+                      className="text-sm font-medium"
+                    >
                       Frequency of personalized newsletter
                     </FormLabel>
                     <FormControl>
@@ -91,7 +94,7 @@ export default function NotificationsForm({
                           form.setValue('newsletter_frequency', value)
                         }
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full sm:w-[180px]">
                           <SelectValue placeholder="Daily" />
                         </SelectTrigger>
                         <SelectContent>
@@ -110,7 +113,11 @@ export default function NotificationsForm({
           </CardContent>
         </Card>
         <div className="flex justify-end">
-          <Button type="submit" className="w-[8rem]" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full sm:w-[8rem]"
+            disabled={loading}
+          >
             {loading ? <LoadingSpinner /> : 'Save changes'}
           </Button>
         </div>

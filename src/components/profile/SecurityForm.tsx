@@ -172,7 +172,11 @@ export default function SecurityForm() {
             </CardContent>
           </Card>
           <div className="flex justify-end pt-4">
-            <Button type="submit" className="w-[8rem]" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full sm:w-[8rem]"
+              disabled={loading}
+            >
               {loading ? <LoadingSpinner /> : 'Save changes'}
             </Button>
           </div>
@@ -188,7 +192,7 @@ export default function SecurityForm() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-4 sm:gap-0">
             <div className="flex gap-3">
               <div className="flex justify-center items-center rounded-full bg-muted size-10">
                 <IoLogoGoogle className="size-6" />
@@ -200,7 +204,10 @@ export default function SecurityForm() {
                 </p>
               </div>
             </div>
-            <Button onClick={() => googleAction(!!googleIdentity)}>
+            <Button
+              onClick={() => googleAction(!!googleIdentity)}
+              className="w-full sm:w-auto"
+            >
               {!googleIdentity ? 'Link' : 'Unlink'}
             </Button>
           </div>

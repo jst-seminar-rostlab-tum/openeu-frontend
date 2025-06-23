@@ -99,7 +99,7 @@ export default async function ProfilePage() {
     return (
       <TabsTrigger value={category.id} key={index} disabled={category.disabled}>
         {category.icon}
-        {category.name}
+        <span className="hidden sm:inline">{category.name}</span>
       </TabsTrigger>
     );
   };
@@ -113,9 +113,22 @@ export default async function ProfilePage() {
   };
 
   return (
-    <Tabs defaultValue={categories[0].id}>
-      <TabsList>{categories.map(buildTabList)}</TabsList>
-      {categories.map(buildTabContent)}
-    </Tabs>
+    <div className="container mx-auto px-4 py-6 max-w-4xl">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
+          Profile Settings
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Manage your account preferences and settings
+        </p>
+      </div>
+
+      <Tabs defaultValue={categories[0].id} className="w-full">
+        <TabsList className="grid w-full grid-cols-4 p-1 bg-muted/50 sm:inline-flex sm:w-fit sm:h-9">
+          {categories.map(buildTabList)}
+        </TabsList>
+        <div className="mt-6">{categories.map(buildTabContent)}</div>
+      </Tabs>
+    </div>
   );
 }

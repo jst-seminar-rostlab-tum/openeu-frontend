@@ -86,7 +86,7 @@ export default function InterestsForm({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <FormField
                 render={({ field }) => (
                   <FormItem>
@@ -140,7 +140,11 @@ export default function InterestsForm({
           </CardContent>
         </Card>
         <div className="flex justify-end">
-          <Button type="submit" className="w-[8rem]" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full sm:w-[8rem]"
+            disabled={loading}
+          >
             {loading ? <LoadingSpinner /> : 'Save changes'}
           </Button>
         </div>
