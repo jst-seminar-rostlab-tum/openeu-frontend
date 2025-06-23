@@ -15,13 +15,13 @@ interface SmartSearchProps {
   isLoading?: boolean;
 }
 
-export const SuggestedSearch: React.FC<SmartSearchProps> = ({
+export function SuggestedSearch({
   value,
   onValueChange,
   onSearch,
   placeholder = 'Search...',
   isLoading,
-}) => {
+}: SmartSearchProps) {
   const {
     suggestions,
     fetchSuggestions,
@@ -95,4 +95,4 @@ export const SuggestedSearch: React.FC<SmartSearchProps> = ({
       )}
     </div>
   );
-};
+}
