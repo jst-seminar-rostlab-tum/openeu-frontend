@@ -8,6 +8,7 @@ import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigato
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
 import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
+import PersonalizeSwitch from '@/components/PersonalizeSwitch/PersonalizeSwitch';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Input } from '@/components/ui/input';
@@ -80,6 +81,7 @@ export function CalendarHeader() {
             />
             <Search className="absolute left-2 h-5 w-5 text-muted-foreground pointer-events-none" />
           </div>
+          <PersonalizeSwitch />
           <FilterModal showDateDropdown={false} topics={topicLabels} />
 
           <Tooltip>

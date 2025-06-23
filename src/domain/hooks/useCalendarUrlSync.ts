@@ -30,6 +30,7 @@ interface UrlState {
   selectedTopics: string[];
   searchQuery: string;
   selectedCountry: string;
+  selectedUserId: string;
   startDate: Date | null;
   endDate: Date | null;
   view: TCalendarView;
@@ -54,6 +55,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
   const urlState = useMemo((): UrlState => {
     const searchQuery = searchParams.get('q') || '';
     const selectedCountry = searchParams.get('country') || '';
+    const selectedUserId = searchParams.get('userId') || '';
     const selectedTopics = searchParams.get('topics')
       ? searchParams.get('topics')!.split(',').filter(Boolean)
       : [];
@@ -88,6 +90,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
       startDate,
       endDate,
       selectedTopics,
+      selectedUserId,
       view,
     };
   }, [searchParams]);

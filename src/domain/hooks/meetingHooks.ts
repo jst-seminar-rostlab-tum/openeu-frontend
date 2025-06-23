@@ -22,6 +22,8 @@ export interface GetMeetingsQueryParams {
   country?: string | null;
   /** @description List of topic names (repeat or comma-separated) */
   topics?: string[] | null;
+  /** @description User ID for personalized meeting recommendations */
+  user_id?: string | null;
 }
 
 export const useMeetings = (props: GetMeetingsQueryParams, enabled = true) =>
