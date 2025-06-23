@@ -93,6 +93,7 @@ export function SuggestedSearch({
           className="w-[--radix-popover-trigger-width] p-0"
           align="start"
           side="bottom"
+          onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <div className="max-h-60 overflow-y-auto">
             {suggestions.length > 0 && (
