@@ -1,13 +1,17 @@
 'use client';
 
-import { Search } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
 import { useDebouncedSuggestions } from '@/domain/hooks/suggestionHooks';
 
-interface SmartSearchProps {
+interface SuggestedSearchProps {
   value: string;
   onValueChange: (value: string) => void;
   onSearch?: (value: string) => void;
@@ -21,7 +25,7 @@ export function SuggestedSearch({
   onSearch,
   placeholder = 'Search...',
   isLoading,
-}: SmartSearchProps) {
+}: SuggestedSearchProps) {
   const {
     suggestions,
     fetchSuggestions,
@@ -30,12 +34,8 @@ export function SuggestedSearch({
   } = useDebouncedSuggestions();
 
   const loading = isLoading ?? internalLoading;
-
   const [localSearchText, setLocalSearchText] = useState(value);
-
-  useEffect(() => {
-    setLocalSearchText(value);
-  }, [value]);
+  const [open, setOpen] = useState(false);
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +43,9 @@ export function SuggestedSearch({
       setLocalSearchText(input);
       onValueChange(input);
       fetchSuggestions(input);
+
+      // Automatically show dropdown if input is long enough
+      setOpen(input.length >= 2);
     },
     [onValueChange, fetchSuggestions],
   );
@@ -53,46 +56,64 @@ export function SuggestedSearch({
         e.preventDefault();
         onSearch?.(localSearchText);
         clearSuggestions();
+        setOpen(false); // Close the popover
       }
     },
     [onSearch, localSearchText, clearSuggestions],
   );
 
   const onSelectSuggestion = (title: string) => {
+    setLocalSearchText(title);
     onValueChange(title);
     onSearch?.(title);
     clearSuggestions();
+    setOpen(false);
   };
 
   return (
     <div className="relative">
-      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-      <Input
-        type="search"
-        placeholder={placeholder}
-        value={localSearchText}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        className="pl-8"
-      />
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div className="relative">
+            <Input
+              type="search"
+              placeholder={placeholder}
+              value={localSearchText}
+              onChange={onChange}
+              onKeyDown={onKeyDown}
+              className="pl-8"
+            />
+            {loading && (
+              <Spinner className="absolute right-8 top-2.5" size="xsmall" />
+            )}
+          </div>
+        </PopoverTrigger>
 
-      {loading && (
-        <Spinner className="absolute right-8 top-2.5" size="xsmall" />
-      )}
-
-      {suggestions.length > 0 && (
-        <ul className="absolute top-full mt-1 z-10 w-full bg-white border border-gray-200 rounded shadow max-h-60 overflow-y-auto">
-          {suggestions.map((title, i) => (
-            <li
-              key={i}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-              onClick={() => onSelectSuggestion(title)}
-            >
-              {title}
-            </li>
-          ))}
-        </ul>
-      )}
+        <PopoverContent
+          className="w-[--radix-popover-trigger-width] p-0"
+          align="start"
+          side="bottom"
+        >
+          <div className="max-h-60 overflow-y-auto">
+            {suggestions.length > 0 && (
+              <div className="p-1">
+                <div className="px-2 py-1.5 text-sm font-medium text-muted-foreground">
+                  Suggestions
+                </div>
+                {suggestions.map((title, i) => (
+                  <div
+                    key={i}
+                    className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                    onClick={() => onSelectSuggestion(title)}
+                  >
+                    <span className="truncate">{title}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
