@@ -26,7 +26,10 @@ export async function signup(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const topics = formData.get('topics') as string;
-  const subscribedNewsletter = formData.get('subscribed-newsletter') as string;
+  const newsletterFrequency = formData.get('newsletter_frequency') as
+    | 'daily'
+    | 'weekly'
+    | 'none';
   const url = await getCurrentURL();
 
   if (country.split(',').length === 0 || country === '') {
@@ -59,7 +62,7 @@ export async function signup(formData: FormData) {
       company_name: company,
       company_description: companyDescription,
       topic_list: topics.split(','),
-      subscribed_newsletter: subscribedNewsletter === 'true',
+      newsletter_frequency: newsletterFrequency,
     });
   }
 
