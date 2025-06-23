@@ -113,20 +113,9 @@ export default async function ProfilePage() {
   };
 
   return (
-    <div className="flex flex-row justify-center items-center w-full pt-10">
-      <div className="grid gap-5">
-        <div className="flex flex-col">
-          <h1 className="text-2xl font-semibold">Profile Settings</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage you profile details, company details, interesting company &
-            topics here.
-          </p>
-        </div>
-        <Tabs defaultValue={categories[0].id}>
-          <TabsList>{categories.map(buildTabList)}</TabsList>
-          {categories.map(buildTabContent)}
-        </Tabs>
-      </div>
-    </div>
+    <Tabs defaultValue={categories[0].id}>
+      <TabsList>{categories.map(buildTabList)}</TabsList>
+      {categories.map(buildTabContent)}
+    </Tabs>
   );
 }
