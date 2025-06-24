@@ -1,4 +1,5 @@
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/profile`;
 
@@ -21,6 +22,10 @@ export const profileRepository = {
         }),
       });
       if (!res.ok) {
+        ToastOperations.showError({
+          title: 'Error fetching profile',
+          message: 'Failed to fetch profile. Please try again later.',
+        });
         throw new Error('Failed to create profile');
       }
       return 'success';

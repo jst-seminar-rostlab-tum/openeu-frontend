@@ -2,6 +2,7 @@ import { addHours } from 'date-fns';
 
 import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { GetMeetingsQueryParams } from '@/domain/hooks/meetingHooks';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/meetings`;
 
@@ -20,6 +21,10 @@ export const meetingRepository = {
     try {
       const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`);
       if (!res.ok) {
+        ToastOperations.showError({
+          title: 'Error fetching meetings',
+          message: 'Failed to fetch meetings. Please try again later.',
+        });
         throw new Error('Failed to fetch meetings');
       }
       const response = await res.json();
