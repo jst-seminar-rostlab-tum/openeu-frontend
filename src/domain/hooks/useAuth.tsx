@@ -12,6 +12,7 @@ import React, {
 } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 type AuthContextType = {
   user: User | null;
@@ -74,8 +75,11 @@ export function AuthProvider({
 
     const { error } = await supabase.auth.signOut();
     if (error) {
-      console.error('Error signing out:', error.message);
-      // Restore user state if logout failed
+      ToastOperations.showError({
+        title: 'Sign Out Failed',
+        message:
+          'Unable to sign out at this time. Please try again or refresh the page.',
+      });
       setUser(initialUser);
     } else {
       router.push('/');
