@@ -26,7 +26,7 @@ import {
 } from 'date-fns';
 
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { TCalendarView } from '@/domain/types/calendar/types';
 
 const FORMAT_STRING = 'MMM d, yyyy';
@@ -81,7 +81,7 @@ export function navigateDate(
 }
 
 export function getEventsCount(
-  events: MeetingData[],
+  events: Meeting[],
   date: Date,
   view: TCalendarView,
 ): number {
@@ -101,11 +101,11 @@ export function getEventsCount(
 
 export function getMonthCellEvents(
   date: Date,
-  events: MeetingData[],
+  events: Meeting[],
   eventPositions: Record<string, number>,
-): MeetingData[] {
+): Meeting[] {
   const dayStart = startOfDay(date);
-  const eventsForDate: MeetingData[] = events.filter((event) => {
+  const eventsForDate: Meeting[] = events.filter((event) => {
     const eventStart = parseISO(event.meeting_start_datetime);
     const eventEnd = parseISO(event.meeting_end_datetime);
     return (
@@ -173,8 +173,8 @@ export function formatTime(
 }
 
 export function calculateMonthEventPositions(
-  multiDayEvents: MeetingData[],
-  singleDayEvents: MeetingData[],
+  multiDayEvents: Meeting[],
+  singleDayEvents: Meeting[],
   selectedDate: Date,
 ): Record<string, number> {
   try {
@@ -310,7 +310,19 @@ export function getMeetingTypeShort(sourceTable?: string): string {
   );
 }
 
-export function groupEvents(dayEvents: MeetingData[]) {
+export function getSourceTableFromInstitution(institutionName: string): string {
+  const reverseMapping = Object.fromEntries(
+    Object.entries(MEETING_TYPE_MAPPING).map(([key, value]) => [value, key]),
+  );
+
+  return reverseMapping[institutionName] || institutionName;
+}
+
+export function getInstitutionFromSourceTable(sourceTable: string): string {
+  return MEETING_TYPE_MAPPING[sourceTable] || sourceTable;
+}
+
+export function groupEvents(dayEvents: Meeting[]) {
   const sortedEvents = dayEvents.sort(
     (a, b) =>
       parseISO(a.meeting_end_datetime).getTime() -
@@ -326,7 +338,7 @@ export function groupEvents(dayEvents: MeetingData[]) {
     },
   );
 
-  const groups: MeetingData[][][] = [];
+  const groups: Meeting[][][] = [];
   Object.entries(grouped).forEach(([key, value]) => {
     const [start] = key.split('---');
     const eventStart = parseISO(start);
@@ -348,7 +360,7 @@ export function groupEvents(dayEvents: MeetingData[]) {
 }
 
 export function getEventBlockStyle(
-  event: MeetingData,
+  event: Meeting,
   day: Date,
   groupIndex: number,
   groupSize: number,

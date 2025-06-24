@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { ProfileData } from '@/domain/entities/profile/ProfileData';
 import { createClient } from '@/lib/supabase/server';
 import { profileRepository } from '@/repositories/profileRepository';
 
@@ -26,7 +27,9 @@ export async function signup(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const topics = formData.get('topics') as string;
-  const subscribedNewsletter = formData.get('subscribed-newsletter') as string;
+  const newsletterFrequency = formData.get(
+    'newsletter-frequency',
+  ) as ProfileData['newsletterFrequency'];
   const url = await getCurrentURL();
 
   if (country.split(',').length === 0 || country === '') {
@@ -59,7 +62,7 @@ export async function signup(formData: FormData) {
       companyName: company,
       companyDescription: companyDescription,
       topicList: topics.split(','),
-      subscribedNewsletter: subscribedNewsletter === 'true',
+      newsletterFrequency: newsletterFrequency,
     });
   }
 
