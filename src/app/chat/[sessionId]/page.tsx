@@ -1,19 +1,13 @@
-import { Suspense } from 'react';
+import ChatFooter from '@/components/Chat/ChatFooter';
+import ChatInterface from '@/components/Chat/ChatInterface';
 
-import ChatSkeleton from '@/components/Chat/ChatSkeleton';
-
-import ChatSessionClient from './ChatSessionClient';
-
-export default async function ChatSessionPage({
-  params,
-}: {
-  params: Promise<{ sessionId: string }>;
-}) {
-  const { sessionId } = await params;
-
+export default function ChatSessionPage() {
   return (
-    <Suspense fallback={<ChatSkeleton />}>
-      <ChatSessionClient sessionId={sessionId} />
-    </Suspense>
+    <div className="flex flex-col h-full max-w-4xl mx-auto">
+      <div className="flex-1">
+        <ChatInterface />
+      </div>
+      <ChatFooter />
+    </div>
   );
 }

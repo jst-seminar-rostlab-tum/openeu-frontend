@@ -1,6 +1,7 @@
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
 import { ToastOperations } from '@/operations/toast/toastOperations';
-const API_URL = 'https://openeu-backend-1.onrender.com/profile';
+
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/profile`;
 
 export const profileRepository = {
   async createProfile(profileData: ProfileData): Promise<string> {
@@ -17,7 +18,7 @@ export const profileRepository = {
           company_name: profileData.companyName,
           company_description: profileData.companyDescription,
           topic_list: profileData.topicList,
-          subscribed_newsletter: profileData.subscribedNewsletter,
+          newsletter_frequency: profileData.newsletterFrequency,
         }),
       });
       if (!res.ok) {
