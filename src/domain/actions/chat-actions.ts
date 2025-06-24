@@ -3,6 +3,7 @@
 import { revalidateTag } from 'next/cache';
 
 import { requireAuth } from '@/lib/dal';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 import {
   CreateSessionRequest,
@@ -35,10 +36,9 @@ export async function createChatSession(
     if (!response.ok) {
       // Get the response text for better error debugging
       const errorText = await response.text();
-      console.error('API Error Response:', {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText,
+      ToastOperations.showError({
+        title: 'API Error',
+        message: `Failed to create session: ${response.status} ${response.statusText}`,
       });
 
       throw new Error(
@@ -53,7 +53,11 @@ export async function createChatSession(
 
     return session;
   } catch (error) {
-    console.error('Error creating chat session:', error);
+    ToastOperations.showError({
+      title: 'Session Creation Failed',
+      message:
+        error instanceof Error ? error.message : 'An unexpected error occurred',
+    });
     throw error;
   }
 }

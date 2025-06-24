@@ -6,7 +6,11 @@ import React, { ReactNode } from 'react';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
       refetchOnWindowFocus: false,
+      gcTime: 1000 * 60 * 60,
+      staleTime: Infinity,
     },
   },
 });
