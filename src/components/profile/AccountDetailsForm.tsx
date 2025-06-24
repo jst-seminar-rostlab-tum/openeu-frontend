@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building, User as UserIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -43,6 +44,7 @@ export default function AccountDetailsForm({
   company_description,
 }: AccountDetailsFormProps) {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof accountDetailsSchema>>({
     resolver: zodResolver(accountDetailsSchema),
@@ -64,12 +66,13 @@ export default function AccountDetailsForm({
         newsletter_frequency: 'daily',
       };
       createProfile(profileData)
-        .then(() =>
+        .then(() => {
           ToastOperations.showSuccess({
             title: 'Profile created',
             message: 'Your profile was created successfully.',
-          }),
-        )
+          });
+          router.refresh();
+        })
         .catch((e) =>
           ToastOperations.showError({
             title: "Profile couldn't be created.",
