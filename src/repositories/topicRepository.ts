@@ -9,7 +9,7 @@ export const topicRepository = {
       if (!res.ok) {
         ToastOperations.showError({
           title: 'Error fetching topic',
-          message: `'Failed to fetch topic. Please try again later.'`,
+          message: 'Failed to fetch topic. Please try again later.',
         });
         throw new Error('Failed to fetch topics');
       }
