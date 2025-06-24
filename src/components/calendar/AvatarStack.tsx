@@ -11,15 +11,17 @@ type AvatarStackProps = {
 };
 
 export function AvatarStack({ members }: AvatarStackProps) {
-  const visibleMembers = members.slice(0, 3);
-  const remainingMembers = members.slice(3);
+  const [visibleMembers, remainingMembers] = [
+    members.slice(0, 3),
+    members.slice(3),
+  ];
 
   return (
     <div className="flex ml-auto -space-x-1 mb-1">
       {visibleMembers.map((member) => (
         <Tooltip key={member.id}>
           <TooltipTrigger asChild>
-            <Avatar className="w-6 h-6 ring-2 ring-ring grayscale">
+            <Avatar className="w-6 h-6 ring-1 ring-muted-foreground">
               <AvatarFallback className="w-6 h-6 bg-muted text-muted-foreground text-[10px]">
                 {member.given_name[0] + '' + member.family_name[0]}
               </AvatarFallback>
@@ -35,7 +37,7 @@ export function AvatarStack({ members }: AvatarStackProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <Avatar
-              className="w-6 h-6 ring-2 ring-ring grayscale"
+              className="w-6 h-6 ring-1 ring-muted-foreground shadow-md"
               style={{ zIndex: 100 - visibleMembers.length }}
             >
               <AvatarFallback className="w-6 h-6 bg-accent text-primary text-[10px]">
