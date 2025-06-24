@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { Building, MapPin } from 'lucide-react';
 import React, { ReactNode } from 'react';
 
+import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { dayCellVariants } from '@/components/calendar/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet';
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { members } from '@/domain/entities/mock/mock_members';
 import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
@@ -94,6 +96,7 @@ export function EventListDialog({
                   {event.location && getMeetingTypeShort(event.location)}
                 </span>
               </Badge>
+              <AvatarStack members={members}></AvatarStack>
             </div>
           </div>
         </div>

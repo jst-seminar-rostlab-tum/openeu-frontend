@@ -6,3 +6,5 @@ export type Meeting = components['schemas']['Meeting'] & {
   color: 'blue' | 'green' | 'red' | 'yellow' | 'purple' | 'orange';
   meeting_end_datetime: string;
 };
+
+export type Member = components['schemas']['Member'];
