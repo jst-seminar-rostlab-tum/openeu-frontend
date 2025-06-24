@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/map/Map';
-import { SearchBar } from '@/components/SearchBar/SearchBar';
+import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
@@ -22,6 +22,16 @@ export default function MapPage() {
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
+      <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
+        <SuggestedSearch
+          value={displayValue}
+          onValueChange={setDisplayValue}
+          onSearch={setSearchQuery}
+          isLoading={isFetching}
+          placeholder="Search meetings..."
+        />
+        <FilterModal showCountryDropdown={false} topics={topicLabels} />
+      </Card>
       <div className="absolute top-16 left-4 right-4 z-10 flex justify-end items-center px-2 gap-2">
         <div className="flex flex-wrap gap-2">
           {(() => {
@@ -50,20 +60,7 @@ export default function MapPage() {
           )}
         </div>
 
-        <Card className="flex flex-row gap-2 p-2">
-          <SearchBar
-            value={displayValue}
-            onValueChange={setDisplayValue}
-            onSearch={setSearchQuery}
-            isFetching={isFetching}
-            placeholder="Search meetings..."
-          />
-          <FilterModal
-            topics={topicLabels}
-            showCountryDropdown={false}
-            useWeekDefault={true}
-          />
-        </Card>
+
       </div>
     </div>
   );
