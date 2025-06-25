@@ -1,6 +1,6 @@
 'use client';
 
-import { format } from 'date-fns';
+import { format, isSameDay, isSameWeek, parseISO, startOfDay } from 'date-fns';
 import { Building, Calendar, MapPin } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { ReactNode } from 'react';
@@ -22,8 +22,7 @@ import { DialogHeader } from '@/components/ui/dialog';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { TMeetingColor } from '@/domain/types/calendar/types';
-import { cn, getWeekKey } from '@/lib/utils';
-import MapOperations from '@/operations/map/MapOperations';
+import { cn } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
@@ -66,54 +65,45 @@ export function EventListDialog({
     </span>
   );
 
+  const determineViewType = (
+    startDate: Date,
+    endDate?: Date,
+  ): 'day' | 'week' | 'month' => {
+    if (!endDate) return 'day';
+    const normalizedStart = startOfDay(startDate);
+    const normalizedEnd = startOfDay(endDate);
+
+    if (isSameDay(normalizedStart, normalizedEnd)) {
+      return 'day';
+    }
+
+    if (isSameWeek(normalizedStart, normalizedEnd, { weekStartsOn: 1 })) {
+      return 'week';
+    }
+
+    return 'month';
+  };
+
   const handleGoToCalendar = () => {
     if (!filters.start) return;
 
-    const start = filters.start;
-    const country = selectedCountry || '';
-    let view: 'day' | 'week' | 'month' = 'day';
+    try {
+      const startDate = parseISO(filters.start);
+      const endDate = filters.end ? parseISO(filters.end) : undefined;
+      const country = selectedCountry || '';
 
-    if (filters.end) {
-      const startDate = MapOperations.isoStringToDate(start);
-      const endDate = MapOperations.isoStringToDate(filters.end);
-
-      const normalize = (d: Date) =>
-        new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-      const startDay = normalize(startDate);
-      const endDay = normalize(endDate);
-
-      const isSameDay = startDay.getTime() === endDay.getTime();
-
-      const startWeek = getWeekKey(startDay);
-      const endWeek = getWeekKey(endDay);
-
-      const isSameWeek = startWeek === endWeek;
-
-      if (isSameDay) {
-        view = 'day';
-      } else if (isSameWeek) {
-        view = 'week';
-      } else {
-        view = 'month';
-      }
+      const view = determineViewType(startDate, endDate);
 
       const params = new URLSearchParams({
-        start,
-        end: filters.end,
-        country,
+        start: filters.start,
+        ...(filters.end && { end: filters.end }),
+        ...(country && { country }),
         view,
       });
 
-      router.push(`/calendar?${params.toString()}`);
-    } else {
-      const params = new URLSearchParams({
-        start,
-        country,
-        view: 'day',
-      });
-
-      router.push(`/calendar?${params.toString()}`);
+      router.push(`/calendar?${params}`);
+    } catch {
+      router.push(`/calendar?start=${filters.start}`);
     }
   };
 
