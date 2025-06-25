@@ -59,8 +59,6 @@ export default function MapPage() {
             </Badge>
           )}
         </div>
-
-
       </div>
     </div>
   );

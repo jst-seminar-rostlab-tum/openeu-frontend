@@ -7,4 +7,12 @@ export type Meeting = components['schemas']['Meeting'] & {
   meeting_end_datetime: string;
 };
 
-export type Member = components['schemas']['Member'];
+export type Member = {
+  id: string;
+  type: string;
+  label: string;
+  family_name: string;
+  given_name: string;
+  sort_label: string;
+  country: string;
+};

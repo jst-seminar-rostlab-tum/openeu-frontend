@@ -1,5 +1,8 @@
-import { format } from 'date-fns';
-import { Building, MapPin } from 'lucide-react';
+'use client';
+
+import { format, isSameDay, isSameWeek, parseISO, startOfDay } from 'date-fns';
+import { Building, Calendar, MapPin } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
@@ -8,15 +11,18 @@ import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { members } from '@/domain/entities/mock/mock_members';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
@@ -29,6 +35,8 @@ interface EventListDialogProps {
   endDate?: Date;
   title?: string;
   open?: boolean;
+  selectedCountry?: string;
+  isInCalendar?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -40,10 +48,14 @@ export function EventListDialog({
   endDate,
   title,
   open,
+  selectedCountry,
+  isInCalendar = true,
   onOpenChange,
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
+  const { filters } = useMeetingContext();
+  const router = useRouter();
 
   const defaultTrigger = (
     <span className="cursor-pointer">
@@ -54,6 +66,48 @@ export function EventListDialog({
       </span>
     </span>
   );
+
+  const determineViewType = (
+    startDate: Date,
+    endDate?: Date,
+  ): 'day' | 'week' | 'month' => {
+    if (!endDate) return 'day';
+    const normalizedStart = startOfDay(startDate);
+    const normalizedEnd = startOfDay(endDate);
+
+    if (isSameDay(normalizedStart, normalizedEnd)) {
+      return 'day';
+    }
+
+    if (isSameWeek(normalizedStart, normalizedEnd, { weekStartsOn: 1 })) {
+      return 'week';
+    }
+
+    return 'month';
+  };
+
+  const handleGoToCalendar = () => {
+    if (!filters.start) return;
+
+    try {
+      const startDate = parseISO(filters.start);
+      const endDate = filters.end ? parseISO(filters.end) : undefined;
+      const country = selectedCountry || '';
+
+      const view = determineViewType(startDate, endDate);
+
+      const params = new URLSearchParams({
+        start: filters.start,
+        ...(filters.end && { end: filters.end }),
+        ...(country && { country }),
+        view,
+      });
+
+      router.push(`/calendar?${params}`);
+    } catch {
+      router.push(`/calendar?start=${filters.start}`);
+    }
+  };
 
   function eventListEntry(event: Meeting, index: number) {
     const relevanceScore = event.similarity
@@ -127,6 +181,14 @@ export function EventListDialog({
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
           {cellEvents.map((event, index) => eventListEntry(event, index))}
         </div>
+        {!isInCalendar && (
+          <DialogFooter>
+            <Button variant="default" onClick={handleGoToCalendar}>
+              <Calendar className="h-5 w-5 pointer-events-none" />
+              Show in Calendar
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );
