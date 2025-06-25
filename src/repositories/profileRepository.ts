@@ -19,6 +19,15 @@ export const profileRepository = {
           company_description: profileData.companyDescription,
           topic_list: profileData.topicList,
           newsletter_frequency: profileData.newsletterFrequency,
+          user_type: profileData.userType,
+          company_stage: profileData.companyStage,
+          company_size: profileData.companySize,
+          primary_industry: profileData.primaryIndustry,
+          geographic_focus: profileData.geographicFocus,
+          business_model: profileData.businessModel,
+          regulatory_complexity: profileData.regulatoryComplexity,
+          key_regulatory_areas: profileData.keyRegulatoryAreas,
+          onboarding_completed: profileData.onboardingCompleted,
         }),
       });
       if (!res.ok) {
