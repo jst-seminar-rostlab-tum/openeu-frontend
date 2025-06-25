@@ -1,7 +1,7 @@
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function MonitorLoading() {
+export default function LegislationSkeleton() {
   return (
     <Section className="space-y-4">
       <div className="flex flex-col gap-4">
