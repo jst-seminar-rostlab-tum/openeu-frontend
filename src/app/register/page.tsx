@@ -1,5 +1,4 @@
 import { AlertCircleIcon } from 'lucide-react';
-import Image from 'next/image';
 
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -13,13 +12,9 @@ export default async function Page(props: {
     <div className="grid min-h-[calc(100vh-3rem)] lg:grid-cols-2">
       <div className="hidden lg:flex justify-center items-center sticky top-0 left-0">
         <div className="justify-center items-center flex flex-col">
-          <Image
-            src="/project-europe-no-bg.png"
-            alt="Project Europe"
-            className="object-fit dark:brightness-[0.2] dark:grayscale mb-20 dark:invert"
-            width={450}
-            height={149}
-          />
+          <h1 className="text-7xl mb-12 font-bold hover:text-accent-foreground transition-colors italic">
+            OpenEU
+          </h1>
           <p className="font-light text-lg text-center px-10">
             OpenEU transforms how citizens, businesses, and organizations engage
             with and participate in the EU, ensuring transparency and
