@@ -1,4 +1,5 @@
 import { Notification } from '@/domain/entities/notifications/generated-types';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/notifications`;
 
@@ -8,6 +9,10 @@ export async function fetchBackendNotifications(
   try {
     const response = await fetch(`${API_URL}/${userId}`);
     if (!response.ok) {
+      ToastOperations.showError({
+        title: 'Error fetching notifications',
+        message: 'Failed to fetch notifications. Please try again later.',
+      });
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const res: { data: Notification[] } = await response.json();

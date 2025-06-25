@@ -1,34 +1,33 @@
 'use client';
 
-import { Radio, RadioGroup } from '@headlessui/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MultiSelect } from '@/components/ui/multi-select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { signup } from '@/domain/actions/register';
+import { useTopics } from '@/domain/hooks/topicHook';
 import { cn } from '@/lib/utils';
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
-  const topics = [
-    { name: 'Topic 1' },
-    { name: 'Topic 2' },
-    { name: 'Topic 3' },
-    { name: 'Topic 4' },
-  ];
+  const topics = useTopics();
 
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-  const [newsletterSignup, setNewsletterSignup] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [redraw, setRedraw] = useState(false);
 
   return (
     <form
@@ -103,43 +102,21 @@ export function RegisterForm({
             disabled={loading}
           />
         </div>
-        <div className="hidden gap-3">
+        <div className="grid gap-3">
           <Label>Topics</Label>
-          <input type="hidden" value={selectedTopics.join(',')} name="topics" />
-          <RadioGroup
-            disabled={loading}
+          <MultiSelect
+            options={
+              topics.data?.map((option: { topic: string; id: string }) => ({
+                label: option.topic,
+                value: option.topic,
+              })) || []
+            }
             value={selectedTopics}
-            onChange={(v) => {
-              const temp = selectedTopics;
-              // @ts-expect-error wrong type provided by lib
-              if (temp.includes(v)) {
-                // @ts-expect-error wrong type provided by lib
-                const index = temp.indexOf(v);
-                temp.splice(index, 1);
-              } else {
-                // @ts-expect-error wrong type provided by lib
-                temp.push(v);
-              }
-              setSelectedTopics(temp);
-              setRedraw(!redraw);
-            }}
-            className="mt-2 grid grid-cols-3 gap-3"
-          >
-            {topics.map((option: { name: string }) => (
-              <Radio
-                key={option.name}
-                value={option.name}
-                className={cn(
-                  'cursor-pointer focus:outline-none flex items-center justify-center rounded-md px-3 py-3 text-sm ring-1 ring-gray-300 hover:bg-gray-50 data-[focus]:data-[checked]:ring-2 data-[focus]:ring-2 data-[focus]:ring-primary data-[focus]:ring-offset-2 sm:flex-1 [&:not([data-focus])]:[&:not([data-checked])]:ring-inset',
-                  selectedTopics.includes(option.name)
-                    ? ' bg-primary text-white ring-0 hover:bg-primary'
-                    : '',
-                )}
-              >
-                {option.name}
-              </Radio>
-            ))}
-          </RadioGroup>
+            onValueChange={setSelectedTopics}
+            placeholder="Select topics"
+            variant="inverted"
+            disabled={loading}
+          />
         </div>
         <div className="grid gap-3 mt-10">
           <Label htmlFor="email">E-Mail</Label>
@@ -164,26 +141,28 @@ export function RegisterForm({
             disabled={loading}
           />
         </div>
-        <div className="grid gap-3">
-          <div className="flex flex-row gap-2 items-center">
-            <input
-              type="hidden"
-              value={newsletterSignup ? 'true' : 'false'}
-              name="subscribed-newsletter"
-            />
-            <Checkbox
-              id="newsletter"
-              checked={newsletterSignup}
-              onCheckedChange={(checked) => {
-                setNewsletterSignup(!!checked);
-                return checked;
-              }}
-              disabled={loading}
-            />
-            <Label htmlFor="newsletter" className="text-sm font-normal">
-              Signup for daily, personalized newsletter
-            </Label>
-          </div>
+        <div className="overflow-x-auto">
+          <Label htmlFor="newsletter-frequency">Newsletter</Label>
+          <Select
+            name="newsletter-frequency"
+            defaultValue="daily"
+            disabled={loading}
+          >
+            <SelectTrigger className="w-full mt-3">
+              <SelectValue placeholder="Newsletter frequency" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="daily">
+                Sign up for daily, personalized newsletter
+              </SelectItem>
+              <SelectItem value="weekly">
+                Sign up for weekly, personalized newsletter
+              </SelectItem>
+              <SelectItem value="none">
+                Do not sign up for newsletter
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? LoadingSpinner() : 'Sign up'}

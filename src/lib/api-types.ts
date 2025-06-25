@@ -251,7 +251,7 @@ export interface components {
        */
       meeting_start_datetime: string;
       /** Meeting End Datetime */
-      meeting_end_datetime: string | null;
+      meeting_end_datetime?: string | null;
       /** Location */
       location?: string | null;
       /** Exact Location */
@@ -264,6 +264,18 @@ export interface components {
       similarity?: number | null;
       /** Topics */
       topic?: string | null;
+      /** Attendees */
+      attendees: string[] | null;
+      members?: components['schemas']['Member'][] | null;
+    };
+    Member: {
+      id: string;
+      type: string;
+      label: string;
+      family_name: string;
+      given_name: string;
+      sort_label: string;
+      country: string;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
@@ -331,8 +343,11 @@ export interface components {
       company_description: string;
       /** Topic List */
       topic_list: string[];
-      /** Subscribed Newsletter */
-      subscribed_newsletter: boolean;
+      /**
+       * Newsletter Frequency
+       * @enum {string}
+       */
+      newsletter_frequency: 'daily' | 'weekly' | 'none';
     };
     /** SessionsResponseModel */
     SessionsResponseModel: {
