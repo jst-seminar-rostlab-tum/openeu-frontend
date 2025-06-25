@@ -262,6 +262,7 @@ export default function MapComponent({
           title={`Meetings in ${selectedCountry} (${selectedCountryMeetings.length} events)`}
           selectedCountry={selectedCountry}
           open={dialogOpen}
+          isInCalendar={false}
           onOpenChange={setDialogOpen}
         />
       )}

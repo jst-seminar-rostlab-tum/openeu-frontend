@@ -1,5 +1,8 @@
+'use client';
+
 import { format } from 'date-fns';
 import { Building, Calendar, MapPin } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
 import { dayCellVariants } from '@/components/calendar/MonthViewCalendar/DayCell';
@@ -17,8 +20,9 @@ import {
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { TMeetingColor } from '@/domain/types/calendar/types';
-import { cn } from '@/lib/utils';
+import { cn, getWeekKey } from '@/lib/utils';
 import MapOperations from '@/operations/map/MapOperations';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
@@ -31,6 +35,7 @@ interface EventListDialogProps {
   title?: string;
   open?: boolean;
   selectedCountry?: string;
+  isInCalendar?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -43,10 +48,13 @@ export function EventListDialog({
   title,
   open,
   selectedCountry,
+  isInCalendar = true,
   onOpenChange,
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
+  const { filters } = useMeetingContext();
+  const router = useRouter();
 
   const defaultTrigger = (
     <span className="cursor-pointer">
@@ -59,13 +67,54 @@ export function EventListDialog({
   );
 
   const handleGoToCalendar = () => {
-    const start = MapOperations.dateToISOString(date);
-    const end = MapOperations.dateToISOString(endDate);
+    if (!filters.start) return;
+
+    const start = filters.start;
     const country = selectedCountry || '';
+    let view: 'day' | 'week' | 'month' = 'day';
 
-    const params = new URLSearchParams({ start, end, country });
+    if (filters.end) {
+      const startDate = MapOperations.isoStringToDate(start);
+      const endDate = MapOperations.isoStringToDate(filters.end);
 
-    window.location.href = `/calendar?${params.toString()}`;
+      const normalize = (d: Date) =>
+        new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+      const startDay = normalize(startDate);
+      const endDay = normalize(endDate);
+
+      const isSameDay = startDay.getTime() === endDay.getTime();
+
+      const startWeek = getWeekKey(startDay);
+      const endWeek = getWeekKey(endDay);
+
+      const isSameWeek = startWeek === endWeek;
+
+      if (isSameDay) {
+        view = 'day';
+      } else if (isSameWeek) {
+        view = 'week';
+      } else {
+        view = 'month';
+      }
+
+      const params = new URLSearchParams({
+        start,
+        end: filters.end,
+        country,
+        view,
+      });
+
+      router.push(`/calendar?${params.toString()}`);
+    } else {
+      const params = new URLSearchParams({
+        start,
+        country,
+        view: 'day',
+      });
+
+      router.push(`/calendar?${params.toString()}`);
+    }
   };
 
   function eventListEntry(event: Meeting, index: number) {
@@ -139,12 +188,14 @@ export function EventListDialog({
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
           {cellEvents.map((event, index) => eventListEntry(event, index))}
         </div>
-        <DialogFooter>
-          <Button variant="default" onClick={handleGoToCalendar}>
-            <Calendar className="h-5 w-5 pointer-events-none" />
-            Show in Calendar
-          </Button>
-        </DialogFooter>
+        {!isInCalendar && (
+          <DialogFooter>
+            <Button variant="default" onClick={handleGoToCalendar}>
+              <Calendar className="h-5 w-5 pointer-events-none" />
+              Show in Calendar
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );
