@@ -266,16 +266,6 @@ export interface components {
       topic?: string | null;
       /** Attendees */
       attendees: string[] | null;
-      members?: components['schemas']['Member'][] | null;
-    };
-    Member: {
-      id: string;
-      type: string;
-      label: string;
-      family_name: string;
-      given_name: string;
-      sort_label: string;
-      country: string;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
