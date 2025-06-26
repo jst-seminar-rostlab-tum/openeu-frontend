@@ -28,13 +28,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { loginWithGoogle } from '@/domain/actions/login-with-google';
 import { saveToCalendar } from '@/domain/actions/save-to-calendar';
 import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { createClient } from '@/lib/supabase/client';
 import {
   formatTime,
   getMeetingType,
 } from '@/operations/meeting/CalendarHelpers';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface IProps {
   event: MeetingData;
@@ -46,6 +47,8 @@ export function EventDetailsDialog({ event, children }: IProps) {
   const endDate = parseISO(event.meeting_end_datetime);
 
   const [calendarLoading, setCalendarLoading] = useState(false);
+
+  const supabase = createClient();
 
   return (
     <Dialog>
@@ -161,15 +164,35 @@ export function EventDetailsDialog({ event, children }: IProps) {
               setCalendarLoading(true);
               saveToCalendar(
                 `${event.title} (${getMeetingType(event.source_table)})`,
-                event.description,
+                event.description +
+                  (event.meeting_url ? ` (${event.meeting_url})` : ''),
                 event.location,
                 event.meeting_start_datetime,
                 event.meeting_end_datetime,
               ).then(async (needsGoogleAuth: boolean) => {
                 if (needsGoogleAuth) {
-                  await loginWithGoogle();
+                  ToastOperations.showError({
+                    title: 'Error',
+                    message:
+                      'Please link your Google account to save events to your calendar.',
+                  });
+                  await supabase.auth.linkIdentity({
+                    provider: 'google',
+                    options: {
+                      redirectTo: `${window.location.origin}/auth/callback`,
+                      queryParams: {
+                        access_type: 'offline',
+                        prompt: 'consent',
+                      },
+                      scopes: 'https://www.googleapis.com/auth/calendar',
+                    },
+                  });
                   setCalendarLoading(false);
                 } else {
+                  ToastOperations.showSuccess({
+                    title: 'Success',
+                    message: 'Event saved to your calendar.',
+                  });
                   setCalendarLoading(false);
                 }
               });
