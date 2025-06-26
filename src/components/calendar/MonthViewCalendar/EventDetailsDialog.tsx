@@ -11,9 +11,11 @@ import {
   Scale,
   Tag,
   Text,
+  User,
 } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 
+import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
@@ -29,7 +31,8 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { saveToCalendar } from '@/domain/actions/save-to-calendar';
-import type { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { members } from '@/domain/entities/mock/mock_members';
 import { createClient } from '@/lib/supabase/client';
 import {
   formatTime,
@@ -38,7 +41,7 @@ import {
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface IProps {
-  event: MeetingData;
+  event: Meeting;
   children: ReactNode;
 }
 
@@ -67,7 +70,9 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <TagBadge className="max-w-full mt-1">
                   <span
                     className="truncate direction-rtl text-left"
-                    title={event.location}
+                    title={
+                      event.location ? event.location : 'No location specified'
+                    }
                   >
                     {event.location}
                   </span>
@@ -137,11 +142,18 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <div className="flex items-start gap-2 col-span-full">
                 <Scale className="mt-1 size-4 shrink-0 text-muted-foreground" />
                 <div className="w-full">
-                  <p className="mb-2 text-sm">Relevance</p>
+                  <p className="text-sm font-medium">Relevance</p>
                   <RelevanceScore meeting={event} type={'bar'} />
                 </div>
               </div>
             )}
+            <div className="flex items-start gap-2">
+              <User className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <div className="w-full">
+                <p className="mb-1 text-sm font-medium">Members</p>
+                <AvatarStack members={members}></AvatarStack>
+              </div>
+            </div>
           </div>
         </ScrollArea>
         <DialogFooter>
@@ -166,7 +178,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 `${event.title} (${getMeetingType(event.source_table)})`,
                 event.description +
                   (event.meeting_url ? ` (${event.meeting_url})` : ''),
-                event.location,
+                event.location ? event.location : '',
                 event.meeting_start_datetime,
                 event.meeting_end_datetime,
               ).then(async (needsGoogleAuth: boolean) => {

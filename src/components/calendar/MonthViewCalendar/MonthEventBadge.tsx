@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority';
 import { endOfDay, isSameDay, parseISO, startOfDay } from 'date-fns';
 
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { cn } from '@/lib/utils';
 import { formatTime } from '@/operations/meeting/CalendarHelpers';
 
@@ -52,7 +52,7 @@ interface IProps
     VariantProps<typeof eventBadgeVariants>,
     'color' | 'multiDayPosition'
   > {
-  event: MeetingData;
+  event: Meeting;
   cellDate: Date;
   eventCurrentDay?: number;
   eventTotalDays?: number;

@@ -1,32 +1,42 @@
-import { format } from 'date-fns';
-import { Building, MapPin } from 'lucide-react';
+'use client';
+
+import { format, isSameDay, isSameWeek, parseISO, startOfDay } from 'date-fns';
+import { Building, Calendar, MapPin } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
+import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { dayCellVariants } from '@/components/calendar/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet';
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
-import { MeetingData } from '@/domain/entities/calendar/MeetingData';
+import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { members } from '@/domain/entities/mock/mock_members';
+import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
   date: Date;
-  events: MeetingData[];
+  events: Meeting[];
   MAX_VISIBLE_EVENTS?: number;
   children?: ReactNode;
   endDate?: Date;
   title?: string;
   open?: boolean;
+  selectedCountry?: string;
+  isInCalendar?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -38,10 +48,14 @@ export function EventListDialog({
   endDate,
   title,
   open,
+  selectedCountry,
+  isInCalendar = true,
   onOpenChange,
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - MAX_VISIBLE_EVENTS, 0);
+  const { filters } = useMeetingContext();
+  const router = useRouter();
 
   const defaultTrigger = (
     <span className="cursor-pointer">
@@ -53,7 +67,49 @@ export function EventListDialog({
     </span>
   );
 
-  function eventListEntry(event: MeetingData, index: number) {
+  const determineViewType = (
+    startDate: Date,
+    endDate?: Date,
+  ): 'day' | 'week' | 'month' => {
+    if (!endDate) return 'day';
+    const normalizedStart = startOfDay(startDate);
+    const normalizedEnd = startOfDay(endDate);
+
+    if (isSameDay(normalizedStart, normalizedEnd)) {
+      return 'day';
+    }
+
+    if (isSameWeek(normalizedStart, normalizedEnd, { weekStartsOn: 1 })) {
+      return 'week';
+    }
+
+    return 'month';
+  };
+
+  const handleGoToCalendar = () => {
+    if (!filters.start) return;
+
+    try {
+      const startDate = parseISO(filters.start);
+      const endDate = filters.end ? parseISO(filters.end) : undefined;
+      const country = selectedCountry || '';
+
+      const view = determineViewType(startDate, endDate);
+
+      const params = new URLSearchParams({
+        start: filters.start,
+        ...(filters.end && { end: filters.end }),
+        ...(country && { country }),
+        view,
+      });
+
+      router.push(`/calendar?${params}`);
+    } catch {
+      router.push(`/calendar?start=${filters.start}`);
+    }
+  };
+
+  function eventListEntry(event: Meeting, index: number) {
     const relevanceScore = event.similarity
       ? Math.round(event.similarity * 100)
       : null;
@@ -87,11 +143,14 @@ export function EventListDialog({
                 <MapPin className="shrink-0 w-3 h-3" />
                 <span
                   className="truncate min-w-0 direction-rtl text-left"
-                  title={getMeetingTypeShort(event.location)}
+                  title={getMeetingTypeShort(
+                    event.location ? event.location : 'No location specified',
+                  )}
                 >
-                  {getMeetingTypeShort(event.location)}
+                  {event.location && getMeetingTypeShort(event.location)}
                 </span>
               </Badge>
+              <AvatarStack members={members}></AvatarStack>
             </div>
           </div>
         </div>
@@ -122,6 +181,14 @@ export function EventListDialog({
         <div className="max-h-[60vh] overflow-y-auto space-y-2">
           {cellEvents.map((event, index) => eventListEntry(event, index))}
         </div>
+        {!isInCalendar && (
+          <DialogFooter>
+            <Button variant="default" onClick={handleGoToCalendar}>
+              <Calendar className="h-5 w-5 pointer-events-none" />
+              Show in Calendar
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

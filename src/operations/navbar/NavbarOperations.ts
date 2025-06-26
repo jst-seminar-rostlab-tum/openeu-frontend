@@ -20,6 +20,10 @@ export default class NavbarOperations {
         title: 'Inbox',
         href: '/inbox',
       },
+      {
+        title: 'Monitor',
+        href: '/monitor',
+      },
     ];
   }
 }

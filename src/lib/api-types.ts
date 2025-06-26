@@ -262,6 +262,10 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
+      /** Topics */
+      topic?: string | null;
+      /** Attendees */
+      attendees: string[] | null;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
@@ -329,8 +333,11 @@ export interface components {
       company_description: string;
       /** Topic List */
       topic_list: string[];
-      /** Subscribed Newsletter */
-      subscribed_newsletter: boolean;
+      /**
+       * Newsletter Frequency
+       * @enum {string}
+       */
+      newsletter_frequency: 'daily' | 'weekly' | 'none';
     };
     /** SessionsResponseModel */
     SessionsResponseModel: {
