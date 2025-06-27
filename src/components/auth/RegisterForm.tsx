@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { europeanCountries } from '@/components/map/constants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,6 +29,11 @@ export function RegisterForm({
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const countries = europeanCountries.map((country) => ({
+    label: country,
+    value: country,
+  }));
 
   return (
     <form
@@ -88,13 +94,7 @@ export function RegisterForm({
             name="country"
           />
           <MultiSelect
-            options={[
-              { label: 'Germany', value: 'de' },
-              { label: 'Spain', value: 'es' },
-              { label: 'Austria', value: 'at' },
-              { label: 'Belgium', value: 'be' },
-              { label: 'Poland', value: 'pl' },
-            ]}
+            options={countries}
             value={selectedCountries}
             onValueChange={setSelectedCountries}
             placeholder="Select countries"
@@ -108,7 +108,7 @@ export function RegisterForm({
             options={
               topics.data?.map((option: { topic: string; id: string }) => ({
                 label: option.topic,
-                value: option.topic,
+                value: option.id,
               })) || []
             }
             value={selectedTopics}
