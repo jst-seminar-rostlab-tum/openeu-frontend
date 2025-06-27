@@ -10,15 +10,7 @@ export const profileRepository = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id: profileData.id,
-          name: profileData.name,
-          surname: profileData.surname,
-          company_name: profileData.company_name,
-          company_description: profileData.company_description,
-          topic_list: profileData.topic_list,
-          newsletter_frequency: profileData.newsletter_frequency,
-        }),
+        body: JSON.stringify(profileData),
       });
       if (!res.ok) {
         throw new Error('Failed to create profile');
