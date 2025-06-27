@@ -13,16 +13,30 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /**
-     * Create Profile
-     * @description Create or update a user profile: compute embedding from company_name, company_description, and topic_list,
-     *     then upsert the record into Supabase.
-     */
+    /** Create Profile */
     post: operations['create_profile_profile__post'];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
+    trace?: never;
+  };
+  '/profile/{user_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get User Profile */
+    get: operations['get_user_profile_profile__user_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update User Profile */
+    patch: operations['update_user_profile_profile__user_id__patch'];
     trace?: never;
   };
   '/meetings': {
@@ -198,6 +212,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Suggestions */
+    get: operations['get_suggestions_suggestions_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/': {
     parameters: {
       query?: never;
@@ -262,10 +293,6 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
-      /** Topics */
-      topic?: string | null;
-      /** Attendees */
-      attendees: string[] | null;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
@@ -331,13 +358,90 @@ export interface components {
       company_name: string;
       /** Company Description */
       company_description: string;
-      /** Topic List */
-      topic_list: string[];
+      /** Topic Id List */
+      topic_id_list: string[];
+      /** Countries */
+      countries: string[];
       /**
        * Newsletter Frequency
        * @enum {string}
        */
       newsletter_frequency: 'daily' | 'weekly' | 'none';
+    };
+    /** ProfileDB */
+    ProfileDB: {
+      /**
+       * Id
+       * Format: uuid4
+       */
+      id: string;
+      /** Name */
+      name: string;
+      /** Surname */
+      surname: string;
+      /** Company Name */
+      company_name: string;
+      /** Company Description */
+      company_description: string;
+      /** Topic Id List */
+      topic_id_list: string[];
+      /** Countries */
+      countries: string[];
+      /**
+       * Newsletter Frequency
+       * @enum {string}
+       */
+      newsletter_frequency: 'daily' | 'weekly' | 'none';
+      /** Embedding */
+      embedding: number[];
+    };
+    /** ProfileReturn */
+    ProfileReturn: {
+      /**
+       * Id
+       * Format: uuid4
+       */
+      id: string;
+      /** Name */
+      name: string;
+      /** Surname */
+      surname: string;
+      /** Company Name */
+      company_name: string;
+      /** Company Description */
+      company_description: string;
+      /** Topic Id List */
+      topic_id_list: string[];
+      /** Countries */
+      countries: string[];
+      /**
+       * Newsletter Frequency
+       * @enum {string}
+       */
+      newsletter_frequency: 'daily' | 'weekly' | 'none';
+      /** Topic Ids */
+      topic_ids: string[];
+      /** Topics */
+      topics: string[];
+      /** Embedding */
+      embedding: number[];
+    };
+    /** ProfileUpdate */
+    ProfileUpdate: {
+      /** Name */
+      name?: string | null;
+      /** Surname */
+      surname?: string | null;
+      /** Company Name */
+      company_name?: string | null;
+      /** Company Description */
+      company_description?: string | null;
+      /** Topic Id List */
+      topic_id_list?: string[] | null;
+      /** Countries */
+      countries?: string[] | null;
+      /** Newsletter Frequency */
+      newsletter_frequency?: ('daily' | 'weekly' | 'none') | null;
     };
     /** SessionsResponseModel */
     SessionsResponseModel: {
@@ -347,6 +451,18 @@ export interface components {
       user_id: string;
       /** Title */
       title: string;
+    };
+    /** Suggestion */
+    Suggestion: {
+      /** Title */
+      title: string;
+      /** Similarity Score */
+      similarity_score: number;
+    };
+    /** SuggestionResponse */
+    SuggestionResponse: {
+      /** Data */
+      data: components['schemas']['Suggestion'][];
     };
     /** Topic */
     Topic: {
@@ -406,6 +522,72 @@ export interface operations {
       };
     };
   };
+  get_user_profile_profile__user_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProfileReturn'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  update_user_profile_profile__user_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProfileUpdate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProfileDB'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
   get_meetings_meetings_get: {
     parameters: {
       query?: {
@@ -420,6 +602,10 @@ export interface operations {
         topics?: string[] | null;
         /** @description Filter by country (e.g., 'Austria', 'European Union') */
         country?: string | null;
+        /** @description User ID for personalized meeting recommendations */
+        user_id?: string | null;
+        /** @description Filter by source table(s) (repeat or comma-separated) */
+        source_table?: string[] | null;
       };
       header?: never;
       path?: never;
@@ -708,6 +894,40 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['Notification'][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_suggestions_suggestions_get: {
+    parameters: {
+      query: {
+        /** @description Fuzzy text to search meeting titles */
+        query: string;
+        /** @description Number of suggestions to return */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SuggestionResponse'];
         };
       };
       /** @description Validation Error */

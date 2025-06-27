@@ -1,3 +1,4 @@
+import type { Profile } from '@/domain/entities/profile/generated-types';
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -31,6 +32,27 @@ export const profileRepository = {
       return 'success';
     } catch {
       return 'error';
+    }
+  },
+
+  async getProfile(userId: string): Promise<Profile | null> {
+    try {
+      const res = await fetch(`${API_URL}/${userId}`);
+      if (!res.ok) {
+        ToastOperations.showError({
+          title: 'Error fetching profile',
+          message: 'Failed to fetch profile. Please try again later.',
+        });
+        return null;
+      }
+      const data = await res.json();
+      return data as Profile;
+    } catch {
+      ToastOperations.showError({
+        title: 'Error fetching profile',
+        message: 'Failed to fetch profile. Please try again later.',
+      });
+      return null;
     }
   },
 };

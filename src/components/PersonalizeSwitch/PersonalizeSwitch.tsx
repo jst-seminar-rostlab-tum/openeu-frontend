@@ -3,14 +3,15 @@ import * as React from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
+import { useProfile } from '@/domain/hooks/profileHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 
 export default function PersonalizeSwitch() {
   const { setFilters, filters } = useMeetingContext();
   const { user } = useAuth();
 
-  const hasProfile = user?.user_metadata['incompleteProfile'];
-
+  const { data: profile } = useProfile(user?.id);
+  const hasProfile = !!profile;
   const [checked, setChecked] = React.useState(false);
 
   React.useEffect(() => {
