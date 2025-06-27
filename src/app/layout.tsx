@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import React from 'react';
 
+import Footer from '@/components/Footer';
 import NavBar from '@/components/navigation/NavBar';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -43,6 +44,7 @@ export default async function RootLayout({
                 <main className="mt-12 min-h-[calc(100vh-3rem)]">
                   {children}
                 </main>
+                <Footer />
                 <Toaster />
               </TooltipProvider>
             </AuthProvider>
