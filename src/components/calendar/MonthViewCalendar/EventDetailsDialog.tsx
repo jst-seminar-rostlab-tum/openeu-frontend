@@ -8,7 +8,6 @@ import {
   ExternalLink,
   MapPin,
   Scale,
-  Tag,
   Text,
   User,
 } from 'lucide-react';
@@ -113,18 +112,6 @@ export function EventDetailsDialog({ event, children }: IProps) {
                   <p className="text-sm text-muted-foreground">
                     {event.description}
                   </p>
-                </div>
-              </div>
-            )}
-
-            {event?.topic && (
-              <div className="flex items-start gap-2">
-                <Tag className="mt-1 size-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-medium">Topic</p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <TagBadge>{event.topic}</TagBadge>
-                  </div>
                 </div>
               </div>
             )}
