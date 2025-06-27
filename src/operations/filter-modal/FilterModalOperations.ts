@@ -1,5 +1,9 @@
 import { FilterModalState } from '@/domain/entities/FilterModalState';
-import { getCurrentMonthRange } from '@/operations/meeting/CalendarHelpers';
+import { getCurrentWeekRange } from '@/lib/formatters';
+import {
+  getCurrentMonthRange,
+  MEETING_TYPE_MAPPING,
+} from '@/operations/meeting/CalendarHelpers';
 const { now } = getCurrentMonthRange();
 
 export default class FilterModalOperations {
@@ -36,13 +40,22 @@ export default class FilterModalOperations {
     ];
   }
 
-  static getDefaultState(): FilterModalState {
+  static getDefaultState(useWeekDefault = false): FilterModalState {
+    const { startDate, endDate } = getCurrentWeekRange();
     return {
-      startDate: now,
-      endDate: now,
+      startDate: useWeekDefault ? startDate : now,
+      endDate: useWeekDefault ? endDate : now,
       country: '',
       topics: [],
+      institutions: [],
     };
+  }
+
+  static getInstitutions(): { label: string; value: string }[] {
+    return Object.values(MEETING_TYPE_MAPPING).map((institution) => ({
+      label: institution,
+      value: institution,
+    }));
   }
 
   static validateDateRange(startDate: Date, endDate: Date): boolean {

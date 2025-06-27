@@ -12,7 +12,6 @@ export function RelevanceScore({
   textClassName = 'text-white',
 }: RelevanceScoreProps) {
   const isBar = type === 'bar';
-  const color = meeting.color;
   const relevanceScore = isBar
     ? Math.round(meeting.similarity! * 10000) / 100
     : Math.round(meeting.similarity! * 100);
@@ -43,7 +42,7 @@ export function RelevanceScore({
             cy="18"
             r="16"
             fill="none"
-            style={{ stroke: `var(--color-${color}-300)` }}
+            style={{ stroke: `var(--color-${meeting.color}-300)` }}
             strokeWidth="3"
           ></circle>
           <circle
@@ -51,7 +50,7 @@ export function RelevanceScore({
             cy="18"
             r="16"
             fill="none"
-            style={{ stroke: `var(--color-${color}-800)` }}
+            style={{ stroke: `var(--color-${meeting.color}-800)` }}
             strokeWidth="3"
             strokeDasharray="100"
             strokeDashoffset={relevanceScore}

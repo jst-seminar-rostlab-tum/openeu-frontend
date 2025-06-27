@@ -1,6 +1,6 @@
 'use client';
 
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import {
   Building,
   Calendar,
@@ -10,9 +10,11 @@ import {
   Scale,
   Tag,
   Text,
+  User,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 
+import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Button } from '@/components/ui/button';
@@ -27,6 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { members } from '@/domain/entities/mock/mock_members';
 import {
   formatTime,
   getMeetingType,
@@ -38,8 +41,8 @@ interface IProps {
 }
 
 export function EventDetailsDialog({ event, children }: IProps) {
-  const startDate = event.meeting_start_datetime;
-  const endDate = event.meeting_end_datetime;
+  const startDate = parseISO(event.meeting_start_datetime);
+  const endDate = parseISO(event.meeting_end_datetime);
 
   return (
     <Dialog>
@@ -58,7 +61,9 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <TagBadge className="max-w-full mt-1">
                   <span
                     className="truncate direction-rtl text-left"
-                    title={event.location!}
+                    title={
+                      event.location ? event.location : 'No location specified'
+                    }
                   >
                     {event.location}
                   </span>
@@ -83,7 +88,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <p className="text-sm text-muted-foreground">
                   {format(startDate, 'EEEE dd MMMM')}
                   <span className="mx-1">at</span>
-                  {formatTime(event.meeting_start_datetime, true)}
+                  {formatTime(parseISO(event.meeting_start_datetime), true)}
                 </p>
               </div>
             </div>
@@ -95,7 +100,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 <p className="text-sm text-muted-foreground">
                   {format(endDate, 'EEEE dd MMMM')}
                   <span className="mx-1">at</span>
-                  {formatTime(event.meeting_end_datetime, true)}
+                  {formatTime(parseISO(event.meeting_end_datetime), true)}
                 </p>
               </div>
             </div>
@@ -128,11 +133,18 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <div className="flex items-start gap-2 col-span-full">
                 <Scale className="mt-1 size-4 shrink-0 text-muted-foreground" />
                 <div className="w-full">
-                  <p className="mb-2 text-sm">Relevance</p>
+                  <p className="text-sm font-medium">Relevance</p>
                   <RelevanceScore meeting={event} type={'bar'} />
                 </div>
               </div>
             )}
+            <div className="flex items-start gap-2">
+              <User className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <div className="w-full">
+                <p className="mb-1 text-sm font-medium">Members</p>
+                <AvatarStack members={members}></AvatarStack>
+              </div>
+            </div>
           </div>
         </ScrollArea>
         <DialogFooter>

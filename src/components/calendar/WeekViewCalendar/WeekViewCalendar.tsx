@@ -1,4 +1,4 @@
-import { addDays, format, isSameDay, startOfWeek } from 'date-fns';
+import { addDays, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
 import { motion } from 'framer-motion';
 
 import { DroppableArea } from '@/components/calendar/MonthViewCalendar/DroppableArea';
@@ -114,8 +114,8 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                 {weekDays.map((day, dayIndex) => {
                   const dayEvents = singleDayEvents.filter(
                     (event) =>
-                      isSameDay(event.meeting_start_datetime, day) ||
-                      isSameDay(event.meeting_end_datetime, day),
+                      isSameDay(parseISO(event.meeting_start_datetime), day) ||
+                      isSameDay(parseISO(event.meeting_end_datetime), day),
                   );
                   const groupedEvents = groupEvents(dayEvents);
 

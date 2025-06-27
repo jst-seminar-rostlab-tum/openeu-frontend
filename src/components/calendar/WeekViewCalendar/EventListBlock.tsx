@@ -1,13 +1,16 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
-import { differenceInMinutes } from 'date-fns';
+import { differenceInMinutes, parseISO } from 'date-fns';
 import type { HTMLAttributes } from 'react';
 
 import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
-import { formatTime } from '@/operations/meeting/CalendarHelpers';
+import {
+  formatTime,
+  getColorFromId,
+} from '@/operations/meeting/CalendarHelpers';
 
 const calendarWeekEventCardVariants = cva(
   'flex select-none flex-col gap-0.5 truncate whitespace-nowrap rounded-md border px-2 py-1.5 text-xs focus-visible:outline-offset-2',
@@ -56,12 +59,12 @@ interface IProps
 export function EventListBlock({ events, className }: IProps) {
   const { badgeVariant, use24HourFormat } = useMeetingContext();
 
-  const start = events[0].meeting_start_datetime;
-  const end = events[0].meeting_end_datetime;
+  const start = parseISO(events[0].meeting_start_datetime);
+  const end = parseISO(events[0].meeting_end_datetime);
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
-  const eventColor = events[0].color;
+  const eventColor = getColorFromId(events[0].meeting_id);
   const color = (
     badgeVariant === 'dot' ? `${eventColor}-dot` : eventColor
   ) as VariantProps<typeof calendarWeekEventCardVariants>['color'];

@@ -6,6 +6,7 @@ import {
   isSameMonth,
   isSameWeek,
   isSameYear,
+  parseISO,
 } from 'date-fns';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 
@@ -16,11 +17,14 @@ import {
 } from '@/domain/hooks/meetingHooks';
 import { useUrlSync } from '@/domain/hooks/useCalendarUrlSync';
 import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
+import { getCurrentWeekRange } from '@/lib/formatters';
 import {
   calculateEndDate,
   calculateStartDate,
   getColorFromId,
   getCurrentMonthRange,
+  getInstitutionFromSourceTable,
+  getSourceTableFromInstitution,
 } from '@/operations/meeting/CalendarHelpers';
 
 const { now } = getCurrentMonthRange();
@@ -35,8 +39,10 @@ export interface IMeetingContext {
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
   selectedTopics: string[];
+  selectedInstitutions: string[];
   setSelectedTopics: (topics: string[]) => void;
   setSelectedCountry: (country: string) => void;
+  setSelectedInstitutions: (institutions: string[]) => void;
   meetings: Meeting[];
   isLoading: boolean;
   isFetching: boolean;
@@ -61,6 +67,7 @@ interface MeetingProviderProps {
   view?: TCalendarView;
   updateUrl?: boolean;
   excludeUrlParams?: string[];
+  useWeekDefault?: boolean;
 }
 
 export function MeetingProvider({
@@ -68,6 +75,7 @@ export function MeetingProvider({
   view = 'month',
   updateUrl = true,
   excludeUrlParams = [],
+  useWeekDefault = false,
 }: MeetingProviderProps) {
   const { urlState, syncFiltersToUrl } = useUrlSync({
     excludeParams: excludeUrlParams,
@@ -75,7 +83,8 @@ export function MeetingProvider({
 
   // Initialize state from URL (single source of truth pattern)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
-    return urlState.startDate || now;
+    const defaultDate = useWeekDefault ? getCurrentWeekRange().startDate : now;
+    return urlState.startDate || defaultDate;
   });
 
   // Initialize view from URL, fallback to prop
@@ -89,6 +98,9 @@ export function MeetingProvider({
   );
   const [selectedTopics, setSelectedTopics] = useState<string[]>(
     urlState.selectedTopics || [],
+  );
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>(
+    urlState.selectedInstitutions || [],
   );
 
   const [selectedColors] = useState<TMeetingColor[]>([]);
@@ -113,10 +125,21 @@ export function MeetingProvider({
       // Use custom date range from FilterModal
       start = customStart;
       end = customEnd;
+    } else if (urlState.startDate && urlState.endDate) {
+      // Use URL dates if available
+      start = urlState.startDate.toISOString();
+      end = urlState.endDate.toISOString();
     } else {
-      // Use calculated range from selectedDate + view for normal navigation
-      start = calculateStartDate(selectedDate, currentView).toISOString();
-      end = calculateEndDate(selectedDate, currentView).toISOString();
+      // Use default range based on context configuration
+      if (useWeekDefault) {
+        const { startDate: weekStart, endDate: weekEnd } =
+          getCurrentWeekRange();
+        start = weekStart.toISOString();
+        end = weekEnd.toISOString();
+      } else {
+        start = calculateStartDate(selectedDate, currentView).toISOString();
+        end = calculateEndDate(selectedDate, currentView).toISOString();
+      }
     }
 
     return {
@@ -125,6 +148,10 @@ export function MeetingProvider({
       query: searchQuery || undefined,
       country: selectedCountry || undefined,
       topics: selectedTopics.length > 0 ? selectedTopics : undefined,
+      source_table:
+        selectedInstitutions.length > 0
+          ? selectedInstitutions.map(getSourceTableFromInstitution)
+          : undefined,
     };
   }, [
     selectedDate,
@@ -134,6 +161,9 @@ export function MeetingProvider({
     isCustomRange,
     customStart,
     customEnd,
+    urlState.startDate,
+    urlState.endDate,
+    useWeekDefault,
   ]);
 
   useEffect(() => {
@@ -159,9 +189,9 @@ export function MeetingProvider({
         !meeting.meeting_end_datetime ||
         meeting.meeting_start_datetime == meeting.meeting_end_datetime
       ) {
-        const startTime = meeting.meeting_start_datetime;
+        const startTime = parseISO(meeting.meeting_start_datetime);
         const endTime = addHours(startTime, 1.5);
-        processedMeeting.meeting_end_datetime = endTime;
+        processedMeeting.meeting_end_datetime = endTime.toISOString();
       }
 
       // Assign color
@@ -203,6 +233,10 @@ export function MeetingProvider({
     setSelectedTopics(topics);
   };
 
+  const handleSetSelectedInstitutions = (institutions: string[]) => {
+    setSelectedInstitutions(institutions);
+  };
+
   const handleSetFilters = (newFilters: GetMeetingsQueryParams) => {
     // Update basic state
     if (newFilters.query !== undefined) {
@@ -217,6 +251,12 @@ export function MeetingProvider({
 
     if (newFilters.topics != undefined) {
       setSelectedTopics(newFilters.topics || []);
+    }
+
+    if (newFilters.source_table != undefined) {
+      setSelectedInstitutions(
+        newFilters.source_table.map(getInstitutionFromSourceTable) || [],
+      );
     }
 
     // Handle custom date ranges from FilterModal
@@ -242,7 +282,7 @@ export function MeetingProvider({
 
     const compareFn = compareFns[viewParam];
     return eventsParam.filter((event) =>
-      compareFn(event.meeting_start_datetime, selectedDateParam),
+      compareFn(parseISO(event.meeting_start_datetime), selectedDateParam),
     ).length;
   }
 
@@ -258,6 +298,8 @@ export function MeetingProvider({
     setSelectedCountry: handleSetSelectedCountry,
     selectedTopics,
     setSelectedTopics: handleSetSelectedTopics,
+    selectedInstitutions,
+    setSelectedInstitutions: handleSetSelectedInstitutions,
     meetings,
     isLoading,
     isFetching,

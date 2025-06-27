@@ -94,8 +94,9 @@ export function getEventsCount(
   };
 
   const compareFn = compareFns[view];
-  return events.filter((event) => compareFn(event.meeting_start_datetime, date))
-    .length;
+  return events.filter((event) =>
+    compareFn(parseISO(event.meeting_start_datetime), date),
+  ).length;
 }
 
 export function getMonthCellEvents(
@@ -105,8 +106,8 @@ export function getMonthCellEvents(
 ): Meeting[] {
   const dayStart = startOfDay(date);
   const eventsForDate: Meeting[] = events.filter((event) => {
-    const eventStart = event.meeting_start_datetime;
-    const eventEnd = event.meeting_end_datetime;
+    const eventStart = parseISO(event.meeting_start_datetime);
+    const eventEnd = parseISO(event.meeting_end_datetime);
     return (
       (dayStart >= eventStart && dayStart <= eventEnd) ||
       isSameDay(dayStart, eventStart) ||
@@ -118,8 +119,8 @@ export function getMonthCellEvents(
       ...event,
       position: eventPositions[Number(event.meeting_id)] ?? -1,
       isMultiDay: !isSameDay(
-        event.meeting_start_datetime,
-        event.meeting_end_datetime,
+        parseISO(event.meeting_start_datetime),
+        parseISO(event.meeting_end_datetime),
       ),
     }))
     .sort((a, b) => {
@@ -188,43 +189,30 @@ export function calculateMonthEventPositions(
 
     const sortedEvents = [
       ...multiDayEvents.sort((a, b) => {
-        if (
-          a.meeting_end_datetime instanceof Date &&
-          a.meeting_start_datetime instanceof Date
-        ) {
-          const aDuration = differenceInDays(
-            a.meeting_end_datetime,
-            a.meeting_start_datetime,
-          );
-          const bDuration = differenceInDays(
-            b.meeting_end_datetime,
-            b.meeting_start_datetime,
-          );
-          return (
-            bDuration - aDuration ||
-            a.meeting_start_datetime.getTime() -
-              b.meeting_start_datetime.getTime()
-          );
-        }
-        return 0;
+        const aDuration = differenceInDays(
+          parseISO(a.meeting_end_datetime),
+          parseISO(a.meeting_start_datetime),
+        );
+        const bDuration = differenceInDays(
+          parseISO(b.meeting_end_datetime),
+          parseISO(b.meeting_start_datetime),
+        );
+        return (
+          bDuration - aDuration ||
+          parseISO(a.meeting_start_datetime).getTime() -
+            parseISO(b.meeting_start_datetime).getTime()
+        );
       }),
-      ...singleDayEvents.sort((a, b) => {
-        if (
-          a.meeting_end_datetime instanceof Date &&
-          a.meeting_start_datetime instanceof Date
-        ) {
-          return (
-            a.meeting_start_datetime.getTime() -
-            b.meeting_start_datetime.getTime()
-          );
-        }
-        return 0;
-      }),
+      ...singleDayEvents.sort(
+        (a, b) =>
+          parseISO(a.meeting_start_datetime).getTime() -
+          parseISO(b.meeting_start_datetime).getTime(),
+      ),
     ];
 
     sortedEvents.forEach((event) => {
-      const eventStart = event.meeting_start_datetime;
-      const eventEnd = event.meeting_end_datetime;
+      const eventStart = parseISO(event.meeting_start_datetime);
+      const eventEnd = parseISO(event.meeting_end_datetime);
       const eventDays = eachDayOfInterval({
         start: eventStart < monthStart ? monthStart : eventStart,
         end: eventEnd > monthEnd ? monthEnd : eventEnd,
@@ -322,24 +310,33 @@ export function getMeetingTypeShort(sourceTable?: string): string {
   );
 }
 
-export function groupEvents(dayEvents: Meeting[]) {
-  const sortedEvents = dayEvents.sort((a, b) => {
-    if (
-      a.meeting_start_datetime instanceof Date &&
-      b.meeting_start_datetime instanceof Date
-    ) {
-      return (
-        a.meeting_start_datetime.getTime() - b.meeting_start_datetime.getTime()
-      );
-    }
-    return 0;
-  });
+export function getSourceTableFromInstitution(institutionName: string): string {
+  const reverseMapping = Object.fromEntries(
+    Object.entries(MEETING_TYPE_MAPPING).map(([key, value]) => [value, key]),
+  );
 
-  const grouped = Object.groupBy(sortedEvents, (event) => {
-    const start = event.meeting_start_datetime;
-    const end = event.meeting_end_datetime;
-    return start.toISOString() + '---' + end.toISOString();
-  });
+  return reverseMapping[institutionName] || institutionName;
+}
+
+export function getInstitutionFromSourceTable(sourceTable: string): string {
+  return MEETING_TYPE_MAPPING[sourceTable] || sourceTable;
+}
+
+export function groupEvents(dayEvents: Meeting[]) {
+  const sortedEvents = dayEvents.sort(
+    (a, b) =>
+      parseISO(a.meeting_end_datetime).getTime() -
+      parseISO(b.meeting_start_datetime).getTime(),
+  );
+
+  const grouped = Object.groupBy(
+    sortedEvents,
+    ({ meeting_start_datetime, meeting_end_datetime }) => {
+      const start = parseISO(meeting_start_datetime);
+      const end = parseISO(meeting_end_datetime);
+      return start.toISOString() + '---' + end.toISOString();
+    },
+  );
 
   const groups: Meeting[][][] = [];
   Object.entries(grouped).forEach(([key, value]) => {
@@ -349,7 +346,7 @@ export function groupEvents(dayEvents: Meeting[]) {
 
     for (const group of groups) {
       const lastEventInGroup = group[group.length - 1];
-      const lastEventEnd = lastEventInGroup[0].meeting_end_datetime;
+      const lastEventEnd = parseISO(lastEventInGroup[0].meeting_end_datetime);
 
       if (eventStart >= lastEventEnd) {
         group.push(value!);
@@ -368,7 +365,7 @@ export function getEventBlockStyle(
   groupIndex: number,
   groupSize: number,
 ) {
-  const startDate = event.meeting_start_datetime;
+  const startDate = parseISO(event.meeting_start_datetime);
   const dayStart = startOfDay(day); // Use startOfDay instead of manual reset
   const eventStart = startDate < dayStart ? dayStart : startDate;
   const startMinutes = differenceInMinutes(eventStart, dayStart);

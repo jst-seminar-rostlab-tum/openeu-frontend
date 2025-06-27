@@ -1,6 +1,6 @@
 import { ProfileData } from '@/domain/entities/profile/generated-types';
 
-const API_URL = 'http://localhost:3000/profile';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/profile`;
 
 export const profileRepository = {
   async createProfile(profileData: ProfileData): Promise<string> {

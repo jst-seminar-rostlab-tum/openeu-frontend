@@ -26,10 +26,9 @@ export async function signup(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const topics = formData.get('topics') as string;
-  const newsletterFrequency = formData.get('newsletter_frequency') as
-    | 'daily'
-    | 'weekly'
-    | 'none';
+  const newsletterFrequency = formData.get(
+    'newsletter-frequency',
+  ) as ProfileData['newsletterFrequency'];
   const url = await getCurrentURL();
 
   if (country.split(',').length === 0 || country === '') {

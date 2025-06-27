@@ -12,6 +12,7 @@ import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEv
 import { staggerContainer, transition } from '@/domain/animations';
 import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
 import { getMonthCellEvents } from '@/operations/meeting/CalendarHelpers';
 
@@ -102,7 +103,10 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
               >
                 {event && (
                   <>
-                    <EventBullet className="lg:hidden" color={event.color} />
+                    <EventBullet
+                      className="lg:hidden"
+                      color={event.color as TMeetingColor}
+                    />
                     <MonthEventBadge
                       className="hidden lg:flex"
                       event={event}

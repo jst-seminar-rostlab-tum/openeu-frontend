@@ -9,7 +9,7 @@ export interface MeetingData {
   color?: string;
   similarity?: number;
   exact_location?: string;
-  source_table?: string;
+  source_table: string;
   source_id: string;
   topic?: string;
   tags?: string[];

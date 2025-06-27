@@ -1,6 +1,7 @@
 'use client';
 
 import { AlertCircle, Home, RotateCcw } from 'lucide-react';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -35,17 +36,14 @@ export default function Error({
           <Separator />
           <div className="flex flex-col gap-3">
             <Button onClick={reset} className="w-full" size="sm">
-              <RotateCcw className="mr-2 h-4 w-4" />
+              <RotateCcw className="h-4 w-4" />
               Try Again
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => (window.location.href = '/chat')}
-              className="w-full"
-              size="sm"
-            >
-              <Home className="mr-2 h-4 w-4" />
-              Start New Chat
+            <Button variant="outline" className="w-full" size="sm" asChild>
+              <Link href="/chat">
+                <Home className="h-4 w-4" />
+                Start New Chat
+              </Link>
             </Button>
           </div>
         </CardContent>

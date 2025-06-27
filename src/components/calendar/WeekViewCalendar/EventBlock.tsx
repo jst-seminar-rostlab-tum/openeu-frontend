@@ -1,6 +1,6 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
-import { differenceInMinutes } from 'date-fns';
+import { differenceInMinutes, parseISO } from 'date-fns';
 import { Building, MapPin } from 'lucide-react';
 import React, { HTMLAttributes } from 'react';
 
@@ -12,6 +12,7 @@ import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
 import {
   formatTime,
+  getColorFromId,
   getMeetingTypeShort,
 } from '@/operations/meeting/CalendarHelpers';
 
@@ -62,12 +63,12 @@ interface IProps
 export function EventBlock({ event, className }: IProps) {
   const { badgeVariant, use24HourFormat } = useMeetingContext();
 
-  const start = event.meeting_start_datetime;
-  const end = event.meeting_end_datetime;
+  const start = parseISO(event.meeting_start_datetime);
+  const end = parseISO(event.meeting_end_datetime);
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
-  const eventColor = event.color;
+  const eventColor = getColorFromId(event.meeting_id);
   const color = (
     badgeVariant === 'dot' ? `${eventColor}-dot` : eventColor
   ) as VariantProps<typeof calendarWeekEventCardVariants>['color'];
@@ -127,9 +128,11 @@ export function EventBlock({ event, className }: IProps) {
           <MapPin className="shrink-0 w-3 h-3" />
           <span
             className="truncate min-w-0 direction-rtl text-left"
-            title={getMeetingTypeShort(event.location!)}
+            title={getMeetingTypeShort(
+              event.location ? event.location : 'No location specified',
+            )}
           >
-            {getMeetingTypeShort(event.location!)}
+            {event.location && getMeetingTypeShort(event.location)}
           </span>
         </Badge>
       </div>

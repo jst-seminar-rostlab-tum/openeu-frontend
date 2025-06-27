@@ -1,4 +1,5 @@
 import * as turf from '@turf/turf';
+import { parseISO } from 'date-fns';
 import * as geojson from 'geojson';
 import { useMemo } from 'react';
 
@@ -50,8 +51,8 @@ export function useCountryMeetingMap(
     countryMap.forEach((data) => {
       data.meetings.sort(
         (a, b) =>
-          a.meeting_start_datetime.getTime() -
-          b.meeting_start_datetime.getTime(),
+          parseISO(a.meeting_start_datetime).getTime() -
+          parseISO(b.meeting_start_datetime).getTime(),
       );
     });
 
@@ -99,3 +100,11 @@ export const getLargestPolygon = (feature: geojson.Feature) => {
 
   return largestPolygon;
 };
+
+export default class MapOperations {
+  static topicsToFilterBadge(topics: string[]) {
+    const [first, ...rest] = topics;
+    const label = rest.length > 0 ? `${first} +${rest.length}` : first;
+    return label;
+  }
+}
