@@ -88,7 +88,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProfileDB" }
+                "schema": { "$ref": "#/components/schemas/ProfileReturn" }
               }
             }
           },
@@ -480,6 +480,89 @@
         }
       }
     },
+    "/legislative-files": {
+      "get": {
+        "summary": "Get Legislative Files",
+        "operationId": "get_legislative_files_legislative_files_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Semantic search query",
+              "title": "Query"
+            },
+            "description": "Semantic search query"
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "description": "Filter by reference year (e.g. 2025)",
+              "title": "Year"
+            },
+            "description": "Filter by reference year (e.g. 2025)"
+          },
+          {
+            "name": "committee",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Filter by committee name",
+              "title": "Committee"
+            },
+            "description": "Filter by committee name"
+          },
+          {
+            "name": "rapporteur",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Filter by rapporteur name",
+              "title": "Rapporteur"
+            },
+            "description": "Filter by rapporteur name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFilesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notifications/{user_id}": {
       "get": {
         "tags": ["notifications"],
@@ -626,12 +709,62 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "LegislativeFile": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "source_table": { "type": "string", "title": "Source Table" },
+          "source_id": { "type": "string", "title": "Source Id" },
+          "link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Link"
+          },
+          "title": { "type": "string", "title": "Title" },
+          "lastpubdate": {
+            "anyOf": [
+              { "type": "string", "format": "date" },
+              { "type": "null" }
+            ],
+            "title": "Lastpubdate"
+          },
+          "committee": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Committee"
+          },
+          "rapporteur": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Rapporteur"
+          },
+          "similarity": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Similarity"
+          }
+        },
+        "type": "object",
+        "required": ["id", "source_table", "source_id", "title"],
+        "title": "LegislativeFile"
+      },
+      "LegislativeFilesResponse": {
+        "properties": {
+          "legislative_files": {
+            "items": { "$ref": "#/components/schemas/LegislativeFile" },
+            "type": "array",
+            "title": "Legislative Files"
+          }
+        },
+        "type": "object",
+        "required": ["legislative_files"],
+        "title": "LegislativeFilesResponse"
+      },
       "Meeting": {
         "properties": {
           "meeting_id": { "type": "string", "title": "Meeting Id" },
           "source_table": { "type": "string", "title": "Source Table" },
           "source_id": { "type": "string", "title": "Source Id" },
           "title": { "type": "string", "title": "Title" },
+          "topic": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Topic"
+          },
           "status": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Status"
@@ -755,10 +888,10 @@
             "type": "string",
             "title": "Company Description"
           },
-          "topic_id_list": {
+          "topic_ids": {
             "items": { "type": "string" },
             "type": "array",
-            "title": "Topic Id List"
+            "title": "Topic Ids"
           },
           "countries": {
             "items": { "type": "string" },
@@ -778,56 +911,11 @@
           "surname",
           "company_name",
           "company_description",
-          "topic_id_list",
+          "topic_ids",
           "countries",
           "newsletter_frequency"
         ],
         "title": "ProfileCreate"
-      },
-      "ProfileDB": {
-        "properties": {
-          "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
-          "company_name": { "type": "string", "title": "Company Name" },
-          "company_description": {
-            "type": "string",
-            "title": "Company Description"
-          },
-          "topic_id_list": {
-            "items": { "type": "string" },
-            "type": "array",
-            "title": "Topic Id List"
-          },
-          "countries": {
-            "items": { "type": "string" },
-            "type": "array",
-            "title": "Countries"
-          },
-          "newsletter_frequency": {
-            "type": "string",
-            "enum": ["daily", "weekly", "none"],
-            "title": "Newsletter Frequency"
-          },
-          "embedding": {
-            "items": { "type": "number" },
-            "type": "array",
-            "title": "Embedding"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "name",
-          "surname",
-          "company_name",
-          "company_description",
-          "topic_id_list",
-          "countries",
-          "newsletter_frequency",
-          "embedding"
-        ],
-        "title": "ProfileDB"
       },
       "ProfileReturn": {
         "properties": {
@@ -839,10 +927,10 @@
             "type": "string",
             "title": "Company Description"
           },
-          "topic_id_list": {
+          "topic_ids": {
             "items": { "type": "string" },
             "type": "array",
-            "title": "Topic Id List"
+            "title": "Topic Ids"
           },
           "countries": {
             "items": { "type": "string" },
@@ -853,16 +941,6 @@
             "type": "string",
             "enum": ["daily", "weekly", "none"],
             "title": "Newsletter Frequency"
-          },
-          "topic_ids": {
-            "items": { "type": "string" },
-            "type": "array",
-            "title": "Topic Ids"
-          },
-          "topics": {
-            "items": { "type": "string" },
-            "type": "array",
-            "title": "Topics"
           },
           "embedding": {
             "items": { "type": "number" },
@@ -877,11 +955,9 @@
           "surname",
           "company_name",
           "company_description",
-          "topic_id_list",
+          "topic_ids",
           "countries",
           "newsletter_frequency",
-          "topic_ids",
-          "topics",
           "embedding"
         ],
         "title": "ProfileReturn"
@@ -904,12 +980,12 @@
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Company Description"
           },
-          "topic_id_list": {
+          "topic_ids": {
             "anyOf": [
               { "items": { "type": "string" }, "type": "array" },
               { "type": "null" }
             ],
-            "title": "Topic Id List"
+            "title": "Topic Ids"
           },
           "countries": {
             "anyOf": [

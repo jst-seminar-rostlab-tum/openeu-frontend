@@ -192,6 +192,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/legislative-files': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Legislative Files */
+    get: operations['get_legislative_files_legislative_files_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/notifications/{user_id}': {
     parameters: {
       query?: never;
@@ -262,6 +279,32 @@ export interface components {
       /** Detail */
       detail?: components['schemas']['ValidationError'][];
     };
+    /** LegislativeFile */
+    LegislativeFile: {
+      /** Id */
+      id: string;
+      /** Source Table */
+      source_table: string;
+      /** Source Id */
+      source_id: string;
+      /** Link */
+      link?: string | null;
+      /** Title */
+      title: string;
+      /** Lastpubdate */
+      lastpubdate?: string | null;
+      /** Committee */
+      committee?: string | null;
+      /** Rapporteur */
+      rapporteur?: string | null;
+      /** Similarity */
+      similarity?: number | null;
+    };
+    /** LegislativeFilesResponse */
+    LegislativeFilesResponse: {
+      /** Legislative Files */
+      legislative_files: components['schemas']['LegislativeFile'][];
+    };
     /** Meeting */
     Meeting: {
       /** Meeting Id */
@@ -272,6 +315,8 @@ export interface components {
       source_id: string;
       /** Title */
       title: string;
+      /** Topic */
+      topic?: string | null;
       /** Status */
       status?: string | null;
       /** Meeting Url */
@@ -358,8 +403,8 @@ export interface components {
       company_name: string;
       /** Company Description */
       company_description: string;
-      /** Topic Id List */
-      topic_id_list: string[];
+      /** Topic Ids */
+      topic_ids: string[];
       /** Countries */
       countries: string[];
       /**
@@ -367,33 +412,6 @@ export interface components {
        * @enum {string}
        */
       newsletter_frequency: 'daily' | 'weekly' | 'none';
-    };
-    /** ProfileDB */
-    ProfileDB: {
-      /**
-       * Id
-       * Format: uuid4
-       */
-      id: string;
-      /** Name */
-      name: string;
-      /** Surname */
-      surname: string;
-      /** Company Name */
-      company_name: string;
-      /** Company Description */
-      company_description: string;
-      /** Topic Id List */
-      topic_id_list: string[];
-      /** Countries */
-      countries: string[];
-      /**
-       * Newsletter Frequency
-       * @enum {string}
-       */
-      newsletter_frequency: 'daily' | 'weekly' | 'none';
-      /** Embedding */
-      embedding: number[];
     };
     /** ProfileReturn */
     ProfileReturn: {
@@ -410,8 +428,8 @@ export interface components {
       company_name: string;
       /** Company Description */
       company_description: string;
-      /** Topic Id List */
-      topic_id_list: string[];
+      /** Topic Ids */
+      topic_ids: string[];
       /** Countries */
       countries: string[];
       /**
@@ -419,10 +437,6 @@ export interface components {
        * @enum {string}
        */
       newsletter_frequency: 'daily' | 'weekly' | 'none';
-      /** Topic Ids */
-      topic_ids: string[];
-      /** Topics */
-      topics: string[];
       /** Embedding */
       embedding: number[];
     };
@@ -436,8 +450,8 @@ export interface components {
       company_name?: string | null;
       /** Company Description */
       company_description?: string | null;
-      /** Topic Id List */
-      topic_id_list?: string[] | null;
+      /** Topic Ids */
+      topic_ids?: string[] | null;
       /** Countries */
       countries?: string[] | null;
       /** Newsletter Frequency */
@@ -574,7 +588,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['ProfileDB'];
+          'application/json': components['schemas']['ProfileReturn'];
         };
       };
       /** @description Validation Error */
@@ -870,6 +884,45 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['Topic'][];
+        };
+      };
+    };
+  };
+  get_legislative_files_legislative_files_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        /** @description Semantic search query */
+        query?: string | null;
+        /** @description Filter by reference year (e.g. 2025) */
+        year?: number | null;
+        /** @description Filter by committee name */
+        committee?: string | null;
+        /** @description Filter by rapporteur name */
+        rapporteur?: string | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LegislativeFilesResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
