@@ -40,5 +40,5 @@ export const notificationSchema = z.object({
 
 export const interestsSchema = z.object({
   countries: z.array(z.string()),
-  topic_id_list: z.array(z.string()),
+  topic_ids: z.array(z.string()),
 });

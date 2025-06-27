@@ -32,7 +32,9 @@ export default async function ProfilePage() {
 
   const topics = await topicRepository.getTopics();
 
-  const selectedTopics = userProfile ? userProfile.topic_id_list : [];
+  const selectedCountries = userProfile ? userProfile.countries : [];
+  const selectedTopics = userProfile ? userProfile.topic_ids : [];
+
   const newsletterFrequency = userProfile
     ? userProfile.newsletter_frequency
     : 'none';
@@ -68,6 +70,7 @@ export default async function ProfilePage() {
       component: (
         <InterestsForm
           userId={user.id}
+          selectedCountries={selectedCountries}
           selectedTopics={selectedTopics}
           topics={topics}
         />

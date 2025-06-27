@@ -62,7 +62,7 @@ export default function AccountDetailsForm({
       const profileData: ProfileData = {
         ...values,
         id: userId,
-        topic_id_list: [],
+        topic_ids: [],
         countries: [],
         newsletter_frequency: 'daily',
       };

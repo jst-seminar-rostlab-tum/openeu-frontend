@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { europeanCountries } from '@/components/map/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
@@ -25,12 +26,14 @@ import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export interface InterestsFormProps {
   userId: string;
+  selectedCountries: string[];
   selectedTopics: string[];
   topics: Topic[];
 }
 
 export default function InterestsForm({
   userId,
+  selectedCountries,
   selectedTopics,
   topics,
 }: InterestsFormProps) {
@@ -41,25 +44,22 @@ export default function InterestsForm({
     value: topic.id,
   }));
 
-  const countries = [
-    { label: 'Germany', value: 'de' },
-    { label: 'Spain', value: 'es' },
-    { label: 'Austria', value: 'at' },
-    { label: 'Belgium', value: 'be' },
-    { label: 'Poland', value: 'pl' },
-  ];
+  const countries = europeanCountries.map((country) => ({
+    label: country,
+    value: country,
+  }));
 
   const form = useForm<z.infer<typeof interestsSchema>>({
     resolver: zodResolver(interestsSchema),
     defaultValues: {
-      countries: [],
-      topic_id_list: selectedTopics,
+      countries: selectedCountries,
+      topic_ids: selectedTopics,
     },
   });
 
   function onSubmit(values: z.infer<typeof interestsSchema>) {
     setLoading(true);
-    updateProfile(userId, { topic_id_list: values.topic_id_list })
+    updateProfile(userId, { ...values })
       .then(() =>
         ToastOperations.showSuccess({
           title: 'Profile updated',
@@ -102,6 +102,7 @@ export default function InterestsForm({
                           }
                           placeholder="Select countries"
                           variant="inverted"
+                          defaultValue={selectedCountries}
                           {...field}
                         />
                       </FormControl>
@@ -122,7 +123,7 @@ export default function InterestsForm({
                         <MultiSelect
                           options={options}
                           onValueChange={(data: string[]) =>
-                            form.setValue('topic_id_list', data)
+                            form.setValue('topic_ids', data)
                           }
                           placeholder="Select topics"
                           variant="inverted"
@@ -134,7 +135,7 @@ export default function InterestsForm({
                     </div>
                   </FormItem>
                 )}
-                name="topic_id_list"
+                name="topic_ids"
               />
             </div>
           </CardContent>
