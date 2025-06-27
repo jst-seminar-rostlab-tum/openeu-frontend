@@ -35,7 +35,7 @@ export const profileRepository = {
     }
   },
 
-  async getProfile(userId: string): Promise<Profile | null> {
+  async getProfile(userId: string): Promise<Profile> {
     try {
       const res = await fetch(`${API_URL}/${userId}`);
       if (!res.ok) {
@@ -43,7 +43,7 @@ export const profileRepository = {
           title: 'Error fetching profile',
           message: 'Failed to fetch profile. Please try again later.',
         });
-        return null;
+        throw new Error('Failed to get profile');
       }
       const data = await res.json();
       return data as Profile;
@@ -52,7 +52,7 @@ export const profileRepository = {
         title: 'Error fetching profile',
         message: 'Failed to fetch profile. Please try again later.',
       });
-      return null;
+      throw new Error('Failed to get profile');
     }
   },
 };

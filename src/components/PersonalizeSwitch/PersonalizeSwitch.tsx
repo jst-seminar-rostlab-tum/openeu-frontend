@@ -7,28 +7,21 @@ import { useProfile } from '@/domain/hooks/profileHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 
 export default function PersonalizeSwitch() {
-  const { setFilters, filters } = useMeetingContext();
+  const { setSelectedUserId } = useMeetingContext();
   const { user } = useAuth();
+  const userId = user?.id;
+  const { data: profile } = useProfile(userId ?? '');
+  const hasProfile = !!profile && !!userId;
 
-  const { data: profile } = useProfile(user?.id);
-  const hasProfile = !!profile;
   const [checked, setChecked] = React.useState(true);
-
-  React.useEffect(() => {
-    if (hasProfile && user?.id) {
-      setFilters({
-        ...filters,
-        user_id: user.id,
-      });
-    }
-  }, [hasProfile, user?.id]);
 
   const handleSwitch = (checked: boolean) => {
     setChecked(checked);
-    setFilters({
-      ...filters,
-      user_id: checked && hasProfile ? user?.id : '',
-    });
+    if (checked && hasProfile) {
+      setSelectedUserId(user?.id);
+    } else {
+      setSelectedUserId('');
+    }
   };
 
   return (
