@@ -2,7 +2,7 @@ export default function Page() {
   return (
     <>
       <div className="space-y-8 px-10 py-5">
-        <h2 className="text-2xl py-5 font-bold text-black">Privacy Policy</h2>
+        <h2 className="text-2xl py-5 font-bold">Privacy Policy</h2>
         <div className="text-base">
           <p className="mb-1">
             Center for Software Engineering Excellence gGmbH is pleased with
