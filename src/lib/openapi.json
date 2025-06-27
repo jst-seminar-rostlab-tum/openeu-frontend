@@ -1,22 +1,16 @@
 {
   "openapi": "3.1.0",
-  "info": {
-    "title": "FastAPI",
-    "version": "0.1.0"
-  },
+  "info": { "title": "FastAPI", "version": "0.1.0" },
   "paths": {
     "/profile/": {
       "post": {
         "tags": ["profile"],
         "summary": "Create Profile",
-        "description": "Create or update a user profile: compute embedding from company_name, company_description, and topic_list,\nthen upsert the record into Supabase.",
         "operationId": "create_profile_profile__post",
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ProfileCreate"
-              }
+              "schema": { "$ref": "#/components/schemas/ProfileCreate" }
             }
           },
           "required": true
@@ -24,9 +18,38 @@
         "responses": {
           "201": {
             "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/{user_id}": {
+      "get": {
+        "tags": ["profile"],
+        "summary": "Get User Profile",
+        "operationId": "get_user_profile_profile__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "User Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProfileReturn" }
               }
             }
           },
@@ -34,9 +57,46 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["profile"],
+        "summary": "Update User Profile",
+        "operationId": "update_user_profile_profile__user_id__patch",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "User Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProfileUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProfileReturn" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -65,13 +125,8 @@
             "required": false,
             "schema": {
               "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                {
-                  "type": "null"
-                }
+                { "type": "string", "format": "date-time" },
+                { "type": "null" }
               ],
               "description": "Start datetime (ISO8601)",
               "title": "Start"
@@ -84,13 +139,8 @@
             "required": false,
             "schema": {
               "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                {
-                  "type": "null"
-                }
+                { "type": "string", "format": "date-time" },
+                { "type": "null" }
               ],
               "description": "End datetime (ISO8601)",
               "title": "End"
@@ -102,14 +152,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
               "description": "Search query using semantic similarity",
               "title": "Query"
             },
@@ -121,15 +164,8 @@
             "required": false,
             "schema": {
               "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "null"
-                }
+                { "type": "array", "items": { "type": "string" } },
+                { "type": "null" }
               ],
               "description": "List of topic names (repeat or comma-separated)",
               "title": "Topics"
@@ -141,18 +177,36 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
               "description": "Filter by country (e.g., 'Austria', 'European Union')",
               "title": "Country"
             },
             "description": "Filter by country (e.g., 'Austria', 'European Union')"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "User ID for personalized meeting recommendations",
+              "title": "User Id"
+            },
+            "description": "User ID for personalized meeting recommendations"
+          },
+          {
+            "name": "source_table",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "type": "array", "items": { "type": "string" } },
+                { "type": "null" }
+              ],
+              "description": "Filter by source table(s) (repeat or comma-separated)",
+              "title": "Source Table"
+            },
+            "description": "Filter by source table(s) (repeat or comma-separated)"
           }
         ],
         "responses": {
@@ -162,9 +216,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Meeting"
-                  },
+                  "items": { "$ref": "#/components/schemas/Meeting" },
                   "title": "Response Get Meetings Meetings Get"
                 }
               }
@@ -174,9 +226,7 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -194,14 +244,7 @@
             "in": "header",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
               "title": "Token"
             }
           }
@@ -219,16 +262,12 @@
               }
             }
           },
-          "404": {
-            "description": "Not found"
-          },
+          "404": { "description": "Not found" },
           "422": {
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -245,9 +284,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": {
-                    "type": "string"
-                  },
+                  "additionalProperties": { "type": "string" },
                   "type": "object",
                   "title": "Response Run Scheduled Tasks Scheduler Tick Get"
                 }
@@ -266,28 +303,19 @@
             "name": "job_name",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Job Name"
-            }
+            "schema": { "type": "string", "title": "Job Name" }
           }
         ],
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "content": { "application/json": { "schema": {} } }
           },
           "422": {
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -301,9 +329,7 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChatMessageItem"
-              }
+              "schema": { "$ref": "#/components/schemas/ChatMessageItem" }
             }
           },
           "required": true
@@ -311,19 +337,13 @@
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "content": { "application/json": { "schema": {} } }
           },
           "422": {
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -337,9 +357,7 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewSessionItem"
-              }
+              "schema": { "$ref": "#/components/schemas/NewSessionItem" }
             }
           },
           "required": true
@@ -359,9 +377,7 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -377,10 +393,7 @@
             "name": "session_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
+            "schema": { "type": "string", "title": "Session Id" }
           }
         ],
         "responses": {
@@ -402,9 +415,7 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -420,10 +431,7 @@
             "name": "user_id",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "User Id"
-            }
+            "schema": { "type": "string", "title": "User Id" }
           }
         ],
         "responses": {
@@ -445,9 +453,7 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -464,12 +470,93 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/Topic"
-                  },
+                  "items": { "$ref": "#/components/schemas/Topic" },
                   "type": "array",
                   "title": "Response Get Topics Topics Get"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/legislative-files": {
+      "get": {
+        "summary": "Get Legislative Files",
+        "operationId": "get_legislative_files_legislative_files_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Semantic search query",
+              "title": "Query"
+            },
+            "description": "Semantic search query"
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "description": "Filter by reference year (e.g. 2025)",
+              "title": "Year"
+            },
+            "description": "Filter by reference year (e.g. 2025)"
+          },
+          {
+            "name": "committee",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Filter by committee name",
+              "title": "Committee"
+            },
+            "description": "Filter by committee name"
+          },
+          {
+            "name": "rapporteur",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "Filter by rapporteur name",
+              "title": "Rapporteur"
+            },
+            "description": "Filter by rapporteur name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFilesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -487,11 +574,7 @@
             "name": "user_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "User Id"
-            }
+            "schema": { "type": "string", "format": "uuid", "title": "User Id" }
           },
           {
             "name": "limit",
@@ -512,9 +595,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Notification"
-                  },
+                  "items": { "$ref": "#/components/schemas/Notification" },
                   "title": "Response Get Notifications For User Notifications  User Id  Get"
                 }
               }
@@ -524,9 +605,59 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestions": {
+      "get": {
+        "summary": "Get Suggestions",
+        "operationId": "get_suggestions_suggestions_get",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Fuzzy text to search meeting titles",
+              "title": "Query"
+            },
+            "description": "Fuzzy text to search meeting titles"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1,
+              "description": "Number of suggestions to return",
+              "default": 5,
+              "title": "Limit"
+            },
+            "description": "Number of suggestions to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuggestionResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -544,14 +675,7 @@
               "application/json": {
                 "schema": {
                   "additionalProperties": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "boolean"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "boolean" }]
                   },
                   "type": "object",
                   "title": "Response Root  Get"
@@ -567,14 +691,8 @@
     "schemas": {
       "ChatMessageItem": {
         "properties": {
-          "session_id": {
-            "type": "string",
-            "title": "Session Id"
-          },
-          "message": {
-            "type": "string",
-            "title": "Message"
-          }
+          "session_id": { "type": "string", "title": "Session Id" },
+          "message": { "type": "string", "title": "Message" }
         },
         "type": "object",
         "required": ["session_id", "message"],
@@ -583,9 +701,7 @@
       "HTTPValidationError": {
         "properties": {
           "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
+            "items": { "$ref": "#/components/schemas/ValidationError" },
             "type": "array",
             "title": "Detail"
           }
@@ -593,44 +709,68 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "LegislativeFile": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "source_table": { "type": "string", "title": "Source Table" },
+          "source_id": { "type": "string", "title": "Source Id" },
+          "link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Link"
+          },
+          "title": { "type": "string", "title": "Title" },
+          "lastpubdate": {
+            "anyOf": [
+              { "type": "string", "format": "date" },
+              { "type": "null" }
+            ],
+            "title": "Lastpubdate"
+          },
+          "committee": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Committee"
+          },
+          "rapporteur": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Rapporteur"
+          },
+          "similarity": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Similarity"
+          }
+        },
+        "type": "object",
+        "required": ["id", "source_table", "source_id", "title"],
+        "title": "LegislativeFile"
+      },
+      "LegislativeFilesResponse": {
+        "properties": {
+          "legislative_files": {
+            "items": { "$ref": "#/components/schemas/LegislativeFile" },
+            "type": "array",
+            "title": "Legislative Files"
+          }
+        },
+        "type": "object",
+        "required": ["legislative_files"],
+        "title": "LegislativeFilesResponse"
+      },
       "Meeting": {
         "properties": {
-          "meeting_id": {
-            "type": "string",
-            "title": "Meeting Id"
-          },
-          "source_table": {
-            "type": "string",
-            "title": "Source Table"
-          },
-          "source_id": {
-            "type": "string",
-            "title": "Source Id"
-          },
-          "title": {
-            "type": "string",
-            "title": "Title"
+          "meeting_id": { "type": "string", "title": "Meeting Id" },
+          "source_table": { "type": "string", "title": "Source Table" },
+          "source_id": { "type": "string", "title": "Source Id" },
+          "title": { "type": "string", "title": "Title" },
+          "topic": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Topic"
           },
           "status": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Status"
           },
           "meeting_url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Meeting Url"
           },
           "meeting_start_datetime": {
@@ -640,72 +780,32 @@
           },
           "meeting_end_datetime": {
             "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
             ],
             "title": "Meeting End Datetime"
           },
           "location": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Location"
           },
           "exact_location": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Exact Location"
           },
           "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Description"
           },
           "tags": {
             "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
             ],
             "title": "Tags"
           },
           "similarity": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
             "title": "Similarity"
           }
         },
@@ -721,27 +821,11 @@
       },
       "MessagesResponseModel": {
         "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id"
-          },
-          "chat_session": {
-            "type": "string",
-            "title": "Chat Session"
-          },
-          "content": {
-            "type": "string",
-            "title": "Content"
-          },
-          "author": {
-            "type": "string",
-            "title": "Author"
-          },
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "title": "Date"
-          }
+          "id": { "type": "string", "title": "Id" },
+          "chat_session": { "type": "string", "title": "Chat Session" },
+          "content": { "type": "string", "title": "Content" },
+          "author": { "type": "string", "title": "Author" },
+          "date": { "type": "string", "format": "date-time", "title": "Date" }
         },
         "type": "object",
         "required": ["id", "chat_session", "content", "author", "date"],
@@ -749,10 +833,7 @@
       },
       "NewChatResponseModel": {
         "properties": {
-          "session_id": {
-            "type": "string",
-            "title": "Session Id"
-          }
+          "session_id": { "type": "string", "title": "Session Id" }
         },
         "type": "object",
         "required": ["session_id"],
@@ -760,14 +841,8 @@
       },
       "NewSessionItem": {
         "properties": {
-          "title": {
-            "type": "string",
-            "title": "Title"
-          },
-          "user_id": {
-            "type": "string",
-            "title": "User Id"
-          }
+          "title": { "type": "string", "title": "Title" },
+          "user_id": { "type": "string", "title": "User Id" }
         },
         "type": "object",
         "required": ["title", "user_id"],
@@ -775,44 +850,20 @@
       },
       "Notification": {
         "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "user_id": {
-            "type": "string",
-            "format": "uuid",
-            "title": "User Id"
-          },
+          "id": { "type": "integer", "title": "Id" },
+          "user_id": { "type": "string", "format": "uuid", "title": "User Id" },
           "sent_at": {
             "type": "string",
             "format": "date-time",
             "title": "Sent At"
           },
-          "type": {
-            "type": "string",
-            "title": "Type"
-          },
+          "type": { "type": "string", "title": "Type" },
           "message": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Message"
           },
           "relevance_score": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
             "title": "Relevance Score"
           }
         },
@@ -829,33 +880,23 @@
       },
       "ProfileCreate": {
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid4",
-            "title": "Id"
-          },
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "surname": {
-            "type": "string",
-            "title": "Surname"
-          },
-          "company_name": {
-            "type": "string",
-            "title": "Company Name"
-          },
+          "id": { "type": "string", "format": "uuid4", "title": "Id" },
+          "name": { "type": "string", "title": "Name" },
+          "surname": { "type": "string", "title": "Surname" },
+          "company_name": { "type": "string", "title": "Company Name" },
           "company_description": {
             "type": "string",
             "title": "Company Description"
           },
-          "topic_list": {
-            "items": {
-              "type": "string"
-            },
+          "topic_ids": {
+            "items": { "type": "string" },
             "type": "array",
-            "title": "Topic List"
+            "title": "Topic Ids"
+          },
+          "countries": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Countries"
           },
           "newsletter_frequency": {
             "type": "string",
@@ -870,40 +911,135 @@
           "surname",
           "company_name",
           "company_description",
-          "topic_list",
+          "topic_ids",
+          "countries",
           "newsletter_frequency"
         ],
         "title": "ProfileCreate"
       },
+      "ProfileReturn": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid4", "title": "Id" },
+          "name": { "type": "string", "title": "Name" },
+          "surname": { "type": "string", "title": "Surname" },
+          "company_name": { "type": "string", "title": "Company Name" },
+          "company_description": {
+            "type": "string",
+            "title": "Company Description"
+          },
+          "topic_ids": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Topic Ids"
+          },
+          "countries": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Countries"
+          },
+          "newsletter_frequency": {
+            "type": "string",
+            "enum": ["daily", "weekly", "none"],
+            "title": "Newsletter Frequency"
+          },
+          "embedding": {
+            "items": { "type": "number" },
+            "type": "array",
+            "title": "Embedding"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "surname",
+          "company_name",
+          "company_description",
+          "topic_ids",
+          "countries",
+          "newsletter_frequency",
+          "embedding"
+        ],
+        "title": "ProfileReturn"
+      },
+      "ProfileUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "surname": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Surname"
+          },
+          "company_name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Company Name"
+          },
+          "company_description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Company Description"
+          },
+          "topic_ids": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Topic Ids"
+          },
+          "countries": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Countries"
+          },
+          "newsletter_frequency": {
+            "anyOf": [
+              { "type": "string", "enum": ["daily", "weekly", "none"] },
+              { "type": "null" }
+            ],
+            "title": "Newsletter Frequency"
+          }
+        },
+        "type": "object",
+        "title": "ProfileUpdate"
+      },
       "SessionsResponseModel": {
         "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id"
-          },
-          "user_id": {
-            "type": "string",
-            "title": "User Id"
-          },
-          "title": {
-            "type": "string",
-            "title": "Title"
-          }
+          "id": { "type": "string", "title": "Id" },
+          "user_id": { "type": "string", "title": "User Id" },
+          "title": { "type": "string", "title": "Title" }
         },
         "type": "object",
         "required": ["id", "user_id", "title"],
         "title": "SessionsResponseModel"
       },
+      "Suggestion": {
+        "properties": {
+          "title": { "type": "string", "title": "Title" },
+          "similarity_score": { "type": "number", "title": "Similarity Score" }
+        },
+        "type": "object",
+        "required": ["title", "similarity_score"],
+        "title": "Suggestion"
+      },
+      "SuggestionResponse": {
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/Suggestion" },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "SuggestionResponse"
+      },
       "Topic": {
         "properties": {
-          "topic": {
-            "type": "string",
-            "title": "Topic"
-          },
-          "id": {
-            "type": "string",
-            "title": "Id"
-          }
+          "topic": { "type": "string", "title": "Topic" },
+          "id": { "type": "string", "title": "Id" }
         },
         "type": "object",
         "required": ["topic", "id"],
@@ -912,27 +1048,12 @@
       "ValidationError": {
         "properties": {
           "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
             "type": "array",
             "title": "Location"
           },
-          "msg": {
-            "type": "string",
-            "title": "Message"
-          },
-          "type": {
-            "type": "string",
-            "title": "Error Type"
-          }
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
         },
         "type": "object",
         "required": ["loc", "msg", "type"],
