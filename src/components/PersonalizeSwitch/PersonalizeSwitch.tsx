@@ -12,17 +12,16 @@ export default function PersonalizeSwitch() {
 
   const { data: profile } = useProfile(user?.id);
   const hasProfile = !!profile;
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = React.useState(true);
 
   React.useEffect(() => {
-    if (hasProfile) {
+    if (hasProfile && user?.id) {
       setFilters({
         ...filters,
-        user_id: user?.id,
+        user_id: user.id,
       });
-      setChecked(true);
     }
-  }, [filters, hasProfile, setFilters, user?.id]);
+  }, [hasProfile, user?.id]);
 
   const handleSwitch = (checked: boolean) => {
     setChecked(checked);
