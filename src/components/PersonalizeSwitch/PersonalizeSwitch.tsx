@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -9,20 +10,31 @@ import { useAuth } from '@/domain/hooks/useAuth';
 export default function PersonalizeSwitch() {
   const { setSelectedUserId } = useMeetingContext();
   const { user } = useAuth();
-  const userId = user?.id;
-  const { data: profile } = useProfile(userId ?? '');
-  const hasProfile = !!profile && !!userId;
 
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
+  const [userId, setUserId] = useState('');
+
+  const { data: profile } = useProfile(userId);
 
   const handleSwitch = (checked: boolean) => {
     setChecked(checked);
     if (checked && hasProfile) {
-      setSelectedUserId(user?.id);
+      setSelectedUserId(userId);
     } else {
       setSelectedUserId('');
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      setUserId(user.id);
+      setHasProfile(!!profile);
+      if (profile) {
+        handleSwitch(true);
+      }
+    }
+  }, [user, profile]);
 
   return (
     <div className="flex items-center space-x-2">
