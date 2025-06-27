@@ -45,23 +45,13 @@ export async function unlinkGoogleAccount() {
   }
 }
 
-export async function createProfile(
-  profileData: ProfileData,
-): Promise<ProfileData> {
+export async function createProfile(data: ProfileData): Promise<ProfileData> {
   const res = await fetch(`${API_BASE_URL}/profile`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      id: profileData.id,
-      name: profileData.name,
-      surname: profileData.surname,
-      company_name: profileData.company_name,
-      company_description: profileData.company_description,
-      topic_list: profileData.topic_list,
-      newsletter_frequency: profileData.newsletter_frequency,
-    }),
+    body: JSON.stringify(data),
   });
   if (!res.ok) {
     throw new Error('Failed to create profile');
@@ -95,7 +85,6 @@ export async function updateProfile(
     },
     body: JSON.stringify(data),
   });
-  console.log(res);
   if (!res.ok) {
     throw new Error('Failed to get profile');
   }

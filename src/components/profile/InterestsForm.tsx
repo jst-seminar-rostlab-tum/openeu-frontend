@@ -38,7 +38,7 @@ export default function InterestsForm({
 
   const options = topics.map((topic) => ({
     label: topic.topic,
-    value: topic.topic,
+    value: topic.id,
   }));
 
   const countries = [
@@ -53,13 +53,13 @@ export default function InterestsForm({
     resolver: zodResolver(interestsSchema),
     defaultValues: {
       countries: [],
-      topic_list: selectedTopics,
+      topic_id_list: selectedTopics,
     },
   });
 
   function onSubmit(values: z.infer<typeof interestsSchema>) {
     setLoading(true);
-    updateProfile(userId, { topic_list: values.topic_list })
+    updateProfile(userId, { topic_id_list: values.topic_id_list })
       .then(() =>
         ToastOperations.showSuccess({
           title: 'Profile updated',
@@ -122,7 +122,7 @@ export default function InterestsForm({
                         <MultiSelect
                           options={options}
                           onValueChange={(data: string[]) =>
-                            form.setValue('topic_list', data)
+                            form.setValue('topic_id_list', data)
                           }
                           placeholder="Select topics"
                           variant="inverted"
@@ -134,7 +134,7 @@ export default function InterestsForm({
                     </div>
                   </FormItem>
                 )}
-                name="topics"
+                name="topic_id_list"
               />
             </div>
           </CardContent>

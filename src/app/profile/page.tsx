@@ -32,7 +32,7 @@ export default async function ProfilePage() {
 
   const topics = await topicRepository.getTopics();
 
-  const selectedTopics = userProfile ? userProfile.topic_list : [];
+  const selectedTopics = userProfile ? userProfile.topic_id_list : [];
   const newsletterFrequency = userProfile
     ? userProfile.newsletter_frequency
     : 'none';

@@ -62,7 +62,8 @@ export default function AccountDetailsForm({
       const profileData: ProfileData = {
         ...values,
         id: userId,
-        topic_list: [],
+        topic_id_list: [],
+        countries: [],
         newsletter_frequency: 'daily',
       };
       createProfile(profileData)
