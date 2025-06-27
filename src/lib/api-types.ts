@@ -13,16 +13,30 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /**
-     * Create Profile
-     * @description Create or update a user profile: compute embedding from company_name, company_description, and topic_list,
-     *     then upsert the record into Supabase.
-     */
+    /** Create Profile */
     post: operations['create_profile_profile__post'];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
+    trace?: never;
+  };
+  '/profile/{user_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get User Profile */
+    get: operations['get_user_profile_profile__user_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update User Profile */
+    patch: operations['update_user_profile_profile__user_id__patch'];
     trace?: never;
   };
   '/meetings': {
@@ -34,6 +48,23 @@ export interface paths {
     };
     /** Get Meetings */
     get: operations['get_meetings_meetings_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/meetings/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Meeting Suggestions */
+    get: operations['get_meeting_suggestions_meetings_suggestions_get'];
     put?: never;
     post?: never;
     delete?: never;
@@ -178,6 +209,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/legislative-files': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Legislative Files */
+    get: operations['get_legislative_files_legislative_files_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/legislative-files/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Legislation Suggestions */
+    get: operations['get_legislation_suggestions_legislative_files_suggestions_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/notifications/{user_id}': {
     parameters: {
       query?: never;
@@ -231,6 +296,46 @@ export interface components {
       /** Detail */
       detail?: components['schemas']['ValidationError'][];
     };
+    /** LegislativeFile */
+    LegislativeFile: {
+      /** Id */
+      id: string;
+      /** Source Table */
+      source_table: string;
+      /** Source Id */
+      source_id: string;
+      /** Link */
+      link?: string | null;
+      /** Title */
+      title: string;
+      /** Lastpubdate */
+      lastpubdate?: string | null;
+      /** Committee */
+      committee?: string | null;
+      /** Rapporteur */
+      rapporteur?: string | null;
+      /** Similarity */
+      similarity?: number | null;
+    };
+    /** LegislativeFileSuggestion */
+    LegislativeFileSuggestion: {
+      /** Id */
+      id: string;
+      /** Title */
+      title: string;
+      /** Similarity Score */
+      similarity_score: number;
+    };
+    /** LegislativeFileSuggestionResponse */
+    LegislativeFileSuggestionResponse: {
+      /** Data */
+      data: components['schemas']['LegislativeFileSuggestion'][];
+    };
+    /** LegislativeFilesResponse */
+    LegislativeFilesResponse: {
+      /** Legislative Files */
+      legislative_files: components['schemas']['LegislativeFile'][];
+    };
     /** Meeting */
     Meeting: {
       /** Meeting Id */
@@ -241,6 +346,8 @@ export interface components {
       source_id: string;
       /** Title */
       title: string;
+      /** Topic */
+      topic?: string | null;
       /** Status */
       status?: string | null;
       /** Meeting Url */
@@ -262,10 +369,18 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
-      /** Topics */
-      topic?: string | null;
-      /** Attendees */
-      attendees: string[] | null;
+    };
+    /** MeetingSuggestion */
+    MeetingSuggestion: {
+      /** Title */
+      title: string;
+      /** Similarity Score */
+      similarity_score: number;
+    };
+    /** MeetingSuggestionResponse */
+    MeetingSuggestionResponse: {
+      /** Data */
+      data: components['schemas']['MeetingSuggestion'][];
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
@@ -331,13 +446,59 @@ export interface components {
       company_name: string;
       /** Company Description */
       company_description: string;
-      /** Topic List */
-      topic_list: string[];
+      /** Topic Ids */
+      topic_ids: string[];
+      /** Countries */
+      countries: string[];
       /**
        * Newsletter Frequency
        * @enum {string}
        */
       newsletter_frequency: 'daily' | 'weekly' | 'none';
+    };
+    /** ProfileReturn */
+    ProfileReturn: {
+      /**
+       * Id
+       * Format: uuid4
+       */
+      id: string;
+      /** Name */
+      name: string;
+      /** Surname */
+      surname: string;
+      /** Company Name */
+      company_name: string;
+      /** Company Description */
+      company_description: string;
+      /** Topic Ids */
+      topic_ids: string[];
+      /** Countries */
+      countries: string[];
+      /**
+       * Newsletter Frequency
+       * @enum {string}
+       */
+      newsletter_frequency: 'daily' | 'weekly' | 'none';
+      /** Embedding */
+      embedding: number[];
+    };
+    /** ProfileUpdate */
+    ProfileUpdate: {
+      /** Name */
+      name?: string | null;
+      /** Surname */
+      surname?: string | null;
+      /** Company Name */
+      company_name?: string | null;
+      /** Company Description */
+      company_description?: string | null;
+      /** Topic Ids */
+      topic_ids?: string[] | null;
+      /** Countries */
+      countries?: string[] | null;
+      /** Newsletter Frequency */
+      newsletter_frequency?: ('daily' | 'weekly' | 'none') | null;
     };
     /** SessionsResponseModel */
     SessionsResponseModel: {
@@ -406,6 +567,72 @@ export interface operations {
       };
     };
   };
+  get_user_profile_profile__user_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProfileReturn'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  update_user_profile_profile__user_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProfileUpdate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProfileReturn'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
   get_meetings_meetings_get: {
     parameters: {
       query?: {
@@ -420,6 +647,10 @@ export interface operations {
         topics?: string[] | null;
         /** @description Filter by country (e.g., 'Austria', 'European Union') */
         country?: string | null;
+        /** @description User ID for personalized meeting recommendations */
+        user_id?: string | null;
+        /** @description Filter by source table(s) (repeat or comma-separated) */
+        source_table?: string[] | null;
       };
       header?: never;
       path?: never;
@@ -434,6 +665,40 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['Meeting'][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_meeting_suggestions_meetings_suggestions_get: {
+    parameters: {
+      query: {
+        /** @description Fuzzy text to search meeting titles */
+        query: string;
+        /** @description Number of suggestions to return */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingSuggestionResponse'];
         };
       };
       /** @description Validation Error */
@@ -684,6 +949,79 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['Topic'][];
+        };
+      };
+    };
+  };
+  get_legislative_files_legislative_files_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        /** @description Semantic search query */
+        query?: string | null;
+        /** @description Filter by reference year (e.g. 2025) */
+        year?: number | null;
+        /** @description Filter by committee name */
+        committee?: string | null;
+        /** @description Filter by rapporteur name */
+        rapporteur?: string | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LegislativeFilesResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_legislation_suggestions_legislative_files_suggestions_get: {
+    parameters: {
+      query: {
+        /** @description Fuzzy text to search legislation titles */
+        query: string;
+        /** @description Number of suggestions to return */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LegislativeFileSuggestionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
