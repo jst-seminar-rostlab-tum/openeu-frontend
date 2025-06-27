@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -14,12 +14,13 @@ export default function PersonalizeSwitch() {
   const [checked, setChecked] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [userId, setUserId] = useState('');
+  const isInitialized = useRef(false);
 
   const { data: profile } = useProfile(userId);
 
-  const handleSwitch = (checked: boolean) => {
-    setChecked(checked);
-    if (checked && hasProfile) {
+  const handleSwitch = (isChecked: boolean) => {
+    setChecked(isChecked);
+    if (isChecked && hasProfile) {
       setSelectedUserId(userId);
     } else {
       setSelectedUserId('');
@@ -27,14 +28,14 @@ export default function PersonalizeSwitch() {
   };
 
   useEffect(() => {
-    if (user) {
-      setUserId(user.id);
-      setHasProfile(!!profile);
-      if (profile) {
-        handleSwitch(true);
-      }
+    if (user && profile && !isInitialized.current) {
+      setUserId(userId);
+      setHasProfile(true);
+      setChecked(true);
+      setSelectedUserId(userId);
+      isInitialized.current = true;
     }
-  }, [user, profile]);
+  }, [user, profile, setSelectedUserId]);
 
   return (
     <div className="flex items-center space-x-2">
