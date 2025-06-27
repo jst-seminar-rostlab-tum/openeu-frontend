@@ -264,6 +264,8 @@ export interface components {
       similarity?: number | null;
       /** Topics */
       topic?: string | null;
+      /** Attendees */
+      attendees: string[] | null;
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {

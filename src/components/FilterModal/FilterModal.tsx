@@ -41,6 +41,7 @@ interface FilterModalProps {
   showCountryDropdown?: boolean;
   showTopicDropdown?: boolean;
   showDateDropdown?: boolean;
+  useWeekDefault?: boolean;
 }
 
 export default function FilterModal({
@@ -48,9 +49,12 @@ export default function FilterModal({
   showCountryDropdown = true,
   showTopicDropdown = true,
   showDateDropdown = true,
+  useWeekDefault = false,
 }: FilterModalProps) {
   const {
     selectedCountry,
+    selectedTopics,
+    setSelectedTopics,
     selectedInstitutions,
     setSelectedCountry,
     setSelectedInstitutions,
@@ -81,7 +85,7 @@ export default function FilterModal({
         startDate: filters.start ? new Date(filters.start) : now,
         endDate: filters.end ? new Date(filters.end) : now,
         country: selectedCountry,
-        topics: [], // Topics not synced from context yet
+        topics: selectedTopics || [],
         institutions: selectedInstitutions,
       });
     }
@@ -89,6 +93,7 @@ export default function FilterModal({
     dialogOpen,
     selectedCountry,
     selectedInstitutions,
+    selectedTopics,
     filters.start,
     filters.end,
   ]);
@@ -112,12 +117,12 @@ export default function FilterModal({
   const handleClear = () => {
     multiSelectRef.current?.clearHandler();
     multiSelectRefInstitutions.current?.clearHandler();
-    const defaultState = FilterModalOperations.getDefaultState();
+    const defaultState = FilterModalOperations.getDefaultState(useWeekDefault);
     setLocalState(defaultState);
     setSelectedCountry('');
+    setSelectedTopics([]);
     setSelectedInstitutions([]);
 
-    // Reset CalendarContext filters to default date range
     if (showDateDropdown) {
       setFilters({
         ...filters,
@@ -131,6 +136,7 @@ export default function FilterModal({
       setFilters({
         ...filters,
         country: undefined,
+        topics: undefined,
         source_table: undefined,
       });
     }
@@ -138,6 +144,7 @@ export default function FilterModal({
 
   const handleApply = () => {
     setSelectedCountry(localState.country || '');
+    setSelectedTopics(localState.topics || []);
     setSelectedInstitutions(localState.institutions || []);
     // Update CalendarContext filters with new date range
     if (localState.startDate && localState.endDate && showDateDropdown) {
@@ -155,7 +162,7 @@ export default function FilterModal({
       setFilters({
         ...filters,
         country: localState.country || undefined,
-        topics: localState.topics || undefined,
+        topics: localState.topics?.length ? localState.topics : undefined,
         source_table: localState.institutions?.length
           ? localState.institutions.map(getSourceTableFromInstitution)
           : undefined,

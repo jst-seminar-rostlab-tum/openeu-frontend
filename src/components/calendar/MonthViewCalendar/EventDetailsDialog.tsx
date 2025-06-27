@@ -10,9 +10,11 @@ import {
   Scale,
   Tag,
   Text,
+  User,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 
+import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Button } from '@/components/ui/button';
@@ -27,6 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { members } from '@/domain/entities/mock/mock_members';
 import {
   formatTime,
   getMeetingType,
@@ -130,11 +133,18 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <div className="flex items-start gap-2 col-span-full">
                 <Scale className="mt-1 size-4 shrink-0 text-muted-foreground" />
                 <div className="w-full">
-                  <p className="mb-2 text-sm">Relevance</p>
+                  <p className="text-sm font-medium">Relevance</p>
                   <RelevanceScore meeting={event} type={'bar'} />
                 </div>
               </div>
             )}
+            <div className="flex items-start gap-2">
+              <User className="mt-1 size-4 shrink-0 text-muted-foreground" />
+              <div className="w-full">
+                <p className="mb-1 text-sm font-medium">Members</p>
+                <AvatarStack members={members}></AvatarStack>
+              </div>
+            </div>
           </div>
         </ScrollArea>
         <DialogFooter>
