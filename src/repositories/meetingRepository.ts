@@ -1,3 +1,4 @@
+import { getCookie } from 'cookies-next';
 import { addHours } from 'date-fns';
 
 import { Meeting } from '@/domain/entities/calendar/generated-types';
@@ -8,6 +9,7 @@ const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/meetings`;
 
 export const meetingRepository = {
   async getMeetings(params: GetMeetingsQueryParams): Promise<Meeting[]> {
+    const token = getCookie('token');
     const query = params
       ? Object.entries(params)
           .filter((entry) => !!entry[1])
@@ -19,7 +21,11 @@ export const meetingRepository = {
           .join('&')
       : undefined;
     try {
-      const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`);
+      const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!res.ok) {
         ToastOperations.showError({
           title: 'Error fetching meetings',
