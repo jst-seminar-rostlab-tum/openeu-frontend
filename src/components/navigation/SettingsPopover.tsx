@@ -1,6 +1,7 @@
 'use client';
 
-import { Monitor, Moon, Settings, Sun } from 'lucide-react';
+import { Monitor, Moon, Settings, Shield, Sun } from 'lucide-react';
+import Link from 'next/link';
 import { useTheme } from 'next-themes';
 
 import { Button } from '@/components/ui/button';
@@ -23,11 +24,18 @@ export function SettingsPopover() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-40 flex flex-col gap-2">
+      <PopoverContent className="w-50 flex flex-col gap-1">
         <h3 className="font-medium">Settings</h3>
         <Separator />
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Theme</p>
+        <Button variant="ghost" size="sm" className="justify-start" asChild>
+          <Link href="/privacy">
+            <Shield className="h-4 w-4" />
+            Privacy Policy
+          </Link>
+        </Button>
+        <Separator />
+        <div className="space-y-1">
+          <p className="text-sm text-muted-foreground">Theme</p>
           <ToggleGroup
             type="single"
             size="sm"

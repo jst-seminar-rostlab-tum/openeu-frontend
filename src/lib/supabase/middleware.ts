@@ -44,6 +44,7 @@ export async function updateSession(request: NextRequest) {
     '/auth/confirm',
     '/auth/callback',
     '/auth/error',
+    '/privacy',
   ];
 
   const isPublicRoute = publicRoutes.some((route) => {
