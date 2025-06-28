@@ -22,10 +22,15 @@ export const meetingRepository = {
       : undefined;
     try {
       const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
+
       if (!res.ok) {
         ToastOperations.showError({
           title: 'Error fetching meetings',
