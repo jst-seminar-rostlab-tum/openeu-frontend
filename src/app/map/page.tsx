@@ -24,20 +24,6 @@ export default function MapPage() {
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
-      <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
-        <SuggestedSearch<MeetingSuggestion>
-          value={displayValue}
-          onValueChange={setDisplayValue}
-          onSearch={setSearchQuery}
-          isLoading={isFetching}
-          placeholder="Search meetings..."
-          fetchSuggestions={meetingRepository.getMeetingSuggestions}
-          getDisplayText={(meeting) => meeting.title}
-          getSelectValue={(meeting) => meeting.title}
-          onSelect={(meeting) => setSearchQuery(meeting.title)}
-        />
-        <FilterModal showCountryDropdown={false} topics={topicLabels} />
-      </Card>
       <div className="absolute right-4 top-16 z-10 flex items-center gap-2">
         <div className="flex flex-wrap gap-2">
           {(() => {
@@ -65,13 +51,17 @@ export default function MapPage() {
             </Badge>
           )}
         </div>
-        <Card className="flex flex-row gap-2 p-2">
-          <SuggestedSearch
+        <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
+          <SuggestedSearch<MeetingSuggestion>
             value={displayValue}
             onValueChange={setDisplayValue}
             onSearch={setSearchQuery}
             isLoading={isFetching}
             placeholder="Search meetings..."
+            fetchSuggestions={meetingRepository.getMeetingSuggestions}
+            getDisplayText={(meeting) => meeting.title}
+            getSelectValue={(meeting) => meeting.title}
+            onSelect={(meeting) => setSearchQuery(meeting.title)}
           />
           <FilterModal showCountryDropdown={false} topics={topicLabels} />
         </Card>
