@@ -24,9 +24,11 @@ import {
   slideFromRight,
   transition,
 } from '@/domain/animations';
+import { MeetingSuggestion } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
 import { formatTopicsForDisplay } from '@/lib/formatters';
+import { meetingRepository } from '@/repositories/meetingRepository';
 
 export function CalendarHeader() {
   const { view, setView, searchQuery, setSearchQuery, filters } =
@@ -61,11 +63,15 @@ export function CalendarHeader() {
         transition={transition}
       >
         <div className="options flex-wrap flex items-center gap-4 md:gap-2">
-          <SuggestedSearch
+          <SuggestedSearch<MeetingSuggestion>
             value={localSearchText}
             onValueChange={setLocalSearchText}
             onSearch={(val) => setSearchQuery(val)}
             placeholder="Search meetings..."
+            fetchSuggestions={meetingRepository.getMeetingSuggestions}
+            getDisplayText={(meeting) => meeting.title}
+            getSelectValue={(meeting) => meeting.title}
+            onSelect={(meeting) => setSearchQuery(meeting.title)}
           />
           <div className="flex flex-wrap gap-2">
             {filters.country && (

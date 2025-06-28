@@ -7,9 +7,11 @@ import Map from '@/components/map/Map';
 import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { MeetingSuggestion } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
 import { dateRangeToString, formatTopicsForDisplay } from '@/lib/formatters';
+import { meetingRepository } from '@/repositories/meetingRepository';
 
 export default function MapPage() {
   const { searchQuery, setSearchQuery, isFetching, filters } =
@@ -50,12 +52,16 @@ export default function MapPage() {
           )}
         </div>
         <Card className="flex flex-row gap-2 p-2">
-          <SuggestedSearch
+          <SuggestedSearch<MeetingSuggestion>
             value={displayValue}
             onValueChange={setDisplayValue}
             onSearch={setSearchQuery}
             isLoading={isFetching}
             placeholder="Search meetings..."
+            fetchSuggestions={meetingRepository.getMeetingSuggestions}
+            getDisplayText={(meeting) => meeting.title}
+            getSelectValue={(meeting) => meeting.title}
+            onSelect={(meeting) => setSearchQuery(meeting.title)}
           />
           <FilterModal showCountryDropdown={false} topics={topicLabels} />
         </Card>

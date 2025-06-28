@@ -10,45 +10,63 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
-import { useDebouncedSuggestions } from '@/domain/hooks/suggestionHooks';
+import {
+  type SearchConfig,
+  useDebouncedSearch,
+} from '@/domain/hooks/use-debounced-search';
 
-interface SuggestedSearchProps {
+export interface SuggestedSearchProps<T> {
   value: string;
   onValueChange: (value: string) => void;
   onSearch?: (value: string) => void;
+  onSelect?: (item: T) => void;
   placeholder?: string;
   isLoading?: boolean;
+  fetchSuggestions: (query: string) => Promise<T[]>;
+  getDisplayText: (item: T) => string;
+  getSelectValue: (item: T) => string;
+  searchConfig?: SearchConfig;
+  suggestionsLabel?: string;
+  className?: string;
 }
 
-export function SuggestedSearch({
+export function SuggestedSearch<T>({
   value,
   onValueChange,
   onSearch,
+  onSelect,
   placeholder = 'Search...',
-  isLoading,
-}: SuggestedSearchProps) {
+  isLoading: externalLoading,
+  fetchSuggestions,
+  getDisplayText,
+  getSelectValue,
+  searchConfig,
+  suggestionsLabel = 'Suggestions',
+  className,
+}: SuggestedSearchProps<T>) {
   const {
-    suggestions,
-    fetchSuggestions,
-    clearSuggestions,
+    results: suggestions,
+    search,
+    clearResults,
     isLoading: internalLoading,
-  } = useDebouncedSuggestions();
+    error,
+  } = useDebouncedSearch(fetchSuggestions, searchConfig);
 
-  const loading = isLoading ?? internalLoading;
+  const loading = externalLoading ?? internalLoading;
   const [localSearchText, setLocalSearchText] = useState(value);
   const [open, setOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1); // 👈 new state
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const input = e.target.value;
       setLocalSearchText(input);
-      setHighlightedIndex(-1); // reset highlight on input change
+      setHighlightedIndex(-1);
       onValueChange(input);
-      fetchSuggestions(input);
-      setOpen(input.length >= 2);
+      search(input);
+      setOpen(input.length >= (searchConfig?.minQueryLength ?? 2));
     },
-    [onValueChange, fetchSuggestions],
+    [onValueChange, search, searchConfig?.minQueryLength],
   );
 
   const onKeyDown = useCallback(
@@ -63,15 +81,23 @@ export function SuggestedSearch({
         setHighlightedIndex((prev) => Math.max(prev - 1, 0));
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        const selected =
-          highlightedIndex >= 0 && suggestions[highlightedIndex]
-            ? suggestions[highlightedIndex]
-            : localSearchText;
+        const selectedItem =
+          highlightedIndex >= 0 && suggestions[highlightedIndex];
 
-        setLocalSearchText(selected);
-        onValueChange(selected);
-        onSearch?.(selected);
-        clearSuggestions();
+        if (selectedItem) {
+          const selectedValue = getSelectValue(selectedItem);
+          setLocalSearchText(selectedValue);
+          onValueChange(selectedValue);
+          onSelect?.(selectedItem);
+          onSearch?.(selectedValue);
+        } else {
+          onSearch?.(localSearchText);
+        }
+
+        clearResults();
+        setOpen(false);
+      } else if (e.key === 'Escape') {
+        clearResults();
         setOpen(false);
       }
     },
@@ -81,20 +107,24 @@ export function SuggestedSearch({
       localSearchText,
       onSearch,
       onValueChange,
-      clearSuggestions,
+      onSelect,
+      getSelectValue,
+      clearResults,
     ],
   );
 
-  const onSelectSuggestion = (title: string) => {
-    setLocalSearchText(title);
-    onValueChange(title);
-    onSearch?.(title);
-    clearSuggestions();
+  const onSelectSuggestion = (item: T) => {
+    const selectedValue = getSelectValue(item);
+    setLocalSearchText(selectedValue);
+    onValueChange(selectedValue);
+    onSelect?.(item);
+    onSearch?.(selectedValue);
+    clearResults();
     setOpen(false);
   };
 
   return (
-    <div className="relative">
+    <div className={`relative ${className || ''}`}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="relative">
@@ -121,12 +151,13 @@ export function SuggestedSearch({
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <div className="max-h-60 overflow-y-auto">
-            {suggestions.length > 0 && (
+            {error && <div className="p-2 text-sm text-red-600">{error}</div>}
+            {suggestions.length > 0 && !error && (
               <div className="p-1">
                 <div className="px-2 py-1.5 text-sm font-medium text-muted-foreground">
-                  Suggestions
+                  {suggestionsLabel}
                 </div>
-                {suggestions.map((title, i) => (
+                {suggestions.map((item, i) => (
                   <div
                     key={i}
                     className={`flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none ${
@@ -135,9 +166,9 @@ export function SuggestedSearch({
                         : 'hover:bg-accent hover:text-accent-foreground'
                     }`}
                     onMouseEnter={() => setHighlightedIndex(i)}
-                    onClick={() => onSelectSuggestion(title)}
+                    onClick={() => onSelectSuggestion(item)}
                   >
-                    <span className="truncate">{title}</span>
+                    <span className="truncate">{getDisplayText(item)}</span>
                   </div>
                 ))}
               </div>
