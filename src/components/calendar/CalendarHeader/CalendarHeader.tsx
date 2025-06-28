@@ -28,11 +28,13 @@ import { MeetingSuggestion } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
 import { formatTopicsForDisplay } from '@/lib/formatters';
+import { getInstitutionFromSourceTable } from '@/operations/meeting/CalendarHelpers';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
 export function CalendarHeader() {
   const { view, setView, searchQuery, setSearchQuery, filters } =
     useMeetingContext();
+  console.log('filters', filters);
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
 
   const { data: topicsData = [] } = useTopics();
@@ -92,6 +94,27 @@ export function CalendarHeader() {
                   className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
                 >
                   {topicDisplay.displayText}
+                </Badge>
+              );
+            })()}
+            {(() => {
+              if (!filters.source_table || filters.source_table.length === 0) {
+                return null;
+              }
+
+              const institutions: string[] = [];
+              for (const sourceTable of filters.source_table) {
+                institutions.push(getInstitutionFromSourceTable(sourceTable));
+              }
+              const institutionsDisplay = formatTopicsForDisplay(institutions);
+
+              if (!institutionsDisplay) return null;
+              return (
+                <Badge
+                  variant="secondary"
+                  className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+                >
+                  {institutionsDisplay.displayText}
                 </Badge>
               );
             })()}
