@@ -51,7 +51,7 @@ export default function MapPage() {
             </Badge>
           )}
         </div>
-        <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
+        <Card className="flex flex-row gap-2 p-2">
           <SuggestedSearch<MeetingSuggestion>
             value={displayValue}
             onValueChange={setDisplayValue}
