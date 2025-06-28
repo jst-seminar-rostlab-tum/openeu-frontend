@@ -7,7 +7,9 @@ interface DebounceOptions {
   trailing?: boolean;
 }
 
-export function useDebounce<T extends (...args: unknown[]) => unknown>(
+export function useDebounce<
+  T extends (...args: Parameters<T>) => ReturnType<T>,
+>(
   callback: T,
   delay: number,
   options?: DebounceOptions,
