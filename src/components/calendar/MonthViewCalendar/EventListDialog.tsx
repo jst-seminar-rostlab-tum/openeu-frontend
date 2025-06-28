@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
-import { dayCellVariants } from '@/components/calendar/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet';
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
+import { eventColorVariants } from '@/components/calendar/MonthViewCalendar/eventVariants';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -118,11 +118,7 @@ export function EventListDialog({
         <div
           className={cn(
             'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
-            {
-              [dayCellVariants({
-                color: event.color as TMeetingColor,
-              })]: true,
-            },
+            eventColorVariants[event.color as keyof typeof eventColorVariants],
           )}
         >
           <div className="flex w-full flex-col gap-1">
@@ -135,11 +131,11 @@ export function EventListDialog({
               )}
             </div>
             <div className="flex items-center gap-1">
-              <Badge variant="outline" className="text-white">
+              <Badge variant="subtle" className="text-foreground">
                 <Building className="shrink-0" />
                 {getMeetingTypeShort(event.source_table)}
               </Badge>
-              <Badge variant="outline" className="text-white max-w-40">
+              <Badge variant="subtle" className="text-foreground max-w-40">
                 <MapPin className="shrink-0 w-3 h-3" />
                 <span
                   className="truncate min-w-0 direction-rtl text-left"
