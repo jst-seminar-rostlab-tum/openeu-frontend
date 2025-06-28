@@ -2,22 +2,23 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 
-import { useChatContext } from '@/app/chat/ChatContext';
-
 interface ScrollToBottomContextType {
   showScrollButton: boolean;
   scrollToBottom: () => void;
+  scrollToBottomAfterRender: () => void;
 }
 
 const ScrollToBottomContext = createContext<ScrollToBottomContextType>({
   showScrollButton: false,
   scrollToBottom: () => {},
+  scrollToBottomAfterRender: () => {},
 });
 
 export function useScrollToBottomButton() {
@@ -31,18 +32,9 @@ interface ChatScrollContainerProps {
 export default function ChatScrollContainer({
   children,
 }: ChatScrollContainerProps) {
-  const { messages } = useChatContext();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  useLayoutEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop =
-        scrollContainerRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  // Set up scroll detection
   useLayoutEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -59,18 +51,29 @@ export default function ChatScrollContainer({
     return () => container.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({
         top: scrollContainerRef.current.scrollHeight,
         behavior: 'smooth',
       });
     }
-  };
+  }, []);
+
+  const scrollToBottomAfterRender = useCallback(() => {
+    if (scrollContainerRef.current) {
+      requestAnimationFrame(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop =
+            scrollContainerRef.current.scrollHeight;
+        }
+      });
+    }
+  }, []);
 
   return (
     <ScrollToBottomContext.Provider
-      value={{ showScrollButton, scrollToBottom }}
+      value={{ showScrollButton, scrollToBottom, scrollToBottomAfterRender }}
     >
       <div
         ref={scrollContainerRef}

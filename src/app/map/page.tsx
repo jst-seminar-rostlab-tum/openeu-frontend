@@ -22,17 +22,7 @@ export default function MapPage() {
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
-      <Card className="absolute flex flex-row right-4 top-16 gap-2 z-10 p-2">
-        <SuggestedSearch
-          value={displayValue}
-          onValueChange={setDisplayValue}
-          onSearch={setSearchQuery}
-          isLoading={isFetching}
-          placeholder="Search meetings..."
-        />
-        <FilterModal showCountryDropdown={false} topics={topicLabels} />
-      </Card>
-      <div className="absolute top-16 left-4 right-4 z-10 flex justify-end items-center px-2 gap-2">
+      <div className="absolute right-4 top-16 z-10 flex items-center gap-2">
         <div className="flex flex-wrap gap-2">
           {(() => {
             const topicDisplay = formatTopicsForDisplay(filters.topics);
@@ -41,7 +31,7 @@ export default function MapPage() {
             return (
               <Badge
                 variant="secondary"
-                className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+                className="text-xs py-1 px-2 outline-1 outline-gray"
               >
                 {topicDisplay.displayText}
               </Badge>
@@ -50,7 +40,7 @@ export default function MapPage() {
           {filters.start && filters.end && (
             <Badge
               variant="secondary"
-              className="text-xs py-1 px-1 z-10 outline-1 outline-gray"
+              className="text-xs py-1 px-1 outline-1 outline-gray"
             >
               {dateRangeToString(
                 new Date(filters.start),
@@ -59,6 +49,16 @@ export default function MapPage() {
             </Badge>
           )}
         </div>
+        <Card className="flex flex-row gap-2 p-2">
+          <SuggestedSearch
+            value={displayValue}
+            onValueChange={setDisplayValue}
+            onSearch={setSearchQuery}
+            isLoading={isFetching}
+            placeholder="Search meetings..."
+          />
+          <FilterModal showCountryDropdown={false} topics={topicLabels} />
+        </Card>
       </div>
     </div>
   );
