@@ -39,10 +39,6 @@ export const profileRepository = {
     try {
       const res = await fetch(`${API_URL}/${userId}`);
       if (!res.ok) {
-        ToastOperations.showInfo({
-          title: 'You do not have a profile yet',
-          message: 'Please create a profile to access personalized features.',
-        });
         throw new Error('Failed to get profile');
       }
       const data = await res.json();
