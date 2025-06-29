@@ -7,7 +7,10 @@ interface Suggestion {
   similarity: number;
 }
 export const suggestionRepository = {
-  async getSuggestions(query: string): Promise<string[]> {
+  async getSuggestions(
+    query: string,
+    signOut: () => Promise<void>,
+  ): Promise<string[]> {
     if (!query || query.length < 2) return [];
     const token = getCookie('token');
 
@@ -21,6 +24,10 @@ export const suggestionRepository = {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (res.status === 401) {
+        await signOut();
+        throw new Error('Unauthorized: Logging out user');
+      }
 
       if (!res.ok) throw new Error('Failed to fetch suggestions');
       const response = await res.json();
