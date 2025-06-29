@@ -15,7 +15,7 @@ export default function MapFeature() {
     >
       <div className="w-full h-50 ">
         <MeetingProvider updateUrl={false}>
-          <Map countryClickDisabled={true} />
+          <Map countryClickDisabled />
         </MeetingProvider>
       </div>
     </FeatureCard>
