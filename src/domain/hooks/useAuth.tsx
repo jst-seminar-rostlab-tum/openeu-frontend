@@ -23,6 +23,24 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Utility function to safely parse JWT token
+const parseJwtToken = (token: string) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(''),
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('Error parsing JWT token:', error);
+    return null;
+  }
+};
+
 export function AuthProvider({
   children,
   initialUser,
@@ -61,19 +79,25 @@ export function AuthProvider({
     setUser(initialUser);
     setLoading(false);
 
-    // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
+
+      if (event === 'TOKEN_REFRESHED' && session?.access_token) {
+        console.log('Token refreshed successfully');
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Auth state change:', event, session?.user?.email);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, [supabase, MOCK_AUTH, initialUser]);
 
   const signOut = useCallback(async () => {
-    // Immediately clear user state to prevent any UI interaction
     setUser(null);
     setShowSessionExpirationModal(false);
 
@@ -96,24 +120,47 @@ export function AuthProvider({
 
   useEffect(() => {
     const checkTokenExpiration = async () => {
-      const { data } = await supabase.auth.getSession();
-      const token = data.session?.access_token;
+      try {
+        const { data } = await supabase.auth.getSession();
+        const token = data.session?.access_token;
 
-      if (token) {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const expiration = payload.exp * 1000 - 3546 * 1000; // Convert to milliseconds
-        const now = Date.now();
+        if (token) {
+          const payload = parseJwtToken(token);
 
-        if (expiration <= now) {
-          handleSessionExpiration();
-        } else {
-          const timeout = expiration - now;
-          setTimeout(() => handleSessionExpiration(), timeout);
+          if (!payload || !payload.exp) {
+            handleSessionExpiration();
+            return;
+          }
+
+          const expiration = payload.exp * 1000;
+          const now = Date.now();
+
+          if (expiration <= now) {
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Token expired, showing session expiration modal');
+            }
+            handleSessionExpiration();
+          } else {
+            const timeout = expiration - now;
+            if (process.env.NODE_ENV === 'development') {
+              console.log(
+                `Token expires in ${Math.round(timeout / 1000 / 60)} minutes`,
+              );
+            }
+            setTimeout(() => handleSessionExpiration(), timeout);
+          }
         }
+      } catch (error) {
+        console.error('Error checking token expiration:', error);
+        handleSessionExpiration();
       }
     };
 
     checkTokenExpiration();
+
+    const interval = setInterval(checkTokenExpiration, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
   }, [supabase, handleSessionExpiration]);
 
   const contextValue = useMemo(
