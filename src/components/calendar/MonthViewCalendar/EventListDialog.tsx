@@ -174,7 +174,7 @@ export function EventListDialog({
             </div>
           </DialogTitle>
         </DialogHeader>
-        <div className="max-h-[60vh] overflow-y-auto space-y-2">
+        <div className="max-h-[60vh] overflow-y-auto space-y-2 scrollbar-custom">
           {cellEvents.map((event, index) => eventListEntry(event, index))}
         </div>
         {!isInCalendar && (
