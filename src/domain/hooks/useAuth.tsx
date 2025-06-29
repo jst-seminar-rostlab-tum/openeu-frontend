@@ -86,6 +86,30 @@ export function AuthProvider({
     }
   }, [supabase, router, initialUser]);
 
+  useEffect(() => {
+    const checkTokenExpiration = async () => {
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const expiration = payload.exp * 1000; // Convert to milliseconds
+        const now = Date.now();
+
+        console.log('expire in ' + (expiration - now) / 1000 + 'seconds ');
+        if (expiration <= now) {
+          console.log('Timeout triggered');
+          await signOut();
+        } else {
+          const timeout = expiration - now;
+          setTimeout(() => signOut(), timeout);
+        }
+      }
+    };
+
+    checkTokenExpiration();
+  }, [supabase, signOut]);
+
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),
     [user, loading, signOut],
