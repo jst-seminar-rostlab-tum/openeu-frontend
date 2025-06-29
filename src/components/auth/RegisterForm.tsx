@@ -4,7 +4,6 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { IoLogoGoogle } from 'react-icons/io';
 
-import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { loginWithGoogle } from '@/domain/actions/login-with-google';
 import { signup } from '@/domain/actions/register';
 import { useTopics } from '@/domain/hooks/topicHook';
@@ -168,7 +168,12 @@ export function RegisterForm({
         </div>
         <div className="flex flex-col gap-3">
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? LoadingSpinner() : 'Sign up'}
+            {loading
+              ? Spinner({
+                  size: 'xsmall',
+                  className: 'text-white dark:text-black',
+                })
+              : 'Sign up'}
           </Button>
           <Button onClick={loginWithGoogle} type="button">
             <IoLogoGoogle />

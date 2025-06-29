@@ -4,7 +4,6 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { IoLogoGoogle } from 'react-icons/io';
 
-import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/domain/actions/login';
 import { loginWithGoogle } from '@/domain/actions/login-with-google';
 import { cn } from '@/lib/utils';
@@ -68,7 +68,12 @@ export function LoginForm({
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? LoadingSpinner() : 'Sign in'}
+                  {loading
+                    ? Spinner({
+                        size: 'xsmall',
+                        className: 'text-white dark:text-black',
+                      })
+                    : 'Sign in'}
                 </Button>
                 <Button onClick={loginWithGoogle} type="button">
                   <IoLogoGoogle />

@@ -17,7 +17,6 @@ import { ReactNode, useState } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,6 +29,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Spinner } from '@/components/ui/spinner';
 import { saveToCalendar } from '@/domain/actions/save-to-calendar';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
 import { members } from '@/domain/entities/mock/mock_members';
@@ -212,7 +212,12 @@ export function EventDetailsDialog({ event, children }: IProps) {
             disabled={calendarLoading}
           >
             <p>
-              {calendarLoading ? LoadingSpinner() : 'Add to calendar'}
+              {calendarLoading
+                ? Spinner({
+                    size: 'xsmall',
+                    className: 'text-white dark:text-black',
+                  })
+                : 'Add to calendar'}
               <CalendarPlus className="size-4" />
             </p>
           </Button>
