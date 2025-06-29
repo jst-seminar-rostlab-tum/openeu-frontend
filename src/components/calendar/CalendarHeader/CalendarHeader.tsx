@@ -34,7 +34,6 @@ import { meetingRepository } from '@/repositories/meetingRepository';
 export function CalendarHeader() {
   const { view, setView, searchQuery, setSearchQuery, filters } =
     useMeetingContext();
-  console.log('filters', filters);
   const [localSearchText, setLocalSearchText] = React.useState(searchQuery);
 
   const { data: topicsData = [] } = useTopics();
