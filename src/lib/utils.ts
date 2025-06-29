@@ -33,7 +33,7 @@ export function extractInitials(name?: string): string {
 }
 
 // Tag color utilities
-const TAG_COLORS = [
+const COLORS = [
   'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800',
   'bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800',
   'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800',
@@ -53,25 +53,24 @@ const TAG_COLORS = [
   'bg-lime-50 text-lime-700 border-lime-200 dark:bg-lime-950 dark:text-lime-300 dark:border-lime-800',
 ];
 
-// Dot color utilities for calendar events
-const TAG_DOT_COLORS = [
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-blue-600 dark:[&_svg]:fill-blue-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-green-600 dark:[&_svg]:fill-green-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-purple-600 dark:[&_svg]:fill-purple-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-yellow-600 dark:[&_svg]:fill-yellow-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-red-600 dark:[&_svg]:fill-red-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-indigo-600 dark:[&_svg]:fill-indigo-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-pink-600 dark:[&_svg]:fill-pink-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-orange-600 dark:[&_svg]:fill-orange-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-teal-600 dark:[&_svg]:fill-teal-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-cyan-600 dark:[&_svg]:fill-cyan-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-violet-600 dark:[&_svg]:fill-violet-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-fuchsia-600 dark:[&_svg]:fill-fuchsia-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-rose-600 dark:[&_svg]:fill-rose-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-amber-600 dark:[&_svg]:fill-amber-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-emerald-600 dark:[&_svg]:fill-emerald-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-sky-600 dark:[&_svg]:fill-sky-500',
-  'border-border bg-card text-foreground hover:bg-accent [&_svg]:fill-lime-600 dark:[&_svg]:fill-lime-500',
+const DOT_COLORS = [
+  'bg-blue-600 dark:bg-blue-500',
+  'bg-green-600 dark:bg-green-500',
+  'bg-purple-600 dark:bg-purple-500',
+  'bg-yellow-600 dark:bg-yellow-500',
+  'bg-red-600 dark:bg-red-500',
+  'bg-indigo-600 dark:bg-indigo-500',
+  'bg-pink-600 dark:bg-pink-500',
+  'bg-orange-600 dark:bg-orange-500',
+  'bg-teal-600 dark:bg-teal-500',
+  'bg-cyan-600 dark:bg-cyan-500',
+  'bg-violet-600 dark:bg-violet-500',
+  'bg-fuchsia-600 dark:bg-fuchsia-500',
+  'bg-rose-600 dark:bg-rose-500',
+  'bg-amber-600 dark:bg-amber-500',
+  'bg-emerald-600 dark:bg-emerald-500',
+  'bg-sky-600 dark:bg-sky-500',
+  'bg-lime-600 dark:bg-lime-500',
 ];
 
 /**
@@ -99,7 +98,7 @@ function hashString(str: string): number {
  */
 export function getColor(id: string, variant: 'bg' | 'dot' = 'bg'): string {
   const hash = hashString(id);
-  const colors = variant === 'dot' ? TAG_DOT_COLORS : TAG_COLORS;
+  const colors = variant === 'dot' ? DOT_COLORS : COLORS;
   const colorIndex = hash % colors.length;
   return colors[colorIndex];
 }
