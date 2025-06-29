@@ -56,6 +56,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/meetings/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Meeting Suggestions */
+    get: operations['get_meeting_suggestions_meetings_suggestions_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/crawler/': {
     parameters: {
       query?: never;
@@ -209,6 +226,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/legislative-files/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Legislation Suggestions */
+    get: operations['get_legislation_suggestions_legislative_files_suggestions_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/notifications/{user_id}': {
     parameters: {
       query?: never;
@@ -221,23 +255,6 @@ export interface paths {
      * @description Retrieve all notifications for a specific user by their ID.
      */
     get: operations['get_notifications_for_user_notifications__user_id__get'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/suggestions': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get Suggestions */
-    get: operations['get_suggestions_suggestions_get'];
     put?: never;
     post?: never;
     delete?: never;
@@ -300,6 +317,20 @@ export interface components {
       /** Similarity */
       similarity?: number | null;
     };
+    /** LegislativeFileSuggestion */
+    LegislativeFileSuggestion: {
+      /** Id */
+      id: string;
+      /** Title */
+      title: string;
+      /** Similarity Score */
+      similarity_score: number;
+    };
+    /** LegislativeFileSuggestionResponse */
+    LegislativeFileSuggestionResponse: {
+      /** Data */
+      data: components['schemas']['LegislativeFileSuggestion'][];
+    };
     /** LegislativeFilesResponse */
     LegislativeFilesResponse: {
       /** Legislative Files */
@@ -338,6 +369,18 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
+    };
+    /** MeetingSuggestion */
+    MeetingSuggestion: {
+      /** Title */
+      title: string;
+      /** Similarity Score */
+      similarity_score: number;
+    };
+    /** MeetingSuggestionResponse */
+    MeetingSuggestionResponse: {
+      /** Data */
+      data: components['schemas']['MeetingSuggestion'][];
     };
     /** MessagesResponseModel */
     MessagesResponseModel: {
@@ -647,6 +690,40 @@ export interface operations {
       };
     };
   };
+  get_meeting_suggestions_meetings_suggestions_get: {
+    parameters: {
+      query: {
+        /** @description Fuzzy text to search meeting titles */
+        query: string;
+        /** @description Number of suggestions to return */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingSuggestionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
   dummy_crawl_crawler__get: {
     parameters: {
       query?: never;
@@ -927,6 +1004,40 @@ export interface operations {
       };
     };
   };
+  get_legislation_suggestions_legislative_files_suggestions_get: {
+    parameters: {
+      query: {
+        /** @description Fuzzy text to search legislation titles */
+        query: string;
+        /** @description Number of suggestions to return */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LegislativeFileSuggestionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
   get_notifications_for_user_notifications__user_id__get: {
     parameters: {
       query?: {
@@ -947,40 +1058,6 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['Notification'][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HTTPValidationError'];
-        };
-      };
-    };
-  };
-  get_suggestions_suggestions_get: {
-    parameters: {
-      query: {
-        /** @description Fuzzy text to search meeting titles */
-        query: string;
-        /** @description Number of suggestions to return */
-        limit?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SuggestionResponse'];
         };
       };
       /** @description Validation Error */
