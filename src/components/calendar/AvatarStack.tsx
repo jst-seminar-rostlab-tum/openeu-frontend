@@ -37,7 +37,7 @@ export function AvatarStack({ members }: AvatarStackProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <Avatar
-              className="w-6 h-6 ring-1 ring-muted-foreground shadow-md bg-transparent"
+              className="w-6 h-6 ring-1 ring-muted-foreground shadow-md"
               style={{ zIndex: 100 - visibleMembers.length }}
             >
               <AvatarFallback className="w-6 h-6 bg-accent text-primary text-[10px]">
