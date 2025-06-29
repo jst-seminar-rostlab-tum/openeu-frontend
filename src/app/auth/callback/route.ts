@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient();
     const {
-      data: { user },
+      data: { user, session },
       error,
     } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
@@ -27,6 +27,15 @@ export async function GET(request: Request) {
 
       if (!count) {
         await supabase.auth.updateUser({ data: { incompleteProfile: true } });
+      }
+
+      if (session) {
+        await supabase.auth.updateUser({
+          data: {
+            oauthRefreshToken: session.provider_refresh_token,
+            oauthAccessToken: session.provider_token,
+          },
+        });
       }
 
       const forwardedHost = request.headers.get('x-forwarded-host'); // original origin before load balancer
