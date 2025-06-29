@@ -1,3 +1,5 @@
+import { getCookie } from 'cookies-next';
+
 import {
   LegislativeFileSuggestion,
   LegislativeFileSuggestionResponse,
@@ -12,9 +14,20 @@ export const legislationRepository = {
   ): Promise<LegislativeFileSuggestion[]> {
     if (!query || query.length < 2) return [];
 
+    const token = getCookie('token');
+
     try {
       const res = await fetch(
         `${API_URL}/suggestions?query=${encodeURIComponent(query)}`,
+        {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       if (!res.ok) {
         throw new Error(

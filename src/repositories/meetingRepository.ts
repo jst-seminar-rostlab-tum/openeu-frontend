@@ -1,3 +1,4 @@
+import { getCookie } from 'cookies-next';
 import { addHours } from 'date-fns';
 
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
@@ -12,11 +13,22 @@ const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/meetings`;
 
 export const meetingRepository = {
   async getMeetingSuggestions(query: string): Promise<MeetingSuggestion[]> {
+    const token = getCookie('token');
+
     if (!query || query.length < 2) return [];
 
     try {
       const res = await fetch(
         `${API_URL}/suggestions?query=${encodeURIComponent(query)}`,
+        {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       if (!res.ok) {
         throw new Error(`Failed to fetch meeting suggestions: ${res.status}`);
@@ -33,6 +45,7 @@ export const meetingRepository = {
   },
 
   async getMeetings(params: GetMeetingsQueryParams): Promise<Meeting[]> {
+    const token = getCookie('token');
     const query = params
       ? Object.entries(params)
           .filter((entry) => !!entry[1])
@@ -44,7 +57,16 @@ export const meetingRepository = {
           .join('&')
       : undefined;
     try {
-      const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`);
+      const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       if (!res.ok) {
         ToastOperations.showError({
           title: 'Error fetching meetings',
