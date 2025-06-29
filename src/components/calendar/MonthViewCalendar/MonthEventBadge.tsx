@@ -3,16 +3,15 @@ import { cva } from 'class-variance-authority';
 import { endOfDay, isSameDay, parseISO, startOfDay } from 'date-fns';
 
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
-import { eventColorVariants } from '@/components/calendar/MonthViewCalendar/eventVariants';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { cn } from '@/lib/utils';
+import { getColor } from '@/lib/utils';
 import { formatTime } from '@/operations/meeting/CalendarHelpers';
 
 export const eventBadgeVariants = cva(
-  'mx-1 flex size-auto h-6.5 sselect-none items-center gap-1.5  whitespace-nowrap truncate justify-between rounded-md border px-2 text-xs',
+  'mx-1 flex size-auto h-6.5 sselect-none items-center gap-1.5  whitespace-nowrap truncate justify-between rounded-md border px-2 text-xs cursor-pointer',
   {
     variants: {
-      color: eventColorVariants,
       multiDayPosition: {
         first:
           'relative z-10 mr-0 w-[calc(100%_+_1px)] rounded-r-none border-r-0 [&>span]:mr-2.5',
@@ -22,17 +21,12 @@ export const eventBadgeVariants = cva(
         none: '',
       },
     },
-    defaultVariants: {
-      color: 'blue-dot',
-    },
+    defaultVariants: {},
   },
 );
 
 interface IProps
-  extends Omit<
-    VariantProps<typeof eventBadgeVariants>,
-    'color' | 'multiDayPosition'
-  > {
+  extends Omit<VariantProps<typeof eventBadgeVariants>, 'multiDayPosition'> {
   event: Meeting;
   cellDate: Date;
   eventCurrentDay?: number;
@@ -77,10 +71,10 @@ export function MonthEventBadge({
     new Date(event.meeting_start_datetime),
     true,
   );
-  const color = event.color as VariantProps<typeof eventBadgeVariants>['color'];
 
   const eventBadgeClasses = cn(
-    eventBadgeVariants({ color, multiDayPosition: position, className }),
+    eventBadgeVariants({ multiDayPosition: position, className }),
+    getColor(event.meeting_id),
   );
 
   return (

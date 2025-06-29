@@ -1,16 +1,21 @@
 import { ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { getTagColor } from '@/lib/utils';
+import { getColor } from '@/lib/utils';
 
 interface TagBadgeProps {
   children: ReactNode;
   className?: string;
+  colorHash?: string | null;
 }
 
-export function TagBadge({ children, className = '' }: TagBadgeProps) {
+export function TagBadge({
+  children,
+  className = '',
+  colorHash,
+}: TagBadgeProps) {
   const tagString = typeof children === 'string' ? children : '';
-  const colorClass = getTagColor(tagString);
+  const colorClass = getColor(colorHash || tagString);
 
   return (
     <Badge

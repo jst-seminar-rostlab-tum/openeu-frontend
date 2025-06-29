@@ -7,24 +7,11 @@ import {
   IMeetingContext,
   MeetingContext,
 } from '@/components/calendar/MeetingContext';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
+import { GetMeetingsParams } from '@/domain/entities/calendar/generated-types';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
-export interface GetMeetingsQueryParams {
-  limit?: number;
-  /** @description Start datetime (ISO8601) */
-  start?: string | null;
-  /** @description End datetime (ISO8601) */
-  end?: string | null;
-  /** @description Search query using semantic similarity */
-  query?: string | null;
-  /** @description Filter by country (e.g., 'Austria', 'European Union') */
-  country?: string | null;
-  /** @description List of topic names (repeat or comma-separated) */
-  topics?: string[] | null;
-  /** @description List of source table names (repeat or comma-separated) */
-  source_table?: string[] | null;
-}
+export type GetMeetingsQueryParams = GetMeetingsParams;
 
 export const useMeetings = (props: GetMeetingsQueryParams, enabled = true) =>
   useQuery<Meeting[]>({

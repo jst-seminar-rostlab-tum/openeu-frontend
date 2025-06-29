@@ -8,7 +8,6 @@ import React, { ReactNode } from 'react';
 import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet';
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
-import { eventColorVariants } from '@/components/calendar/MonthViewCalendar/eventVariants';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,11 +19,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { members } from '@/domain/entities/mock/mock_members';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
+import { getColor } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
@@ -117,8 +116,8 @@ export function EventListDialog({
       <EventDetailsDialog key={`${event.meeting_id}-${index}`} event={event}>
         <div
           className={cn(
-            'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
-            eventColorVariants[event.color as keyof typeof eventColorVariants],
+            'flex items-center gap-2 p-2 border rounded-md cursor-pointer',
+            getColor(event.meeting_id),
           )}
         >
           <div className="flex w-full flex-col gap-1">
@@ -157,12 +156,12 @@ export function EventListDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children || defaultTrigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-center gap-2">
               <EventBullet
-                color={cellEvents[0]?.color as TMeetingColor}
+                color={getColor(cellEvents[0]?.meeting_id || '', 'dot')}
                 className=""
               />
               <p className="text-sm font-medium">

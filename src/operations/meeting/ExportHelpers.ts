@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
 
 const filterMeetingsForExport = (meetings: Meeting[]) =>
