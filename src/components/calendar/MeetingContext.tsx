@@ -10,18 +10,20 @@ import {
 } from 'date-fns';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import {
+  Meeting,
+  TCalendarView,
+} from '@/domain/entities/calendar/CalendarTypes';
 import {
   GetMeetingsQueryParams,
   useMeetings,
 } from '@/domain/hooks/meetingHooks';
 import { useUrlSync } from '@/domain/hooks/useCalendarUrlSync';
-import { TCalendarView, TMeetingColor } from '@/domain/types/calendar/types';
 import { getCurrentWeekRange } from '@/lib/formatters';
+import { getColor } from '@/lib/utils';
 import {
   calculateEndDate,
   calculateStartDate,
-  getColorFromId,
   getCurrentMonthRange,
   getInstitutionFromSourceTable,
   getSourceTableFromInstitution,
@@ -29,12 +31,13 @@ import {
 
 const { now } = getCurrentMonthRange();
 
+type NonNullableFilters = NonNullable<GetMeetingsQueryParams>;
+
 export interface IMeetingContext {
   selectedDate: Date;
   view: TCalendarView;
   setView: (view: TCalendarView) => void;
   setSelectedDate: (date: Date | undefined) => void;
-  selectedColors: TMeetingColor[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
@@ -49,7 +52,7 @@ export interface IMeetingContext {
   isError: boolean;
   use24HourFormat: boolean;
   badgeVariant: 'dot' | 'colored';
-  filters: GetMeetingsQueryParams;
+  filters: NonNullableFilters;
   setFilters: (filters: GetMeetingsQueryParams) => void;
   getEventsCount: (
     events?: Meeting[],
@@ -103,8 +106,6 @@ export function MeetingProvider({
     urlState.selectedInstitutions || [],
   );
 
-  const [selectedColors] = useState<TMeetingColor[]>([]);
-
   // Track if we're using a custom date range (from FilterModal)
   const [isCustomRange, setIsCustomRange] = useState<boolean>(
     Boolean(urlState.startDate && urlState.endDate),
@@ -116,8 +117,7 @@ export function MeetingProvider({
     urlState.endDate?.toISOString() || null,
   );
 
-  // Memoized filter calculation following Medium article pattern
-  const filters = useMemo((): GetMeetingsQueryParams => {
+  const filters = useMemo((): NonNullableFilters => {
     let start: string;
     let end: string;
 
@@ -180,9 +180,9 @@ export function MeetingProvider({
     isError,
   } = useMeetings(filters);
 
-  // Add colors to meetings using getColorFromId
+  // Add colors to meetings using getColor
   const meetings = useMemo(() => {
-    return rawMeetings.map((meeting) => {
+    return rawMeetings.map((meeting): Meeting => {
       // Ensure meeting has valid end time
       const processedMeeting = { ...meeting };
       if (
@@ -194,12 +194,11 @@ export function MeetingProvider({
         processedMeeting.meeting_end_datetime = endTime.toISOString();
       }
 
-      // Assign color
-      processedMeeting.color = getColorFromId(
-        meeting.meeting_id,
-      ) as TMeetingColor;
-
-      return processedMeeting;
+      // Assign color using unified system
+      return {
+        ...processedMeeting,
+        color: getColor(meeting.meeting_id),
+      };
     });
   }, [rawMeetings]);
 
@@ -238,6 +237,8 @@ export function MeetingProvider({
   };
 
   const handleSetFilters = (newFilters: GetMeetingsQueryParams) => {
+    if (!newFilters) return;
+
     // Update basic state
     if (newFilters.query !== undefined) {
       setSearchQuery(newFilters.query || '');
@@ -291,7 +292,6 @@ export function MeetingProvider({
     view: currentView,
     setView,
     setSelectedDate: handleSelectDate,
-    selectedColors,
     searchQuery,
     setSearchQuery: handleSetSearchQuery,
     selectedCountry,

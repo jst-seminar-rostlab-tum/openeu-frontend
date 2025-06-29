@@ -3,7 +3,7 @@ import React from 'react';
 import { DayViewSkeleton } from '@/components/calendar/CalendarSkeleton/DayViewSkeleton';
 import { MonthViewSkeleton } from '@/components/calendar/CalendarSkeleton/MonthViewSkeleton';
 import { WeekViewSkeleton } from '@/components/calendar/CalendarSkeleton/WeekViewSkeleton';
-import { TCalendarView } from '@/domain/types/calendar/types';
+import { TCalendarView } from '@/domain/entities/calendar/CalendarTypes';
 interface CalendarSkeletonProps {
   view: TCalendarView;
 }

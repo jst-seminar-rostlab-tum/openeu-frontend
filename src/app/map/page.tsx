@@ -25,7 +25,7 @@ export default function MapPage() {
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
-      <div className="absolute right-4 top-16 z-10 flex items-center gap-2">
+      <div className="absolute right-4 top-16 z-10 flex flex-col-reverse items-end md:flex-row md:items-center gap-2">
         <div className="flex flex-wrap gap-2">
           {(() => {
             const topicDisplay = formatTopicsForDisplay(filters.topics);

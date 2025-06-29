@@ -9,9 +9,11 @@ import { CalendarDayView } from '@/components/calendar/DayViewCalendar/DayViewCa
 import { CalendarMonthView } from '@/components/calendar/MonthViewCalendar/MonthViewCalendar';
 import { CalendarWeekView } from '@/components/calendar/WeekViewCalendar/WeekViewCalendar';
 import { fadeIn, transition } from '@/domain/animations';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import {
+  Meeting,
+  TCalendarView,
+} from '@/domain/entities/calendar/CalendarTypes';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import { TCalendarView } from '@/domain/types/calendar/types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export function CalendarBody() {
