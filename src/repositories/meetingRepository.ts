@@ -1,12 +1,37 @@
 import { addHours } from 'date-fns';
 
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import {
+  Meeting,
+  MeetingSuggestion,
+  MeetingSuggestionResponse,
+} from '@/domain/entities/calendar/generated-types';
 import { GetMeetingsQueryParams } from '@/domain/hooks/meetingHooks';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/meetings`;
 
 export const meetingRepository = {
+  async getMeetingSuggestions(query: string): Promise<MeetingSuggestion[]> {
+    if (!query || query.length < 2) return [];
+
+    try {
+      const res = await fetch(
+        `${API_URL}/suggestions?query=${encodeURIComponent(query)}`,
+      );
+      if (!res.ok) {
+        throw new Error(`Failed to fetch meeting suggestions: ${res.status}`);
+      }
+      const response: MeetingSuggestionResponse = await res.json();
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (err) {
+      ToastOperations.showError({
+        title: 'Error fetching meeting suggestions',
+        message: 'Failed to fetch meeting suggestions. Please try again later.',
+      });
+      throw new Error('Failed to fetch meetings suggestions', { cause: err });
+    }
+  },
+
   async getMeetings(params: GetMeetingsQueryParams): Promise<Meeting[]> {
     const query = params
       ? Object.entries(params)
