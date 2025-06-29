@@ -509,6 +509,18 @@ export interface components {
       /** Title */
       title: string;
     };
+    /** Suggestion */
+    Suggestion: {
+      /** Title */
+      title: string;
+      /** Similarity Score */
+      similarity_score: number;
+    };
+    /** SuggestionResponse */
+    SuggestionResponse: {
+      /** Data */
+      data: components['schemas']['Suggestion'][];
+    };
     /** Topic */
     Topic: {
       /** Topic */

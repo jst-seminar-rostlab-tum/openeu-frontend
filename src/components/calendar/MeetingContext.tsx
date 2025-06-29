@@ -38,11 +38,13 @@ export interface IMeetingContext {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
+  selectedUserId: string;
   selectedTopics: string[];
   selectedInstitutions: string[];
   setSelectedTopics: (topics: string[]) => void;
   setSelectedCountry: (country: string) => void;
   setSelectedInstitutions: (institutions: string[]) => void;
+  setSelectedUserId: (user_id: string) => void;
   meetings: Meeting[];
   isLoading: boolean;
   isFetching: boolean;
@@ -95,6 +97,9 @@ export function MeetingProvider({
   const [searchQuery, setSearchQuery] = useState<string>(urlState.searchQuery);
   const [selectedCountry, setSelectedCountry] = useState<string>(
     urlState.selectedCountry,
+  );
+  const [selectedUserId, setSelectedUserId] = useState<string>(
+    urlState.selectedUserId,
   );
   const [selectedTopics, setSelectedTopics] = useState<string[]>(
     urlState.selectedTopics || [],
@@ -152,12 +157,14 @@ export function MeetingProvider({
         selectedInstitutions.length > 0
           ? selectedInstitutions.map(getSourceTableFromInstitution)
           : undefined,
+      user_id: selectedUserId || undefined,
     };
   }, [
     selectedDate,
     currentView,
     searchQuery,
     selectedCountry,
+    selectedUserId,
     isCustomRange,
     customStart,
     customEnd,
@@ -229,6 +236,10 @@ export function MeetingProvider({
     setSelectedCountry(country);
   };
 
+  const handleSetSelectedUserId = (userId: string) => {
+    setSelectedUserId(userId);
+  };
+
   const handleSetSelectedTopics = (topics: string[]) => {
     setSelectedTopics(topics);
   };
@@ -244,6 +255,9 @@ export function MeetingProvider({
     }
     if (newFilters.country !== undefined) {
       setSelectedCountry(newFilters.country || '');
+    }
+    if (newFilters.user_id !== undefined) {
+      setSelectedUserId(newFilters.user_id || '');
     }
     if (newFilters.start) {
       setSelectedDate(new Date(newFilters.start));
@@ -296,6 +310,8 @@ export function MeetingProvider({
     setSearchQuery: handleSetSearchQuery,
     selectedCountry,
     setSelectedCountry: handleSetSelectedCountry,
+    selectedUserId,
+    setSelectedUserId: handleSetSelectedUserId,
     selectedTopics,
     setSelectedTopics: handleSetSelectedTopics,
     selectedInstitutions,
