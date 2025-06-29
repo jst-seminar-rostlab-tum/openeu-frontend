@@ -11,6 +11,7 @@ import React, {
   useState,
 } from 'react';
 
+import { SessionExpirationModal } from '@/components/auth/SessionExpirationModal';
 import { createClient } from '@/lib/supabase/client';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -31,6 +32,8 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(initialUser);
   const [loading, setLoading] = useState(true);
+  const [showSessionExpirationModal, setShowSessionExpirationModal] =
+    useState(false);
   const router = useRouter();
   const supabase = createClient();
 
@@ -72,6 +75,7 @@ export function AuthProvider({
   const signOut = useCallback(async () => {
     // Immediately clear user state to prevent any UI interaction
     setUser(null);
+    setShowSessionExpirationModal(false);
 
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -86,6 +90,10 @@ export function AuthProvider({
     }
   }, [supabase, router, initialUser]);
 
+  const handleSessionExpiration = useCallback(() => {
+    setShowSessionExpirationModal(true);
+  }, []);
+
   useEffect(() => {
     const checkTokenExpiration = async () => {
       const { data } = await supabase.auth.getSession();
@@ -93,22 +101,20 @@ export function AuthProvider({
 
       if (token) {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        const expiration = payload.exp * 1000; // Convert to milliseconds
+        const expiration = payload.exp * 1000 - 3546 * 1000; // Convert to milliseconds
         const now = Date.now();
 
-        console.log('expire in ' + (expiration - now) / 1000 + 'seconds ');
         if (expiration <= now) {
-          console.log('Timeout triggered');
-          await signOut();
+          handleSessionExpiration();
         } else {
           const timeout = expiration - now;
-          setTimeout(() => signOut(), timeout);
+          setTimeout(() => handleSessionExpiration(), timeout);
         }
       }
     };
 
     checkTokenExpiration();
-  }, [supabase, signOut]);
+  }, [supabase, handleSessionExpiration]);
 
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),
@@ -116,7 +122,13 @@ export function AuthProvider({
   );
 
   return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>
+      {children}
+      <SessionExpirationModal
+        open={showSessionExpirationModal}
+        onLogout={signOut}
+      />
+    </AuthContext.Provider>
   );
 }
 
