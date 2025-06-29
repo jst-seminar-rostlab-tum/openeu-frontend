@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "format:fix": "prettier .",
     "prepare": "husky",
-    "api:fetch": "curl -s https://openeu-backend-1.onrender.com/openapi.json -o src/lib/openapi.json",
+    "api:fetch": "node src/lib/scripts/fetch-api.mjs",
     "api:types": "npx openapi-typescript src/lib/openapi.json -o src/lib/api-types.ts",
     "api:update": "npm run api:fetch && npm run api:types"
   },
@@ -52,6 +52,7 @@
     "cmdk": "^1.1.1",
     "cookies-next": "^6.0.0",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.0.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
