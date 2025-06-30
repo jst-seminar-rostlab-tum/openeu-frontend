@@ -7,15 +7,22 @@ export function createClient() {
     {
       cookies: {
         getAll() {
-          return document.cookie.split(';').map((cookie) => {
-            const [name, value] = cookie.trim().split('=');
-            return { name, value };
-          });
+          if (typeof document !== 'undefined') {
+            return document.cookie.split(';').map((cookie) => {
+              const [name, value] = cookie.trim().split('=');
+              return { name, value };
+            });
+          }
+          return [];
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            document.cookie = `${name}=${value}; path=/; ${options?.secure ? 'secure;' : ''} ${options?.sameSite ? `samesite=${options.sameSite};` : ''}`;
-          });
+          if (typeof document !== 'undefined') {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              document.cookie = `${name}=${value}; path=/; ${
+                options?.secure ? 'secure;' : ''
+              } ${options?.sameSite ? `samesite=${options.sameSite};` : ''}`;
+            });
+          }
         },
       },
     },
