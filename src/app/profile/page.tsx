@@ -4,9 +4,10 @@ import AccountDetailsForm from '@/components/profile/AccountDetailsForm';
 import InterestsForm from '@/components/profile/InterestsForm';
 import NotificationsForm from '@/components/profile/NotificationsForm';
 import SecurityForm from '@/components/profile/SecurityForm';
+import { Section } from '@/components/section';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getProfile } from '@/domain/actions/profile';
-import { createClient } from '@/lib/supabase/server';
+import { getUser } from '@/lib/dal';
 import { topicRepository } from '@/repositories/topicRepository';
 
 interface ProfileCategory {
@@ -18,10 +19,7 @@ interface ProfileCategory {
 }
 
 export default async function ProfilePage() {
-  const client = await createClient();
-  const {
-    data: { user },
-  } = await client.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     throw new Error('User does not exist');
@@ -116,7 +114,7 @@ export default async function ProfilePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl">
+    <Section className="container mx-auto px-4 py-6 max-w-4xl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
           Profile Settings
@@ -132,6 +130,6 @@ export default async function ProfilePage() {
         </TabsList>
         <div className="mt-6">{categories.map(buildTabContent)}</div>
       </Tabs>
-    </div>
+    </Section>
   );
 }
