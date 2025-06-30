@@ -12,6 +12,7 @@ import { MeetingSuggestion } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
 import { dateRangeToString, formatTopicsForDisplay } from '@/lib/formatters';
+import { getInstitutionFromSourceTable } from '@/operations/meeting/CalendarHelpers';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
 export default function MapPage() {
@@ -25,7 +26,7 @@ export default function MapPage() {
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
-      <div className="absolute right-4 top-16 z-10 flex items-center gap-2">
+      <div className="absolute right-4 top-16 z-10 flex flex-col-reverse items-end md:flex-row md:items-center gap-2">
         <div className="flex flex-wrap gap-2">
           {(() => {
             const topicDisplay = formatTopicsForDisplay(filters.topics);
@@ -37,6 +38,27 @@ export default function MapPage() {
                 className="text-xs py-1 px-2 outline-1 outline-gray"
               >
                 {topicDisplay.displayText}
+              </Badge>
+            );
+          })()}
+          {(() => {
+            if (!filters.source_table || filters.source_table.length === 0) {
+              return null;
+            }
+
+            const institutions: string[] = [];
+            for (const sourceTable of filters.source_table) {
+              institutions.push(getInstitutionFromSourceTable(sourceTable));
+            }
+            const institutionsDisplay = formatTopicsForDisplay(institutions);
+
+            if (!institutionsDisplay) return null;
+            return (
+              <Badge
+                variant="secondary"
+                className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+              >
+                {institutionsDisplay.displayText}
               </Badge>
             );
           })()}

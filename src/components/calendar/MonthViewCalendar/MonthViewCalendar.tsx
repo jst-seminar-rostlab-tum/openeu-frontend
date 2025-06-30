@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 import { DayCell } from '@/components/calendar/MonthViewCalendar/DayCell';
 import { staggerContainer, transition } from '@/domain/animations';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import {
   calculateMonthEventPositions,

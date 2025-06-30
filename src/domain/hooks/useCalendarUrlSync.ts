@@ -3,9 +3,9 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
-import { TCalendarView } from '@/domain/types/calendar/types';
 import { getInstitutionFromSourceTable } from '@/operations/meeting/CalendarHelpers';
 
+import { TCalendarView } from '../entities/calendar/CalendarTypes';
 import { GetMeetingsQueryParams } from './meetingHooks';
 
 const CALENDAR_VIEWS = new Set<TCalendarView>([
@@ -107,7 +107,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
 
   // Batched URL update function (prevents multiple router.replace calls)
   const syncFiltersToUrl = useCallback(
-    (filters: GetMeetingsQueryParams, view?: TCalendarView) => {
+    (filters: NonNullable<GetMeetingsQueryParams>, view?: TCalendarView) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
       // Batch all parameter updates into single operation
       const updates: Record<string, string | null> = {
