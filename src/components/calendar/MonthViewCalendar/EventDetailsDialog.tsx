@@ -67,7 +67,10 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <MapPin className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">Location</p>
-                <TagBadge className="max-w-full mt-1">
+                <TagBadge
+                  className="max-w-full mt-1"
+                  colorHash={event.location}
+                >
                   <span
                     className="truncate direction-rtl text-left"
                     title={

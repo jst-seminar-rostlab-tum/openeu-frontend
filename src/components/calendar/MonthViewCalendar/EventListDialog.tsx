@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
-import { dayCellVariants } from '@/components/calendar/MonthViewCalendar/DayCell';
 import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet';
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
@@ -20,11 +19,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { members } from '@/domain/entities/mock/mock_members';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import { TMeetingColor } from '@/domain/types/calendar/types';
 import { cn } from '@/lib/utils';
+import { getColor } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
@@ -117,12 +116,8 @@ export function EventListDialog({
       <EventDetailsDialog key={`${event.meeting_id}-${index}`} event={event}>
         <div
           className={cn(
-            'flex items-center gap-2 p-2 border rounded-md hover:bg-muted',
-            {
-              [dayCellVariants({
-                color: event.color as TMeetingColor,
-              })]: true,
-            },
+            'flex items-center gap-2 p-2 border rounded-md cursor-pointer',
+            getColor(event.meeting_id),
           )}
         >
           <div className="flex w-full flex-col gap-1">
@@ -135,11 +130,11 @@ export function EventListDialog({
               )}
             </div>
             <div className="flex items-center gap-1">
-              <Badge variant="outline" className="text-white">
+              <Badge variant="subtle" className="text-foreground">
                 <Building className="shrink-0" />
                 {getMeetingTypeShort(event.source_table)}
               </Badge>
-              <Badge variant="outline" className="text-white max-w-40">
+              <Badge variant="subtle" className="text-foreground max-w-40">
                 <MapPin className="shrink-0 w-3 h-3" />
                 <span
                   className="truncate min-w-0 direction-rtl text-left"
@@ -161,12 +156,12 @@ export function EventListDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children || defaultTrigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-center gap-2">
               <EventBullet
-                color={cellEvents[0]?.color as TMeetingColor}
+                color={getColor(cellEvents[0]?.meeting_id || '', 'dot')}
                 className=""
               />
               <p className="text-sm font-medium">
@@ -178,7 +173,7 @@ export function EventListDialog({
             </div>
           </DialogTitle>
         </DialogHeader>
-        <div className="max-h-[60vh] overflow-y-auto space-y-2">
+        <div className="max-h-[60vh] overflow-y-auto space-y-2 scrollbar-custom">
           {cellEvents.map((event, index) => eventListEntry(event, index))}
         </div>
         {!isInCalendar && (
