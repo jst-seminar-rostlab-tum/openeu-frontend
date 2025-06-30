@@ -5,7 +5,7 @@ import { endOfDay, isSameDay, parseISO, startOfDay } from 'date-fns';
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { cn } from '@/lib/utils';
-import { getColor } from '@/lib/utils';
+import { getColorByHash } from '@/lib/utils';
 import { formatTime } from '@/operations/meeting/CalendarHelpers';
 
 export const eventBadgeVariants = cva(
@@ -74,7 +74,7 @@ export function MonthEventBadge({
 
   const eventBadgeClasses = cn(
     eventBadgeVariants({ multiDayPosition: position, className }),
-    getColor(event.meeting_id),
+    getColorByHash(event.meeting_id),
   );
 
   return (

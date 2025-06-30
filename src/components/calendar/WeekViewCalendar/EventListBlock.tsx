@@ -5,7 +5,7 @@ import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventLi
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
-import { getColor } from '@/lib/utils';
+import { getColorByHash } from '@/lib/utils';
 import { formatTime } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
@@ -20,7 +20,7 @@ export function EventListBlock({ events, className }: IProps) {
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
-  const colorClasses = getColor(
+  const colorClasses = getColorByHash(
     events[0].meeting_id,
     badgeVariant === 'dot' ? 'dot' : 'bg',
   );
