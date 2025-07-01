@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
-import { getColor } from '@/lib/utils';
+import { getColorByHash } from '@/lib/utils';
 import {
   formatTime,
   getMeetingTypeShort,
@@ -26,7 +26,7 @@ export function EventBlock({ event, className }: IProps) {
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
-  const colorClasses = getColor(
+  const colorClasses = getColorByHash(
     event.meeting_id,
     badgeVariant === 'dot' ? 'dot' : 'bg',
   );

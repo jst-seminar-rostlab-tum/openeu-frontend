@@ -1,4 +1,5 @@
 import FeaturesSection from '@/components/home/FeaturesSection';
+import Footer from '@/components/home/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import LoggedInLanding from '@/components/home/LoggedInLanding';
 import MissionSection from '@/components/home/MissionSection';
@@ -16,6 +17,7 @@ export default async function HomePage() {
       <HeroSection />
       <FeaturesSection />
       <MissionSection />
+      <Footer />
     </main>
   );
 }
