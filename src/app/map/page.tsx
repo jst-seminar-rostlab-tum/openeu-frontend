@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/map/Map';
+import PersonalizeSwitch from '@/components/PersonalizeSwitch/PersonalizeSwitch';
 import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -86,6 +87,7 @@ export default function MapPage() {
             onSelect={(meeting) => setSearchQuery(meeting.title)}
           />
           <FilterModal showCountryDropdown={false} topics={topicLabels} />
+          <PersonalizeSwitch />
         </Card>
       </div>
     </div>
