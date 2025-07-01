@@ -45,6 +45,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@turf/turf": "^7.2.0",
     "@types/geojson": "^7946.0.16",
+    "@types/lodash": "^4.17.19",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
