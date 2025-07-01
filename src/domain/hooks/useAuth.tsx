@@ -1,6 +1,7 @@
 'use client';
 
 import { User } from '@supabase/supabase-js';
+import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, {
   createContext,
@@ -22,24 +23,6 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Utility function to safely parse JWT token
-const parseJwtToken = (token: string) => {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join(''),
-    );
-    return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error('Error parsing JWT token:', error);
-    return null;
-  }
-};
 
 export function AuthProvider({
   children,
@@ -125,7 +108,7 @@ export function AuthProvider({
         const token = data.session?.access_token;
 
         if (token) {
-          const payload = parseJwtToken(token);
+          const payload = jwtDecode(token);
 
           if (!payload || !payload.exp) {
             handleSessionExpiration();

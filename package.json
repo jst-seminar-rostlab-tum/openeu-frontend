@@ -59,6 +59,7 @@
     "framer-motion": "^12.15.0",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
+    "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "lodash": "^4.17.21",
