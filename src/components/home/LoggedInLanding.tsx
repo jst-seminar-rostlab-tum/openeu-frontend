@@ -7,6 +7,7 @@ import Link from 'next/link';
 
 import { Section } from '@/components/section';
 import { Button } from '@/components/ui/button';
+import { useIncompleteProfile } from '@/domain/hooks/use-incomplete-profile';
 import { getFirstName } from '@/lib/utils';
 
 interface LoggedInLandingProps {
@@ -15,6 +16,8 @@ interface LoggedInLandingProps {
 
 export default function LoggedInLanding({ user }: LoggedInLandingProps) {
   const firstName = getFirstName(user);
+
+  useIncompleteProfile(user);
 
   return (
     <main className="min-h-[calc(100vh-48px)] bg-white dark:bg-black text-black dark:text-white relative overflow-hidden">
