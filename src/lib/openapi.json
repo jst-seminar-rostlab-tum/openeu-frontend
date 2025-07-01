@@ -287,6 +287,60 @@
         }
       }
     },
+    "/legislative-files/meetings": {
+      "get": {
+        "summary": "Get Meetings By Legislative Id",
+        "description": "Returns all meetings from the mep_meetings table that reference the given legislative (procedure_reference) ID",
+        "operationId": "get_meetings_by_legislative_id_legislative_files_meetings_get",
+        "parameters": [
+          {
+            "name": "legislative_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Legislative procedure reference ID to filter meetings",
+              "title": "Legislative Id"
+            },
+            "description": "Legislative procedure reference ID to filter meetings"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "exclusiveMinimum": 0,
+              "description": "Maximum number of meetings to return",
+              "default": 500,
+              "title": "Limit"
+            },
+            "description": "Maximum number of meetings to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeMeetingsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/crawler/": {
       "get": {
         "tags": ["crawler"],
@@ -782,6 +836,10 @@
             ],
             "title": "Lastpubdate"
           },
+          "details_link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Details Link"
+          },
           "committee": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Committee"
@@ -789,6 +847,47 @@
           "rapporteur": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Rapporteur"
+          },
+          "status": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Status"
+          },
+          "subjects": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Subjects"
+          },
+          "key_players": {
+            "anyOf": [
+              {
+                "items": { "additionalProperties": true, "type": "object" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Key Players"
+          },
+          "key_events": {
+            "anyOf": [
+              {
+                "items": { "additionalProperties": true, "type": "object" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Key Events"
+          },
+          "documentation_gateway": {
+            "anyOf": [
+              {
+                "items": { "additionalProperties": true, "type": "object" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Documentation Gateway"
           },
           "similarity": {
             "anyOf": [{ "type": "number" }, { "type": "null" }],
@@ -834,6 +933,64 @@
         "type": "object",
         "required": ["legislative_files"],
         "title": "LegislativeFilesResponse"
+      },
+      "LegislativeMeeting": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "title": { "type": "string", "title": "Title" },
+          "member_name": { "type": "string", "title": "Member Name" },
+          "meeting_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Meeting Date"
+          },
+          "meeting_location": { "type": "string", "title": "Meeting Location" },
+          "member_capacity": { "type": "string", "title": "Member Capacity" },
+          "procedure_reference": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Procedure Reference"
+          },
+          "associated_committee_or_delegation_code": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Associated Committee Or Delegation Code"
+          },
+          "associated_committee_or_delegation_name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Associated Committee Or Delegation Name"
+          },
+          "embedding_input": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Embedding Input"
+          },
+          "scraped_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Scraped At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "member_name",
+          "meeting_date",
+          "meeting_location",
+          "member_capacity",
+          "scraped_at"
+        ],
+        "title": "LegislativeMeeting"
+      },
+      "LegislativeMeetingsResponse": {
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/LegislativeMeeting" },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "LegislativeMeetingsResponse"
       },
       "Meeting": {
         "properties": {

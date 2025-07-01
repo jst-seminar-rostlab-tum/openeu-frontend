@@ -73,6 +73,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/legislative-files/meetings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Meetings By Legislative Id
+     * @description Returns all meetings from the mep_meetings table that reference the given legislative (procedure_reference) ID
+     */
+    get: operations['get_meetings_by_legislative_id_legislative_files_meetings_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/crawler/': {
     parameters: {
       query?: never;
@@ -310,10 +330,34 @@ export interface components {
       title: string;
       /** Lastpubdate */
       lastpubdate?: string | null;
+      /** Details Link */
+      details_link?: string | null;
       /** Committee */
       committee?: string | null;
       /** Rapporteur */
       rapporteur?: string | null;
+      /** Status */
+      status?: string | null;
+      /** Subjects */
+      subjects?: string[] | null;
+      /** Key Players */
+      key_players?:
+        | {
+            [key: string]: unknown;
+          }[]
+        | null;
+      /** Key Events */
+      key_events?:
+        | {
+            [key: string]: unknown;
+          }[]
+        | null;
+      /** Documentation Gateway */
+      documentation_gateway?:
+        | {
+            [key: string]: unknown;
+          }[]
+        | null;
       /** Similarity */
       similarity?: number | null;
     };
@@ -335,6 +379,42 @@ export interface components {
     LegislativeFilesResponse: {
       /** Legislative Files */
       legislative_files: components['schemas']['LegislativeFile'][];
+    };
+    /** LegislativeMeeting */
+    LegislativeMeeting: {
+      /** Id */
+      id: string;
+      /** Title */
+      title: string;
+      /** Member Name */
+      member_name: string;
+      /**
+       * Meeting Date
+       * Format: date-time
+       */
+      meeting_date: string;
+      /** Meeting Location */
+      meeting_location: string;
+      /** Member Capacity */
+      member_capacity: string;
+      /** Procedure Reference */
+      procedure_reference?: string | null;
+      /** Associated Committee Or Delegation Code */
+      associated_committee_or_delegation_code?: string | null;
+      /** Associated Committee Or Delegation Name */
+      associated_committee_or_delegation_name?: string | null;
+      /** Embedding Input */
+      embedding_input?: string | null;
+      /**
+       * Scraped At
+       * Format: date-time
+       */
+      scraped_at: string;
+    };
+    /** LegislativeMeetingsResponse */
+    LegislativeMeetingsResponse: {
+      /** Data */
+      data: components['schemas']['LegislativeMeeting'][];
     };
     /** Meeting */
     Meeting: {
@@ -699,6 +779,40 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['MeetingSuggestionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_meetings_by_legislative_id_legislative_files_meetings_get: {
+    parameters: {
+      query: {
+        /** @description Legislative procedure reference ID to filter meetings */
+        legislative_id: string;
+        /** @description Maximum number of meetings to return */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LegislativeMeetingsResponse'];
         };
       };
       /** @description Validation Error */
