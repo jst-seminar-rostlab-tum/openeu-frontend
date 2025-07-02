@@ -1,7 +1,6 @@
 'use client';
 
 import { User } from '@supabase/supabase-js';
-import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, {
   createContext,
@@ -12,7 +11,6 @@ import React, {
   useState,
 } from 'react';
 
-import { SessionExpirationModal } from '@/components/auth/SessionExpirationModal';
 import { createClient } from '@/lib/supabase/client';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -33,8 +31,7 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(initialUser);
   const [loading, setLoading] = useState(true);
-  const [showSessionExpirationModal, setShowSessionExpirationModal] =
-    useState(false);
+
   const router = useRouter();
   const supabase = createClient();
 
@@ -68,12 +65,35 @@ export function AuthProvider({
       setUser(session?.user ?? null);
       setLoading(false);
 
-      if (event === 'TOKEN_REFRESHED' && session?.access_token) {
-        console.log('Token refreshed successfully');
-      }
+      // Handle different auth events
+      switch (event) {
+        case 'TOKEN_REFRESHED':
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Token refreshed successfully');
+          }
+          break;
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Auth state change:', event, session?.user?.email);
+        case 'SIGNED_OUT':
+          if (process.env.NODE_ENV === 'development') {
+            console.log('User signed out');
+          }
+          // If user was previously authenticated and now signed out,
+          // it might be due to refresh token expiration
+          if (user && !session) {
+            handleSessionExpiration();
+          }
+          break;
+
+        case 'SIGNED_IN':
+          if (process.env.NODE_ENV === 'development') {
+            console.log('User signed in:', session?.user?.email);
+          }
+          break;
+
+        default:
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Auth state change:', event, session?.user?.email);
+          }
       }
     });
 
@@ -82,7 +102,6 @@ export function AuthProvider({
 
   const signOut = useCallback(async () => {
     setUser(null);
-    setShowSessionExpirationModal(false);
 
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -97,54 +116,49 @@ export function AuthProvider({
     }
   }, [supabase, router, initialUser]);
 
-  const handleSessionExpiration = useCallback(() => {
-    setShowSessionExpirationModal(true);
-  }, []);
+  const handleSessionExpiration = useCallback(() => {}, []);
 
+  // Check for refresh token expiration (not access token expiration)
   useEffect(() => {
-    const checkTokenExpiration = async () => {
+    const checkRefreshTokenExpiration = async () => {
       try {
-        const { data } = await supabase.auth.getSession();
-        const token = data.session?.access_token;
+        const { data, error } = await supabase.auth.getSession();
 
-        if (token) {
-          const payload = jwtDecode(token);
-
-          if (!payload || !payload.exp) {
-            handleSessionExpiration();
-            return;
+        // If we can't get a session and there's an error, refresh token might be expired
+        if (error || !data.session) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log(
+              'Session check failed, refresh token may be expired:',
+              error,
+            );
           }
-
-          const expiration = payload.exp * 1000;
-          const now = Date.now();
-
-          if (expiration <= now) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Token expired, showing session expiration modal');
-            }
+          // Only show modal if user was previously authenticated
+          if (user) {
             handleSessionExpiration();
-          } else {
-            const timeout = expiration - now;
-            if (process.env.NODE_ENV === 'development') {
-              console.log(
-                `Token expires in ${Math.round(timeout / 1000 / 60)} minutes`,
-              );
-            }
-            setTimeout(() => handleSessionExpiration(), timeout);
           }
+          return;
+        }
+
+        // If we have a session, refresh token is still valid
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Session is valid, refresh token active');
         }
       } catch (error) {
-        console.error('Error checking token expiration:', error);
-        handleSessionExpiration();
+        console.error('Error checking session:', error);
+        // Only show modal if user was previously authenticated
+        if (user) {
+          handleSessionExpiration();
+        }
       }
     };
 
-    checkTokenExpiration();
-
-    const interval = setInterval(checkTokenExpiration, 5 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, [supabase, handleSessionExpiration]);
+    // Only check if user is authenticated
+    if (user) {
+      // Check every 10 minutes for refresh token expiration
+      const interval = setInterval(checkRefreshTokenExpiration, 10 * 60 * 1000);
+      return () => clearInterval(interval);
+    }
+  }, [supabase, user, handleSessionExpiration]);
 
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),
@@ -152,13 +166,7 @@ export function AuthProvider({
   );
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-      <SessionExpirationModal
-        open={showSessionExpirationModal}
-        onLogout={signOut}
-      />
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }
 
