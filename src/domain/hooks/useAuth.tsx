@@ -88,7 +88,6 @@ export function AuthProvider({
             console.log('User signed out');
           }
 
-          // Only handle session expiration if we're not already signing out
           if (!isSigningOut) {
             handleSessionExpiration();
           }
