@@ -1,11 +1,10 @@
 import type { Profile } from '@/domain/entities/profile/generated-types';
-import { ProfileData } from '@/domain/entities/profile/generated-types';
-import { ProfileData } from '@/domain/entities/profile/ProfileData';
+import { ProfileCreate } from '@/domain/entities/profile/generated-types';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/profile`;
 
 export const profileRepository = {
-  async createProfile(profileData: ProfileData): Promise<string> {
+  async createProfile(profileData: ProfileCreate): Promise<string> {
     try {
       const res = await fetch(API_URL, {
         method: 'POST',

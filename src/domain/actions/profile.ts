@@ -3,7 +3,8 @@
 import { redirect } from 'next/navigation';
 
 import {
-  ProfileData,
+  Profile,
+  ProfileCreate,
   ProfileUpdate,
 } from '@/domain/entities/profile/generated-types';
 import { createClient } from '@/lib/supabase/server';
@@ -45,7 +46,9 @@ export async function unlinkGoogleAccount() {
   }
 }
 
-export async function createProfile(data: ProfileData): Promise<ProfileData> {
+export async function createProfile(
+  data: ProfileCreate,
+): Promise<ProfileCreate> {
   const res = await fetch(`${API_BASE_URL}/profile`, {
     method: 'POST',
     headers: {
@@ -59,9 +62,7 @@ export async function createProfile(data: ProfileData): Promise<ProfileData> {
   return res.json();
 }
 
-export async function getProfile(
-  profileId: string,
-): Promise<ProfileData | false> {
+export async function getProfile(profileId: string): Promise<Profile | null> {
   const res = await fetch(`${API_BASE_URL}/profile/${profileId}`, {
     method: 'GET',
     headers: {
@@ -69,7 +70,7 @@ export async function getProfile(
     },
   });
   if (!res.ok) {
-    return false;
+    return null;
   }
   return await res.json();
 }
@@ -77,7 +78,7 @@ export async function getProfile(
 export async function updateProfile(
   profileId: string,
   data: ProfileUpdate,
-): Promise<ProfileData> {
+): Promise<ProfileCreate> {
   const res = await fetch(`${API_BASE_URL}/profile/${profileId}`, {
     method: 'PATCH',
     headers: {

@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { createProfile, updateProfile } from '@/domain/actions/profile';
-import { ProfileData } from '@/domain/entities/profile/generated-types';
+import { ProfileCreate } from '@/domain/entities/profile/generated-types';
 import { accountDetailsSchema } from '@/domain/schemas/profile';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -59,7 +59,7 @@ export default function AccountDetailsForm({
   function onSubmit(values: z.infer<typeof accountDetailsSchema>) {
     setLoading(true);
     if (userHasNoProfile) {
-      const profileData: ProfileData = {
+      const profileData: ProfileCreate = {
         ...values,
         id: userId,
         topic_ids: [],
