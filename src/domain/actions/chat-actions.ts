@@ -1,7 +1,7 @@
 'use server';
 
-import { getCookie } from 'cookies-next';
 import { revalidateTag } from 'next/cache';
+import { cookies } from 'next/headers';
 
 import { requireAuth } from '@/lib/dal';
 import { ToastOperations } from '@/operations/toast/toastOperations';
@@ -14,11 +14,10 @@ import {
 export async function createChatSession(
   data: Omit<CreateSessionRequest, 'user_id'>,
 ): Promise<CreateSessionResponse> {
-  const token = getCookie('token');
-
   try {
     // Require authentication and get user
     const { user } = await requireAuth();
+    const token = (await cookies()).get('token')?.value;
 
     const requestData: CreateSessionRequest = {
       ...data,
@@ -29,6 +28,8 @@ export async function createChatSession(
       `${process.env.NEXT_PUBLIC_API_URL}/chat/start`,
       {
         method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
