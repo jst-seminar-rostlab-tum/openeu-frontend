@@ -1,5 +1,6 @@
 'use server';
 
+import { getCookie } from 'cookies-next';
 import { revalidateTag } from 'next/cache';
 
 import { requireAuth } from '@/lib/dal';
@@ -13,6 +14,8 @@ import {
 export async function createChatSession(
   data: Omit<CreateSessionRequest, 'user_id'>,
 ): Promise<CreateSessionResponse> {
+  const token = getCookie('token');
+
   try {
     // Require authentication and get user
     const { user } = await requireAuth();
@@ -28,6 +31,7 @@ export async function createChatSession(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(requestData),
       },

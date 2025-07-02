@@ -1,6 +1,8 @@
 'use server';
 
+import { setCookie } from 'cookies-next';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -65,6 +67,9 @@ export async function signup(formData: FormData) {
       countries: country.split(','),
       newsletter_frequency: newsletterFrequency,
     });
+  }
+  if (data.session) {
+    setCookie('token', data.session.access_token, { cookies });
   }
 
   revalidatePath('/', 'layout');

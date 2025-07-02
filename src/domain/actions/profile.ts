@@ -1,5 +1,6 @@
 'use server';
 
+import { getCookie } from 'cookies-next';
 import { redirect } from 'next/navigation';
 
 import {
@@ -49,10 +50,13 @@ export async function unlinkGoogleAccount() {
 export async function createProfile(
   data: ProfileCreate,
 ): Promise<ProfileCreate> {
+  const token = getCookie('token');
+
   const res = await fetch(`${API_BASE_URL}/profile`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -63,10 +67,13 @@ export async function createProfile(
 }
 
 export async function getProfile(profileId: string): Promise<Profile | null> {
+  const token = getCookie('token');
+
   const res = await fetch(`${API_BASE_URL}/profile/${profileId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
   });
   if (!res.ok) {
@@ -79,10 +86,13 @@ export async function updateProfile(
   profileId: string,
   data: ProfileUpdate,
 ): Promise<ProfileCreate> {
+  const token = getCookie('token');
+
   const res = await fetch(`${API_BASE_URL}/profile/${profileId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });

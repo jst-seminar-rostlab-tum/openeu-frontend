@@ -1,3 +1,5 @@
+import { getCookie } from 'cookies-next';
+
 import {
   type ChatSession,
   type Message,
@@ -12,9 +14,20 @@ export const chatRepository = {
    * Fetch all chat sessions for a specific user
    */
   async getChatSessions(userId: string): Promise<ChatSession[]> {
+    const token = getCookie('token');
+
     try {
       const response = await fetch(
         `${API_BASE_URL}/chat/sessions?user_id=${userId}`,
+        {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -32,9 +45,20 @@ export const chatRepository = {
    * Fetch all messages for a specific chat session
    */
   async getChatMessages(sessionId: string): Promise<Message[]> {
+    const token = getCookie('token');
+
     try {
       const response = await fetch(
         `${API_BASE_URL}/chat/sessions/${sessionId}`,
+        {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -55,11 +79,16 @@ export const chatRepository = {
     request: SendMessageRequest,
     onStreamUpdate?: (content: string) => void,
   ): Promise<string> {
+    const token = getCookie('token');
+
     try {
       const response = await fetch(`${API_BASE_URL}/chat/`, {
         method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(request),
       });

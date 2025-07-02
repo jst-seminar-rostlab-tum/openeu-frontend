@@ -1,6 +1,7 @@
 'use client';
 
 import { User } from '@supabase/supabase-js';
+import { deleteCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import React, {
   createContext,
@@ -31,6 +32,8 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(initialUser);
   const [loading, setLoading] = useState(true);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
   const router = useRouter();
   const supabase = createClient();
 
@@ -58,19 +61,64 @@ export function AuthProvider({
     setUser(initialUser);
     setLoading(false);
 
-    // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(`[${new Date().toISOString()}]: event called`, event);
       setUser(session?.user ?? null);
       setLoading(false);
+
+      switch (event) {
+        case 'TOKEN_REFRESHED':
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Token refreshed successfully');
+          }
+          if (session?.access_token) {
+            console.log(
+              `[${new Date().toISOString()}]: Token refreshed successfully`,
+            );
+            // Save the refreshed token in cookies
+            setCookie('token', session.access_token, {
+              path: '/',
+              secure: true,
+              sameSite: 'strict',
+            });
+          }
+          break;
+
+        case 'SIGNED_OUT':
+          if (process.env.NODE_ENV === 'development') {
+            console.log(
+              `[${new Date().toISOString()}]: Session expired, User signed out`,
+            );
+          }
+
+          if (!isSigningOut) {
+            handleSessionExpiration();
+          }
+
+          break;
+
+        case 'INITIAL_SESSION':
+        case 'SIGNED_IN':
+          if (process.env.NODE_ENV === 'development') {
+            console.log('User signed in:', session?.user?.email);
+          }
+          setIsSigningOut(false);
+          break;
+
+        default:
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Auth state change:', event, session?.user?.email);
+          }
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase, MOCK_AUTH, initialUser]);
+  }, [supabase, MOCK_AUTH, initialUser, isSigningOut]);
 
   const signOut = useCallback(async () => {
-    // Immediately clear user state to prevent any UI interaction
+    setIsSigningOut(true);
     setUser(null);
 
     const { error } = await supabase.auth.signOut();
@@ -81,10 +129,23 @@ export function AuthProvider({
           'Unable to sign out at this time. Please try again or refresh the page.',
       });
       setUser(initialUser);
+      setIsSigningOut(false);
     } else {
+      deleteCookie('token', { path: '/' });
+      deleteCookie('refresh_token', { path: '/' });
       router.push('/');
     }
   }, [supabase, router, initialUser]);
+
+  const handleSessionExpiration = useCallback(() => {
+    ToastOperations.showWarning({
+      title: 'Session Expired',
+      message:
+        'Your session has expired for security reasons. You will be logged out automatically.',
+    });
+    console.log(`[${new Date().toISOString()}]: toast shown`);
+    signOut();
+  }, []);
 
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),
