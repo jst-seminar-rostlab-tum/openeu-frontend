@@ -1,8 +1,6 @@
 import { getCookie } from 'cookies-next';
 
 import type { Profile } from '@/domain/entities/profile/generated-types';
-import { ProfileData } from '@/domain/entities/profile/ProfileData';
-import { ToastOperations } from '@/operations/toast/toastOperations';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/profile`;
 
