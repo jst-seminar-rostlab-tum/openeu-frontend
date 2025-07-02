@@ -1,7 +1,7 @@
 'use server';
 
-import { getCookie } from 'cookies-next';
 import { revalidateTag } from 'next/cache';
+import { cookies } from 'next/headers';
 
 import { requireAuth } from '@/lib/dal';
 import { ToastOperations } from '@/operations/toast/toastOperations';
@@ -17,7 +17,7 @@ export async function createChatSession(
   try {
     // Require authentication and get user
     const { user } = await requireAuth();
-    const token = getCookie('token');
+    const token = (await cookies()).get('token')?.value;
 
     const requestData: CreateSessionRequest = {
       ...data,

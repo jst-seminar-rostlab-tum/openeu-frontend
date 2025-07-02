@@ -82,6 +82,8 @@ export const chatRepository = {
     const token = getCookie('token');
 
     try {
+      console.log('start new message');
+      console.log(token);
       const response = await fetch(`${API_BASE_URL}/chat/`, {
         method: 'POST',
         mode: 'cors',
