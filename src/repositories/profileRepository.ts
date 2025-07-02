@@ -10,7 +10,7 @@ export const profileRepository = {
 
     try {
       const res = await fetch(`${API_URL}/${userId}`, {
-        method: 'POST',
+        method: 'GET',
         mode: 'cors',
         credentials: 'include',
         headers: {
