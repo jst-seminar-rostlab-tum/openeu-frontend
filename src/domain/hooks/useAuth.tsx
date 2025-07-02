@@ -32,6 +32,7 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(initialUser);
   const [loading, setLoading] = useState(true);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const router = useRouter();
   const supabase = createClient();
@@ -87,7 +88,10 @@ export function AuthProvider({
             console.log('User signed out');
           }
 
-          handleSessionExpiration();
+          // Only handle session expiration if we're not already signing out
+          if (!isSigningOut) {
+            handleSessionExpiration();
+          }
 
           break;
 
@@ -96,6 +100,7 @@ export function AuthProvider({
           if (process.env.NODE_ENV === 'development') {
             console.log('User signed in:', session?.user?.email);
           }
+          setIsSigningOut(false);
           break;
 
         default:
@@ -106,9 +111,10 @@ export function AuthProvider({
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase, MOCK_AUTH, initialUser]);
+  }, [supabase, MOCK_AUTH, initialUser, isSigningOut]);
 
   const signOut = useCallback(async () => {
+    setIsSigningOut(true);
     setUser(null);
 
     const { error } = await supabase.auth.signOut();
@@ -119,23 +125,22 @@ export function AuthProvider({
           'Unable to sign out at this time. Please try again or refresh the page.',
       });
       setUser(initialUser);
+      setIsSigningOut(false);
     } else {
+      deleteCookie('token', { path: '/' });
+      deleteCookie('refresh_token', { path: '/' });
       router.push('/');
     }
   }, [supabase, router, initialUser]);
 
   const handleSessionExpiration = useCallback(() => {
-    setTimeout(() => {
-      ToastOperations.showWarning({
-        title: 'Session Expired',
-        message:
-          'Your session has expired for security reasons. You will be logged out automatically.',
-      });
-      deleteCookie('token', { path: '/' });
-      deleteCookie('refresh_token', { path: '/' });
-      signOut();
-    }, 2000);
-  }, [signOut]);
+    ToastOperations.showWarning({
+      title: 'Session Expired',
+      message:
+        'Your session has expired for security reasons. You will be logged out automatically.',
+    });
+    signOut();
+  }, []);
 
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),
