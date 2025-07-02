@@ -7,12 +7,25 @@ export interface ProfileData {
   topicList: string[];
   newsletterFrequency: 'daily' | 'weekly' | 'none';
   // Enhanced personalization fields
+  userCategory: 'entrepreneur' | 'politician';
   userType:
     | 'founder'
     | 'startup_employee'
     | 'consultant'
     | 'investor'
     | 'other';
+  // Politician-specific fields
+  politicalRole?:
+    | 'mep'
+    | 'national_mp'
+    | 'local_representative'
+    | 'policy_advisor'
+    | 'civil_servant'
+    | 'other';
+  institution?: string;
+  politicalParty?: string;
+  areaOfExpertise?: string[];
+  // Entrepreneur-specific fields
   companyStage:
     | 'idea'
     | 'pre_seed'

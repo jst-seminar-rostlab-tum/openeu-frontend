@@ -1,13 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import {
-  Calendar,
-  FileText,
-  MessageSquare,
-  TrendingUp,
-  Users,
-} from 'lucide-react';
+import { Calendar, FileText, TrendingUp } from 'lucide-react';
 import React from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -58,36 +52,6 @@ const ActionItems: React.FC<ActionItemProps> = ({ profile }) => {
       ],
       buttonText: 'Read Updates',
       insight: 'Critical updates requiring immediate attention',
-    },
-    {
-      id: 'discussions',
-      icon: MessageSquare,
-      title: 'Relevant Discussions',
-      count: 8,
-      description: `Community discussions about ${profile.primaryIndustry} compliance`,
-      preview: [
-        'Startup founders discuss AI compliance costs',
-        'Legal experts clarify GDPR requirements',
-        'Industry leaders share implementation tips',
-        'Policy makers seek stakeholder input',
-      ],
-      buttonText: 'Join Discussions',
-      insight: 'Active conversations with 200+ participants',
-    },
-    {
-      id: 'connections',
-      icon: Users,
-      title: 'Suggested Connections',
-      count: 15,
-      description: `Other ${profile.userType}s in ${profile.primaryIndustry}`,
-      preview: [
-        'Sarah Chen - FinTech Founder (Berlin)',
-        'Marco Silva - AI Compliance Expert (Amsterdam)',
-        'Emma Thompson - Policy Advisor (Brussels)',
-        'Alex Rodriguez - Startup Legal Counsel (Paris)',
-      ],
-      buttonText: 'Connect',
-      insight: 'Based on shared regulatory challenges',
     },
   ];
 

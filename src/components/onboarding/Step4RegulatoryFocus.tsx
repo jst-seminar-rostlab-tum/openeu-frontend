@@ -59,7 +59,7 @@ export const Step4RegulatoryFocus: React.FC = () => {
       <CardHeader>
         <CardTitle>Regulatory Focus</CardTitle>
         <CardDescription>
-          Help us understand which regulations matter most to your business
+          Help us understand which regulations matter most to you
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -81,25 +81,16 @@ export const Step4RegulatoryFocus: React.FC = () => {
               <SelectItem value="low">
                 <div className="space-y-1">
                   <div className="font-medium">Low</div>
-                  <div className="text-xs text-muted-foreground">
-                    Basic compliance, standard business regulations
-                  </div>
                 </div>
               </SelectItem>
               <SelectItem value="medium">
                 <div className="space-y-1">
                   <div className="font-medium">Medium</div>
-                  <div className="text-xs text-muted-foreground">
-                    Some specialized regulations, moderate compliance burden
-                  </div>
                 </div>
               </SelectItem>
               <SelectItem value="high">
                 <div className="space-y-1">
                   <div className="font-medium">High</div>
-                  <div className="text-xs text-muted-foreground">
-                    Heavily regulated industry, complex compliance requirements
-                  </div>
                 </div>
               </SelectItem>
             </SelectContent>
@@ -126,9 +117,6 @@ export const Step4RegulatoryFocus: React.FC = () => {
               maxCount={3}
             />
           </div>
-          <p className="text-xs text-muted-foreground">
-            Selected: {profileData.keyRegulatoryAreas?.length || 0} areas
-          </p>
         </div>
 
         <div className="bg-muted p-4 rounded-lg">

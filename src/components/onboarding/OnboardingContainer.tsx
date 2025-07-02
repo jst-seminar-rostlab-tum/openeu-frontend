@@ -8,24 +8,41 @@ import { fadeInUp } from '@/lib/animations';
 import { OnboardingProvider, useOnboarding } from './OnboardingContext';
 import { ProgressIndicator } from './ProgressIndicator';
 import { Step1Welcome } from './Step1Welcome';
+import { Step2PoliticalRole } from './Step2PoliticalRole';
 import { Step2RoleAndCompany } from './Step2RoleAndCompany';
 import { Step3BusinessDetails } from './Step3BusinessDetails';
+import { Step3PolicyFocus } from './Step3PolicyFocus';
 import { Step4RegulatoryFocus } from './Step4RegulatoryFocus';
 import { Step5Completion } from './Step5Completion';
 
 const OnboardingFlow: React.FC = () => {
-  const { currentStep, totalSteps } = useOnboarding();
+  const { currentStep, totalSteps, userCategory } = useOnboarding();
 
   const renderStep = () => {
-    const stepComponents: Record<number, React.ReactElement> = {
-      1: <Step1Welcome />,
-      2: <Step2RoleAndCompany />,
-      3: <Step3BusinessDetails />,
-      4: <Step4RegulatoryFocus />,
-      5: <Step5Completion />,
-    };
+    // Step 1 is always the same - Welcome with user category selection
+    if (currentStep === 1) {
+      return <Step1Welcome />;
+    }
 
-    return stepComponents[currentStep] || <Step1Welcome />;
+    // Different flows based on user category
+    if (userCategory === 'politician') {
+      const politicianSteps: Record<number, React.ReactElement> = {
+        2: <Step2PoliticalRole />,
+        3: <Step3PolicyFocus />,
+        4: <Step4RegulatoryFocus />,
+        5: <Step5Completion />,
+      };
+      return politicianSteps[currentStep] || <Step1Welcome />;
+    } else {
+      // Entrepreneur flow (default)
+      const entrepreneurSteps: Record<number, React.ReactElement> = {
+        2: <Step2RoleAndCompany />,
+        3: <Step3BusinessDetails />,
+        4: <Step4RegulatoryFocus />,
+        5: <Step5Completion />,
+      };
+      return entrepreneurSteps[currentStep] || <Step1Welcome />;
+    }
   };
 
   return (

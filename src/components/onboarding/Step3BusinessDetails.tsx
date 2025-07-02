@@ -190,9 +190,6 @@ export const Step3BusinessDetails: React.FC = () => {
               variant="secondary"
             />
           </div>
-          <p className="text-xs text-muted-foreground">
-            Selected: {profileData.geographicFocus?.length || 0} countries
-          </p>
         </div>
 
         <div className="flex justify-between pt-4">
