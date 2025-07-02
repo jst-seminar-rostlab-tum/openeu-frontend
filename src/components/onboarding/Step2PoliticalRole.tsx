@@ -22,17 +22,9 @@ import {
 } from '@/components/ui/select';
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
 import { staggerContainer, staggerItem } from '@/lib/animations';
+import { POLITICAL_ROLES } from '@/operations/onboarding/OnboardingOperations';
 
 import { useOnboarding } from './OnboardingContext';
-
-const POLITICAL_ROLES = [
-  { value: 'mep', label: 'Member of European Parliament (MEP)' },
-  { value: 'national_mp', label: 'National Member of Parliament' },
-  { value: 'local_representative', label: 'Local Representative/Councillor' },
-  { value: 'policy_advisor', label: 'Policy Advisor' },
-  { value: 'civil_servant', label: 'Civil Servant' },
-  { value: 'other', label: 'Other' },
-];
 
 export const Step2PoliticalRole: React.FC = () => {
   const { profileData, updateProfileData, nextStep, prevStep } =

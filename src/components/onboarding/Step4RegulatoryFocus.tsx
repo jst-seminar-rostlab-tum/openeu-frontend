@@ -20,26 +20,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
+import { REGULATORY_AREAS } from '@/operations/onboarding/OnboardingOperations';
 
 import { useOnboarding } from './OnboardingContext';
-
-const REGULATORY_AREAS = [
-  'GDPR & Data Protection',
-  'Financial Services (PSD2, MiFID)',
-  'Digital Services Act (DSA)',
-  'Digital Markets Act (DMA)',
-  'AI Regulation',
-  'Cybersecurity (NIS2)',
-  'Environmental Regulations',
-  'Labor & Employment Law',
-  'Tax & VAT Compliance',
-  'Medical Device Regulation (MDR)',
-  'Consumer Protection',
-  'Competition Law',
-  'Intellectual Property',
-  'Import/Export Regulations',
-  'Industry-specific regulations',
-];
 
 export const Step4RegulatoryFocus: React.FC = () => {
   const { profileData, updateProfileData, nextStep, prevStep } =

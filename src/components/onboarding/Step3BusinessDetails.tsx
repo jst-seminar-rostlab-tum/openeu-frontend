@@ -21,71 +21,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
+import {
+  BUSINESS_MODELS,
+  EU_COUNTRIES,
+  INDUSTRIES,
+} from '@/operations/onboarding/OnboardingOperations';
 
 import { useOnboarding } from './OnboardingContext';
-
-const EU_COUNTRIES = [
-  'Austria',
-  'Belgium',
-  'Bulgaria',
-  'Croatia',
-  'Cyprus',
-  'Czech Republic',
-  'Denmark',
-  'Estonia',
-  'Finland',
-  'France',
-  'Germany',
-  'Greece',
-  'Hungary',
-  'Ireland',
-  'Italy',
-  'Latvia',
-  'Lithuania',
-  'Luxembourg',
-  'Malta',
-  'Netherlands',
-  'Poland',
-  'Portugal',
-  'Romania',
-  'Slovakia',
-  'Slovenia',
-  'Spain',
-  'Sweden',
-];
-
-const INDUSTRIES = [
-  'FinTech',
-  'HealthTech',
-  'EdTech',
-  'CleanTech',
-  'E-commerce',
-  'SaaS',
-  'AI/ML',
-  'Blockchain',
-  'IoT',
-  'Cybersecurity',
-  'Gaming',
-  'Media & Entertainment',
-  'Travel & Tourism',
-  'Food & Beverage',
-  'Fashion',
-  'Real Estate',
-  'Transportation',
-  'Energy',
-  'Manufacturing',
-  'Other',
-];
-
-const BUSINESS_MODELS = [
-  { value: 'b2b', label: 'B2B (Business to Business)' },
-  { value: 'b2c', label: 'B2C (Business to Consumer)' },
-  { value: 'b2b2c', label: 'B2B2C (Business to Business to Consumer)' },
-  { value: 'marketplace', label: 'Marketplace' },
-  { value: 'saas', label: 'Software as a Service (SaaS)' },
-  { value: 'hardware', label: 'Hardware' },
-  { value: 'other', label: 'Other' },
-];
 
 export const Step3BusinessDetails: React.FC = () => {
   const { profileData, updateProfileData, nextStep, prevStep } =

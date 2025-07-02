@@ -73,6 +73,7 @@ export async function signup(formData: FormData) {
       regulatoryComplexity: 'medium',
       keyRegulatoryAreas: [],
       onboardingCompleted: false,
+      userCategory: 'entrepreneur',
     });
   }
 

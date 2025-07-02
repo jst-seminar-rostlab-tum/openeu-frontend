@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, FileText, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import React from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -16,44 +16,14 @@ import {
 } from '@/components/ui/card';
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
 import { staggerContainer, staggerItem } from '@/lib/animations';
+import { getActionItemsForProfile } from '@/operations/onboarding/OnboardingOperations';
 
 interface ActionItemProps {
   profile: Partial<ProfileData>;
 }
 
 const ActionItems: React.FC<ActionItemProps> = ({ profile }) => {
-  const actionItems = [
-    {
-      id: 'meetings',
-      icon: Calendar,
-      title: 'Relevant Meetings This Week',
-      count: 4,
-      description: `EU meetings discussing ${profile.primaryIndustry} regulations`,
-      preview: [
-        'Digital Services Committee - AI Regulation',
-        'GDPR Working Group - Data Protection Updates',
-        'Green Deal Committee - Sustainability Standards',
-        'Single Market Committee - Cross-border Commerce',
-      ],
-      buttonText: 'View Calendar',
-      insight: 'High priority - affects your business model directly',
-    },
-    {
-      id: 'updates',
-      icon: FileText,
-      title: 'Regulatory Updates',
-      count: 12,
-      description: `New regulations affecting ${profile.businessModel} businesses`,
-      preview: [
-        'AI Act implementation guidelines released',
-        'GDPR enforcement in fintech sector',
-        'Digital Services Act compliance deadline',
-        'Green taxonomy reporting requirements',
-      ],
-      buttonText: 'Read Updates',
-      insight: 'Critical updates requiring immediate attention',
-    },
-  ];
+  const actionItems = getActionItemsForProfile(profile);
 
   return (
     <motion.div

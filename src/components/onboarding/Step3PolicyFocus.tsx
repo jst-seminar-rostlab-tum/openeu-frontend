@@ -12,61 +12,12 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { MultiSelect } from '@/components/ui/multi-select';
+import {
+  EU_COUNTRIES,
+  POLICY_AREAS,
+} from '@/operations/onboarding/OnboardingOperations';
 
 import { useOnboarding } from './OnboardingContext';
-
-const EU_COUNTRIES = [
-  'Austria',
-  'Belgium',
-  'Bulgaria',
-  'Croatia',
-  'Cyprus',
-  'Czech Republic',
-  'Denmark',
-  'Estonia',
-  'Finland',
-  'France',
-  'Germany',
-  'Greece',
-  'Hungary',
-  'Ireland',
-  'Italy',
-  'Latvia',
-  'Lithuania',
-  'Luxembourg',
-  'Malta',
-  'Netherlands',
-  'Poland',
-  'Portugal',
-  'Romania',
-  'Slovakia',
-  'Slovenia',
-  'Spain',
-  'Sweden',
-];
-
-const POLICY_AREAS = [
-  'Digital Markets',
-  'Data Protection & Privacy',
-  'Financial Services',
-  'Healthcare & Life Sciences',
-  'Climate & Environment',
-  'Competition Policy',
-  'Consumer Protection',
-  'Taxation',
-  'Trade & Customs',
-  'Employment & Social Affairs',
-  'Energy',
-  'Transportation',
-  'Agriculture',
-  'Education',
-  'Foreign Affairs & Security',
-  'Justice & Home Affairs',
-  'Research & Innovation',
-  'Regional Development',
-  'Internal Market',
-  'Other',
-];
 
 export const Step3PolicyFocus: React.FC = () => {
   const { profileData, updateProfileData, nextStep, prevStep } =
@@ -104,9 +55,6 @@ export const Step3PolicyFocus: React.FC = () => {
             placeholder="Select policy areas..."
             variant="secondary"
           />
-          <p className="text-xs text-muted-foreground">
-            Selected: {profileData.areaOfExpertise?.length || 0} areas
-          </p>
         </div>
 
         <div className="space-y-3">
@@ -123,9 +71,6 @@ export const Step3PolicyFocus: React.FC = () => {
             placeholder="Select countries..."
             variant="secondary"
           />
-          <p className="text-xs text-muted-foreground">
-            Selected: {profileData.geographicFocus?.length || 0} countries
-          </p>
         </div>
 
         <div className="flex justify-between pt-4">
