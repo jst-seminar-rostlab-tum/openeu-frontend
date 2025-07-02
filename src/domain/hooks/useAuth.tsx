@@ -64,6 +64,7 @@ export function AuthProvider({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(`[${new Date().toISOString()}]: event called`, event);
       setUser(session?.user ?? null);
       setLoading(false);
 
@@ -73,7 +74,9 @@ export function AuthProvider({
             console.log('Token refreshed successfully');
           }
           if (session?.access_token) {
-            console.log('Token refreshed successfully');
+            console.log(
+              `[${new Date().toISOString()}]: Token refreshed successfully`,
+            );
             // Save the refreshed token in cookies
             setCookie('token', session.access_token, {
               path: '/',
@@ -85,7 +88,9 @@ export function AuthProvider({
 
         case 'SIGNED_OUT':
           if (process.env.NODE_ENV === 'development') {
-            console.log('User signed out');
+            console.log(
+              `[${new Date().toISOString()}]: Session expired, User signed out`,
+            );
           }
 
           if (!isSigningOut) {
@@ -138,6 +143,7 @@ export function AuthProvider({
       message:
         'Your session has expired for security reasons. You will be logged out automatically.',
     });
+    console.log(`[${new Date().toISOString()}]: toast shown`);
     signOut();
   }, []);
 
