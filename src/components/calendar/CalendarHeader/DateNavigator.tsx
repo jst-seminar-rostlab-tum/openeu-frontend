@@ -6,9 +6,11 @@ import { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { buttonHover, transition } from '@/domain/animations';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import {
+  Meeting,
+  TCalendarView,
+} from '@/domain/entities/calendar/CalendarTypes';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import type { TCalendarView } from '@/domain/types/calendar/types';
 import { navigateDate, rangeText } from '@/operations/meeting/CalendarHelpers';
 
 interface IProps {

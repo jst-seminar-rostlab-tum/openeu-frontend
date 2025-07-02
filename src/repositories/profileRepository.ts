@@ -1,5 +1,5 @@
 import { getCookie } from 'cookies-next';
-
+import type { Profile } from '@/domain/entities/profile/generated-types';
 import { ProfileData } from '@/domain/entities/profile/ProfileData';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -38,6 +38,19 @@ export const profileRepository = {
       return 'success';
     } catch {
       return 'error';
+    }
+  },
+
+  async getProfile(userId: string): Promise<Profile> {
+    try {
+      const res = await fetch(`${API_URL}/${userId}`);
+      if (!res.ok) {
+        throw new Error('Failed to get profile');
+      }
+      const data = await res.json();
+      return data as Profile;
+    } catch {
+      throw new Error('Failed to get profile');
     }
   },
 };

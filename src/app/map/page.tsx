@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import FilterModal from '@/components/FilterModal/FilterModal';
 import Map from '@/components/map/Map';
+import PersonalizeSwitch from '@/components/PersonalizeSwitch/PersonalizeSwitch';
 import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -25,7 +26,7 @@ export default function MapPage() {
   return (
     <div className="fixed inset-0 pt-12 w-full h-full">
       <Map />
-      <div className="absolute right-4 top-16 z-10 flex items-center gap-2">
+      <div className="absolute right-4 top-16 z-10 flex flex-col-reverse items-end md:flex-row md:items-center gap-2">
         <div className="flex flex-wrap gap-2">
           {(() => {
             const topicDisplay = formatTopicsForDisplay(filters.topics);
@@ -86,6 +87,7 @@ export default function MapPage() {
             onSelect={(meeting) => setSearchQuery(meeting.title)}
           />
           <FilterModal showCountryDropdown={false} topics={topicLabels} />
+          <PersonalizeSwitch />
         </Card>
       </div>
     </div>

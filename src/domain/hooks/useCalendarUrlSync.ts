@@ -3,9 +3,9 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
-import { TCalendarView } from '@/domain/types/calendar/types';
 import { getInstitutionFromSourceTable } from '@/operations/meeting/CalendarHelpers';
 
+import { TCalendarView } from '../entities/calendar/CalendarTypes';
 import { GetMeetingsQueryParams } from './meetingHooks';
 
 const CALENDAR_VIEWS = new Set<TCalendarView>([
@@ -31,6 +31,7 @@ interface UrlState {
   selectedTopics: string[];
   searchQuery: string;
   selectedCountry: string;
+  selectedUserId: string;
   selectedInstitutions: string[];
   startDate: Date | null;
   endDate: Date | null;
@@ -56,6 +57,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
   const urlState = useMemo((): UrlState => {
     const searchQuery = searchParams.get('q') || '';
     const selectedCountry = searchParams.get('country') || '';
+    const selectedUserId = searchParams.get('userId') || '';
     const selectedTopics = searchParams.get('topics')
       ? searchParams.get('topics')!.split(',').filter(Boolean)
       : [];
@@ -97,6 +99,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
       startDate,
       endDate,
       selectedTopics,
+      selectedUserId,
       selectedInstitutions,
       view,
     };
@@ -104,7 +107,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
 
   // Batched URL update function (prevents multiple router.replace calls)
   const syncFiltersToUrl = useCallback(
-    (filters: GetMeetingsQueryParams, view?: TCalendarView) => {
+    (filters: NonNullable<GetMeetingsQueryParams>, view?: TCalendarView) => {
       const current = new URLSearchParams(Array.from(searchParams.entries()));
       // Batch all parameter updates into single operation
       const updates: Record<string, string | null> = {

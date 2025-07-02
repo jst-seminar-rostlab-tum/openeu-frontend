@@ -1,4 +1,4 @@
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 
 interface RelevanceScoreProps {
   meeting: Meeting;

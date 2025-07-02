@@ -1,8 +1,8 @@
 import { getCookie } from 'cookies-next';
 import { addHours } from 'date-fns';
 
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import {
-  Meeting,
   MeetingSuggestion,
   MeetingSuggestionResponse,
 } from '@/domain/entities/calendar/generated-types';
