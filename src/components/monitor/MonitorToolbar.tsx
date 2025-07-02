@@ -37,10 +37,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { LegislativeFileSuggestion } from '@/domain/entities/monitor/generated-types';
 import { Legislation } from '@/domain/entities/monitor/types';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import { legislationRepository } from '@/repositories/legislationRepository';
 
-import { SearchBar } from '../SearchBar/SearchBar';
+import { SuggestedSearch } from '../SuggestedSearch/SuggestedSearch';
 
 interface KanbanToolbarProps {
   table: ReactTable<Legislation>;
@@ -294,11 +296,15 @@ export function KanbanToolbar({
   return (
     <div className="flex items-center gap-2 justify-between">
       {/* Search - always visible */}
-      <SearchBar
+      <SuggestedSearch<LegislativeFileSuggestion>
         placeholder="Search legislation..."
         value={searchInput}
         onValueChange={handleSearchChange}
-        size="sm"
+        onSearch={handleSearchChange}
+        fetchSuggestions={legislationRepository.getLegislationSuggestions}
+        getDisplayText={(legislation) => legislation.title}
+        getSelectValue={(legislation) => legislation.title}
+        onSelect={(legislation) => handleSearchChange(legislation.title)}
       />
 
       {/* Desktop Controls */}

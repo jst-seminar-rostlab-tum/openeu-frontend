@@ -2,7 +2,7 @@ import { areIntervalsOverlapping, parseISO } from 'date-fns';
 
 import { EventBlock } from '@/components/calendar/WeekViewCalendar/EventBlock';
 import { EventListBlock } from '@/components/calendar/WeekViewCalendar/EventListBlock';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { getEventBlockStyle } from '@/operations/meeting/CalendarHelpers';
 
 interface RenderGroupedEventsProps {

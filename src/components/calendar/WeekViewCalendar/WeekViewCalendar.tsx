@@ -7,7 +7,7 @@ import { RenderGroupedEvents } from '@/components/calendar/WeekViewCalendar/Rend
 import { WeekViewMultiDayEventsRow } from '@/components/calendar/WeekViewCalendar/WeekViewMultiDayEventsRow';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { fadeIn, staggerContainer, transition } from '@/domain/animations';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { groupEvents } from '@/operations/meeting/CalendarHelpers';
 

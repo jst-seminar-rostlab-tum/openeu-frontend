@@ -4,7 +4,7 @@ import * as geojson from 'geojson';
 import { useMemo } from 'react';
 
 import { europeanCountries } from '@/components/map/constants';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
 
 const COUNTRY_MAPPINGS = {

@@ -233,6 +233,60 @@
         }
       }
     },
+    "/meetings/suggestions": {
+      "get": {
+        "summary": "Get Meeting Suggestions",
+        "operationId": "get_meeting_suggestions_meetings_suggestions_get",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Fuzzy text to search meeting titles",
+              "title": "Query"
+            },
+            "description": "Fuzzy text to search meeting titles"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1,
+              "description": "Number of suggestions to return",
+              "default": 5,
+              "title": "Limit"
+            },
+            "description": "Number of suggestions to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingSuggestionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/crawler/": {
       "get": {
         "tags": ["crawler"],
@@ -563,6 +617,60 @@
         }
       }
     },
+    "/legislative-files/suggestions": {
+      "get": {
+        "summary": "Get Legislation Suggestions",
+        "operationId": "get_legislation_suggestions_legislative_files_suggestions_get",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Fuzzy text to search legislation titles",
+              "title": "Query"
+            },
+            "description": "Fuzzy text to search legislation titles"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1,
+              "description": "Number of suggestions to return",
+              "default": 5,
+              "title": "Limit"
+            },
+            "description": "Number of suggestions to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFileSuggestionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notifications/{user_id}": {
       "get": {
         "tags": ["notifications"],
@@ -743,6 +851,30 @@
         "required": ["id", "source_table", "source_id", "title"],
         "title": "LegislativeFile"
       },
+      "LegislativeFileSuggestion": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "title": { "type": "string", "title": "Title" },
+          "similarity_score": { "type": "number", "title": "Similarity Score" }
+        },
+        "type": "object",
+        "required": ["id", "title", "similarity_score"],
+        "title": "LegislativeFileSuggestion"
+      },
+      "LegislativeFileSuggestionResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/LegislativeFileSuggestion"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "LegislativeFileSuggestionResponse"
+      },
       "LegislativeFilesResponse": {
         "properties": {
           "legislative_files": {
@@ -818,6 +950,27 @@
           "meeting_start_datetime"
         ],
         "title": "Meeting"
+      },
+      "MeetingSuggestion": {
+        "properties": {
+          "title": { "type": "string", "title": "Title" },
+          "similarity_score": { "type": "number", "title": "Similarity Score" }
+        },
+        "type": "object",
+        "required": ["title", "similarity_score"],
+        "title": "MeetingSuggestion"
+      },
+      "MeetingSuggestionResponse": {
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/MeetingSuggestion" },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "MeetingSuggestionResponse"
       },
       "MessagesResponseModel": {
         "properties": {

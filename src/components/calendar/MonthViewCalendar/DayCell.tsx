@@ -1,6 +1,5 @@
 'use client';
 
-import { cva } from 'class-variance-authority';
 import { isToday, startOfDay } from 'date-fns';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
@@ -10,9 +9,10 @@ import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet
 import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
 import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
 import { staggerContainer, transition } from '@/domain/animations';
-import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
-import { TMeetingColor } from '@/domain/types/calendar/types';
+import {
+  CalendarCell,
+  Meeting,
+} from '@/domain/entities/calendar/CalendarTypes';
 import { cn } from '@/lib/utils';
 import { getMonthCellEvents } from '@/operations/meeting/CalendarHelpers';
 
@@ -23,27 +23,6 @@ interface IProps {
 }
 
 const MAX_VISIBLE_EVENTS = 3;
-
-export const dayCellVariants = cva('text-white', {
-  variants: {
-    color: {
-      blue: 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 ',
-      green:
-        'bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-400',
-      red: 'bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-400',
-      yellow:
-        'bg-yellow-600 dark:bg-yellow-500 hover:bg-yellow-700 dark:hover:bg-yellow-400',
-      purple:
-        'bg-purple-600 dark:bg-purple-500 hover:bg-purple-700 dark:hover:bg-purple-400',
-      orange:
-        'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400',
-      gray: 'bg-gray-600 dark:bg-gray-500 hover:bg-gray-700 dark:hover:bg-gray-400',
-    },
-  },
-  defaultVariants: {
-    color: 'orange',
-  },
-});
 
 export function DayCell({ cell, events, eventPositions }: IProps) {
   const { day, currentMonth, date } = cell;
@@ -103,10 +82,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
               >
                 {event && (
                   <>
-                    <EventBullet
-                      className="lg:hidden"
-                      color={event.color as TMeetingColor}
-                    />
+                    <EventBullet className="lg:hidden" color={event.color} />
                     <MonthEventBadge
                       className="hidden lg:flex"
                       event={event}

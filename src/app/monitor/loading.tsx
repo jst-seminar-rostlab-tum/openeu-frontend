@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function MonitorLoading() {
+export default function MonitorSkeleton() {
   return (
     <div className="h-[calc(100vh-3rem)] flex flex-col gap-3 p-4">
       <div className="flex justify-between items-end">
