@@ -14,11 +14,10 @@ import {
 export async function createChatSession(
   data: Omit<CreateSessionRequest, 'user_id'>,
 ): Promise<CreateSessionResponse> {
-  const token = getCookie('token');
-
   try {
     // Require authentication and get user
     const { user } = await requireAuth();
+    const token = getCookie('token');
 
     const requestData: CreateSessionRequest = {
       ...data,
@@ -29,6 +28,8 @@ export async function createChatSession(
       `${process.env.NEXT_PUBLIC_API_URL}/chat/start`,
       {
         method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
