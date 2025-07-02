@@ -4,9 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { createProfile } from '@/domain/actions/profile';
 import { ProfileCreate } from '@/domain/entities/profile/generated-types';
 import { createClient } from '@/lib/supabase/server';
-import { profileRepository } from '@/repositories/profileRepository';
 
 async function getCurrentURL() {
   const headersList = await headers();
@@ -55,7 +55,7 @@ export async function signup(formData: FormData) {
   }
 
   if (data.user) {
-    await profileRepository.createProfile({
+    await createProfile({
       id: data.user.id,
       name: name,
       surname: surname,
