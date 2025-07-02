@@ -10,9 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { MultiSelect } from '@/components/ui/multi-select';
 import {
   Select,
   SelectContent,
@@ -91,19 +91,6 @@ export const Step3BusinessDetails: React.FC = () => {
   const { profileData, updateProfileData, nextStep, prevStep } =
     useOnboarding();
   const [customIndustry, setCustomIndustry] = useState('');
-
-  const handleGeographicFocusChange = (country: string, checked: boolean) => {
-    const currentFocus = profileData.geographicFocus || [];
-    if (checked) {
-      updateProfileData({
-        geographicFocus: [...currentFocus, country],
-      });
-    } else {
-      updateProfileData({
-        geographicFocus: currentFocus.filter((c) => c !== country),
-      });
-    }
-  };
 
   const handleIndustryChange = (industry: string) => {
     if (industry === 'Other') {
@@ -189,23 +176,19 @@ export const Step3BusinessDetails: React.FC = () => {
 
         <div className="space-y-3">
           <Label>Geographic Focus (Select all that apply)</Label>
-          <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto border rounded-lg p-3">
-            {EU_COUNTRIES.map((country) => (
-              <div key={country} className="flex items-center space-x-2">
-                <Checkbox
-                  id={country}
-                  checked={
-                    profileData.geographicFocus?.includes(country) || false
-                  }
-                  onCheckedChange={(checked) =>
-                    handleGeographicFocusChange(country, checked as boolean)
-                  }
-                />
-                <Label htmlFor={country} className="text-sm">
-                  {country}
-                </Label>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 gap-2">
+            <MultiSelect
+              options={EU_COUNTRIES.map((country) => ({
+                label: country,
+                value: country,
+              }))}
+              onValueChange={(values) =>
+                updateProfileData({ geographicFocus: values })
+              }
+              defaultValue={profileData.geographicFocus || []}
+              placeholder="Select countries..."
+              variant="secondary"
+            />
           </div>
           <p className="text-xs text-muted-foreground">
             Selected: {profileData.geographicFocus?.length || 0} countries

@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { MultiSelect } from '@/components/ui/multi-select';
 import {
   Select,
   SelectContent,
@@ -44,19 +44,6 @@ const REGULATORY_AREAS = [
 export const Step4RegulatoryFocus: React.FC = () => {
   const { profileData, updateProfileData, nextStep, prevStep } =
     useOnboarding();
-
-  const handleRegulatoryAreaChange = (area: string, checked: boolean) => {
-    const currentAreas = profileData.keyRegulatoryAreas || [];
-    if (checked) {
-      updateProfileData({
-        keyRegulatoryAreas: [...currentAreas, area],
-      });
-    } else {
-      updateProfileData({
-        keyRegulatoryAreas: currentAreas.filter((a) => a !== area),
-      });
-    }
-  };
 
   const handleNext = () => {
     if (
@@ -122,22 +109,22 @@ export const Step4RegulatoryFocus: React.FC = () => {
         <div className="space-y-3">
           <Label>Key Regulatory Areas (Select all that apply)</Label>
           <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto border rounded-lg p-4">
-            {REGULATORY_AREAS.map((area) => (
-              <div key={area} className="flex items-center space-x-3">
-                <Checkbox
-                  id={area}
-                  checked={
-                    profileData.keyRegulatoryAreas?.includes(area) || false
-                  }
-                  onCheckedChange={(checked) =>
-                    handleRegulatoryAreaChange(area, checked as boolean)
-                  }
-                />
-                <Label htmlFor={area} className="text-sm leading-5">
-                  {area}
-                </Label>
-              </div>
-            ))}
+            <MultiSelect
+              options={REGULATORY_AREAS.map((area) => ({
+                label: area,
+                value: area,
+              }))}
+              onValueChange={(values) =>
+                updateProfileData({
+                  keyRegulatoryAreas: values,
+                })
+              }
+              defaultValue={profileData.keyRegulatoryAreas || []}
+              placeholder="Select regulatory areas..."
+              variant="inverted"
+              animation={2}
+              maxCount={3}
+            />
           </div>
           <p className="text-xs text-muted-foreground">
             Selected: {profileData.keyRegulatoryAreas?.length || 0} areas
