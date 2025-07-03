@@ -1,6 +1,10 @@
 import {
+  LegislativeFile,
+  LegislativeFilesParams,
+  LegislativeFilesResponse,
   LegislativeFileSuggestion,
   LegislativeFileSuggestionResponse,
+  LegislativeSuggestionsParams,
 } from '@/domain/entities/monitor/generated-types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -8,14 +12,20 @@ const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/legislative-files`;
 
 export const legislationRepository = {
   async getLegislationSuggestions(
-    query: string,
+    params: LegislativeSuggestionsParams,
   ): Promise<LegislativeFileSuggestion[]> {
-    if (!query || query.length < 2) return [];
+    if (!params.query || params.query.length < 2) return [];
 
     try {
-      const res = await fetch(
-        `${API_URL}/suggestions?query=${encodeURIComponent(query)}`,
+      const cleanParams = Object.fromEntries(
+        Object.entries(params)
+          .filter(([_, value]) => value !== undefined && value !== null)
+          .map(([key, value]) => [key, String(value)]),
       );
+
+      const searchParams = new URLSearchParams(cleanParams);
+      const res = await fetch(`${API_URL}/suggestions?${searchParams}`);
+
       if (!res.ok) {
         throw new Error(
           `Failed to fetch legislation suggestions: ${res.status}`,
@@ -35,15 +45,37 @@ export const legislationRepository = {
     }
   },
 
-  async getLegislations() {
+  async getLegislativeFiles(
+    params?: LegislativeFilesParams,
+  ): Promise<LegislativeFile[]> {
     try {
-      const res = await fetch(API_URL);
+      let url = API_URL;
 
-      const parsedRes = await res.json();
-      const data = Array.isArray(parsedRes.data) ? parsedRes.data : [];
+      if (params) {
+        const cleanParams = Object.fromEntries(
+          Object.entries(params)
+            .filter(([_, value]) => value !== undefined && value !== null)
+            .map(([key, value]) => [key, String(value)]),
+        );
 
-      return Array.isArray(data) ? data : [];
-    } catch {
+        if (Object.keys(cleanParams).length > 0) {
+          const searchParams = new URLSearchParams(cleanParams);
+          url = `${API_URL}?${searchParams}`;
+        }
+      }
+
+      const res = await fetch(url);
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch legislative files: ${res.status}`);
+      }
+
+      const response: LegislativeFilesResponse = await res.json();
+      return Array.isArray(response.legislative_files)
+        ? response.legislative_files
+        : [];
+    } catch (err) {
+      console.warn('Failed to fetch from API, returning empty array:', err);
       return [];
     }
   },

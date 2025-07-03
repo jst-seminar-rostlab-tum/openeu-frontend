@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { kanbanColumns } from '@/app/monitor/columns';
 import { TanStackKanban } from '@/components/monitor/MonitorKanban';
 import { KanbanToolbar } from '@/components/monitor/MonitorToolbar';
+import { useLegislativeFiles } from '@/domain/hooks/legislative-hooks';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
 
 export default function ObservatoryPage() {
@@ -21,10 +22,14 @@ export default function ObservatoryPage() {
   >();
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
-    new Set(ObservatoryOperations.getStatusOrder()),
+    new Set(Object.keys(ObservatoryOperations.statusConfig)),
   );
 
-  const legislationData = ObservatoryOperations.getLegislationData();
+  const { data: legislationData = [] } = useLegislativeFiles({
+    query: searchValue || undefined,
+    committee: selectedCommittee,
+    year: selectedYear,
+  });
 
   const table = useReactTable({
     data: legislationData,

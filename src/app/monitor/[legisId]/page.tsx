@@ -14,7 +14,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { LegislativeFile } from '@/domain/entities/monitor/generated-types';
+import { LegislationStatus } from '@/domain/entities/monitor/types';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import MonitorOperations from '@/operations/monitor/MonitorOperations';
 
 export default async function LegislationPage({
   params,
@@ -22,8 +25,9 @@ export default async function LegislationPage({
   params: Promise<{ legisId: string }>;
 }) {
   const { legisId } = await params;
-  const decodedLegisId = decodeURIComponent(legisId);
-  const legislation = ObservatoryOperations.getLegislationById(decodedLegisId);
+  console.log(legisId);
+  // const decodedLegisId = decodeURIComponent(legisId);
+  const legislation = null as unknown as LegislativeFile;
 
   if (!legislation) {
     notFound();
@@ -40,24 +44,29 @@ export default async function LegislationPage({
         </Button>
         <div className="flex flex-row items-center gap-2">
           <div className="flex items-center gap-2">
-            <div
-              className="h-2 w-2 rounded-full"
-              style={{
-                backgroundColor:
-                  ObservatoryOperations.getStatusConfig()[legislation.status]
-                    .color,
-              }}
-            />
-            <span className="font-medium">
-              {ObservatoryOperations.getStatusConfig()[legislation.status].name}
-            </span>
+            {(() => {
+              const status = (legislation.status ||
+                'Other') as LegislationStatus;
+              const config = ObservatoryOperations.statusConfig[status];
+              return (
+                <>
+                  <div
+                    className="h-2 w-2 rounded-full"
+                    style={{ backgroundColor: config.color }}
+                  />
+                  <span className="font-medium">{config.name}</span>
+                </>
+              );
+            })()}
           </div>
 
           <Separator orientation="vertical" className="!h-5 hidden md:block" />
           <Badge className="font-mono" variant="secondary">
             {legislation.id}
           </Badge>
-          <Badge variant="outline">{legislation.year}</Badge>
+          <Badge variant="outline">
+            {MonitorOperations.extractYearFromId(legislation.id)}
+          </Badge>
         </div>
         <h1 className="text-2xl font-bold leading-tight">
           {legislation.title}
@@ -67,31 +76,29 @@ export default async function LegislationPage({
         <Card className="break-inside-avoid">
           <CardHeader className="flex items-center">
             <Calendar className="h-4 w-4" />
-            <CardTitle>Timeline & Procedure</CardTitle>
+            <CardTitle>Timeline & Publication</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">Submitted</span>
+              <span className="text-muted-foreground">Last Publication</span>
               <span className="font-medium">
-                {legislation.submissionDate?.toLocaleDateString() || 'N/A'}
-              </span>
-            </div>
-
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">Last Update</span>
-              <span className="font-medium">
-                {legislation.lastUpdate?.toLocaleDateString() || 'N/A'}
+                {legislation.lastpubdate || 'N/A'}
               </span>
             </div>
 
             <Separator />
 
             <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">Procedure Type</span>
+              <span className="text-muted-foreground">Procedure Reference</span>
               <Badge variant="outline" className="font-mono text-xs">
-                {legislation.procedureType}
+                {legislation.id}
               </Badge>
             </div>
+
+            {/* TODO: Add UI for new timeline fields */}
+            {/* - Extract dates from key_events array */}
+            {/* - Show submission date from key_events */}
+            {/* - Show procedural stages from key_events */}
           </CardContent>
         </Card>
         {legislation.committee && (
@@ -107,31 +114,14 @@ export default async function LegislationPage({
             </CardContent>
           </Card>
         )}
-        {legislation.rapporteurs.length > 0 && (
+        {legislation.rapporteur && (
           <Card className="break-inside-avoid">
-            <CardHeader className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <CardTitle>Rapporteurs</CardTitle>
-              </div>
-              <Badge>{legislation.rapporteurs.length}</Badge>
+            <CardHeader className="flex items-center">
+              <Users className="h-4 w-4" />
+              <CardTitle>Rapporteur</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-1">
-                {legislation.rapporteurs.map((rapporteur, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <span className="font-medium truncate">
-                      {rapporteur.name}
-                    </span>
-                    <Badge variant="secondary" className="text-xs ml-2">
-                      {rapporteur.group}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
+              <p className="text-sm font-medium">{legislation.rapporteur}</p>
             </CardContent>
           </Card>
         )}

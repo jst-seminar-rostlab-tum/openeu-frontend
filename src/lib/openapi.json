@@ -774,6 +774,188 @@
         }
       }
     },
+    "/alerts": {
+      "post": {
+        "summary": "Create Alert Endpoint",
+        "operationId": "create_alert_endpoint_alerts_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateAlertRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AlertResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Alerts Endpoint",
+        "operationId": "get_alerts_endpoint_alerts_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User ID for retrieving alerts",
+              "title": "User Id"
+            },
+            "description": "User ID for retrieving alerts"
+          },
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+              "description": "Include inactive alerts",
+              "default": false,
+              "title": "Include Inactive"
+            },
+            "description": "Include inactive alerts"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AlertResponse" },
+                  "title": "Response Get Alerts Endpoint Alerts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/{alert_id}": {
+      "patch": {
+        "summary": "Set Alert Active Endpoint",
+        "operationId": "set_alert_active_endpoint_alerts__alert_id__patch",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Alert Id" }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "description": "Set alert active/inactive",
+              "title": "Active"
+            },
+            "description": "Set alert active/inactive"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Alert Endpoint",
+        "operationId": "delete_alert_endpoint_alerts__alert_id__delete",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Alert Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/{alert_id}/meetings": {
+      "get": {
+        "summary": "Get Relevant Meetings Endpoint",
+        "operationId": "get_relevant_meetings_endpoint_alerts__alert_id__meetings_get",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Alert Id" }
+          },
+          {
+            "name": "k",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50, "title": "K" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "summary": "Root",
@@ -799,6 +981,48 @@
   },
   "components": {
     "schemas": {
+      "AlertResponse": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "user_id": { "type": "string", "title": "User Id" },
+          "description": { "type": "string", "title": "Description" },
+          "embedding": {
+            "items": { "type": "number" },
+            "type": "array",
+            "title": "Embedding"
+          },
+          "relevancy_threshold": {
+            "type": "number",
+            "title": "Relevancy Threshold"
+          },
+          "last_run_at": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Last Run At"
+          },
+          "is_active": { "type": "boolean", "title": "Is Active" },
+          "created_at": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "description",
+          "embedding",
+          "relevancy_threshold",
+          "last_run_at",
+          "is_active",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "AlertResponse"
+      },
       "ChatMessageItem": {
         "properties": {
           "session_id": { "type": "string", "title": "Session Id" },
@@ -807,6 +1031,15 @@
         "type": "object",
         "required": ["session_id", "message"],
         "title": "ChatMessageItem"
+      },
+      "CreateAlertRequest": {
+        "properties": {
+          "user_id": { "type": "string", "title": "User Id" },
+          "description": { "type": "string", "title": "Description" }
+        },
+        "type": "object",
+        "required": ["user_id", "description"],
+        "title": "CreateAlertRequest"
       },
       "HTTPValidationError": {
         "properties": {
@@ -818,6 +1051,67 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "KeyEvent": {
+        "properties": {
+          "date": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Date"
+          },
+          "event": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Event"
+          },
+          "summary": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Summary"
+          },
+          "reference": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Reference" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "KeyEvent"
+      },
+      "KeyPlayer": {
+        "properties": {
+          "institution": { "type": "string", "title": "Institution" },
+          "committee": { "type": "string", "title": "Committee" },
+          "committee_full": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Committee Full"
+          },
+          "committee_link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Committee Link"
+          },
+          "rapporteurs": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/Rapporteur" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Rapporteurs"
+          },
+          "shadow_rapporteurs": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/Rapporteur" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Shadow Rapporteurs"
+          }
+        },
+        "type": "object",
+        "required": ["institution", "committee"],
+        "title": "KeyPlayer"
       },
       "LegislativeFile": {
         "properties": {
@@ -862,7 +1156,7 @@
           "key_players": {
             "anyOf": [
               {
-                "items": { "additionalProperties": true, "type": "object" },
+                "items": { "$ref": "#/components/schemas/KeyPlayer" },
                 "type": "array"
               },
               { "type": "null" }
@@ -872,7 +1166,7 @@
           "key_events": {
             "anyOf": [
               {
-                "items": { "additionalProperties": true, "type": "object" },
+                "items": { "$ref": "#/components/schemas/KeyEvent" },
                 "type": "array"
               },
               { "type": "null" }
@@ -1262,6 +1556,32 @@
         },
         "type": "object",
         "title": "ProfileUpdate"
+      },
+      "Rapporteur": {
+        "properties": {
+          "name": { "type": "string", "title": "Name" },
+          "link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Link"
+          }
+        },
+        "type": "object",
+        "required": ["name"],
+        "title": "Rapporteur"
+      },
+      "Reference": {
+        "properties": {
+          "text": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Text"
+          },
+          "link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Link"
+          }
+        },
+        "type": "object",
+        "title": "Reference"
       },
       "SessionsResponseModel": {
         "properties": {

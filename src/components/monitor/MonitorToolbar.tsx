@@ -37,15 +37,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { LegislativeFileSuggestion } from '@/domain/entities/monitor/generated-types';
-import { Legislation } from '@/domain/entities/monitor/types';
+import {
+  LegislativeFile,
+  LegislativeFileSuggestion,
+} from '@/domain/entities/monitor/generated-types';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
 import { legislationRepository } from '@/repositories/legislationRepository';
 
 import { SuggestedSearch } from '../SuggestedSearch/SuggestedSearch';
 
 interface KanbanToolbarProps {
-  table: ReactTable<Legislation>;
+  table: ReactTable<LegislativeFile>;
   onSearchChange?: (search: string) => void;
   onCommitteeChange?: (committee: string | undefined) => void;
   onYearChange?: (year: number | undefined) => void;
@@ -301,7 +303,9 @@ export function KanbanToolbar({
         value={searchInput}
         onValueChange={handleSearchChange}
         onSearch={handleSearchChange}
-        fetchSuggestions={legislationRepository.getLegislationSuggestions}
+        fetchSuggestions={(query) =>
+          legislationRepository.getLegislationSuggestions({ query, limit: 5 })
+        }
         getDisplayText={(legislation) => legislation.title}
         getSelectValue={(legislation) => legislation.title}
         onSelect={(legislation) => handleSearchChange(legislation.title)}

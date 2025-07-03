@@ -283,6 +283,59 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/alerts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Alerts Endpoint */
+    get: operations['get_alerts_endpoint_alerts_get'];
+    put?: never;
+    /** Create Alert Endpoint */
+    post: operations['create_alert_endpoint_alerts_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/alerts/{alert_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete Alert Endpoint */
+    delete: operations['delete_alert_endpoint_alerts__alert_id__delete'];
+    options?: never;
+    head?: never;
+    /** Set Alert Active Endpoint */
+    patch: operations['set_alert_active_endpoint_alerts__alert_id__patch'];
+    trace?: never;
+  };
+  '/alerts/{alert_id}/meetings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Relevant Meetings Endpoint */
+    get: operations['get_relevant_meetings_endpoint_alerts__alert_id__meetings_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/': {
     parameters: {
       query?: never;
@@ -304,6 +357,27 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /** AlertResponse */
+    AlertResponse: {
+      /** Id */
+      id: string;
+      /** User Id */
+      user_id: string;
+      /** Description */
+      description: string;
+      /** Embedding */
+      embedding: number[];
+      /** Relevancy Threshold */
+      relevancy_threshold: number;
+      /** Last Run At */
+      last_run_at: string | null;
+      /** Is Active */
+      is_active: boolean;
+      /** Created At */
+      created_at: string | null;
+      /** Updated At */
+      updated_at: string | null;
+    };
     /** ChatMessageItem */
     ChatMessageItem: {
       /** Session Id */
@@ -311,10 +385,42 @@ export interface components {
       /** Message */
       message: string;
     };
+    /** CreateAlertRequest */
+    CreateAlertRequest: {
+      /** User Id */
+      user_id: string;
+      /** Description */
+      description: string;
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
       detail?: components['schemas']['ValidationError'][];
+    };
+    /** KeyEvent */
+    KeyEvent: {
+      /** Date */
+      date?: string | null;
+      /** Event */
+      event?: string | null;
+      /** Summary */
+      summary?: string | null;
+      reference?: components['schemas']['Reference'] | null;
+    };
+    /** KeyPlayer */
+    KeyPlayer: {
+      /** Institution */
+      institution: string;
+      /** Committee */
+      committee: string;
+      /** Committee Full */
+      committee_full?: string | null;
+      /** Committee Link */
+      committee_link?: string | null;
+      /** Rapporteurs */
+      rapporteurs?: components['schemas']['Rapporteur'][] | null;
+      /** Shadow Rapporteurs */
+      shadow_rapporteurs?: components['schemas']['Rapporteur'][] | null;
     };
     /** LegislativeFile */
     LegislativeFile: {
@@ -341,17 +447,9 @@ export interface components {
       /** Subjects */
       subjects?: string[] | null;
       /** Key Players */
-      key_players?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
+      key_players?: components['schemas']['KeyPlayer'][] | null;
       /** Key Events */
-      key_events?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
+      key_events?: components['schemas']['KeyEvent'][] | null;
       /** Documentation Gateway */
       documentation_gateway?:
         | {
@@ -579,6 +677,20 @@ export interface components {
       countries?: string[] | null;
       /** Newsletter Frequency */
       newsletter_frequency?: ('daily' | 'weekly' | 'none') | null;
+    };
+    /** Rapporteur */
+    Rapporteur: {
+      /** Name */
+      name: string;
+      /** Link */
+      link?: string | null;
+    };
+    /** Reference */
+    Reference: {
+      /** Text */
+      text?: string | null;
+      /** Link */
+      link?: string | null;
     };
     /** SessionsResponseModel */
     SessionsResponseModel: {
@@ -1160,6 +1272,171 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['Notification'][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_alerts_endpoint_alerts_get: {
+    parameters: {
+      query: {
+        /** @description User ID for retrieving alerts */
+        user_id: string;
+        /** @description Include inactive alerts */
+        include_inactive?: boolean | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AlertResponse'][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  create_alert_endpoint_alerts_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateAlertRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AlertResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  delete_alert_endpoint_alerts__alert_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        alert_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  set_alert_active_endpoint_alerts__alert_id__patch: {
+    parameters: {
+      query: {
+        /** @description Set alert active/inactive */
+        active: boolean;
+      };
+      header?: never;
+      path: {
+        alert_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_relevant_meetings_endpoint_alerts__alert_id__meetings_get: {
+    parameters: {
+      query?: {
+        k?: number;
+      };
+      header?: never;
+      path: {
+        alert_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */

@@ -12,12 +12,13 @@ import {
   KanbanHeader,
   KanbanProvider,
 } from '@/components/ui/kanban';
-import { Legislation } from '@/domain/entities/monitor/types';
+import { LegislativeFile } from '@/domain/entities/monitor/generated-types';
 import { cn } from '@/lib/utils';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import MonitorOperations from '@/operations/monitor/MonitorOperations';
 
 interface TanStackKanbanProps {
-  table: ReactTable<Legislation>;
+  table: ReactTable<LegislativeFile>;
   className?: string;
   visibleColumns: Set<string>;
 }
@@ -34,7 +35,7 @@ export function TanStackKanban({
     [processedData],
   );
 
-  const statusConfig = ObservatoryOperations.getStatusConfig();
+  const statusConfig = ObservatoryOperations.statusConfig;
 
   const visibleStatusColumns = (
     Object.keys(statusConfig) as Array<keyof typeof statusConfig>
@@ -61,7 +62,7 @@ export function TanStackKanban({
               </div>
             </KanbanHeader>
             <KanbanCards>
-              {items.map((item: Legislation, index: number) => {
+              {items.map((item: LegislativeFile, index: number) => {
                 const legislationUrl = `/monitor/${encodeURIComponent(item.id)}`;
 
                 return (
@@ -78,7 +79,9 @@ export function TanStackKanban({
                           <Badge className="font-mono" variant="secondary">
                             {item.id}
                           </Badge>
-                          <span>{item.year}</span>
+                          <span>
+                            {MonitorOperations.extractYearFromId(item.id)}
+                          </span>
                         </div>
 
                         <h3
