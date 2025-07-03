@@ -23,7 +23,7 @@ import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { members } from '@/domain/entities/mock/mock_members';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn } from '@/lib/utils';
-import { getColor } from '@/lib/utils';
+import { getColorByHash } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
@@ -117,7 +117,7 @@ export function EventListDialog({
         <div
           className={cn(
             'flex items-center gap-2 p-2 border rounded-md cursor-pointer',
-            getColor(event.meeting_id),
+            getColorByHash(event.meeting_id),
           )}
         >
           <div className="flex w-full flex-col gap-1">
@@ -161,7 +161,7 @@ export function EventListDialog({
           <DialogTitle>
             <div className="flex items-center gap-2">
               <EventBullet
-                color={getColor(cellEvents[0]?.meeting_id || '', 'dot')}
+                color={getColorByHash(cellEvents[0]?.meeting_id || '', 'dot')}
                 className=""
               />
               <p className="text-sm font-medium">

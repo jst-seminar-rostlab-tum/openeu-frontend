@@ -32,46 +32,117 @@ export function extractInitials(name?: string): string {
   return (firstInitial + lastInitial).toUpperCase();
 }
 
-// Tag color utilities
-const COLORS = [
-  'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800',
-  'bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800',
-  'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800',
-  'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-800',
-  'bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800',
-  'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800',
-  'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-950 dark:text-pink-300 dark:border-pink-800',
-  'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800',
-  'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950 dark:text-teal-300 dark:border-teal-800',
-  'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800',
-  'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800',
-  'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-950 dark:text-fuchsia-300 dark:border-fuchsia-800',
-  'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800',
-  'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800',
-  'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800',
-  'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800',
-  'bg-lime-50 text-lime-700 border-lime-200 dark:bg-lime-950 dark:text-lime-300 dark:border-lime-800',
-];
+export const COLOR_SCHEMES = {
+  blue: {
+    bg: 'bg-blue-50 dark:bg-blue-950',
+    text: 'text-blue-700 dark:text-blue-300',
+    outline: 'border-blue-200 dark:border-blue-800',
+    dot: 'bg-blue-600 dark:bg-blue-500',
+  },
+  green: {
+    bg: 'bg-green-50 dark:bg-green-950',
+    text: 'text-green-700 dark:text-green-300',
+    outline: 'border-green-200 dark:border-green-800',
+    dot: 'bg-green-600 dark:bg-green-500',
+  },
+  purple: {
+    bg: 'bg-purple-50 dark:bg-purple-950',
+    text: 'text-purple-700 dark:text-purple-300',
+    outline: 'border-purple-200 dark:border-purple-800',
+    dot: 'bg-purple-600 dark:bg-purple-500',
+  },
+  yellow: {
+    bg: 'bg-yellow-50 dark:bg-yellow-950',
+    text: 'text-yellow-700 dark:text-yellow-300',
+    outline: 'border-yellow-200 dark:border-yellow-800',
+    dot: 'bg-yellow-600 dark:bg-yellow-500',
+  },
+  red: {
+    bg: 'bg-red-50 dark:bg-red-950',
+    text: 'text-red-700 dark:text-red-300',
+    outline: 'border-red-200 dark:border-red-800',
+    dot: 'bg-red-600 dark:bg-red-500',
+  },
+  indigo: {
+    bg: 'bg-indigo-50 dark:bg-indigo-950',
+    text: 'text-indigo-700 dark:text-indigo-300',
+    outline: 'border-indigo-200 dark:border-indigo-800',
+    dot: 'bg-indigo-600 dark:bg-indigo-500',
+  },
+  pink: {
+    bg: 'bg-pink-50 dark:bg-pink-950',
+    text: 'text-pink-700 dark:text-pink-300',
+    outline: 'border-pink-200 dark:border-pink-800',
+    dot: 'bg-pink-600 dark:bg-pink-500',
+  },
+  orange: {
+    bg: 'bg-orange-50 dark:bg-orange-950',
+    text: 'text-orange-700 dark:text-orange-300',
+    outline: 'border-orange-200 dark:border-orange-800',
+    dot: 'bg-orange-600 dark:bg-orange-500',
+  },
+  teal: {
+    bg: 'bg-teal-50 dark:bg-teal-950',
+    text: 'text-teal-700 dark:text-teal-300',
+    outline: 'border-teal-200 dark:border-teal-800',
+    dot: 'bg-teal-600 dark:bg-teal-500',
+  },
+  cyan: {
+    bg: 'bg-cyan-50 dark:bg-cyan-950',
+    text: 'text-cyan-700 dark:text-cyan-300',
+    outline: 'border-cyan-200 dark:border-cyan-800',
+    dot: 'bg-cyan-600 dark:bg-cyan-500',
+  },
+  violet: {
+    bg: 'bg-violet-50 dark:bg-violet-950',
+    text: 'text-violet-700 dark:text-violet-300',
+    outline: 'border-violet-200 dark:border-violet-800',
+    dot: 'bg-violet-600 dark:bg-violet-500',
+  },
+  fuchsia: {
+    bg: 'bg-fuchsia-50 dark:bg-fuchsia-950',
+    text: 'text-fuchsia-700 dark:text-fuchsia-300',
+    outline: 'border-fuchsia-200 dark:border-fuchsia-800',
+    dot: 'bg-fuchsia-600 dark:bg-fuchsia-500',
+  },
+  rose: {
+    bg: 'bg-rose-50 dark:bg-rose-950',
+    text: 'text-rose-700 dark:text-rose-300',
+    outline: 'border-rose-200 dark:border-rose-800',
+    dot: 'bg-rose-600 dark:bg-rose-500',
+  },
+  amber: {
+    bg: 'bg-amber-50 dark:bg-amber-950',
+    text: 'text-amber-700 dark:text-amber-300',
+    outline: 'border-amber-200 dark:border-amber-800',
+    dot: 'bg-amber-600 dark:bg-amber-500',
+  },
+  emerald: {
+    bg: 'bg-emerald-50 dark:bg-emerald-950',
+    text: 'text-emerald-700 dark:text-emerald-300',
+    outline: 'border-emerald-200 dark:border-emerald-800',
+    dot: 'bg-emerald-600 dark:bg-emerald-500',
+  },
+  sky: {
+    bg: 'bg-sky-50 dark:bg-sky-950',
+    text: 'text-sky-700 dark:text-sky-300',
+    outline: 'border-sky-200 dark:border-sky-800',
+    dot: 'bg-sky-600 dark:bg-sky-500',
+  },
+  lime: {
+    bg: 'bg-lime-50 dark:bg-lime-950',
+    text: 'text-lime-700 dark:text-lime-300',
+    outline: 'border-lime-200 dark:border-lime-800',
+    dot: 'bg-lime-600 dark:bg-lime-500',
+  },
+} as const;
 
-const DOT_COLORS = [
-  'bg-blue-600 dark:bg-blue-500',
-  'bg-green-600 dark:bg-green-500',
-  'bg-purple-600 dark:bg-purple-500',
-  'bg-yellow-600 dark:bg-yellow-500',
-  'bg-red-600 dark:bg-red-500',
-  'bg-indigo-600 dark:bg-indigo-500',
-  'bg-pink-600 dark:bg-pink-500',
-  'bg-orange-600 dark:bg-orange-500',
-  'bg-teal-600 dark:bg-teal-500',
-  'bg-cyan-600 dark:bg-cyan-500',
-  'bg-violet-600 dark:bg-violet-500',
-  'bg-fuchsia-600 dark:bg-fuchsia-500',
-  'bg-rose-600 dark:bg-rose-500',
-  'bg-amber-600 dark:bg-amber-500',
-  'bg-emerald-600 dark:bg-emerald-500',
-  'bg-sky-600 dark:bg-sky-500',
-  'bg-lime-600 dark:bg-lime-500',
-];
+// Backwards compatibility: legacy arrays for getColor function
+const COLORS = Object.values(COLOR_SCHEMES).map(
+  (scheme) => `${scheme.bg} ${scheme.text} ${scheme.outline}`,
+);
+
+const DOT_COLORS = Object.values(COLOR_SCHEMES).map((scheme) => scheme.dot);
 
 /**
  * Generates a consistent hash for any string using FNV-1a algorithm.
@@ -96,7 +167,10 @@ function hashString(str: string): number {
  * @param variant - Color variant: 'bg' for colored backgrounds, 'dot' for dot indicators
  * @returns Tailwind CSS classes for the specified color variant
  */
-export function getColor(id: string, variant: 'bg' | 'dot' = 'bg'): string {
+export function getColorByHash(
+  id: string,
+  variant: 'bg' | 'dot' = 'bg',
+): string {
   const hash = hashString(id);
   const colors = variant === 'dot' ? DOT_COLORS : COLORS;
   const colorIndex = hash % colors.length;

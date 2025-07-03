@@ -1,12 +1,14 @@
 'use server';
 
+import { setCookie } from 'cookies-next';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { ProfileData } from '@/domain/entities/profile/ProfileData';
+import { createProfile } from '@/domain/actions/profile';
+import { ProfileCreate } from '@/domain/entities/profile/generated-types';
 import { createClient } from '@/lib/supabase/server';
-import { profileRepository } from '@/repositories/profileRepository';
 
 async function getCurrentURL() {
   const headersList = await headers();
@@ -29,7 +31,7 @@ export async function signup(formData: FormData) {
   const topics = formData.get('topics') as string;
   const newsletterFrequency = formData.get(
     'newsletter-frequency',
-  ) as ProfileData['newsletterFrequency'];
+  ) as ProfileCreate['newsletter_frequency'];
   const url = await getCurrentURL();
 
   if (country.split(',').length === 0 || country === '') {
@@ -55,15 +57,19 @@ export async function signup(formData: FormData) {
   }
 
   if (data.user) {
-    await profileRepository.createProfile({
+    await createProfile({
       id: data.user.id,
       name: name,
       surname: surname,
-      companyName: company,
-      companyDescription: companyDescription,
-      topicList: topics.split(','),
-      newsletterFrequency: newsletterFrequency,
+      company_name: company,
+      company_description: companyDescription,
+      topic_ids: topics.split(','),
+      countries: country.split(','),
+      newsletter_frequency: newsletterFrequency,
     });
+  }
+  if (data.session) {
+    setCookie('token', data.session.access_token, { cookies });
   }
 
   revalidatePath('/', 'layout');

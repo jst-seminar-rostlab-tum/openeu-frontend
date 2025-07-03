@@ -1,3 +1,5 @@
+import { getCookie } from 'cookies-next';
+
 import {
   LegislativeFile,
   LegislativeFilesParams,
@@ -16,6 +18,8 @@ export const legislationRepository = {
   ): Promise<LegislativeFileSuggestion[]> {
     if (!params.query || params.query.length < 2) return [];
 
+    const token = getCookie('token');
+
     try {
       const cleanParams = Object.fromEntries(
         Object.entries(params)
@@ -24,7 +28,15 @@ export const legislationRepository = {
       );
 
       const searchParams = new URLSearchParams(cleanParams);
-      const res = await fetch(`${API_URL}/suggestions?${searchParams}`);
+      const res = await fetch(`${API_URL}/suggestions?${searchParams}`, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!res.ok) {
         throw new Error(
@@ -48,6 +60,8 @@ export const legislationRepository = {
   async getLegislativeFiles(
     params?: LegislativeFilesParams,
   ): Promise<LegislativeFile[]> {
+    const token = getCookie('token');
+
     try {
       let url = API_URL;
 
@@ -64,7 +78,15 @@ export const legislationRepository = {
         }
       }
 
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!res.ok) {
         throw new Error(`Failed to fetch legislative files: ${res.status}`);
