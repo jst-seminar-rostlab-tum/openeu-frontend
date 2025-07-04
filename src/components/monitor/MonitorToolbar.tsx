@@ -41,6 +41,7 @@ import {
   LegislativeFile,
   LegislativeFileSuggestion,
 } from '@/domain/entities/monitor/generated-types';
+import { LegislationStatus } from '@/domain/entities/monitor/types';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
 import { legislationRepository } from '@/repositories/legislationRepository';
 
@@ -56,6 +57,7 @@ interface KanbanToolbarProps {
   selectedYear?: number;
   visibleColumns: Set<string>;
   onVisibleColumnsChange: (columns: Set<string>) => void;
+  statusColumnsWithData: LegislationStatus[];
 }
 
 export function KanbanToolbar({
@@ -68,6 +70,7 @@ export function KanbanToolbar({
   selectedYear,
   visibleColumns,
   onVisibleColumnsChange,
+  statusColumnsWithData,
 }: KanbanToolbarProps) {
   // Local filter state
   const [searchInput, setSearchInput] = useState(searchValue);
@@ -78,10 +81,9 @@ export function KanbanToolbar({
     selectedYear ? String(selectedYear) : 'all',
   );
 
-  const committees = ObservatoryOperations.getUniqueCommittees();
-  const years = ObservatoryOperations.getUniqueYears();
-
-  const statusColumns = ObservatoryOperations.getStatusColumns();
+  const tableData = table.getRowModel().rows.map((row) => row.original);
+  const committees = ObservatoryOperations.getUniqueCommittees(tableData);
+  const years = ObservatoryOperations.getUniqueYears(tableData);
 
   // Sortable columns from TanStack Table
   const sortableColumns = useMemo(() => {
@@ -159,7 +161,7 @@ export function KanbanToolbar({
 
     table.resetSorting();
 
-    const allColumns = new Set(statusColumns.map((col) => col.id));
+    const allColumns = new Set(statusColumnsWithData);
     onVisibleColumnsChange(allColumns);
   };
 
@@ -171,7 +173,7 @@ export function KanbanToolbar({
 
   const sorting = table.getState().sorting;
   const hasSorting = sorting.length > 0;
-  const hasHiddenColumns = statusColumns.length !== visibleColumns.size;
+  const hasHiddenColumns = statusColumnsWithData.length !== visibleColumns.size;
   const hasAnyFilters = hasLocalFilters || hasSorting || hasHiddenColumns;
 
   const ControlsContent = () => (
@@ -250,14 +252,14 @@ export function KanbanToolbar({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-60">
-          {statusColumns.map((column) => (
+          {statusColumnsWithData.map((column) => (
             <DropdownMenuCheckboxItem
-              key={column.id}
+              key={column}
               className="capitalize"
-              checked={visibleColumns.has(column.id)}
-              onSelect={(event) => handleColumnToggle(column.id, event)}
+              checked={visibleColumns.has(column)}
+              onSelect={(event) => handleColumnToggle(column, event)}
             >
-              {column.label}
+              {column}
             </DropdownMenuCheckboxItem>
           ))}
         </DropdownMenuContent>

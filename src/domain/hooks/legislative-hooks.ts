@@ -6,19 +6,17 @@ import {
 } from '@/domain/entities/monitor/generated-types';
 import { legislationRepository } from '@/repositories/legislationRepository';
 
-export function useLegislativeFiles(params?: LegislativeFilesParams) {
-  return useQuery({
+export const useLegislativeFiles = (params?: LegislativeFilesParams) =>
+  useQuery({
     queryKey: ['legislative-files', params],
     queryFn: () => legislationRepository.getLegislativeFiles(params),
   });
-}
 
-export function useLegislativeSuggestions(
+export const useLegislativeSuggestions = (
   params: LegislativeSuggestionsParams,
-) {
-  return useQuery({
+) =>
+  useQuery({
     queryKey: ['legislative-suggestions', params],
     queryFn: () => legislationRepository.getLegislationSuggestions(params),
     enabled: params.query.length >= 2,
   });
-}

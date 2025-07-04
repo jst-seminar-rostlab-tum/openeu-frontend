@@ -6,65 +6,41 @@ import {
 
 export default class MonitorOperations {
   static readonly statusConfig: StatusConfig = {
-    'preparatory-phase-in-parliament': {
-      name: 'Preparatory phase in Parliament',
+    'Preparatory phase in Parliament': {
       color: '#94a3b8',
-      order: 1,
     },
-    'awaiting-committee-decision': {
-      name: 'Awaiting committee decision',
+    'Awaiting committee decision': {
       color: '#f59e0b',
-      order: 2,
     },
-    'awaiting-parliament-position-1st-reading': {
-      name: "Awaiting Parliament's position in 1st reading",
+    "Awaiting Parliament's position in 1st reading": {
       color: '#3b82f6',
-      order: 3,
     },
-    'awaiting-parliament-vote': {
-      name: "Awaiting Parliament's vote",
+    "Awaiting Parliament's vote": {
       color: '#8b5cf6',
-      order: 4,
     },
-    'awaiting-plenary-debate-vote': {
-      name: 'Awaiting plenary debate/vote',
+    'Awaiting plenary debate/vote': {
       color: '#f97316',
-      order: 5,
     },
-    'awaiting-final-decision': {
-      name: 'Awaiting final decision',
+    'Awaiting final decision': {
       color: '#ef4444',
-      order: 6,
     },
-    'procedure-completed-awaiting-publication': {
-      name: 'Procedure completed, awaiting publication in Official Journal',
+    'Procedure completed, awaiting publication in Official Journal': {
       color: '#22c55e',
-      order: 7,
     },
-    'procedure-completed': {
-      name: 'Procedure completed',
+    'Procedure completed': {
       color: '#15803d',
-      order: 8,
     },
-    'procedure-completed-delegated-act': {
-      name: 'Procedure completed - delegated act enters into force',
+    'Procedure completed - delegated act enters into force': {
       color: '#16a34a',
-      order: 9,
     },
-    'awaiting-parliament-position-draft-budget': {
-      name: "Awaiting Parliament's position on the draft budget",
+    "Awaiting Parliament's position on the draft budget": {
       color: '#0ea5e9',
-      order: 10,
     },
-    'procedure-rejected': {
-      name: 'Procedure rejected',
+    'Procedure rejected': {
       color: '#dc2626',
-      order: 11,
     },
     Other: {
-      name: 'Other',
       color: '#6b7280',
-      order: 12,
     },
   };
 

@@ -92,10 +92,19 @@ export const legislationRepository = {
         throw new Error(`Failed to fetch legislative files: ${res.status}`);
       }
 
-      const response: LegislativeFilesResponse = await res.json();
-      return Array.isArray(response.legislative_files)
-        ? response.legislative_files
-        : [];
+      const response: LegislativeFilesResponse | { data: LegislativeFile[] } =
+        await res.json();
+      // Handle both possible response structures
+      if ('data' in response && Array.isArray(response.data)) {
+        return response.data;
+      }
+      if (
+        'legislative_files' in response &&
+        Array.isArray(response.legislative_files)
+      ) {
+        return response.legislative_files;
+      }
+      return [];
     } catch (err) {
       console.warn('Failed to fetch from API, returning empty array:', err);
       return [];

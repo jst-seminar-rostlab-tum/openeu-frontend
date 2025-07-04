@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { LegislativeFile } from '@/domain/entities/monitor/generated-types';
+import { getLegislativeFileAction } from '@/domain/actions/monitor';
 import { LegislationStatus } from '@/domain/entities/monitor/types';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
 import MonitorOperations from '@/operations/monitor/MonitorOperations';
@@ -25,9 +25,10 @@ export default async function LegislationPage({
   params: Promise<{ legisId: string }>;
 }) {
   const { legisId } = await params;
-  console.log(legisId);
-  // const decodedLegisId = decodeURIComponent(legisId);
-  const legislation = null as unknown as LegislativeFile;
+  const decodedLegisId = decodeURIComponent(legisId);
+
+  // Fetch data using server action
+  const legislation = await getLegislativeFileAction(decodedLegisId);
 
   if (!legislation) {
     notFound();
@@ -54,7 +55,7 @@ export default async function LegislationPage({
                     className="h-2 w-2 rounded-full"
                     style={{ backgroundColor: config.color }}
                   />
-                  <span className="font-medium">{config.name}</span>
+                  <span className="font-medium">{status}</span>
                 </>
               );
             })()}
@@ -122,6 +123,45 @@ export default async function LegislationPage({
             </CardHeader>
             <CardContent>
               <p className="text-sm font-medium">{legislation.rapporteur}</p>
+            </CardContent>
+          </Card>
+        )}
+        {legislation.key_events && legislation.key_events.length > 0 && (
+          <Card className="break-inside-avoid">
+            <CardHeader className="flex items-center">
+              <Calendar className="h-4 w-4" />
+              <CardTitle>Key Events</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {legislation.key_events.slice(0, 5).map((event, index) => (
+                <div
+                  key={index}
+                  className="border-l-2 border-muted pl-3 pb-2 last:pb-0"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium leading-tight">
+                        {event.event || 'Event'}
+                      </p>
+                      {event.summary && (
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                          {event.summary}
+                        </p>
+                      )}
+                    </div>
+                    {event.date && (
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        {new Date(event.date).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {legislation.key_events.length > 5 && (
+                <p className="text-xs text-muted-foreground text-center pt-2 border-t">
+                  +{legislation.key_events.length - 5} more events
+                </p>
+              )}
             </CardContent>
           </Card>
         )}

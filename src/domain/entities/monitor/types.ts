@@ -1,21 +1,19 @@
 export type LegislationStatus =
-  | 'preparatory-phase-in-parliament'
-  | 'awaiting-committee-decision'
-  | 'awaiting-parliament-position-1st-reading'
-  | 'awaiting-parliament-vote'
-  | 'awaiting-plenary-debate-vote'
-  | 'awaiting-final-decision'
-  | 'procedure-completed-awaiting-publication'
-  | 'procedure-completed'
-  | 'procedure-completed-delegated-act'
-  | 'awaiting-parliament-position-draft-budget'
-  | 'procedure-rejected'
+  | 'Preparatory phase in Parliament'
+  | 'Awaiting committee decision'
+  | "Awaiting Parliament's position in 1st reading"
+  | "Awaiting Parliament's vote"
+  | 'Awaiting plenary debate/vote'
+  | 'Awaiting final decision'
+  | 'Procedure completed, awaiting publication in Official Journal'
+  | 'Procedure completed'
+  | 'Procedure completed - delegated act enters into force'
+  | "Awaiting Parliament's position on the draft budget"
+  | 'Procedure rejected'
   | 'Other';
 
 export interface StatusInfo {
-  name: string;
   color: string;
-  order: number;
 }
 
 export type StatusConfig = Record<LegislationStatus, StatusInfo>;
