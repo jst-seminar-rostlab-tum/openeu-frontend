@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   CalendarCheck,
   ChevronDown,
+  Clock,
   ExternalLink,
   Eye,
   FileText,
@@ -21,7 +22,10 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
-import { getLegislativeFileAction } from '@/domain/actions/monitor';
+import {
+  getLegislativeFileAction,
+  getLegislativeMeetingsAction,
+} from '@/domain/actions/monitor';
 import { LegislationStatus } from '@/domain/entities/monitor/types';
 import { cn } from '@/lib/utils';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
@@ -36,6 +40,9 @@ export default async function LegislationPage({
   const decodedLegisId = decodeURIComponent(legisId);
 
   const legislation = await getLegislativeFileAction({ id: decodedLegisId });
+  const legislativeMeetings = await getLegislativeMeetingsAction({
+    legislative_id: decodedLegisId,
+  });
 
   if (!legislation) {
     notFound();
@@ -287,6 +294,103 @@ export default async function LegislationPage({
                           </Link>
                         )}
                       </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                );
+              })}
+            </CardContent>
+          </Card>
+        )}
+        {legislativeMeetings && legislativeMeetings.length > 0 && (
+          <Card className="break-inside-avoid">
+            <CardHeader className="flex items-center">
+              <Clock className="h-4 w-4" />
+              <CardTitle>Related Meetings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {legislativeMeetings.map((meeting, index) => {
+                const hasContent =
+                  meeting.meeting_location ||
+                  meeting.member_capacity ||
+                  meeting.associated_committee_or_delegation_name ||
+                  meeting.procedure_reference;
+
+                return (
+                  <Collapsible
+                    key={index}
+                    className="border-l-2 pl-3"
+                    disabled={!hasContent}
+                  >
+                    <CollapsibleTrigger className="flex items-start justify-between w-full p-0 text-left group gap-2">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium leading-tight">
+                          {meeting.title}
+                        </p>
+                        {meeting.meeting_date && (
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(
+                              meeting.meeting_date,
+                            ).toLocaleDateString()}
+                          </p>
+                        )}
+                        {meeting.member_name && (
+                          <p className="text-xs text-muted-foreground">
+                            {meeting.member_name}
+                          </p>
+                        )}
+                      </div>
+
+                      <ChevronDown
+                        className={cn(
+                          'h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180',
+                          !hasContent && 'hidden',
+                        )}
+                      />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-1 space-y-1">
+                      {meeting.meeting_location && (
+                        <div className="text-xs">
+                          <span className="font-medium text-muted-foreground">
+                            Location:
+                          </span>{' '}
+                          <span className="text-foreground">
+                            {meeting.meeting_location}
+                          </span>
+                        </div>
+                      )}
+
+                      {meeting.member_capacity && (
+                        <div className="text-xs">
+                          <span className="font-medium text-muted-foreground">
+                            Capacity:
+                          </span>{' '}
+                          <span className="text-foreground">
+                            {meeting.member_capacity}
+                          </span>
+                        </div>
+                      )}
+
+                      {meeting.associated_committee_or_delegation_name && (
+                        <div className="text-xs">
+                          <span className="font-medium text-muted-foreground">
+                            Committee:
+                          </span>{' '}
+                          <span className="text-foreground">
+                            {meeting.associated_committee_or_delegation_name}
+                          </span>
+                        </div>
+                      )}
+
+                      {meeting.procedure_reference && (
+                        <div className="text-xs">
+                          <span className="font-medium text-muted-foreground">
+                            Reference:
+                          </span>{' '}
+                          <span className="text-foreground font-mono">
+                            {meeting.procedure_reference}
+                          </span>
+                        </div>
+                      )}
                     </CollapsibleContent>
                   </Collapsible>
                 );
