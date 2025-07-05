@@ -9,6 +9,7 @@ import {
 import { useMemo, useState } from 'react';
 
 import { kanbanColumns } from '@/app/monitor/columns';
+import { KanbanSkeleton } from '@/components/monitor/KanbanSkeleton';
 import { TanStackKanban } from '@/components/monitor/MonitorKanban';
 import { KanbanToolbar } from '@/components/monitor/MonitorToolbar';
 import { LegislationStatus } from '@/domain/entities/monitor/types';
@@ -23,7 +24,11 @@ export default function ObservatoryPage() {
   >();
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
 
-  const { data: legislationData = [] } = useLegislativeFiles({
+  const {
+    data: legislationData = [],
+    isLoading,
+    isFetching,
+  } = useLegislativeFiles({
     query: searchValue || undefined,
     committee: selectedCommittee,
     year: selectedYear,
@@ -74,12 +79,16 @@ export default function ObservatoryPage() {
           statusColumnsWithData={statusColumnsWithData}
         />
       </div>
-      <TanStackKanban
-        groupedData={groupedData}
-        className="flex-1"
-        visibleColumns={visibleColumns}
-        statusColumnsWithData={statusColumnsWithData}
-      />
+      {isFetching || isLoading ? (
+        <KanbanSkeleton />
+      ) : (
+        <TanStackKanban
+          groupedData={groupedData}
+          className="flex-1"
+          visibleColumns={visibleColumns}
+          statusColumnsWithData={statusColumnsWithData}
+        />
+      )}
     </div>
   );
 }

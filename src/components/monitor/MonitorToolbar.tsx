@@ -139,8 +139,7 @@ export function KanbanToolbar({
     }
   };
 
-  const handleColumnToggle = (columnId: string, event?: Event) => {
-    event?.preventDefault();
+  const handleColumnToggle = (columnId: string) => {
     const newVisibleColumns = new Set(visibleColumns);
     if (newVisibleColumns.has(columnId)) {
       newVisibleColumns.delete(columnId);
@@ -173,7 +172,9 @@ export function KanbanToolbar({
 
   const sorting = table.getState().sorting;
   const hasSorting = sorting.length > 0;
-  const hasHiddenColumns = statusColumnsWithData.length !== visibleColumns.size;
+  const hasHiddenColumns = statusColumnsWithData.some(
+    (status) => !visibleColumns.has(status),
+  );
   const hasAnyFilters = hasLocalFilters || hasSorting || hasHiddenColumns;
 
   const ControlsContent = () => (
@@ -257,7 +258,7 @@ export function KanbanToolbar({
               key={column}
               className="capitalize"
               checked={visibleColumns.has(column)}
-              onSelect={(event) => handleColumnToggle(column, event)}
+              onCheckedChange={() => handleColumnToggle(column)}
             >
               {column}
             </DropdownMenuCheckboxItem>

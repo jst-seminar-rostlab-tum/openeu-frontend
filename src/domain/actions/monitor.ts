@@ -1,33 +1,53 @@
 'use server';
 
-import { LegislativeFile } from '@/domain/entities/monitor/generated-types';
+import { cookies } from 'next/headers';
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/legislative-files`;
+import {
+  LegislativeFile,
+  LegislativeFileParams,
+  LegislativeFileResponse,
+} from '@/domain/entities/monitor/generated-types';
+import { ToastOperations } from '@/operations/toast/toastOperations';
+
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/legislative-file`;
 
 export async function getLegislativeFileAction(
-  id: string,
-): Promise<LegislativeFile | null> {
+  params: LegislativeFileParams,
+): Promise<LegislativeFile> {
   try {
-    const res = await fetch(`${API_URL}/${encodeURIComponent(id)}`, {
+    const token = (await cookies()).get('token')?.value;
+
+    const searchParams = new URLSearchParams({ id: params.id });
+    const res = await fetch(`${API_URL}?${searchParams}`, {
       method: 'GET',
+      mode: 'cors',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-      // Server-side caching for 5 minutes
-      next: { revalidate: 300 },
     });
 
     if (!res.ok) {
-      if (res.status === 404) {
-        return null;
-      }
-      throw new Error(`Failed to fetch legislative file: ${res.status}`);
+      const errorText = await res.text();
+      ToastOperations.showError({
+        title: 'Error fetching legislation',
+        message: `Failed to fetch legislation: ${res.status} ${res.statusText}`,
+      });
+
+      throw new Error(
+        `Failed to fetch legislative file: ${res.status} ${res.statusText} - ${errorText}`,
+      );
     }
 
-    const response: LegislativeFile = await res.json();
-    return response;
-  } catch (err) {
-    console.warn('Failed to fetch legislative file:', err);
-    return null;
+    const response: LegislativeFileResponse = await res.json();
+    return response.legislative_file;
+  } catch (error) {
+    ToastOperations.showError({
+      title: 'Legislation Fetch Failed',
+      message:
+        error instanceof Error ? error.message : 'An unexpected error occurred',
+    });
+    throw error;
   }
 }
