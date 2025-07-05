@@ -15,7 +15,7 @@ import { ToastOperations } from '@/operations/toast/toastOperations';
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/legislative-file`;
 const MEETINGS_API_URL = `${process.env.NEXT_PUBLIC_API_URL}/legislative-files/meetings`;
 
-export async function getLegislativeFileAction(
+export async function getLegislativeFile(
   params: LegislativeFileParams,
 ): Promise<LegislativeFile> {
   try {
@@ -56,7 +56,7 @@ export async function getLegislativeFileAction(
   }
 }
 
-export async function getLegislativeMeetingsAction(
+export async function getLegislativeMeetings(
   params: LegislativeMeetingsParams,
 ): Promise<LegislativeMeeting[]> {
   try {
