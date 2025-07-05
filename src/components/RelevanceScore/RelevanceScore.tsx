@@ -1,4 +1,5 @@
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
+import { extractColorName, getStrokeColorClasses } from '@/lib/utils';
 
 interface RelevanceScoreProps {
   meeting: Meeting;
@@ -15,6 +16,10 @@ export function RelevanceScore({
   const relevanceScore = isBar
     ? Math.round(meeting.similarity! * 10000) / 100
     : Math.round(meeting.similarity! * 100);
+
+  const colorName = extractColorName(meeting.color);
+  const strokeColors = getStrokeColorClasses(colorName);
+
   if (isBar) {
     return (
       <div
@@ -40,18 +45,19 @@ export function RelevanceScore({
           <circle
             cx="18"
             cy="18"
-            r="16"
+            r="12"
             fill="none"
-            style={{ stroke: `var(--color-${meeting.color}-300)` }}
-            strokeWidth="3"
+            className={`${strokeColors.light} dark:${strokeColors.dark}`}
+            opacity={0.3}
+            strokeWidth="2"
           ></circle>
           <circle
             cx="18"
             cy="18"
-            r="16"
+            r="12"
             fill="none"
-            style={{ stroke: `var(--color-${meeting.color}-800)` }}
-            strokeWidth="3"
+            className={`${strokeColors.light} dark:${strokeColors.dark}`}
+            strokeWidth="2"
             strokeDasharray="100"
             strokeDashoffset={relevanceScore}
             strokeLinecap="round"

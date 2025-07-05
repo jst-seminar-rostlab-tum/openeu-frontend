@@ -177,6 +177,24 @@ export function getColorByHash(
   return colors[colorIndex];
 }
 
+export function extractColorName(cssClassString: string): string {
+  // Extract the first color name from the CSS class string
+  const match = cssClassString.match(/bg-(\w+)-\d+/);
+  return match ? match[1] : 'gray';
+}
+
+export function getStrokeColorClasses(colorName: string): {
+  light: string;
+  dark: string;
+} {
+  const lightClass = `stroke-${colorName}-200`;
+  const darkClass = `stroke-${colorName}-800`;
+
+  return {
+    light: lightClass,
+    dark: darkClass,
+  };
+}
 /**
  * Extracts the first name from a Supabase user object.
  * Falls back to the username part of email if no first name is available.
