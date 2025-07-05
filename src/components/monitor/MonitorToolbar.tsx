@@ -37,15 +37,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { LegislativeFileSuggestion } from '@/domain/entities/monitor/generated-types';
-import { Legislation } from '@/domain/entities/monitor/types';
+import {
+  LegislativeFile,
+  LegislativeFileSuggestion,
+} from '@/domain/entities/monitor/generated-types';
+import { LegislationStatus } from '@/domain/entities/monitor/types';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
 import { legislationRepository } from '@/repositories/legislationRepository';
 
 import { SuggestedSearch } from '../SuggestedSearch/SuggestedSearch';
 
 interface KanbanToolbarProps {
-  table: ReactTable<Legislation>;
+  table: ReactTable<LegislativeFile>;
   onSearchChange?: (search: string) => void;
   onCommitteeChange?: (committee: string | undefined) => void;
   onYearChange?: (year: number | undefined) => void;
@@ -54,6 +57,7 @@ interface KanbanToolbarProps {
   selectedYear?: number;
   visibleColumns: Set<string>;
   onVisibleColumnsChange: (columns: Set<string>) => void;
+  statusColumnsWithData: LegislationStatus[];
 }
 
 export function KanbanToolbar({
@@ -66,6 +70,7 @@ export function KanbanToolbar({
   selectedYear,
   visibleColumns,
   onVisibleColumnsChange,
+  statusColumnsWithData,
 }: KanbanToolbarProps) {
   // Local filter state
   const [searchInput, setSearchInput] = useState(searchValue);
@@ -76,10 +81,9 @@ export function KanbanToolbar({
     selectedYear ? String(selectedYear) : 'all',
   );
 
-  const committees = ObservatoryOperations.getUniqueCommittees();
-  const years = ObservatoryOperations.getUniqueYears();
-
-  const statusColumns = ObservatoryOperations.getStatusColumns();
+  const tableData = table.getRowModel().rows.map((row) => row.original);
+  const committees = ObservatoryOperations.getUniqueCommittees(tableData);
+  const years = ObservatoryOperations.getUniqueYears(tableData);
 
   // Sortable columns from TanStack Table
   const sortableColumns = useMemo(() => {
@@ -135,8 +139,7 @@ export function KanbanToolbar({
     }
   };
 
-  const handleColumnToggle = (columnId: string, event?: Event) => {
-    event?.preventDefault();
+  const handleColumnToggle = (columnId: string) => {
     const newVisibleColumns = new Set(visibleColumns);
     if (newVisibleColumns.has(columnId)) {
       newVisibleColumns.delete(columnId);
@@ -157,7 +160,7 @@ export function KanbanToolbar({
 
     table.resetSorting();
 
-    const allColumns = new Set(statusColumns.map((col) => col.id));
+    const allColumns = new Set(statusColumnsWithData);
     onVisibleColumnsChange(allColumns);
   };
 
@@ -169,7 +172,9 @@ export function KanbanToolbar({
 
   const sorting = table.getState().sorting;
   const hasSorting = sorting.length > 0;
-  const hasHiddenColumns = statusColumns.length !== visibleColumns.size;
+  const hasHiddenColumns = statusColumnsWithData.some(
+    (status) => !visibleColumns.has(status),
+  );
   const hasAnyFilters = hasLocalFilters || hasSorting || hasHiddenColumns;
 
   const ControlsContent = () => (
@@ -248,14 +253,14 @@ export function KanbanToolbar({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-60">
-          {statusColumns.map((column) => (
+          {statusColumnsWithData.map((column) => (
             <DropdownMenuCheckboxItem
-              key={column.id}
+              key={column}
               className="capitalize"
-              checked={visibleColumns.has(column.id)}
-              onSelect={(event) => handleColumnToggle(column.id, event)}
+              checked={visibleColumns.has(column)}
+              onCheckedChange={() => handleColumnToggle(column)}
             >
-              {column.label}
+              {column}
             </DropdownMenuCheckboxItem>
           ))}
         </DropdownMenuContent>
@@ -301,7 +306,9 @@ export function KanbanToolbar({
         value={searchInput}
         onValueChange={handleSearchChange}
         onSearch={handleSearchChange}
-        fetchSuggestions={legislationRepository.getLegislationSuggestions}
+        fetchSuggestions={(query) =>
+          legislationRepository.getLegislationSuggestions({ query, limit: 5 })
+        }
         getDisplayText={(legislation) => legislation.title}
         getSelectValue={(legislation) => legislation.title}
         onSelect={(legislation) => handleSearchChange(legislation.title)}
