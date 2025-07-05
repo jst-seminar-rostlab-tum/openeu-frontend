@@ -246,6 +246,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/legislative-file': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Legislative File
+     * @description Get a single legislative file by ID
+     */
+    get: operations['get_legislative_file_legislative_file_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/legislative-files/suggestions': {
     parameters: {
       query?: never;
@@ -367,6 +387,8 @@ export interface components {
       description: string;
       /** Embedding */
       embedding: number[];
+      /** Title */
+      title: string;
       /** Relevancy Threshold */
       relevancy_threshold: number;
       /** Last Run At */
@@ -458,6 +480,10 @@ export interface components {
         | null;
       /** Similarity */
       similarity?: number | null;
+    };
+    /** LegislativeFileResponse */
+    LegislativeFileResponse: {
+      legislative_file: components['schemas']['LegislativeFile'];
     };
     /** LegislativeFileSuggestion */
     LegislativeFileSuggestion: {
@@ -1205,6 +1231,38 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['LegislativeFilesResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_legislative_file_legislative_file_get: {
+    parameters: {
+      query: {
+        /** @description Legislative file ID */
+        id: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LegislativeFileResponse'];
         };
       };
       /** @description Validation Error */

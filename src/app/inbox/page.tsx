@@ -17,12 +17,14 @@ import { DataTablePagination } from '@/components/inbox/Pagination';
 import { DataTableToolbar } from '@/components/inbox/Toolbar';
 import { Section } from '@/components/section';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 import { useNotifications } from '@/domain/hooks/notificationsHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { useNewsletterDialog } from '@/domain/hooks/useNewsletterDialog';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
+import { AlertsSection } from './AlertsSection';
 import { createColumns } from './columns';
 import { DataTable } from './data-table';
 
@@ -34,6 +36,7 @@ export default function InboxPage() {
     pageSize: 10,
   });
 
+  const [tab, setTab] = useState('inbox');
   const { user } = useAuth();
 
   // Fetch notifications with user ID
@@ -173,21 +176,32 @@ export default function InboxPage() {
 
   return (
     <Section>
-      <h1 className="text-2xl font-bold">Inbox</h1>
-      <div className="space-y-2">
-        <DataTableToolbar
-          table={table}
-          onBulkArchive={handleBulkArchive}
-          onBulkDelete={handleBulkDelete}
-        />
-        <DataTable table={table} columns={columns} />
-        <DataTablePagination table={table} />
-      </div>
-      <NewsletterDialog
-        item={selectedItem}
-        open={isOpen}
-        onOpenChange={closeDialog}
-      />
+      <Tabs value={tab} onValueChange={setTab} className="mt-4">
+        <TabsList>
+          <TabsTrigger value="inbox">Inbox</TabsTrigger>
+          <TabsTrigger value="alerts">Alerts</TabsTrigger>
+        </TabsList>
+        <TabsContent value="inbox">
+          <h1 className="text-2xl font-bold">Inbox</h1>
+          <div className="space-y-2">
+            <DataTableToolbar
+              table={table}
+              onBulkArchive={handleBulkArchive}
+              onBulkDelete={handleBulkDelete}
+            />
+            <DataTable table={table} columns={columns} />
+            <DataTablePagination table={table} />
+          </div>
+          <NewsletterDialog
+            item={selectedItem}
+            open={isOpen}
+            onOpenChange={closeDialog}
+          />
+        </TabsContent>
+        <TabsContent value="alerts">
+          <AlertsSection userId={user?.id || ''} />
+        </TabsContent>
+      </Tabs>
     </Section>
   );
 }
