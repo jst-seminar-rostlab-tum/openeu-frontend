@@ -28,4 +28,7 @@ export type LegislativeMeetingsResponse =
 export type LegislativeFile = components['schemas']['LegislativeFile'];
 export type LegislativeFileSuggestion =
   components['schemas']['LegislativeFileSuggestion'];
+export type KeyEvent = components['schemas']['KeyEvent'];
+export type KeyPlayer = components['schemas']['KeyPlayer'];
+export type Rapporteur = components['schemas']['Rapporteur'];
 export type LegislativeMeeting = components['schemas']['LegislativeMeeting'];

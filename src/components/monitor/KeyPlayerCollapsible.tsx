@@ -6,11 +6,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { components } from '@/lib/api-types';
+import {
+  KeyPlayer,
+  Rapporteur,
+} from '@/domain/entities/monitor/generated-types';
 import { cn } from '@/lib/utils';
-
-type KeyPlayer = components['schemas']['KeyPlayer'];
-type Rapporteur = components['schemas']['Rapporteur'];
 
 interface KeyPlayerCollapsibleProps {
   player: KeyPlayer;

@@ -5,10 +5,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { components } from '@/lib/api-types';
+import { LegislativeMeeting } from '@/domain/entities/monitor/generated-types';
 import { cn } from '@/lib/utils';
-
-type LegislativeMeeting = components['schemas']['LegislativeMeeting'];
 
 interface MeetingCollapsibleProps {
   meeting: LegislativeMeeting;
