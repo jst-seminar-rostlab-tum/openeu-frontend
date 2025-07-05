@@ -8,7 +8,7 @@ import { DroppableArea } from '@/components/calendar/MonthViewCalendar/Droppable
 import { CalendarTimeline } from '@/components/calendar/WeekViewCalendar/CalendarTimeline';
 import { RenderGroupedEvents } from '@/components/calendar/WeekViewCalendar/RenderGroupedEvents';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { groupEvents } from '@/operations/meeting/CalendarHelpers';
 

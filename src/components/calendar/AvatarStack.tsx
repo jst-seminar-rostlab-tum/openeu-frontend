@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Member } from '@/domain/entities/calendar/generated-types';
+import { Member } from '@/domain/entities/calendar/CalendarTypes';
 
 type AvatarStackProps = {
   members: Member[];

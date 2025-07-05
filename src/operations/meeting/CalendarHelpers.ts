@@ -25,12 +25,13 @@ import {
   startOfYear,
 } from 'date-fns';
 
-import type { CalendarCell } from '@/domain/entities/calendar/CalendarCell';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
-import { TCalendarView } from '@/domain/types/calendar/types';
+import {
+  CalendarCell,
+  TCalendarView,
+} from '@/domain/entities/calendar/CalendarTypes';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 
 const FORMAT_STRING = 'MMM d, yyyy';
-export const COLORS = ['blue', 'green', 'red', 'orange', 'purple', 'yellow'];
 
 export function rangeText(view: TCalendarView, date: Date): string {
   let start: Date;
@@ -375,15 +376,6 @@ export function getEventBlockStyle(
   const left = groupIndex * width;
 
   return { top: `${top}%`, width: `${width}%`, left: `${left}%` };
-}
-
-export function getColorFromId(meetingId: string) {
-  let hash = 0;
-  for (let i = 0; i < meetingId.length; i++) {
-    hash = meetingId.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const index = Math.abs(hash) % COLORS.length;
-  return COLORS[index].toString();
 }
 
 // New functions from the incoming branch

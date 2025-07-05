@@ -1,29 +1,29 @@
-/**
- * Auto-generated calendar types extracted from OpenAPI specification
- * Run `npm run api:update` to regenerate
- */
-
 // Import the auto-generated types
-import type { components, operations } from '@/lib/api-types';
+import { MeetingData } from './generated-types';
 
-// === API TYPES (truly generated) ===
-export type Meeting = components['schemas']['Meeting'];
-export type GetMeetingsParams =
-  operations['get_meetings_meetings_get']['parameters']['query'];
+// === EXTENDED API TYPES ===
+export type Meeting = MeetingData & {
+  color: string;
+  meeting_end_datetime: string;
+};
 
-// === FRONTEND TYPES ===
+// === FRONTEND-ONLY TYPES ===
 export type TCalendarView = 'day' | 'week' | 'month' | 'year' | 'agenda';
 
-export type TMeetingColor =
-  | 'blue'
-  | 'green'
-  | 'red'
-  | 'yellow'
-  | 'purple'
-  | 'orange';
+export type TMeetingColor = string;
 
 export interface CalendarCell {
   day: number;
   currentMonth: boolean;
   date: Date;
 }
+
+export type Member = {
+  id: string;
+  type: string;
+  label: string;
+  family_name: string;
+  given_name: string;
+  sort_label: string;
+  country: string;
+};

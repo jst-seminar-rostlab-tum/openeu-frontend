@@ -1,4 +1,4 @@
-import { Member } from '../calendar/generated-types';
+import { Member } from '../calendar/CalendarTypes';
 
 export const members: Member[] = [
   {
