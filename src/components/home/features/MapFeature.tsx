@@ -2,9 +2,11 @@
 
 import { Globe } from 'lucide-react';
 
-import { MeetingProvider } from '@/components/calendar/MeetingContext';
 import FeatureCard from '@/components/home/features/FeatureCard';
-import Map from '@/components/map/Map';
+import MapComponent from '@/components/map/MapComponent';
+import MOCK_COUNTRY_MEETING_MAP from '@/components/map/mockCountryMeetingMap';
+
+import MapData from '../../../../public/map.geo.json';
 
 export default function MapFeature() {
   return (
@@ -14,9 +16,13 @@ export default function MapFeature() {
       description="Visualize activity across EU member states"
     >
       <div className="w-full h-50 ">
-        <MeetingProvider updateUrl={false}>
-          <Map countryClickDisabled />
-        </MeetingProvider>
+        <MapComponent
+          mapData={MapData as GeoJSON.FeatureCollection}
+          zoom={4.25}
+          minZoom={4}
+          center={[54.5452, 25.11912]}
+          countryMeetingMap={MOCK_COUNTRY_MEETING_MAP}
+        />
       </div>
     </FeatureCard>
   );

@@ -18,6 +18,7 @@ function MapInner({
   countryClickDisabled?: boolean;
 }) {
   const { meetings } = useMeetingContext();
+
   const countryMeetingMap = useCountryMeetingMap(meetings);
 
   return (

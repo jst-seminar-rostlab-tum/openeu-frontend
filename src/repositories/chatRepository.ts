@@ -23,7 +23,6 @@ export const chatRepository = {
         {
           method: 'GET',
           mode: 'cors',
-          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -54,7 +53,6 @@ export const chatRepository = {
         {
           method: 'GET',
           mode: 'cors',
-          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -100,7 +98,6 @@ export const chatRepository = {
       const response = await fetch(url, {
         method: 'POST',
         mode: 'cors',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,

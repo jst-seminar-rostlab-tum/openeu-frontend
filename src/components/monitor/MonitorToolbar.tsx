@@ -9,7 +9,7 @@ import {
   Settings2,
   X,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -73,13 +73,18 @@ export function KanbanToolbar({
   statusColumnsWithData,
 }: KanbanToolbarProps) {
   // Local filter state
-  const [searchInput, setSearchInput] = useState(searchValue);
+  const [localSearchText, setLocalSearchText] = useState(searchValue);
   const [committeeInput, setCommitteeInput] = useState(
     selectedCommittee || 'all',
   );
   const [yearInput, setYearInput] = useState(
     selectedYear ? String(selectedYear) : 'all',
   );
+
+  // Sync local search text with external search value
+  useEffect(() => {
+    setLocalSearchText(searchValue);
+  }, [searchValue]);
 
   const tableData = table.getRowModel().rows.map((row) => row.original);
   const committees = ObservatoryOperations.getUniqueCommittees(tableData);
@@ -98,7 +103,6 @@ export function KanbanToolbar({
 
   // Local filter handlers
   const handleSearchChange = (value: string) => {
-    setSearchInput(value);
     onSearchChange?.(value);
   };
 
@@ -150,11 +154,9 @@ export function KanbanToolbar({
   };
 
   const clearAllFilters = () => {
-    // Clear local filters
-    setSearchInput('');
+    // Clear local filters (excluding search)
     setCommitteeInput('all');
     setYearInput('all');
-    onSearchChange?.('');
     onCommitteeChange?.(undefined);
     onYearChange?.(undefined);
 
@@ -164,11 +166,7 @@ export function KanbanToolbar({
     onVisibleColumnsChange(allColumns);
   };
 
-  const hasLocalFilters = !!(
-    searchInput ||
-    committeeInput !== 'all' ||
-    yearInput !== 'all'
-  );
+  const hasLocalFilters = !!(committeeInput !== 'all' || yearInput !== 'all');
 
   const sorting = table.getState().sorting;
   const hasSorting = sorting.length > 0;
@@ -303,8 +301,8 @@ export function KanbanToolbar({
       {/* Search - always visible */}
       <SuggestedSearch<LegislativeFileSuggestion>
         placeholder="Search legislation..."
-        value={searchInput}
-        onValueChange={handleSearchChange}
+        value={localSearchText}
+        onValueChange={setLocalSearchText}
         onSearch={handleSearchChange}
         fetchSuggestions={(query) =>
           legislationRepository.getLegislationSuggestions({ query, limit: 5 })
