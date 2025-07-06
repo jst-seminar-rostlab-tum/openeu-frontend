@@ -34,11 +34,7 @@ export default function ChatInputCard() {
       <CardContent className="flex flex-col p-0">
         {context && (
           <div className="mb-2">
-            <ContextBadge
-              type={context.type}
-              id={context.id}
-              title={context.title}
-            />
+            <ContextBadge id={context.id} />
           </div>
         )}
         <Textarea
