@@ -1,7 +1,10 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,8 +14,18 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { updateFocusArea } from '@/domain/actions/onboarding';
+import { focusAreaSchema } from '@/domain/schemas/OnboardingForm';
 import {
   EU_COUNTRIES,
   POLICY_AREAS,
@@ -25,32 +38,44 @@ export const Step4FocusArea: React.FC = () => {
   const { profileData, updateProfileData, nextStep, prevStep } =
     useOnboarding();
 
-  const handleNext = () => {
-    if (
-      profileData.topicList &&
-      profileData.topicList.length > 0 &&
-      profileData.geographicFocus &&
-      profileData.geographicFocus.length > 0 &&
-      profileData.keyRegulatoryAreas &&
-      profileData.keyRegulatoryAreas.length > 0
-    ) {
-      nextStep();
-    }
-  };
+  // Setup form with React Hook Form and Zod validation
+  const form = useForm({
+    resolver: zodResolver(focusAreaSchema),
+    defaultValues: {
+      topicList: profileData.topicList || [],
+      geographicFocus: profileData.geographicFocus || [],
+      keyRegulatoryAreas: profileData.keyRegulatoryAreas || [],
+    },
+    mode: 'onSubmit',
+  });
 
-  const handleMultiSelectChange = (name: string, values: string[]) => {
-    updateProfileData({ [name]: values });
-  };
+  const onSubmit = async (data: z.infer<typeof focusAreaSchema>) => {
+    // Update context with form data
+    updateProfileData(data);
 
-  const isFormValid = () => {
-    return !!(
-      profileData.topicList &&
-      profileData.topicList.length > 0 &&
-      profileData.geographicFocus &&
-      profileData.geographicFocus.length > 0 &&
-      profileData.keyRegulatoryAreas &&
-      profileData.keyRegulatoryAreas.length > 0
+    // Create FormData for server action
+    const formData = new FormData();
+    data.topicList.forEach((topic) => formData.append('topicList', topic));
+    data.geographicFocus.forEach((focus) =>
+      formData.append('geographicFocus', focus),
     );
+    data.keyRegulatoryAreas.forEach((area) =>
+      formData.append('keyRegulatoryAreas', area),
+    );
+
+    // Call server action
+    const result = await updateFocusArea(formData);
+
+    if (result.success) {
+      nextStep();
+    } else if (result.fieldErrors) {
+      // Set server validation errors
+      Object.entries(result.fieldErrors).forEach(([field, message]) => {
+        form.setError(field as keyof z.infer<typeof focusAreaSchema>, {
+          message,
+        });
+      });
+    }
   };
 
   return (
@@ -68,125 +93,140 @@ export const Step4FocusArea: React.FC = () => {
         </CardHeader>
       </motion.div>
 
-      <CardContent className="space-y-8">
-        {/* Areas of Interest (Topics) */}
-        <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.4 }}
-        >
-          <Label className="text-base font-semibold">Areas of Interest</Label>
-          <p className="text-sm text-muted-foreground">
-            Select the topics that matter most to you
-          </p>
-          <MultiSelect
-            options={POLICY_AREAS.map((area) => ({ label: area, value: area }))}
-            onValueChange={(values) =>
-              handleMultiSelectChange('topicList', values)
-            }
-            defaultValue={profileData.topicList || []}
-            placeholder="Select areas of interest..."
-            variant="inverted"
-            animation={2}
-            maxCount={3}
-          />
-          {profileData.topicList && profileData.topicList.length > 0 && (
-            <div className="text-xs text-muted-foreground">
-              {profileData.topicList.length} topic
-              {profileData.topicList.length !== 1 ? 's' : ''} selected
-            </div>
-          )}
-        </motion.div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-8">
+            {/* Areas of Interest (Topics) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+            >
+              <FormField
+                control={form.control}
+                name="topicList"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">
+                      Areas of Interest
+                    </FormLabel>
+                    <FormDescription>
+                      Select the topics that matter most to you
+                    </FormDescription>
+                    <FormControl>
+                      <MultiSelect
+                        options={POLICY_AREAS.map((area) => ({
+                          label: area,
+                          value: area,
+                        }))}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select areas of interest..."
+                        variant="inverted"
+                        animation={2}
+                        maxCount={3}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </motion.div>
 
-        {/* Geographic Focus */}
-        <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
-        >
-          <Label className="text-base font-semibold">Geographic Focus</Label>
-          <p className="text-sm text-muted-foreground">
-            Select the countries/regions you work with
-          </p>
-          <MultiSelect
-            options={EU_COUNTRIES.map((country) => ({
-              label: country,
-              value: country,
-            }))}
-            onValueChange={(values) =>
-              handleMultiSelectChange('geographicFocus', values)
-            }
-            defaultValue={profileData.geographicFocus || []}
-            placeholder="Select countries/regions..."
-            variant="inverted"
-            animation={2}
-            maxCount={3}
-          />
-          {profileData.geographicFocus &&
-            profileData.geographicFocus.length > 0 && (
-              <div className="text-xs text-muted-foreground">
-                {profileData.geographicFocus.length} countr
-                {profileData.geographicFocus.length !== 1 ? 'ies' : 'y'}{' '}
-                selected
-              </div>
-            )}
-        </motion.div>
+            {/* Geographic Focus */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+            >
+              <FormField
+                control={form.control}
+                name="geographicFocus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">
+                      Geographic Focus
+                    </FormLabel>
+                    <FormDescription>
+                      Select the countries/regions you work with
+                    </FormDescription>
+                    <FormControl>
+                      <MultiSelect
+                        options={EU_COUNTRIES.map((country) => ({
+                          label: country,
+                          value: country,
+                        }))}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select countries/regions..."
+                        variant="inverted"
+                        animation={2}
+                        maxCount={3}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </motion.div>
 
-        {/* Legislative Areas */}
-        <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-        >
-          <Label className="text-base font-semibold">Legislative Areas</Label>
-          <p className="text-sm text-muted-foreground">
-            Select the regulatory areas most relevant to you
-          </p>
-          <MultiSelect
-            options={REGULATORY_AREAS.map((area) => ({
-              label: area,
-              value: area,
-            }))}
-            onValueChange={(values) =>
-              handleMultiSelectChange('keyRegulatoryAreas', values)
-            }
-            defaultValue={profileData.keyRegulatoryAreas || []}
-            placeholder="Select regulatory areas..."
-            variant="inverted"
-            animation={2}
-            maxCount={3}
-          />
-          {profileData.keyRegulatoryAreas &&
-            profileData.keyRegulatoryAreas.length > 0 && (
-              <div className="text-xs text-muted-foreground">
-                {profileData.keyRegulatoryAreas.length} area
-                {profileData.keyRegulatoryAreas.length !== 1 ? 's' : ''}{' '}
-                selected
-              </div>
-            )}
-        </motion.div>
+            {/* Legislative Areas */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+            >
+              <FormField
+                control={form.control}
+                name="keyRegulatoryAreas"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">
+                      Legislative Areas
+                    </FormLabel>
+                    <FormDescription>
+                      Select the regulatory areas most relevant to you
+                    </FormDescription>
+                    <FormControl>
+                      <MultiSelect
+                        options={REGULATORY_AREAS.map((area) => ({
+                          label: area,
+                          value: area,
+                        }))}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        placeholder="Select regulatory areas..."
+                        variant="inverted"
+                        animation={2}
+                        maxCount={3}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </motion.div>
 
-        <motion.div
-          className="flex justify-between pt-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.4 }}
-        >
-          <Button variant="outline" onClick={prevStep}>
-            Back
-          </Button>
-          <Button
-            onClick={handleNext}
-            disabled={!isFormValid()}
-            className="px-8"
-          >
-            Continue
-          </Button>
-        </motion.div>
-      </CardContent>
+            <motion.div
+              className="flex justify-between pt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
+            >
+              <Button variant="outline" onClick={prevStep} type="button">
+                Back
+              </Button>
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="px-8"
+              >
+                {form.formState.isSubmitting ? 'Validating...' : 'Continue'}
+              </Button>
+            </motion.div>
+          </CardContent>
+        </form>
+      </Form>
     </Card>
   );
 };

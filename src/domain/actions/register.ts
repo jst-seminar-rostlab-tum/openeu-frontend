@@ -59,6 +59,7 @@ export async function signup(formData: FormData) {
       id: data.user.id,
       name: name,
       surname: surname,
+      email: '',
       companyName: company,
       companyDescription: companyDescription,
       topicList: topics.split(','),

@@ -19,6 +19,8 @@ interface OnboardingContextType {
   isLastStep: boolean;
   isFirstStep: boolean;
   userCategory: 'entrepreneur' | 'politician';
+  userId?: string;
+  setUserId: (id: string) => void;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(
@@ -45,6 +47,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
   const [currentStep, setCurrentStep] = useState(1);
   const [profileData, setProfileData] =
     useState<Partial<ProfileData>>(initialData);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
 
   // Determine total steps based on user category
   const userCategory = profileData.userCategory;
@@ -82,6 +85,8 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
         isFirstStep,
         userCategory:
           (userCategory as 'entrepreneur' | 'politician') || 'undefined',
+        userId,
+        setUserId,
       }}
     >
       {children}

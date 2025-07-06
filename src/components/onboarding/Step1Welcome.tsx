@@ -12,8 +12,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useOnboardingForm,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { registrationSchema } from '@/domain/schemas/OnboardingForm';
 import { staggerContainer, staggerItem } from '@/lib/animations';
 
 import { useOnboarding } from './OnboardingContext';
@@ -21,16 +30,20 @@ import { useOnboarding } from './OnboardingContext';
 export const Step1Welcome: React.FC = () => {
   const { profileData, updateProfileData, nextStep } = useOnboarding();
 
-  const handleNext = () => {
-    if (
-      profileData.name &&
-      profileData.surname &&
-      profileData.email &&
-      profileData.password
-    ) {
+  const { form, handleSubmit, isSubmitting } = useOnboardingForm(
+    registrationSchema,
+    {
+      name: profileData.name || '',
+      surname: profileData.surname || '',
+      email: profileData.email || '',
+      password: profileData.password || '',
+    },
+    (data) => {
+      // Update the onboarding context with form data
+      updateProfileData(data);
       nextStep();
-    }
-  };
+    },
+  );
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -91,72 +104,85 @@ export const Step1Welcome: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.4 }}
         >
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">First Name</Label>
-              <Input
-                id="name"
-                placeholder="Enter your first name"
-                value={profileData.name || ''}
-                onChange={(e) => updateProfileData({ name: e.target.value })}
+          <Form {...form}>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your first name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="surname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your last name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="Enter your email address"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="surname">Last Name</Label>
-              <Input
-                id="surname"
-                placeholder="Enter your last name"
-                value={profileData.surname || ''}
-                onChange={(e) => updateProfileData({ surname: e.target.value })}
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Create a secure password (min. 8 characters)"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Enter your email address"
-              value={profileData.email || ''}
-              onChange={(e) => updateProfileData({ email: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Create a secure password (min. 8 characters)"
-              value={profileData.password || ''}
-              onChange={(e) => updateProfileData({ password: e.target.value })}
-            />
-            <p className="text-xs text-muted-foreground">
-              Password must be at least 8 characters long
-            </p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="flex justify-end pt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.4 }}
-        >
-          <Button
-            onClick={handleNext}
-            disabled={
-              !profileData.name ||
-              !profileData.surname ||
-              !profileData.email ||
-              !profileData.password ||
-              (!!profileData.password && profileData.password.length < 8)
-            }
-            className="px-8"
-          >
-            Create Account
-          </Button>
+              <motion.div
+                className="flex justify-end pt-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.4 }}
+              >
+                <Button type="submit" disabled={isSubmitting} className="px-8">
+                  {isSubmitting ? 'Creating...' : 'Create Account'}
+                </Button>
+              </motion.div>
+            </form>
+          </Form>
         </motion.div>
       </CardContent>
     </Card>

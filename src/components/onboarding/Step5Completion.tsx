@@ -1,5 +1,6 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import {
   BookOpen,
@@ -10,6 +11,8 @@ import {
   User,
 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +22,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -27,38 +37,157 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  completeOnboarding,
+  registerUser,
+  updateCompletionPreferences,
+} from '@/domain/actions/onboarding';
+import { completionSchema } from '@/domain/schemas/OnboardingForm';
 import { staggerContainer, staggerItem } from '@/lib/animations';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 import { useOnboarding } from './OnboardingContext';
 
 export const Step5Completion: React.FC = () => {
-  const { profileData, updateProfileData, nextStep, prevStep } =
+  const { profileData, updateProfileData, nextStep, prevStep, setUserId } =
     useOnboarding();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleCreateProfile = async () => {
-    if (!profileData.newsletterFrequency) {
-      return;
-    }
+  // Setup form with React Hook Form and Zod validation
+  const form = useForm({
+    resolver: zodResolver(completionSchema),
+    defaultValues: {
+      newsletterFrequency: profileData.newsletterFrequency || 'weekly',
+    },
+    mode: 'onSubmit',
+  });
 
-    setIsSubmitting(true);
-    try {
-      // Here you would typically submit to your backend
-      // await createProfile(profileData);
+  const onSubmit = async (data: z.infer<typeof completionSchema>) => {
+    // Update context with form data
+    updateProfileData(data);
 
-      // Simulate profile creation delay
-      setTimeout(() => {
-        setIsSubmitting(false);
-        nextStep();
-      }, 1500);
-    } catch (_error) {
-      setIsSubmitting(false);
-      // Handle error appropriately in production
+    // Create FormData for server action
+    const formData = new FormData();
+    formData.append('newsletterFrequency', data.newsletterFrequency);
+
+    // Call server action
+    const result = await updateCompletionPreferences(formData);
+
+    if (result.success) {
+      // Now proceed with profile creation
+      await handleCreateProfile();
+    } else if (result.fieldErrors) {
+      // Set server validation errors
+      Object.entries(result.fieldErrors).forEach(([field, message]) => {
+        form.setError(field as keyof z.infer<typeof completionSchema>, {
+          message,
+        });
+      });
     }
   };
 
-  const isFormValid = () => {
-    return !!profileData.newsletterFrequency;
+  const handleCreateProfile = async () => {
+    setIsSubmitting(true);
+    try {
+      // Validate we have all required data
+      if (
+        !profileData.userCategory ||
+        !profileData.name ||
+        !profileData.surname ||
+        !profileData.email ||
+        !profileData.password
+      ) {
+        throw new Error('Missing required profile data');
+      }
+
+      // Step 1: Register the user first
+      const formData = new FormData();
+      formData.append('name', profileData.name);
+      formData.append('surname', profileData.surname);
+      formData.append('email', profileData.email);
+      formData.append('password', profileData.password);
+
+      const registrationResult = await registerUser(formData);
+
+      if (!registrationResult.success) {
+        ToastOperations.showError({
+          title: 'Registration Failed',
+          message: registrationResult.error || 'Failed to register user',
+        });
+        throw new Error(registrationResult.error || 'Failed to register user');
+      }
+
+      // Step 2: Update profile data with the new user ID
+      const userId = registrationResult.data?.userId;
+      if (!userId) {
+        ToastOperations.showError({
+          title: 'Registration Error',
+          message: 'No user ID returned from registration',
+        });
+        throw new Error('No user ID returned from registration');
+      }
+
+      // Store userId in context for future use
+      setUserId(userId);
+
+      // Step 3: Create complete profile data with the user ID
+      const completeProfileData = {
+        ...profileData,
+        id: userId,
+        name: profileData.name,
+        surname: profileData.surname,
+        email: profileData.email,
+        userCategory: profileData.userCategory,
+        topicList: profileData.topicList || [],
+        geographicFocus: profileData.geographicFocus || [],
+        keyRegulatoryAreas: profileData.keyRegulatoryAreas || [],
+        newsletterFrequency: profileData.newsletterFrequency,
+        onboardingCompleted: true,
+      };
+
+      // Step 4: Complete onboarding using server action
+      const result = await completeOnboarding(
+        completeProfileData as Parameters<typeof completeOnboarding>[0],
+      );
+
+      if (result.success) {
+        // Profile created successfully, show success message and move to next step
+        ToastOperations.showSuccess({
+          title: 'Profile Created!',
+          message: 'Your OpenEU profile has been successfully created.',
+        });
+        nextStep();
+      } else {
+        // Handle field validation errors
+        if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
+          ToastOperations.showError({
+            title: 'Validation Error',
+            message: 'Please check the form fields and try again.',
+          });
+        } else {
+          ToastOperations.showError({
+            title: 'Profile Creation Failed',
+            message: result.error || 'Failed to create profile',
+          });
+        }
+        throw new Error(result.error || 'Failed to create profile');
+      }
+    } catch (error) {
+      // Only show generic error if no specific error was already shown
+      if (
+        error instanceof Error &&
+        !error.message.includes('Failed to register user') &&
+        !error.message.includes('No user ID returned')
+      ) {
+        ToastOperations.showError({
+          title: 'Something went wrong',
+          message:
+            'Please try again or contact support if the problem persists.',
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderPersonalizedCard = () => {
@@ -256,100 +385,121 @@ export const Step5Completion: React.FC = () => {
       </motion.div>
 
       <CardContent className="space-y-6">
-        <motion.div
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-          className="space-y-6"
-        >
-          {/* Notification Frequency */}
-          <motion.div variants={staggerItem} className="space-y-3">
-            <Label className="text-base font-semibold">
-              Notification Frequency
-            </Label>
-            <Select
-              value={profileData.newsletterFrequency || ''}
-              onValueChange={(value) =>
-                updateProfileData({
-                  newsletterFrequency: value as 'daily' | 'weekly' | 'none',
-                })
-              }
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="space-y-6"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="How often would you like to receive updates?" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium">Daily</span>
-                    <span className="text-xs text-muted-foreground">
-                      Stay on top of everything
-                    </span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="weekly">
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium">Weekly</span>
-                    <span className="text-xs text-muted-foreground">
-                      Curated highlights and summaries
-                    </span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="none">
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium">None</span>
-                    <span className="text-xs text-muted-foreground">
-                      Browse when you want, no emails
-                    </span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </motion.div>
-
-          {/* Personalized Expertise Card */}
-          {renderPersonalizedCard()}
-
-          {/* Info Note */}
-          <motion.div
-            variants={staggerItem}
-            className="bg-muted p-4 rounded-lg text-center"
-          >
-            <p className="text-sm text-muted-foreground">
-              You can update these preferences anytime in your profile settings.
-            </p>
-          </motion.div>
-        </motion.div>
-
-        {/* Navigation Buttons */}
-        <motion.div
-          className="flex justify-between pt-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.4 }}
-        >
-          <Button variant="outline" onClick={prevStep} disabled={isSubmitting}>
-            Back
-          </Button>
-          <Button
-            onClick={handleCreateProfile}
-            disabled={!isFormValid() || isSubmitting}
-            className="px-8"
-          >
-            {isSubmitting ? (
-              <>
-                <motion.div
-                  className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              {/* Notification Frequency */}
+              <motion.div variants={staggerItem}>
+                <FormField
+                  control={form.control}
+                  name="newsletterFrequency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base font-semibold">
+                        Notification Frequency
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="How often would you like to receive updates?" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="daily">
+                            <div className="flex flex-col items-start">
+                              <span className="font-medium">Daily</span>
+                              <span className="text-xs text-muted-foreground">
+                                Stay on top of everything
+                              </span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="weekly">
+                            <div className="flex flex-col items-start">
+                              <span className="font-medium">Weekly</span>
+                              <span className="text-xs text-muted-foreground">
+                                Curated highlights and summaries
+                              </span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="none">
+                            <div className="flex flex-col items-start">
+                              <span className="font-medium">None</span>
+                              <span className="text-xs text-muted-foreground">
+                                Browse when you want, no emails
+                              </span>
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                Creating Profile...
-              </>
-            ) : (
-              'Create Profile'
-            )}
-          </Button>
-        </motion.div>
+              </motion.div>
+
+              {/* Personalized Expertise Card */}
+              {renderPersonalizedCard()}
+
+              {/* Info Note */}
+              <motion.div
+                variants={staggerItem}
+                className="bg-muted p-4 rounded-lg text-center"
+              >
+                <p className="text-sm text-muted-foreground">
+                  You can update these preferences anytime in your profile
+                  settings.
+                </p>
+              </motion.div>
+            </motion.div>
+
+            {/* Navigation Buttons */}
+            <motion.div
+              className="flex justify-between pt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
+            >
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                disabled={isSubmitting}
+                type="button"
+              >
+                Back
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting || form.formState.isSubmitting}
+                className="px-8"
+              >
+                {isSubmitting || form.formState.isSubmitting ? (
+                  <>
+                    <motion.div
+                      className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2"
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                    />
+                    Creating Profile...
+                  </>
+                ) : (
+                  'Create Profile'
+                )}
+              </Button>
+            </motion.div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );
