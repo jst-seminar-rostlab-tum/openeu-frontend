@@ -1,8 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { CheckCircle } from 'lucide-react';
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +22,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  useOnboardingForm,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { registrationSchema } from '@/domain/schemas/OnboardingForm';
@@ -30,20 +32,22 @@ import { useOnboarding } from './OnboardingContext';
 export const Step1Welcome: React.FC = () => {
   const { profileData, updateProfileData, nextStep } = useOnboarding();
 
-  const { form, handleSubmit, isSubmitting } = useOnboardingForm(
-    registrationSchema,
-    {
+  const form = useForm({
+    resolver: zodResolver(registrationSchema),
+    defaultValues: {
       name: profileData.name || '',
       surname: profileData.surname || '',
       email: profileData.email || '',
       password: profileData.password || '',
     },
-    (data) => {
-      // Update the onboarding context with form data
-      updateProfileData(data);
-      nextStep();
-    },
-  );
+    mode: 'onSubmit',
+  });
+
+  const onSubmit = async (data: z.infer<typeof registrationSchema>) => {
+    // Update the onboarding context with form data
+    updateProfileData(data);
+    nextStep();
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -105,7 +109,7 @@ export const Step1Welcome: React.FC = () => {
           transition={{ delay: 0.4, duration: 0.4 }}
         >
           <Form {...form}>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -177,8 +181,8 @@ export const Step1Welcome: React.FC = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.4 }}
               >
-                <Button type="submit" disabled={isSubmitting} className="px-8">
-                  {isSubmitting ? 'Creating...' : 'Create Account'}
+                <Button type="submit" className="px-8">
+                  Create Account
                 </Button>
               </motion.div>
             </form>

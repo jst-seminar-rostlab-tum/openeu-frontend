@@ -8,10 +8,8 @@ import {
   FieldPath,
   FieldValues,
   FormProvider,
-  useForm,
   useFormContext,
 } from 'react-hook-form';
-import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 
@@ -167,33 +165,6 @@ const FormMessage = React.forwardRef<
   );
 });
 FormMessage.displayName = 'FormMessage';
-
-// Form component hook
-export function useOnboardingForm<T extends z.ZodType>(
-  schema: T,
-  defaultValues?: Partial<z.infer<T>>,
-  onSubmit?: (data: z.infer<T>) => void | Promise<void>
-) {
-  const form = useForm<z.infer<T>>({
-    resolver: zodResolver(schema),
-    defaultValues: defaultValues as z.infer<T>,
-    mode: 'onChange', // Validate on change for real-time feedback
-  });
-
-  const handleSubmit = form.handleSubmit(async (data: z.infer<T>) => {
-    if (onSubmit) {
-      await onSubmit(data);
-    }
-  });
-
-  return {
-    form,
-    handleSubmit,
-    isValid: form.formState.isValid,
-    errors: form.formState.errors,
-    isSubmitting: form.formState.isSubmitting,
-  };
-}
 
 export {
   Form,

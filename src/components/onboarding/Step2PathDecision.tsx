@@ -31,7 +31,6 @@ export const Step2PathDecision: React.FC = () => {
   const { profileData, updateProfileData, nextStep, prevStep } =
     useOnboarding();
 
-  // Replace useStepValidation with useForm
   const form = useForm({
     resolver: zodResolver(pathDecisionSchema),
     defaultValues: {
