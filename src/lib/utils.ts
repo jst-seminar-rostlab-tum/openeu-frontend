@@ -187,8 +187,12 @@ export function getStrokeColorClasses(colorName: string): {
   light: string;
   dark: string;
 } {
-  const lightClass = `stroke-${colorName}-200`;
-  const darkClass = `stroke-${colorName}-800`;
+  const availableColors = Object.keys(COLOR_SCHEMES);
+  const safeColorName = availableColors.includes(colorName)
+    ? colorName
+    : 'gray';
+  const lightClass = `stroke-${safeColorName}-500`;
+  const darkClass = `stroke-${safeColorName}-400`;
 
   return {
     light: lightClass,

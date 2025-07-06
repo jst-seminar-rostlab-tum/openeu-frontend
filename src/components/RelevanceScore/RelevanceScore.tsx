@@ -45,19 +45,19 @@ export function RelevanceScore({
           <circle
             cx="18"
             cy="18"
-            r="12"
+            r="13"
             fill="none"
             className={`${strokeColors.light} dark:${strokeColors.dark}`}
             opacity={0.3}
-            strokeWidth="2"
+            strokeWidth="3"
           ></circle>
           <circle
             cx="18"
             cy="18"
-            r="12"
+            r="13"
             fill="none"
             className={`${strokeColors.light} dark:${strokeColors.dark}`}
-            strokeWidth="2"
+            strokeWidth="3"
             strokeDasharray="100"
             strokeDashoffset={relevanceScore}
             strokeLinecap="round"
