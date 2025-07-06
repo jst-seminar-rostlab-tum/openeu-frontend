@@ -31,7 +31,6 @@ export const legislationRepository = {
       const res = await fetch(`${API_URL}/suggestions?${searchParams}`, {
         method: 'GET',
         mode: 'cors',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -81,7 +80,6 @@ export const legislationRepository = {
       const res = await fetch(url, {
         method: 'GET',
         mode: 'cors',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
