@@ -9,7 +9,7 @@ import {
   Settings2,
   X,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -74,12 +74,18 @@ export function KanbanToolbar({
 }: KanbanToolbarProps) {
   // Local filter state
   const [searchInput, setSearchInput] = useState(searchValue);
+  const [localSearchText, setLocalSearchText] = useState(searchValue);
   const [committeeInput, setCommitteeInput] = useState(
     selectedCommittee || 'all',
   );
   const [yearInput, setYearInput] = useState(
     selectedYear ? String(selectedYear) : 'all',
   );
+
+  // Sync local search text with external search value
+  useEffect(() => {
+    setLocalSearchText(searchValue);
+  }, [searchValue]);
 
   const tableData = table.getRowModel().rows.map((row) => row.original);
   const committees = ObservatoryOperations.getUniqueCommittees(tableData);
@@ -152,6 +158,7 @@ export function KanbanToolbar({
   const clearAllFilters = () => {
     // Clear local filters
     setSearchInput('');
+    setLocalSearchText('');
     setCommitteeInput('all');
     setYearInput('all');
     onSearchChange?.('');
@@ -303,8 +310,8 @@ export function KanbanToolbar({
       {/* Search - always visible */}
       <SuggestedSearch<LegislativeFileSuggestion>
         placeholder="Search legislation..."
-        value={searchInput}
-        onValueChange={handleSearchChange}
+        value={localSearchText}
+        onValueChange={setLocalSearchText}
         onSearch={handleSearchChange}
         fetchSuggestions={(query) =>
           legislationRepository.getLegislationSuggestions({ query, limit: 5 })
