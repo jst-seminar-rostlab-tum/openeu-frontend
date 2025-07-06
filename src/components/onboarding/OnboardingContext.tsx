@@ -48,7 +48,7 @@ export const OnboardingProvider: React.FC<OnboardingProviderProps> = ({
 
   // Determine total steps based on user category
   const userCategory = profileData.userCategory;
-  const totalSteps = userCategory === 'politician' ? 5 : 5; // Same number for now, but can be different
+  const totalSteps = 6;
 
   const updateProfileData = (data: Partial<ProfileData>) => {
     setProfileData((prev) => ({ ...prev, ...data }));

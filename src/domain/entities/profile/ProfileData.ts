@@ -2,6 +2,8 @@ export interface ProfileData {
   id: string;
   name: string;
   surname: string;
+  email: string;
+  password?: string; // Optional since we might not always need it after registration
   companyName: string;
   companyDescription: string;
   topicList: string[];

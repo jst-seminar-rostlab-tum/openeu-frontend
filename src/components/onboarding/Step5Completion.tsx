@@ -1,7 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CheckCircle, Loader2, Sparkles } from 'lucide-react';
+import {
+  BookOpen,
+  Building2,
+  CheckCircle,
+  MapPin,
+  Sparkles,
+  User,
+} from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -20,281 +27,330 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { ProfileData } from '@/domain/entities/profile/ProfileData';
-import {
-  bounceIn,
-  scaleIn,
-  sparkleEffect,
-  staggerContainer,
-  staggerItem,
-} from '@/lib/animations';
-import { profileRepository } from '@/repositories/profileRepository';
+import { staggerContainer, staggerItem } from '@/lib/animations';
 
-import ActionItems from './ActionItems';
 import { useOnboarding } from './OnboardingContext';
 
 export const Step5Completion: React.FC = () => {
-  const { profileData, updateProfileData, prevStep } = useOnboarding();
+  const { profileData, updateProfileData, nextStep, prevStep } =
+    useOnboarding();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleCreateProfile = async () => {
+    if (!profileData.newsletterFrequency) {
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // Add final onboarding flag
-      const finalData = {
-        ...profileData,
-        onboardingCompleted: true,
-        id: 'temp-id', // This should come from auth context
-      };
+      // Here you would typically submit to your backend
+      // await createProfile(profileData);
 
-      await profileRepository.createProfile(finalData as ProfileData);
-      setIsCompleted(true);
-
-      // Redirect to demo page after a short delay
+      // Simulate profile creation delay
       setTimeout(() => {
-        window.location.href = '/onboarding/demo';
-      }, 2000);
-      // Handle error (could show toast or error state)
+        setIsSubmitting(false);
+        nextStep();
+      }, 1500);
     } catch (_error) {
-      // Failed to save profile
-    } finally {
       setIsSubmitting(false);
+      // Handle error appropriately in production
     }
   };
 
-  if (isCompleted) {
+  const isFormValid = () => {
+    return !!profileData.newsletterFrequency;
+  };
+
+  const renderPersonalizedCard = () => {
+    const isEntrepreneur = profileData.userCategory === 'entrepreneur';
+    const isPolitician = profileData.userCategory === 'politician';
+
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        className="bg-gradient-to-br from-primary/10 to-blue-500/10 border border-primary/20 rounded-lg p-6"
+        variants={staggerItem}
       >
-        <Card className="w-full max-w-2xl mx-auto relative overflow-hidden">
-          {/* Celebration sparkles */}
-          <div className="absolute inset-0 pointer-events-none">
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 bg-primary rounded-full"
-                style={{
-                  left: `${20 + i * 10}%`,
-                  top: `${10 + (i % 3) * 20}%`,
-                }}
-                variants={sparkleEffect}
-                initial="initial"
-                animate="animate"
-                transition={{ delay: i * 0.1 }}
-              />
-            ))}
-          </div>
+        <div className="flex items-center gap-3 mb-4">
+          <Sparkles className="w-6 h-6 text-primary" />
+          <h3 className="font-semibold text-lg">
+            Your Personalized OpenEU Experience
+          </h3>
+        </div>
 
-          <CardContent className="pt-8 text-center relative z-10">
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="space-y-4"
+        >
+          {/* User Profile Summary */}
+          <motion.div variants={staggerItem} className="flex items-start gap-3">
+            <User className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+            <div>
+              <span className="font-medium">Profile:</span>{' '}
+              <span className="text-muted-foreground">
+                {profileData.name} {profileData.surname} •{' '}
+                {isEntrepreneur ? 'Entrepreneur' : 'Politician/Policy Maker'}
+                {isEntrepreneur && profileData.userType && (
+                  <> • {profileData.userType.replace('_', ' ')}</>
+                )}
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Company/Organization Info */}
+          {isEntrepreneur &&
+            (profileData.companyName || profileData.primaryIndustry) && (
+              <motion.div
+                variants={staggerItem}
+                className="flex items-start gap-3"
+              >
+                <Building2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="font-medium">Business:</span>{' '}
+                  <span className="text-muted-foreground">
+                    {profileData.primaryIndustry}
+                    {profileData.companyStage && (
+                      <> • {profileData.companyStage.replace('_', ' ')} stage</>
+                    )}
+                    {profileData.companySize && (
+                      <> • {profileData.companySize} employees</>
+                    )}
+                  </span>
+                </div>
+              </motion.div>
+            )}
+
+          {isPolitician &&
+            (profileData.politicalRole || profileData.institution) && (
+              <motion.div
+                variants={staggerItem}
+                className="flex items-start gap-3"
+              >
+                <Building2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="font-medium">Role:</span>{' '}
+                  <span className="text-muted-foreground">
+                    {profileData.politicalRole?.replace('_', ' ')}
+                    {profileData.institution && (
+                      <> at {profileData.institution}</>
+                    )}
+                  </span>
+                </div>
+              </motion.div>
+            )}
+
+          {/* Geographic Focus */}
+          {profileData.geographicFocus &&
+            profileData.geographicFocus.length > 0 && (
+              <motion.div
+                variants={staggerItem}
+                className="flex items-start gap-3"
+              >
+                <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="font-medium">Geographic Focus:</span>{' '}
+                  <span className="text-muted-foreground">
+                    {profileData.geographicFocus.slice(0, 3).join(', ')}
+                    {profileData.geographicFocus.length > 3 &&
+                      ` +${profileData.geographicFocus.length - 3} more`}
+                  </span>
+                </div>
+              </motion.div>
+            )}
+
+          {/* Areas of Interest/Expertise */}
+          {((isPolitician &&
+            profileData.areaOfExpertise &&
+            profileData.areaOfExpertise.length > 0) ||
+            (profileData.keyRegulatoryAreas &&
+              profileData.keyRegulatoryAreas.length > 0)) && (
             <motion.div
-              className="flex justify-center mb-4"
-              variants={bounceIn}
-              initial="initial"
-              animate="animate"
-              transition={{ delay: 0.2 }}
+              variants={staggerItem}
+              className="flex items-start gap-3"
             >
-              <CheckCircle className="w-16 h-16 text-green-500" />
+              <BookOpen className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <span className="font-medium">
+                  {isPolitician
+                    ? 'Areas of Expertise:'
+                    : 'Key Regulatory Areas:'}
+                </span>{' '}
+                <span className="text-muted-foreground">
+                  {isPolitician
+                    ? profileData.areaOfExpertise?.slice(0, 3).join(', ')
+                    : profileData.keyRegulatoryAreas?.slice(0, 3).join(', ')}
+                  {((isPolitician &&
+                    profileData.areaOfExpertise &&
+                    profileData.areaOfExpertise.length > 3) ||
+                    (profileData.keyRegulatoryAreas &&
+                      profileData.keyRegulatoryAreas.length > 3)) &&
+                    ` +${(isPolitician ? profileData.areaOfExpertise?.length : profileData.keyRegulatoryAreas?.length)! - 3} more`}
+                </span>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Personalization Benefits */}
+          <div className="pt-2 border-t border-primary/20">
+            <motion.div
+              variants={staggerItem}
+              className="flex items-start gap-3"
+            >
+              <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">
+                  Smart Filtering:
+                </span>{' '}
+                Get updates relevant to your{' '}
+                {isEntrepreneur
+                  ? 'industry and business stage'
+                  : 'policy areas and expertise'}
+              </div>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              variants={staggerItem}
+              className="flex items-start gap-3 mt-2"
             >
-              <CardTitle className="text-2xl mb-2">
-                🎉 Welcome to OpenEU!
-              </CardTitle>
-              <CardDescription className="text-lg">
-                Your personalized experience is ready. Redirecting you now...
-              </CardDescription>
+              <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">
+                  Contextual Insights:
+                </span>{' '}
+                Understand regulatory impact specific to your work
+              </div>
             </motion.div>
-          </CardContent>
-        </Card>
+            <motion.div
+              variants={staggerItem}
+              className="flex items-start gap-3 mt-2"
+            >
+              <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">
+                  Priority Notifications:
+                </span>{' '}
+                Focus on{' '}
+                {profileData.geographicFocus?.slice(0, 2).join(' and ')}{' '}
+                legislation
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
       </motion.div>
     );
-  }
+  };
 
   return (
-    <div className="space-y-8">
-      <motion.div variants={scaleIn} initial="initial" animate="animate">
-        <Card className="w-full max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" />
-              Almost Done!
-            </CardTitle>
-            <CardDescription>
-              Set your preferences and complete your OpenEU setup
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label>Newsletter Frequency</Label>
-              <Select
-                value={profileData.newsletterFrequency || 'weekly'}
-                onValueChange={(value) =>
-                  updateProfileData({
-                    newsletterFrequency:
-                      value as ProfileData['newsletterFrequency'],
-                  })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select newsletter frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">
-                    Daily - Stay on top of everything
-                  </SelectItem>
-                  <SelectItem value="weekly">
-                    Weekly - Curated highlights
-                  </SelectItem>
-                  <SelectItem value="none">
-                    None - Browse when you want
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="bg-primary/5 border border-primary/20 p-6 rounded-lg space-y-4">
-              <h3 className="font-semibold text-lg flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                🎯 Your Personalized OpenEU Experience
-              </h3>
-              <motion.div
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-                className="space-y-3 text-sm"
-              >
-                <motion.div
-                  variants={staggerItem}
-                  className="flex items-start gap-3"
-                >
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium">Smart Regulatory Feed:</span>{' '}
-                    Only see updates relevant to {profileData.primaryIndustry}{' '}
-                    companies in {profileData.geographicFocus?.join(', ')}
-                  </div>
-                </motion.div>
-                <motion.div
-                  variants={staggerItem}
-                  className="flex items-start gap-3"
-                >
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium">Contextual Insights:</span>{' '}
-                    Understand how regulations impact {profileData.companyStage}{' '}
-                    stage {profileData.businessModel} businesses
-                  </div>
-                </motion.div>
-                <motion.div
-                  variants={staggerItem}
-                  className="flex items-start gap-3"
-                >
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium">
-                      Tailored Chat Responses:
-                    </span>{' '}
-                    Get answers specific to your industry and regulatory
-                    complexity level
-                  </div>
-                </motion.div>
-                <motion.div
-                  variants={staggerItem}
-                  className="flex items-start gap-3"
-                >
-                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium">Priority Notifications:</span>{' '}
-                    Focus on{' '}
-                    {profileData.keyRegulatoryAreas?.slice(0, 3).join(', ')} and
-                    other key areas
-                  </div>
-                </motion.div>
-              </motion.div>
-            </div>
-
-            <div className="bg-muted p-4 rounded-lg text-center">
-              <p className="text-sm text-muted-foreground">
-                You can always update these preferences later in your profile
-                settings.
-              </p>
-            </div>
-
-            <div className="flex justify-between pt-4">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={isSubmitting}
-              >
-                Back
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="px-8"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Setting up...
-                  </>
-                ) : (
-                  'Complete Setup'
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+    <Card className="w-full max-w-2xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Complete Your Profile</CardTitle>
+          <CardDescription className="text-lg">
+            Set your preferences and finalize your OpenEU experience
+          </CardDescription>
+        </CardHeader>
       </motion.div>
 
-      <Separator className="my-8" />
+      <CardContent className="space-y-6">
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="space-y-6"
+        >
+          {/* Notification Frequency */}
+          <motion.div variants={staggerItem} className="space-y-3">
+            <Label className="text-base font-semibold">
+              Notification Frequency
+            </Label>
+            <Select
+              value={profileData.newsletterFrequency || ''}
+              onValueChange={(value) =>
+                updateProfileData({
+                  newsletterFrequency: value as 'daily' | 'weekly' | 'none',
+                })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="How often would you like to receive updates?" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="daily">
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Daily</span>
+                    <span className="text-xs text-muted-foreground">
+                      Stay on top of everything
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="weekly">
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Weekly</span>
+                    <span className="text-xs text-muted-foreground">
+                      Curated highlights and summaries
+                    </span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="none">
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">None</span>
+                    <span className="text-xs text-muted-foreground">
+                      Browse when you want, no emails
+                    </span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </motion.div>
 
-      {/* Action Items Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.6 }}
-      >
-        <div className="text-center mb-6">
-          <motion.h2
-            className="text-2xl font-bold mb-2"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.4 }}
-          >
-            🚀 What&apos;s Waiting for You
-          </motion.h2>
-          <motion.p
-            className="text-muted-foreground"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            Based on your profile, we&apos;ve already found relevant content and
-            opportunities for your business
-          </motion.p>
+          {/* Personalized Expertise Card */}
+          {renderPersonalizedCard()}
+
+          {/* Info Note */}
           <motion.div
-            className="mt-4 p-3 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-lg border border-primary/20"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
+            variants={staggerItem}
+            className="bg-muted p-4 rounded-lg text-center"
           >
-            <p className="text-sm font-medium text-primary">
-              ✨ Your personalized dashboard is ready with{' '}
-              {profileData.primaryIndustry} specific insights
+            <p className="text-sm text-muted-foreground">
+              You can update these preferences anytime in your profile settings.
             </p>
           </motion.div>
-        </div>
-        <ActionItems profile={profileData} />
-      </motion.div>
-    </div>
+        </motion.div>
+
+        {/* Navigation Buttons */}
+        <motion.div
+          className="flex justify-between pt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+        >
+          <Button variant="outline" onClick={prevStep} disabled={isSubmitting}>
+            Back
+          </Button>
+          <Button
+            onClick={handleCreateProfile}
+            disabled={!isFormValid() || isSubmitting}
+            className="px-8"
+          >
+            {isSubmitting ? (
+              <>
+                <motion.div
+                  className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full mr-2"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                />
+                Creating Profile...
+              </>
+            ) : (
+              'Create Profile'
+            )}
+          </Button>
+        </motion.div>
+      </CardContent>
+    </Card>
   );
 };

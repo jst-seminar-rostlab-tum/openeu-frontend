@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Building2, CheckCircle, Users } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -22,15 +22,14 @@ export const Step1Welcome: React.FC = () => {
   const { profileData, updateProfileData, nextStep } = useOnboarding();
 
   const handleNext = () => {
-    if (profileData.name && profileData.surname && profileData.userCategory) {
+    if (
+      profileData.name &&
+      profileData.surname &&
+      profileData.email &&
+      profileData.password
+    ) {
       nextStep();
     }
-  };
-
-  const handleUserCategoryChange = (
-    category: 'entrepreneur' | 'politician',
-  ) => {
-    updateProfileData({ userCategory: category });
   };
 
   return (
@@ -41,10 +40,9 @@ export const Step1Welcome: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome to OpenEU! 🇪🇺</CardTitle>
+          <CardTitle className="text-2xl">Create Your Account 🇪🇺</CardTitle>
           <CardDescription className="text-lg">
-            Let&apos;s personalize your experience to help you navigate European
-            regulations effectively
+            Join OpenEU and get personalized regulatory insights for your work
           </CardDescription>
         </CardHeader>
       </motion.div>
@@ -56,7 +54,7 @@ export const Step1Welcome: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
-          <h3 className="font-semibold mb-2">Why personalization matters</h3>
+          <h3 className="font-semibold mb-2">Why join OpenEU?</h3>
           <motion.div
             variants={staggerContainer}
             initial="initial"
@@ -68,14 +66,14 @@ export const Step1Welcome: React.FC = () => {
               className="flex items-center gap-2"
             >
               <CheckCircle className="w-4 h-4 text-primary" />
-              <span>Get relevant regulatory updates for your business</span>
+              <span>Get relevant regulatory updates for your work</span>
             </motion.div>
             <motion.div
               variants={staggerItem}
               className="flex items-center gap-2"
             >
               <CheckCircle className="w-4 h-4 text-primary" />
-              <span>Understand regulatory impact on your operations</span>
+              <span>Connect with stakeholders and decision makers</span>
             </motion.div>
             <motion.div
               variants={staggerItem}
@@ -93,55 +91,6 @@ export const Step1Welcome: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.4 }}
         >
-          <div className="space-y-4">
-            <Label className="text-base font-semibold">I am a:</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Card
-                  className={`cursor-pointer transition-all ${
-                    profileData.userCategory === 'entrepreneur'
-                      ? 'ring-2 ring-primary bg-primary/5'
-                      : 'hover:bg-muted/50'
-                  }`}
-                  onClick={() => handleUserCategoryChange('entrepreneur')}
-                >
-                  <CardContent className="p-4 text-center">
-                    <Building2 className="w-8 h-8 mx-auto mb-2 text-primary" />
-                    <h3 className="font-semibold">Entrepreneur</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Building or running a business
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Card
-                  className={`cursor-pointer transition-all ${
-                    profileData.userCategory === 'politician'
-                      ? 'ring-2 ring-primary bg-primary/5'
-                      : 'hover:bg-muted/50'
-                  }`}
-                  onClick={() => handleUserCategoryChange('politician')}
-                >
-                  <CardContent className="p-4 text-center">
-                    <Users className="w-8 h-8 mx-auto mb-2 text-primary" />
-                    <h3 className="font-semibold">Politician/Policy Maker</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Working in politics or policy
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">First Name</Label>
@@ -162,6 +111,31 @@ export const Step1Welcome: React.FC = () => {
               />
             </div>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email Address</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email address"
+              value={profileData.email || ''}
+              onChange={(e) => updateProfileData({ email: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Create a secure password (min. 8 characters)"
+              value={profileData.password || ''}
+              onChange={(e) => updateProfileData({ password: e.target.value })}
+            />
+            <p className="text-xs text-muted-foreground">
+              Password must be at least 8 characters long
+            </p>
+          </div>
         </motion.div>
 
         <motion.div
@@ -175,11 +149,13 @@ export const Step1Welcome: React.FC = () => {
             disabled={
               !profileData.name ||
               !profileData.surname ||
-              !profileData.userCategory
+              !profileData.email ||
+              !profileData.password ||
+              (!!profileData.password && profileData.password.length < 8)
             }
             className="px-8"
           >
-            Get Started
+            Create Account
           </Button>
         </motion.div>
       </CardContent>

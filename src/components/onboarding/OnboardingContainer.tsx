@@ -8,41 +8,25 @@ import { fadeInUp } from '@/lib/animations';
 import { OnboardingProvider, useOnboarding } from './OnboardingContext';
 import { ProgressIndicator } from './ProgressIndicator';
 import { Step1Welcome } from './Step1Welcome';
-import { Step2PoliticalRole } from './Step2PoliticalRole';
-import { Step2RoleAndCompany } from './Step2RoleAndCompany';
-import { Step3BusinessDetails } from './Step3BusinessDetails';
-import { Step3PolicyFocus } from './Step3PolicyFocus';
-import { Step4RegulatoryFocus } from './Step4RegulatoryFocus';
+import { Step2PathDecision } from './Step2PathDecision';
+import { Step3RoleDetails } from './Step3RoleDetails';
+import { Step4FocusArea } from './Step4FocusArea';
 import { Step5Completion } from './Step5Completion';
+import { Step6Preview } from './Step6Preview';
 
 const OnboardingFlow: React.FC = () => {
-  const { currentStep, totalSteps, userCategory } = useOnboarding();
+  const { currentStep, totalSteps } = useOnboarding();
 
   const renderStep = () => {
-    // Step 1 is always the same - Welcome with user category selection
-    if (currentStep === 1) {
-      return <Step1Welcome />;
-    }
-
-    // Different flows based on user category
-    if (userCategory === 'politician') {
-      const politicianSteps: Record<number, React.ReactElement> = {
-        2: <Step2PoliticalRole />,
-        3: <Step3PolicyFocus />,
-        4: <Step4RegulatoryFocus />,
-        5: <Step5Completion />,
-      };
-      return politicianSteps[currentStep] || <Step1Welcome />;
-    } else {
-      // Entrepreneur flow (default)
-      const entrepreneurSteps: Record<number, React.ReactElement> = {
-        2: <Step2RoleAndCompany />,
-        3: <Step3BusinessDetails />,
-        4: <Step4RegulatoryFocus />,
-        5: <Step5Completion />,
-      };
-      return entrepreneurSteps[currentStep] || <Step1Welcome />;
-    }
+    const steps: Record<number, React.ReactElement> = {
+      1: <Step1Welcome />, // Registration form
+      2: <Step2PathDecision />, // Path decision
+      3: <Step3RoleDetails />, // Role details (both paths)
+      4: <Step4FocusArea />, // Focus areas
+      5: <Step5Completion />, // Complete profile
+      6: <Step6Preview />, // Complete profile
+    };
+    return steps[currentStep] || <Step1Welcome />;
   };
 
   return (
