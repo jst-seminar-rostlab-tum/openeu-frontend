@@ -73,7 +73,6 @@ export function KanbanToolbar({
   statusColumnsWithData,
 }: KanbanToolbarProps) {
   // Local filter state
-  const [searchInput, setSearchInput] = useState(searchValue);
   const [localSearchText, setLocalSearchText] = useState(searchValue);
   const [committeeInput, setCommitteeInput] = useState(
     selectedCommittee || 'all',
@@ -104,7 +103,6 @@ export function KanbanToolbar({
 
   // Local filter handlers
   const handleSearchChange = (value: string) => {
-    setSearchInput(value);
     onSearchChange?.(value);
   };
 
@@ -156,12 +154,9 @@ export function KanbanToolbar({
   };
 
   const clearAllFilters = () => {
-    // Clear local filters
-    setSearchInput('');
-    setLocalSearchText('');
+    // Clear local filters (excluding search)
     setCommitteeInput('all');
     setYearInput('all');
-    onSearchChange?.('');
     onCommitteeChange?.(undefined);
     onYearChange?.(undefined);
 
@@ -171,11 +166,7 @@ export function KanbanToolbar({
     onVisibleColumnsChange(allColumns);
   };
 
-  const hasLocalFilters = !!(
-    searchInput ||
-    committeeInput !== 'all' ||
-    yearInput !== 'all'
-  );
+  const hasLocalFilters = !!(committeeInput !== 'all' || yearInput !== 'all');
 
   const sorting = table.getState().sorting;
   const hasSorting = sorting.length > 0;
