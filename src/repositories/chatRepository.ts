@@ -87,7 +87,6 @@ export const chatRepository = {
       // Build URL with context query parameters
       let url = `${API_BASE_URL}/chat/`;
       if (contextParams && Object.keys(contextParams).length > 0) {
-        // Convert to Record<string, string> for URLSearchParams
         const stringParams: Record<string, string> = {};
         Object.entries(contextParams).forEach(([key, value]) => {
           if (value) {

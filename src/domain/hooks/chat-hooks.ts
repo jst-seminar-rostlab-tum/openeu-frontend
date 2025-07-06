@@ -82,7 +82,6 @@ export function useSendMessage() {
         contextParams,
       ),
     onSuccess: (_, variables) => {
-      // Invalidate messages cache for this session
       queryClient.invalidateQueries({
         queryKey: chatQueryKeys.messages(variables.request.session_id),
       });

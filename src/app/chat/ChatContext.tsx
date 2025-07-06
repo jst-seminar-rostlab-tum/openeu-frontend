@@ -25,7 +25,6 @@ import { ToastOperations } from '@/operations/toast/toastOperations';
 interface ChatContext {
   type: SupportedContextType;
   id: string;
-  title: string;
 }
 
 interface ChatContextType {
@@ -34,16 +33,15 @@ interface ChatContextType {
   streamingMessage: string;
   isLoading: boolean;
   currentSessionId: string | null;
-  contexts: ChatContext[];
+  context: ChatContext | null;
 
   // Actions
   sendMessage: (content: string) => Promise<void>;
   sendTemplate: (message: string) => void;
   switchToSession: (sessionId: string) => void;
   createNewChat: () => void;
-  addContext: (context: ChatContext) => void;
-  removeContext: (type: SupportedContextType) => void;
-  clearAllContexts: () => void;
+  setContext: (context: ChatContext | null) => void;
+  clearContext: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -58,17 +56,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamingMessage, setStreamingMessage] = useState('');
-  const [contexts, setContexts] = useState<ChatContext[]>([]);
+  const [context, setContextState] = useState<ChatContext | null>(null);
 
   useEffect(() => {
     const urlContexts: ChatContext[] = SUPPORTED_CONTEXT_TYPES.map((type) => {
       const id = searchParams.get(`${type}_id`);
-      const title = searchParams.get(`${type}_title`);
-      return id ? { type, id, title: title || id } : null;
+      return id ? { type, id } : null;
     }).filter(Boolean) as ChatContext[];
 
     if (urlContexts.length > 0) {
-      setContexts(urlContexts);
+      setContextState(urlContexts[0]);
     }
   }, [searchParams]);
 
@@ -120,9 +117,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       // Build context parameters for the API call
       const contextParams: Partial<Record<SupportedContextType, string>> = {};
-      contexts.forEach((context) => {
+      if (context) {
         contextParams[context.type] = context.id;
-      });
+      }
 
       // Send message with streaming
       setStreamingMessage('');
@@ -167,24 +164,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     router.push('/chat');
   };
 
-  const addContext = useCallback((context: ChatContext) => {
-    setContexts((prev) => {
-      // Check if context already exists
-      const exists = prev.some(
-        (c) => c.type === context.type && c.id === context.id,
-      );
-      if (exists) return prev;
-
-      return [...prev, context];
-    });
+  const setContext = useCallback((newContext: ChatContext | null) => {
+    setContextState(newContext);
   }, []);
 
-  const removeContext = useCallback((type: SupportedContextType) => {
-    setContexts((prev) => prev.filter((context) => context.type !== type));
-  }, []);
-
-  const clearAllContexts = useCallback(() => {
-    setContexts([]);
+  const clearContext = useCallback(() => {
+    setContextState(null);
   }, []);
 
   const value: ChatContextType = {
@@ -192,14 +177,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     streamingMessage,
     isLoading: sendMessageMutation.isPending || createSession.isPending,
     currentSessionId,
-    contexts,
+    context,
     sendMessage,
     sendTemplate,
     switchToSession,
     createNewChat,
-    addContext,
-    removeContext,
-    clearAllContexts,
+    setContext,
+    clearContext,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

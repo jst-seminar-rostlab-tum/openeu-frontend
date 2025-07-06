@@ -195,7 +195,7 @@ export default async function LegislationPage({
             )}
             <Button variant="outline" size="sm" asChild>
               <Link
-                href={`/chat?legislation_id=${encodeURIComponent(legislation.id)}&legislation_title=${encodeURIComponent(legislation.title)}`}
+                href={`/chat?legislation_id=${encodeURIComponent(legislation.id)}`}
               >
                 <MessageSquare className="h-3 w-3" />
                 Chat with Legislation

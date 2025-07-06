@@ -12,7 +12,7 @@ import ChatOperations from '@/operations/chat/ToolbarOperations';
 export default function ChatInputCard() {
   const [input, setInput] = useState('');
 
-  const { sendMessage, contexts } = useChatContext();
+  const { sendMessage, context } = useChatContext();
 
   const handleSubmit = () => {
     const trimmedValue = input.trim();
@@ -32,16 +32,13 @@ export default function ChatInputCard() {
   return (
     <Card className="p-3 pb-1 w-full shadow-md">
       <CardContent className="flex flex-col p-0">
-        {contexts.length > 0 && (
-          <div className="mb-2 space-y-2">
-            {contexts.map((context) => (
-              <ContextBadge
-                key={`${context.type}-${context.id}`}
-                type={context.type}
-                id={context.id}
-                title={context.title}
-              />
-            ))}
+        {context && (
+          <div className="mb-2">
+            <ContextBadge
+              type={context.type}
+              id={context.id}
+              title={context.title}
+            />
           </div>
         )}
         <Textarea

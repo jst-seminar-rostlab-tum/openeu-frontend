@@ -20,21 +20,18 @@ import { LegislativeFileSuggestion } from '@/domain/entities/monitor/generated-t
 import { legislationRepository } from '@/repositories/legislationRepository';
 
 export function ManageChatContextDialog() {
-  const { contexts, addContext } = useChatContext();
+  const { context, setContext } = useChatContext();
   const [searchValue, setSearchValue] = useState('');
-  const [open, setOpen] = useState(false);
 
   const handleLegislationSelect = (legislation: LegislativeFileSuggestion) => {
-    addContext({
+    setContext({
       type: 'legislation',
       id: legislation.id,
-      title: legislation.title,
     });
-    setSearchValue(''); // Clear search after adding
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
@@ -49,34 +46,30 @@ export function ManageChatContextDialog() {
         <DialogHeader>
           <DialogTitle>Manage Chat Context</DialogTitle>
           <DialogDescription>
-            Add or remove context information to enhance your chat experience.
+            Add or change context information to enhance your chat experience.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Current Contexts Section */}
-          {contexts.length > 0 && (
-            <div className="space-y-3">
+        <div className="space-y-3">
+          {/* Current Context Section */}
+          {context && (
+            <div className="space-y-2">
               <h4 className="text-sm font-medium">Current Context</h4>
-              <div className="space-y-2">
-                {contexts.map((context) => (
-                  <ContextBadge
-                    key={`${context.type}-${context.id}`}
-                    type={context.type}
-                    id={context.id}
-                  />
-                ))}
-              </div>
+              <ContextBadge id={context.id} />
             </div>
           )}
 
-          {contexts.length > 0 && <Separator />}
+          {context && <Separator />}
 
-          {/* Add Legislation Section */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-medium">Add Legislation Context</h4>
+          {/* Add/Change Legislation Section */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">
+              {context
+                ? 'Change Legislation Context'
+                : 'Add Legislation Context'}
+            </h4>
             <SuggestedSearch<LegislativeFileSuggestion>
-              placeholder="Search for legislation to add..."
+              placeholder="Search for legislation by title or id..."
               value={searchValue}
               onValueChange={setSearchValue}
               onSelect={handleLegislationSelect}
@@ -90,9 +83,6 @@ export function ManageChatContextDialog() {
               getSelectValue={(legislation) => legislation.title}
               suggestionsLabel="Legislation"
             />
-            <p className="text-xs text-muted-foreground">
-              Search and select legislation to add context to your conversation.
-            </p>
           </div>
         </div>
       </DialogContent>
