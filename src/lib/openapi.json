@@ -671,6 +671,46 @@
         }
       }
     },
+    "/legislative-file": {
+      "get": {
+        "summary": "Get Legislative File",
+        "description": "Get a single legislative file by ID",
+        "operationId": "get_legislative_file_legislative_file_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Legislative file ID",
+              "title": "Id"
+            },
+            "description": "Legislative file ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFileResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/legislative-files/suggestions": {
       "get": {
         "summary": "Get Legislation Suggestions",
@@ -991,6 +1031,7 @@
             "type": "array",
             "title": "Embedding"
           },
+          "title": { "type": "string", "title": "Title" },
           "relevancy_threshold": {
             "type": "number",
             "title": "Relevancy Threshold"
@@ -1015,6 +1056,7 @@
           "user_id",
           "description",
           "embedding",
+          "title",
           "relevancy_threshold",
           "last_run_at",
           "is_active",
@@ -1191,6 +1233,14 @@
         "type": "object",
         "required": ["id", "source_table", "source_id", "title"],
         "title": "LegislativeFile"
+      },
+      "LegislativeFileResponse": {
+        "properties": {
+          "legislative_file": { "$ref": "#/components/schemas/LegislativeFile" }
+        },
+        "type": "object",
+        "required": ["legislative_file"],
+        "title": "LegislativeFileResponse"
       },
       "LegislativeFileSuggestion": {
         "properties": {
