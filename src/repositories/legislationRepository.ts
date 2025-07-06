@@ -22,7 +22,6 @@ export const legislationRepository = {
         {
           method: 'GET',
           mode: 'cors',
-          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -55,7 +54,6 @@ export const legislationRepository = {
       const res = await fetch(API_URL, {
         method: 'GET',
         mode: 'cors',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
