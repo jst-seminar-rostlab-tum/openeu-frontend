@@ -23,7 +23,6 @@ export const meetingRepository = {
         {
           method: 'GET',
           mode: 'cors',
-          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -60,7 +59,6 @@ export const meetingRepository = {
       const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`, {
         method: 'GET',
         mode: 'cors',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
