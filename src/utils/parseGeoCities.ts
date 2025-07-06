@@ -110,7 +110,6 @@ async function parseGeoCities() {
   );
 
   fs.writeFileSync(outputFile, JSON.stringify(result, null, 2));
-  console.log(`Saved ${result.length} EU cities to ${outputFile}`);
 }
 
 parseGeoCities().catch((err) => {
