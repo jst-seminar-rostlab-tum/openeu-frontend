@@ -26,33 +26,28 @@ import {
 import { MultiSelect } from '@/components/ui/multi-select';
 import { updateFocusArea } from '@/domain/actions/onboarding';
 import { focusAreaSchema } from '@/domain/schemas/OnboardingForm';
+import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
 import {
   EU_COUNTRIES,
   POLICY_AREAS,
   REGULATORY_AREAS,
 } from '@/operations/onboarding/OnboardingOperations';
 
-import { useOnboarding } from './OnboardingContext';
-
-export const Step4FocusArea: React.FC = () => {
-  const { profileData, updateProfileData, nextStep, prevStep } =
-    useOnboarding();
+export const Step3FocusArea = () => {
+  const { nextStep, prevStep } = useOnboardingNavigation();
 
   // Setup form with React Hook Form and Zod validation
   const form = useForm({
     resolver: zodResolver(focusAreaSchema),
     defaultValues: {
-      topicList: profileData.topicList || [],
-      geographicFocus: profileData.geographicFocus || [],
-      keyRegulatoryAreas: profileData.keyRegulatoryAreas || [],
+      topicList: [],
+      geographicFocus: [],
+      keyRegulatoryAreas: [],
     },
     mode: 'onSubmit',
   });
 
   const onSubmit = async (data: z.infer<typeof focusAreaSchema>) => {
-    // Update context with form data
-    updateProfileData(data);
-
     // Create FormData for server action
     const formData = new FormData();
     data.topicList.forEach((topic) => formData.append('topicList', topic));
@@ -205,24 +200,24 @@ export const Step4FocusArea: React.FC = () => {
                   </FormItem>
                 )}
               />
-            </motion.div>
 
-            <motion.div
-              className="flex justify-between pt-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-            >
-              <Button variant="outline" onClick={prevStep} type="button">
-                Back
-              </Button>
-              <Button
-                type="submit"
-                disabled={form.formState.isSubmitting}
-                className="px-8"
+              <motion.div
+                className="flex justify-between pt-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
               >
-                {form.formState.isSubmitting ? 'Validating...' : 'Continue'}
-              </Button>
+                <Button variant="outline" onClick={prevStep} type="button">
+                  Back
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                  className="px-8"
+                >
+                  {form.formState.isSubmitting ? 'Validating...' : 'Continue'}
+                </Button>
+              </motion.div>
             </motion.div>
           </CardContent>
         </form>

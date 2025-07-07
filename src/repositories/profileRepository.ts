@@ -15,7 +15,6 @@ export const profileRepository = {
           id: profileData.id,
           name: profileData.name,
           surname: profileData.surname,
-          company_name: profileData.companyName,
           company_description: profileData.companyDescription,
           topic_list: profileData.topicList,
           newsletter_frequency: profileData.newsletterFrequency,

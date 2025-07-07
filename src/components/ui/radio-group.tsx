@@ -21,9 +21,10 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
     <div className={cn('grid gap-2', className)}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child) && child.type === RadioGroupItem) {
-          return React.cloneElement(child as React.ReactElement<RadioGroupItemProps>, {
-            checked: value === child.props.value,
-            onChange: () => onValueChange?.(child.props.value),
+          const childElement = child as React.ReactElement<RadioGroupItemProps>;
+          return React.cloneElement(childElement, {
+            checked: value === childElement.props.value,
+            onChange: () => onValueChange?.(childElement.props.value),
           });
         }
         return child;

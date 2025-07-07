@@ -24,17 +24,15 @@ import {
 } from '@/components/ui/form';
 import { updatePathDecision } from '@/domain/actions/onboarding';
 import { pathDecisionSchema } from '@/domain/schemas/OnboardingForm';
+import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
 
-import { useOnboarding } from './OnboardingContext';
-
-export const Step2PathDecision: React.FC = () => {
-  const { profileData, updateProfileData, nextStep, prevStep } =
-    useOnboarding();
+export const Step1PathDecision = () => {
+  const { nextStep } = useOnboardingNavigation();
 
   const form = useForm({
     resolver: zodResolver(pathDecisionSchema),
     defaultValues: {
-      userCategory: profileData.userCategory || 'entrepreneur',
+      userCategory: 'entrepreneur' as 'entrepreneur' | 'politician',
     },
     mode: 'onSubmit', // Only validate when user submits
   });
@@ -42,9 +40,6 @@ export const Step2PathDecision: React.FC = () => {
   const onSubmit = async (data: {
     userCategory: 'entrepreneur' | 'politician';
   }) => {
-    // Update context
-    updateProfileData(data);
-
     // Create FormData for server action
     const formData = new FormData();
     formData.append('userCategory', data.userCategory);
@@ -53,7 +48,8 @@ export const Step2PathDecision: React.FC = () => {
     const result = await updatePathDecision(formData);
 
     if (result.success) {
-      nextStep();
+      // Navigate to next step with userCategory parameter
+      nextStep({ userCategory: data.userCategory });
     } else if (result.fieldErrors) {
       // Set server validation errors
       Object.entries(result.fieldErrors).forEach(([field, message]) => {
@@ -155,14 +151,11 @@ export const Step2PathDecision: React.FC = () => {
           </CardContent>
 
           <motion.div
-            className="flex justify-between p-6"
+            className="flex justify-end p-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <Button variant="outline" onClick={prevStep} type="button">
-              Back
-            </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? 'Validating...' : 'Next'}
             </Button>

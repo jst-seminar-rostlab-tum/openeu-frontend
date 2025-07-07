@@ -78,8 +78,7 @@ export async function updateRoleDetails(
 
     if (userCategory === 'entrepreneur') {
       const rawData = {
-        userType: formData.get('userType') as string,
-        companyName: formData.get('companyName') as string,
+        userType: formData.getAll('userType') as string[],
         companyStage: formData.get('companyStage') as string,
         companySize: formData.get('companySize') as string,
         primaryIndustry: formData.get('primaryIndustry') as string,
@@ -366,7 +365,6 @@ export async function updateOnboardingProfile(
       name: profileData.name,
       surname: profileData.surname,
       email: profileData.email,
-      company_name: profileData.companyName,
       company_description: profileData.companyDescription,
       topic_list: profileData.topicList,
       newsletter_frequency: profileData.newsletterFrequency,
@@ -412,7 +410,6 @@ export async function updateOnboardingProfile(
       name: data.name,
       surname: data.surname,
       email: data.email,
-      companyName: data.company_name || '',
       companyDescription: data.company_description || '',
       topicList: data.topic_list || [],
       newsletterFrequency: data.newsletter_frequency || 'weekly',
@@ -557,7 +554,6 @@ export async function getCurrentProfile(): Promise<
       name: data.name || '',
       surname: data.surname || '',
       email: data.email || '',
-      companyName: data.company_name || '',
       companyDescription: data.company_description || '',
       topicList: data.topic_list || [],
       newsletterFrequency: data.newsletter_frequency || 'weekly',

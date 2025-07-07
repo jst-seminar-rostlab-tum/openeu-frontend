@@ -24,13 +24,17 @@ export const pathDecisionSchema = z.object({
 
 // Step 3: Role Details Schemas (split by user category)
 export const entrepreneurRoleSchema = z.object({
-  userType: z.enum(
-    ['founder', 'startup_employee', 'consultant', 'investor', 'other'],
-    {
-      required_error: 'Please select your role type',
-    },
-  ),
-  companyName: z.string().min(1, 'Company name is required'),
+  userType: z
+    .array(
+      z.enum([
+        'founder',
+        'startup_employee',
+        'consultant',
+        'investor',
+        'other',
+      ]),
+    )
+    .min(1, 'Please select at least one role type'),
   companyStage: z.enum(
     [
       'idea',
@@ -102,7 +106,7 @@ export const focusAreaSchema = z.object({
 
 // Step 5: Completion Schema
 export const completionSchema = z.object({
-  newsletterFrequency: z.enum(['daily', 'weekly', 'none'], {
+  newsletterFrequency: z.enum(['daily', 'weekly', 'monthly', 'none'], {
     required_error: 'Please select your notification frequency',
   }),
 });
@@ -142,9 +146,16 @@ export const politicianCompleteSchema = registrationSchema
     onboardingCompleted: z.boolean(),
     // Make entrepreneur-specific fields optional for politicians
     userType: z
-      .enum(['founder', 'startup_employee', 'consultant', 'investor', 'other'])
+      .array(
+        z.enum([
+          'founder',
+          'startup_employee',
+          'consultant',
+          'investor',
+          'other',
+        ]),
+      )
       .optional(),
-    companyName: z.string().optional(),
     companyStage: z
       .enum([
         'idea',

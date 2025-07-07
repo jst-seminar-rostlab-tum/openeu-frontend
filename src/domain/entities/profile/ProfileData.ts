@@ -9,13 +9,13 @@ export interface ProfileData {
   userCategory: 'entrepreneur' | 'politician';
 
   // Entrepreneur-specific fields (required for entrepreneurs)
-  userType?:
+  userType?: (
     | 'founder'
     | 'startup_employee'
     | 'consultant'
     | 'investor'
-    | 'other';
-  companyName?: string;
+    | 'other'
+  )[];
   companyDescription?: string;
   companyStage?:
     | 'idea'
@@ -55,7 +55,7 @@ export interface ProfileData {
   keyRegulatoryAreas: string[];
 
   // Completion preferences (required for all users)
-  newsletterFrequency: 'daily' | 'weekly' | 'none';
+  newsletterFrequency: 'daily' | 'weekly' | 'monthly' | 'none';
 
   // System fields
   onboardingCompleted: boolean;

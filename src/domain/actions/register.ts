@@ -60,12 +60,11 @@ export async function signup(formData: FormData) {
       name: name,
       surname: surname,
       email: '',
-      companyName: company,
       companyDescription: companyDescription,
       topicList: topics.split(','),
       newsletterFrequency: newsletterFrequency,
       // Default values for new fields - user will complete these in onboarding
-      userType: 'other',
+      userType: ['other'],
       companyStage: 'idea',
       companySize: '1',
       primaryIndustry: 'Other',

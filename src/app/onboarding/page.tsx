@@ -1,5 +1,6 @@
-import { OnboardingContainer } from '@/components/onboarding/OnboardingContainer';
+import { redirect } from 'next/navigation';
 
-export default function OnboardingPage() {
-  return <OnboardingContainer />;
+export default async function OnboardingPage() {
+  // Redirect to the first step of the new onboarding flow
+  redirect('/onboarding/1');
 }
