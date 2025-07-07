@@ -130,21 +130,21 @@ export function MeetingProvider({
       // Use custom date range from FilterModal
       start = customStart;
       end = customEnd;
-    } else if (urlState.startDate && urlState.endDate) {
-      // Use URL dates if available
-      start = urlState.startDate.toISOString();
-      end = urlState.endDate.toISOString();
-    } else {
-      // Use default range based on context configuration
-      if (useWeekDefault) {
-        const { startDate: weekStart, endDate: weekEnd } =
-          getCurrentWeekRange();
-        start = weekStart.toISOString();
-        end = weekEnd.toISOString();
+    } else if (useWeekDefault) {
+      if (urlState.startDate && urlState.endDate) {
+        // Use URL dates if available
+        start = urlState.startDate.toISOString();
+        end = urlState.endDate.toISOString();
       } else {
-        start = calculateStartDate(selectedDate, currentView).toISOString();
-        end = calculateEndDate(selectedDate, currentView).toISOString();
+        // Use default range
+        const { startDate, endDate } = getCurrentWeekRange();
+        start = startDate.toISOString();
+        end = endDate.toISOString();
       }
+    } else {
+      // Use calculated range based on selected date and view
+      start = calculateStartDate(selectedDate, currentView).toISOString();
+      end = calculateEndDate(selectedDate, currentView).toISOString();
     }
 
     return {
@@ -168,8 +168,6 @@ export function MeetingProvider({
     isCustomRange,
     customStart,
     customEnd,
-    urlState.startDate,
-    urlState.endDate,
     useWeekDefault,
   ]);
 
