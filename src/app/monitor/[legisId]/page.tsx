@@ -4,6 +4,7 @@ import {
   Clock,
   Eye,
   FileText,
+  MessageSquare,
   Users,
   Zap,
 } from 'lucide-react';
@@ -192,6 +193,14 @@ export default async function LegislationPage({
                 </Link>
               </Button>
             )}
+            <Button variant="outline" size="sm" asChild>
+              <Link
+                href={`/chat?legislation_id=${encodeURIComponent(legislation.id)}`}
+              >
+                <MessageSquare className="h-3 w-3" />
+                Chat with Legislation
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

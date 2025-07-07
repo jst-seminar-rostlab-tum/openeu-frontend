@@ -7,6 +7,7 @@ import {
   type CreateSessionRequest,
   type SendMessageRequest,
 } from '@/domain/entities/chat/generated-types';
+import { SupportedContextType } from '@/domain/entities/monitor/types';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 import { chatRepository } from '@/repositories/chatRepository';
@@ -69,12 +70,18 @@ export function useSendMessage() {
     mutationFn: ({
       request,
       onStreamUpdate,
+      contextParams,
     }: {
       request: SendMessageRequest;
       onStreamUpdate?: (content: string) => void;
-    }) => chatRepository.sendStreamingMessage(request, onStreamUpdate),
+      contextParams?: Partial<Record<SupportedContextType, string>>;
+    }) =>
+      chatRepository.sendStreamingMessage(
+        request,
+        onStreamUpdate,
+        contextParams,
+      ),
     onSuccess: (_, variables) => {
-      // Invalidate messages cache for this session
       queryClient.invalidateQueries({
         queryKey: chatQueryKeys.messages(variables.request.session_id),
       });
