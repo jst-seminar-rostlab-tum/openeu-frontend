@@ -38,111 +38,123 @@ export const COLOR_SCHEMES = {
     text: 'text-blue-700 dark:text-blue-300',
     outline: 'border-blue-200 dark:border-blue-800',
     dot: 'bg-blue-600 dark:bg-blue-500',
+    stroke: 'stroke-blue-300 dark:stroke-blue-600',
   },
   green: {
     bg: 'bg-green-50 dark:bg-green-950',
     text: 'text-green-700 dark:text-green-300',
     outline: 'border-green-200 dark:border-green-800',
     dot: 'bg-green-600 dark:bg-green-500',
+    stroke: 'stroke-green-300 dark:stroke-green-600',
   },
   purple: {
     bg: 'bg-purple-50 dark:bg-purple-950',
     text: 'text-purple-700 dark:text-purple-300',
     outline: 'border-purple-200 dark:border-purple-800',
     dot: 'bg-purple-600 dark:bg-purple-500',
+    stroke: 'stroke-purple-300 dark:stroke-purple-600',
   },
   yellow: {
     bg: 'bg-yellow-50 dark:bg-yellow-950',
     text: 'text-yellow-700 dark:text-yellow-300',
     outline: 'border-yellow-200 dark:border-yellow-800',
     dot: 'bg-yellow-600 dark:bg-yellow-500',
+    stroke: 'stroke-yellow-300 dark:stroke-yellow-600',
   },
   red: {
     bg: 'bg-red-50 dark:bg-red-950',
     text: 'text-red-700 dark:text-red-300',
     outline: 'border-red-200 dark:border-red-800',
     dot: 'bg-red-600 dark:bg-red-500',
+    stroke: 'stroke-red-300 dark:stroke-red-600',
   },
   indigo: {
     bg: 'bg-indigo-50 dark:bg-indigo-950',
     text: 'text-indigo-700 dark:text-indigo-300',
     outline: 'border-indigo-200 dark:border-indigo-800',
     dot: 'bg-indigo-600 dark:bg-indigo-500',
+    stroke: 'stroke-indigo-300 dark:stroke-indigo-600',
   },
   pink: {
     bg: 'bg-pink-50 dark:bg-pink-950',
     text: 'text-pink-700 dark:text-pink-300',
     outline: 'border-pink-200 dark:border-pink-800',
     dot: 'bg-pink-600 dark:bg-pink-500',
+    stroke: 'stroke-pink-300 dark:stroke-pink-600',
   },
   orange: {
     bg: 'bg-orange-50 dark:bg-orange-950',
     text: 'text-orange-700 dark:text-orange-300',
     outline: 'border-orange-200 dark:border-orange-800',
     dot: 'bg-orange-600 dark:bg-orange-500',
+    stroke: 'stroke-orange-300 dark:stroke-orange-600',
   },
   teal: {
     bg: 'bg-teal-50 dark:bg-teal-950',
     text: 'text-teal-700 dark:text-teal-300',
     outline: 'border-teal-200 dark:border-teal-800',
     dot: 'bg-teal-600 dark:bg-teal-500',
+    stroke: 'stroke-teal-300 dark:stroke-teal-600',
   },
   cyan: {
     bg: 'bg-cyan-50 dark:bg-cyan-950',
     text: 'text-cyan-700 dark:text-cyan-300',
     outline: 'border-cyan-200 dark:border-cyan-800',
     dot: 'bg-cyan-600 dark:bg-cyan-500',
+    stroke: 'stroke-cyan-300 dark:stroke-cyan-600',
   },
   violet: {
     bg: 'bg-violet-50 dark:bg-violet-950',
     text: 'text-violet-700 dark:text-violet-300',
     outline: 'border-violet-200 dark:border-violet-800',
     dot: 'bg-violet-600 dark:bg-violet-500',
+    stroke: 'stroke-violet-300 dark:stroke-violet-600',
   },
   fuchsia: {
     bg: 'bg-fuchsia-50 dark:bg-fuchsia-950',
     text: 'text-fuchsia-700 dark:text-fuchsia-300',
     outline: 'border-fuchsia-200 dark:border-fuchsia-800',
     dot: 'bg-fuchsia-600 dark:bg-fuchsia-500',
+    stroke: 'stroke-fuchsia-300 dark:stroke-fuchsia-600',
   },
   rose: {
     bg: 'bg-rose-50 dark:bg-rose-950',
     text: 'text-rose-700 dark:text-rose-300',
     outline: 'border-rose-200 dark:border-rose-800',
     dot: 'bg-rose-600 dark:bg-rose-500',
+    stroke: 'stroke-rose-300 dark:stroke-rose-600',
   },
   amber: {
     bg: 'bg-amber-50 dark:bg-amber-950',
     text: 'text-amber-700 dark:text-amber-300',
     outline: 'border-amber-200 dark:border-amber-800',
     dot: 'bg-amber-600 dark:bg-amber-500',
+    stroke: 'stroke-amber-300 dark:stroke-amber-600',
   },
   emerald: {
     bg: 'bg-emerald-50 dark:bg-emerald-950',
     text: 'text-emerald-700 dark:text-emerald-300',
     outline: 'border-emerald-200 dark:border-emerald-800',
     dot: 'bg-emerald-600 dark:bg-emerald-500',
+    stroke: 'stroke-emerald-300 dark:stroke-emerald-600',
   },
   sky: {
     bg: 'bg-sky-50 dark:bg-sky-950',
     text: 'text-sky-700 dark:text-sky-300',
     outline: 'border-sky-200 dark:border-sky-800',
     dot: 'bg-sky-600 dark:bg-sky-500',
+    stroke: 'stroke-sky-300 dark:stroke-sky-600',
   },
   lime: {
     bg: 'bg-lime-50 dark:bg-lime-950',
     text: 'text-lime-700 dark:text-lime-300',
     outline: 'border-lime-200 dark:border-lime-800',
     dot: 'bg-lime-600 dark:bg-lime-500',
+    stroke: 'stroke-lime-300 dark:stroke-lime-600',
   },
 } as const;
 
-// Backwards compatibility: legacy arrays for getColor function
-const COLORS = Object.values(COLOR_SCHEMES).map(
-  (scheme) => `${scheme.bg} ${scheme.text} ${scheme.outline}`,
-);
-
-const DOT_COLORS = Object.values(COLOR_SCHEMES).map((scheme) => scheme.dot);
+export type ColorSchemeKey = keyof typeof COLOR_SCHEMES;
 
 /**
  * Generates a consistent hash for any string using FNV-1a algorithm.
@@ -161,44 +173,18 @@ function hashString(str: string): number {
 }
 
 /**
- * Maps an ID to a consistent color style using deterministic hashing.
+ * Maps an ID to a consistent color key using deterministic hashing.
  * Same ID will always get the same color across renders and sessions.
  * @param id - ID to colorize (e.g., meeting ID)
- * @param variant - Color variant: 'bg' for colored backgrounds, 'dot' for dot indicators
- * @returns Tailwind CSS classes for the specified color variant
+ * @returns ColorSchemeKey for the specified ID
  */
-export function getColorByHash(
-  id: string,
-  variant: 'bg' | 'dot' = 'bg',
-): string {
+export function getColorKeyByHash(id: string): ColorSchemeKey {
   const hash = hashString(id);
-  const colors = variant === 'dot' ? DOT_COLORS : COLORS;
-  const colorIndex = hash % colors.length;
-  return colors[colorIndex];
+  const colorKeys = Object.keys(COLOR_SCHEMES) as ColorSchemeKey[];
+  const colorIndex = hash % colorKeys.length;
+  return colorKeys[colorIndex];
 }
 
-export function extractColorName(cssClassString: string): string {
-  // Extract the first color name from the CSS class string
-  const match = cssClassString.match(/bg-(\w+)-\d+/);
-  return match ? match[1] : 'gray';
-}
-
-export function getStrokeColorClasses(colorName: string): {
-  light: string;
-  dark: string;
-} {
-  const availableColors = Object.keys(COLOR_SCHEMES);
-  const safeColorName = availableColors.includes(colorName)
-    ? colorName
-    : 'gray';
-  const lightClass = `stroke-${safeColorName}-500`;
-  const darkClass = `stroke-${safeColorName}-400`;
-
-  return {
-    light: lightClass,
-    dark: darkClass,
-  };
-}
 /**
  * Extracts the first name from a Supabase user object.
  * Falls back to the username part of email if no first name is available.
