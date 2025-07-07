@@ -20,7 +20,7 @@ import {
 } from '@/domain/hooks/meetingHooks';
 import { useUrlSync } from '@/domain/hooks/useCalendarUrlSync';
 import { getCurrentWeekRange } from '@/lib/formatters';
-import { getColorByHash } from '@/lib/utils';
+import { getColorKeyByHash } from '@/lib/utils';
 import {
   calculateEndDate,
   calculateStartDate,
@@ -204,7 +204,7 @@ export function MeetingProvider({
       // Assign color using unified system
       return {
         ...processedMeeting,
-        color: getColorByHash(meeting.meeting_id),
+        color: getColorKeyByHash(meeting.meeting_id),
       };
     });
   }, [rawMeetings]);

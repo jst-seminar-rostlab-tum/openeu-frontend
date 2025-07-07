@@ -8,7 +8,7 @@ import React, { ReactNode } from 'react';
 import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { EventBullet } from '@/components/calendar/MonthViewCalendar/EventBullet';
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
-import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
+import { RelevanceScore } from '@/components/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,8 +22,7 @@ import { DialogHeader } from '@/components/ui/dialog';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { members } from '@/domain/entities/mock/mock_members';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import { cn } from '@/lib/utils';
-import { getColorByHash } from '@/lib/utils';
+import { cn, COLOR_SCHEMES } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
 
 interface EventListDialogProps {
@@ -117,16 +116,16 @@ export function EventListDialog({
         <div
           className={cn(
             'flex items-center gap-2 p-2 border rounded-md cursor-pointer',
-            getColorByHash(event.meeting_id),
+            COLOR_SCHEMES[event.color].bg,
+            COLOR_SCHEMES[event.color].text,
+            COLOR_SCHEMES[event.color].outline,
           )}
         >
-          <div className="flex w-full flex-col gap-1">
+          <div className="flex w-full flex-col gap-2">
             <div className="flex justify-between gap-1">
               <p className="flex flex-col text-sm font-medium">{event.title}</p>
               {relevanceScore && (
-                <div className="flex flex-none size-10">
-                  <RelevanceScore meeting={event} type={'circle'} />
-                </div>
+                <RelevanceScore meeting={event} type={'circle'} />
               )}
             </div>
             <div className="flex items-center gap-1">
@@ -160,10 +159,7 @@ export function EventListDialog({
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-center gap-2">
-              <EventBullet
-                color={getColorByHash(cellEvents[0]?.meeting_id || '', 'dot')}
-                className=""
-              />
+              <EventBullet color={cellEvents[0]?.color} className="" />
               <p className="text-sm font-medium">
                 {title ||
                   (endDate
