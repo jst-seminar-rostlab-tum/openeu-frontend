@@ -1,43 +1,22 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { Building2, Users } from 'lucide-react';
 import React from 'react';
-import { useForm } from 'react-hook-form';
 
-import { Button } from '@/components/ui/button';
+import { PathDecisionForm } from '@/components/forms/PathDecisionFormInner';
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import { updatePathDecision } from '@/domain/actions/onboarding';
-import { pathDecisionSchema } from '@/domain/schemas/OnboardingForm';
-import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
+import { useOnboardingNavigation } from '@/domain/hooks/useOnboardingNavigation';
 
 export const Step1PathDecision = () => {
   const { nextStep } = useOnboardingNavigation();
 
-  const form = useForm({
-    resolver: zodResolver(pathDecisionSchema),
-    defaultValues: {
-      userCategory: 'entrepreneur' as 'entrepreneur' | 'politician',
-    },
-    mode: 'onSubmit', // Only validate when user submits
-  });
-
-  const onSubmit = async (data: {
+  const handleSubmit = async (data: {
     userCategory: 'entrepreneur' | 'politician';
   }) => {
     // Create FormData for server action
@@ -48,13 +27,11 @@ export const Step1PathDecision = () => {
     const result = await updatePathDecision(formData);
 
     if (result.success) {
-      // Navigate to next step with userCategory parameter
-      nextStep({ userCategory: data.userCategory });
+      // Navigate to next step
+      nextStep();
     } else if (result.fieldErrors) {
-      // Set server validation errors
-      Object.entries(result.fieldErrors).forEach(([field, message]) => {
-        form.setError(field as keyof typeof data, { message });
-      });
+      // Handle server validation errors - could show toast or other UI feedback
+      // For now, the form will handle validation on the client side
     }
   };
 
@@ -73,95 +50,7 @@ export const Step1PathDecision = () => {
         </CardHeader>
       </motion.div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-6">
-            <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-            >
-              <FormField
-                control={form.control}
-                name="userCategory"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold">
-                      I am a:
-                    </FormLabel>
-                    <FormControl>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <Card
-                            className={`cursor-pointer transition-all ${
-                              field.value === 'entrepreneur'
-                                ? 'ring-2 ring-primary bg-primary/5'
-                                : 'hover:bg-muted/50'
-                            }`}
-                            onClick={() => field.onChange('entrepreneur')}
-                          >
-                            <CardContent className="p-6 text-center">
-                              <Building2 className="w-12 h-12 mx-auto mb-4 text-primary" />
-                              <h3 className="font-semibold text-lg mb-2">
-                                Entrepreneur
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                Building or running a business, startup, or
-                                company
-                              </p>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <Card
-                            className={`cursor-pointer transition-all ${
-                              field.value === 'politician'
-                                ? 'ring-2 ring-primary bg-primary/5'
-                                : 'hover:bg-muted/50'
-                            }`}
-                            onClick={() => field.onChange('politician')}
-                          >
-                            <CardContent className="p-6 text-center">
-                              <Users className="w-12 h-12 mx-auto mb-4 text-primary" />
-                              <h3 className="font-semibold text-lg mb-2">
-                                Politician/Policy Maker
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                Working in politics, policy making, or public
-                                service
-                              </p>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </motion.div>
-          </CardContent>
-
-          <motion.div
-            className="flex justify-end p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Validating...' : 'Next'}
-            </Button>
-          </motion.div>
-        </form>
-      </Form>
+      <PathDecisionForm onSubmit={handleSubmit} />
     </Card>
   );
 };

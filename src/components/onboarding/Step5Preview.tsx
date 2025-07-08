@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
+import { useOnboardingNavigation } from '@/domain/hooks/useOnboardingNavigation';
 
 export const Step5Preview = () => {
   const { prevStep } = useOnboardingNavigation();
