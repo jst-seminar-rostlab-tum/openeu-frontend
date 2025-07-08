@@ -16,7 +16,7 @@ import { ReactNode } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
-import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
+import { RelevanceScore } from '@/components/RelevanceScore';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,

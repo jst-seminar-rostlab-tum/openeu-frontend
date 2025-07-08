@@ -1,16 +1,18 @@
 // Import the auto-generated types
+import { ColorSchemeKey } from '@/lib/utils';
+
 import { MeetingData } from './generated-types';
 
 // === EXTENDED API TYPES ===
 export type Meeting = MeetingData & {
-  color: string;
+  color: ColorSchemeKey;
   meeting_end_datetime: string;
 };
 
 // === FRONTEND-ONLY TYPES ===
 export type TCalendarView = 'day' | 'week' | 'month' | 'year' | 'agenda';
 
-export type TMeetingColor = string;
+export type TMeetingColor = ColorSchemeKey;
 
 export interface CalendarCell {
   day: number;

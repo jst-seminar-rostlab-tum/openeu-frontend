@@ -1,3 +1,5 @@
+import { SUPPORTED_CONTEXT_TYPES } from '@/operations/chat/ChatOperations';
+
 export type LegislationStatus =
   | 'Preparatory phase in Parliament'
   | 'Awaiting committee decision'
@@ -17,3 +19,5 @@ export interface StatusInfo {
 }
 
 export type StatusConfig = Record<LegislationStatus, StatusInfo>;
+
+export type SupportedContextType = (typeof SUPPORTED_CONTEXT_TYPES)[number];
