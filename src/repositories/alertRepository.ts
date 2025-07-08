@@ -1,5 +1,10 @@
 import { getCookie } from 'cookies-next';
 
+import {
+  createNewAlert,
+  deleteAlert,
+  toggleAlertActive,
+} from '@/domain/actions/alert-actions';
 import { Alert } from '@/domain/entities/alerts/generated-types';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { ToastOperations } from '@/operations/toast/toastOperations';
@@ -9,15 +14,18 @@ export async function fetchBackendAlerts(userId: string): Promise<Alert[]> {
   const token = getCookie('token');
 
   try {
-    const response = await fetch(`${API_URL}?user_id=${userId}`, {
-      method: 'GET',
-      credentials: 'include',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response = await fetch(
+      `${API_URL}?user_id=${userId}&include_inactive=true`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     if (!response.ok) {
       ToastOperations.showError({
         title: 'Error fetching alerts',
@@ -35,62 +43,7 @@ export async function fetchBackendAlerts(userId: string): Promise<Alert[]> {
   }
 }
 
-export async function createNewAlert(params: {
-  user_id: string;
-  title?: string;
-  description: string;
-}): Promise<Alert> {
-  const token = getCookie('token');
-  const response = await fetch(`${API_URL}`, {
-    method: 'POST',
-    credentials: 'include',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(params),
-  });
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  return response.json();
-}
-
-export async function deleteAlert(alertId: string): Promise<void> {
-  const token = getCookie('token');
-  const response = await fetch(`${API_URL}/${alertId}`, {
-    method: 'DELETE',
-    credentials: 'include',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-}
-
-export async function toggleAlertActive(
-  alertId: string,
-  active: boolean,
-): Promise<void> {
-  const token = getCookie('token');
-  const response = await fetch(`${API_URL}/${alertId}?active=${active}`, {
-    method: 'PATCH',
-    credentials: 'include',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-}
+export { createNewAlert, deleteAlert, toggleAlertActive };
 
 export async function getMeetingsForAlert(alertId: string): Promise<Meeting[]> {
   const token = getCookie('token');
