@@ -15,6 +15,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NewsletterDialog } from '@/components/inbox/NewsletterDialog';
 import { DataTablePagination } from '@/components/inbox/Pagination';
 import { DataTableToolbar } from '@/components/inbox/Toolbar';
+import { Section } from '@/components/section';
+import { Skeleton } from '@/components/ui/skeleton';
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 import { useNotifications } from '@/domain/hooks/notificationsHooks';
 import { useNewsletterDialog } from '@/domain/hooks/useNewsletterDialog';
@@ -30,7 +32,11 @@ interface InboxSectionProps {
 export function InboxSection({ userId }: InboxSectionProps) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const { data: notifications, error } = useNotifications(
+  const {
+    data: notifications,
+    error,
+    isLoading,
+  } = useNotifications(
     {
       userId: userId,
     },
@@ -140,6 +146,18 @@ export function InboxSection({ userId }: InboxSectionProps) {
     setRowSelection({});
   }, [table]);
 
+  if (isLoading) {
+    return (
+      <Section>
+        <h1 className="text-2xl font-bold">Inbox</h1>
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      </Section>
+    );
+  }
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-1">

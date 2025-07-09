@@ -11,6 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -19,16 +20,10 @@ import { ToastOperations } from '@/operations/toast/toastOperations';
 import { createNewAlert } from '@/repositories/alertRepository';
 
 interface AddAlertDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   userId: string;
 }
 
-export function AddAlertDialog({
-  open,
-  onOpenChange,
-  userId,
-}: AddAlertDialogProps) {
+export function AddAlertDialog({ userId }: AddAlertDialogProps) {
   const [alertDescription, setAlertDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
@@ -44,7 +39,6 @@ export function AddAlertDialog({
         title: 'Alert Created',
         message: 'Your alert was successfully created.',
       });
-      onOpenChange(false);
       setAlertDescription('');
       queryClient.invalidateQueries({ queryKey: ['alerts', userId] });
     } catch (error) {
@@ -59,7 +53,13 @@ export function AddAlertDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="w-fit" size="sm" variant="outline">
+          {' '}
+          Add new alert
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a new alert</DialogTitle>
