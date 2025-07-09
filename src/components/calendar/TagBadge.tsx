@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { getColorByHash } from '@/lib/utils';
+import { cn, COLOR_SCHEMES, getColorKeyByHash } from '@/lib/utils';
 
 interface TagBadgeProps {
   children: ReactNode;
@@ -15,12 +15,18 @@ export function TagBadge({
   colorHash,
 }: TagBadgeProps) {
   const tagString = typeof children === 'string' ? children : '';
-  const colorClass = getColorByHash(colorHash || tagString);
+  const colorKey = getColorKeyByHash(colorHash || tagString);
 
   return (
     <Badge
       variant="outline"
-      className={`text-xs font-medium border ${colorClass} ${className}`}
+      className={cn(
+        'text-xs font-medium border',
+        className,
+        COLOR_SCHEMES[colorKey].bg,
+        COLOR_SCHEMES[colorKey].text,
+        COLOR_SCHEMES[colorKey].outline,
+      )}
     >
       {children}
     </Badge>

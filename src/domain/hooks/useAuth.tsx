@@ -1,7 +1,8 @@
 'use client';
 
 import { User } from '@supabase/supabase-js';
-import { deleteCookie, setCookie } from 'cookies-next';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, {
   createContext,
@@ -60,7 +61,11 @@ export function AuthProvider({
     // Initialize with server-side user data
     setUser(initialUser);
     setLoading(false);
-
+    const token = getCookie('token') as string | undefined;
+    if (!token || isJwtExpired(token)) {
+      handleSessionExpiration();
+      return; // Exit early
+    }
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -172,4 +177,14 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+}
+
+export function isJwtExpired(token: string): boolean {
+  try {
+    const payload = jwtDecode(token);
+    if (!payload.exp) return true;
+    return Date.now() >= payload.exp * 1000;
+  } catch {
+    return true;
+  }
 }

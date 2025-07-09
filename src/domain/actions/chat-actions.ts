@@ -29,7 +29,6 @@ export async function createChatSession(
       {
         method: 'POST',
         mode: 'cors',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,

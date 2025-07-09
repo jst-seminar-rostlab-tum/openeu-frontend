@@ -12,7 +12,6 @@ export const profileRepository = {
       const res = await fetch(`${API_URL}/${userId}`, {
         method: 'GET',
         mode: 'cors',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
