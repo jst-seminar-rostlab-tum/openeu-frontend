@@ -10,9 +10,7 @@ export type AlertTableItem = {
 
 export interface AlertActions {
   onView?: (alert: AlertTableItem) => void;
-  onTitleClick?: (alert: AlertTableItem) => void;
   onToggleActive: (alertId: string, active: boolean) => void;
-  onViewMeetings?: (alert: AlertTableItem) => void;
 }
 
 export const mapAlertToTableItem = (alert: Alert): AlertTableItem => ({

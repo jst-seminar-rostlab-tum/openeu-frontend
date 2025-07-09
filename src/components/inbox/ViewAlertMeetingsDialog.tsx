@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronUp, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, Search } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AlertTableItem } from '@/app/inbox/alertTypes';
@@ -11,6 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,16 +21,16 @@ import { getMeetingsForAlert } from '@/repositories/alertRepository';
 
 interface ViewAlertMeetingsDialogProps {
   alert: AlertTableItem | null;
-  trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  triggerStyle?: 'button' | 'actions';
 }
 
 export function ViewAlertMeetingsDialog({
   alert,
-  trigger,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
+  triggerStyle = 'button',
 }: ViewAlertMeetingsDialogProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const isControlled =
@@ -116,10 +117,17 @@ export function ViewAlertMeetingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      {trigger && (
-        <div onClick={() => onOpenChange(true)} style={{ display: 'inline' }}>
-          {trigger}
-        </div>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          {triggerStyle === 'button' ? (
+            <Button className="w-full">View Related Meetings</Button>
+          ) : (
+            <div className="flex items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground rounded-sm">
+              <Eye className="mr-2 h-4 w-4" />
+              View Meetings
+            </div>
+          )}
+        </DialogTrigger>
       )}
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>

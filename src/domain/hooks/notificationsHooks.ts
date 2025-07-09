@@ -1,7 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { Notification } from '@/domain/entities/notifications/generated-types';
 import { fetchBackendNotifications } from '@/repositories/notificationRepository';
-
-import { useSuspenseQuery } from './useSuspenseQuery';
 
 export interface AlertQueryParams {
   userId: string;
@@ -9,7 +9,7 @@ export interface AlertQueryParams {
 }
 
 export const useNotifications = (props: AlertQueryParams, enabled = true) =>
-  useSuspenseQuery<Notification[]>({
+  useQuery<Notification[]>({
     queryKey: ['notifications', props.userId],
     queryFn: () => fetchBackendNotifications(props.userId),
     enabled: enabled && !!props.userId,

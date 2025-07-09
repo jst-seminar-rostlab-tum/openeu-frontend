@@ -13,9 +13,10 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 
+import { ViewAlertMeetingsDialog } from './ViewAlertMeetingsDialog';
+
 interface AlertDetailsDialogProps {
   alert: AlertTableItem | null;
-  onViewMeetings?: (alert: AlertTableItem) => void;
   trigger?: ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -23,7 +24,6 @@ interface AlertDetailsDialogProps {
 
 export function AlertDetailsDialog({
   alert,
-  onViewMeetings,
   trigger,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
@@ -35,13 +35,6 @@ export function AlertDetailsDialog({
   const onOpenChange = isControlled
     ? controlledOnOpenChange!
     : setUncontrolledOpen;
-
-  const handleViewMeetings = () => {
-    if (alert && onViewMeetings) {
-      onViewMeetings(alert);
-      onOpenChange(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -91,9 +84,7 @@ export function AlertDetailsDialog({
           </div>
 
           <div className="flex justify-center">
-            <Button onClick={handleViewMeetings} className="w-full">
-              View Related Meetings
-            </Button>
+            <ViewAlertMeetingsDialog alert={alert} triggerStyle="button" />
           </div>
         </div>
         <DialogFooter>

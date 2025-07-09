@@ -1,10 +1,11 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Check, Eye, MoreVertical, Power, PowerOff, X } from 'lucide-react';
+import { Check, MoreVertical, Power, PowerOff, X } from 'lucide-react';
 
 import { AlertDetailsDialog } from '@/components/inbox/AlertDetailsDialog';
 import { DataTableColumnHeader } from '@/components/inbox/ColHeader';
+import { ViewAlertMeetingsDialog } from '@/components/inbox/ViewAlertMeetingsDialog';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -20,7 +21,6 @@ import { AlertActions, AlertTableItem } from './alertTypes';
 
 export const getAlertColumns = ({
   onToggleActive,
-  onViewMeetings,
 }: AlertActions): ColumnDef<AlertTableItem>[] => [
   {
     id: 'select',
@@ -57,7 +57,6 @@ export const getAlertColumns = ({
             {row.getValue('title')}
           </div>
         }
-        onViewMeetings={onViewMeetings}
       />
     ),
   },
@@ -119,9 +118,11 @@ export const getAlertColumns = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onViewMeetings?.(row.original)}>
-                <Eye className="mr-2 h-4 w-4" />
-                View Meetings
+              <DropdownMenuItem asChild>
+                <ViewAlertMeetingsDialog
+                  alert={row.original}
+                  triggerStyle="actions"
+                />
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

@@ -11,17 +11,14 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddAlertDialog } from '@/components/inbox/AddAlertDialog';
-import { AlertDetailsDialog } from '@/components/inbox/AlertDetailsDialog';
 import { DataTablePagination } from '@/components/inbox/Pagination';
 import { DataTableToolbar } from '@/components/inbox/Toolbar';
-import { ViewAlertMeetingsDialog } from '@/components/inbox/ViewAlertMeetingsDialog';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAlerts } from '@/domain/hooks/alertHooks';
 import { toggleAlertActive } from '@/repositories/alertRepository';
 
 import { getAlertColumns } from './alertColumns';
-import { AlertTableItem, mapAlertToTableItem } from './alertTypes';
+import { mapAlertToTableItem } from './alertTypes';
 import { DataTable } from './data-table';
 
 interface AlertsSectionProps {
@@ -29,21 +26,12 @@ interface AlertsSectionProps {
 }
 
 export function AlertsSection({ userId }: AlertsSectionProps) {
-  const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  const [viewAlertDialogOpen, setViewAlertDialogOpen] = useState(false);
-  const [alertDetailsDialogOpen, setAlertDetailsDialogOpen] = useState(false);
-  const [selectedAlert, setSelectedAlert] = useState<AlertTableItem | null>(
-    null,
-  );
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const queryClient = useQueryClient();
 
-  const { data: alerts, isLoading: isAlertsLoading } = useAlerts(
-    {
-      userId: userId,
-    },
-    true,
-  );
+  const { data: alerts, isLoading: isAlertsLoading } = useAlerts({
+    userId: userId,
+  });
 
   const alertData = useMemo(() => {
     return alerts?.map(mapAlertToTableItem).sort((a, b) => {
@@ -52,16 +40,6 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
       return dateB - dateA;
     });
   }, [alerts]);
-
-  const handleViewAlert = useCallback((alert: AlertTableItem) => {
-    setSelectedAlert(alert);
-    setViewAlertDialogOpen(true);
-  }, []);
-
-  const handleAlertTitleClick = useCallback((alert: AlertTableItem) => {
-    setSelectedAlert(alert);
-    setAlertDetailsDialogOpen(true);
-  }, []);
 
   const handleToggleActive = useCallback(
     async (alertId: string, active: boolean) => {
@@ -75,25 +53,12 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
     [queryClient, userId],
   );
 
-  const handleViewMeetings = useCallback((alert: AlertTableItem) => {
-    setSelectedAlert(alert);
-    setViewAlertDialogOpen(true);
-  }, []);
-
   const alertColumns = useMemo(
     () =>
       getAlertColumns({
-        onView: handleViewAlert,
-        onTitleClick: handleAlertTitleClick,
         onToggleActive: handleToggleActive,
-        onViewMeetings: handleViewMeetings,
       }),
-    [
-      handleViewAlert,
-      handleAlertTitleClick,
-      handleToggleActive,
-      handleViewMeetings,
-    ],
+    [handleToggleActive],
   );
 
   const alertTable = useReactTable({
@@ -128,14 +93,7 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
           </p>
         </div>
         <div className="flex items-center gap-2 mb-2 sm:mb-0">
-          <Button
-            className="w-fit"
-            size="sm"
-            onClick={() => setAlertDialogOpen(true)}
-            variant="outline"
-          >
-            Add new alert
-          </Button>
+          <AddAlertDialog userId={userId} />
         </div>
       </div>
 
@@ -144,28 +102,6 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
         <DataTable table={alertTable} columns={alertColumns} />
         <DataTablePagination table={alertTable} />
       </div>
-
-      <AddAlertDialog
-        open={alertDialogOpen}
-        onOpenChange={setAlertDialogOpen}
-        userId={userId}
-      />
-
-      <ViewAlertMeetingsDialog
-        alert={selectedAlert}
-        open={viewAlertDialogOpen}
-        onOpenChange={setViewAlertDialogOpen}
-      />
-
-      <AlertDetailsDialog
-        open={alertDetailsDialogOpen}
-        onOpenChange={setAlertDetailsDialogOpen}
-        alert={selectedAlert}
-        onViewMeetings={(alert: AlertTableItem) => {
-          setSelectedAlert(alert);
-          setViewAlertDialogOpen(true);
-        }}
-      />
     </div>
   );
 }
