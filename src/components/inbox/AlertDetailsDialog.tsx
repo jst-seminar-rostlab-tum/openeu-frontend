@@ -59,12 +59,6 @@ export function AlertDetailsDialog({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label className="text-sm font-medium text-muted-foreground">
-                Title
-              </Label>
-              <p className="text-sm mt-1">{alert?.title || 'No title'}</p>
-            </div>
-            <div>
-              <Label className="text-sm font-medium text-muted-foreground">
                 Status
               </Label>
               <p className="text-sm mt-1">
