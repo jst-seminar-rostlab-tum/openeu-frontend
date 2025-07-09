@@ -1,9 +1,7 @@
-'use client';
-
-import { motion } from 'framer-motion';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
-import { PathDecisionForm } from '@/components/forms/PathDecisionFormInner';
+import { PathDecisionForm } from '@/components/forms/PathDecisionForm';
 import {
   Card,
   CardDescription,
@@ -11,46 +9,35 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { updatePathDecision } from '@/domain/actions/onboarding';
-import { useOnboardingNavigation } from '@/domain/hooks/useOnboardingNavigation';
+
+async function submitPathDecision(formData: FormData) {
+  'use server';
+  // Call the existing server action
+  const result = await updatePathDecision(formData);
+  if (result.success) {
+    // Get the user category to determine which step 2 to redirect to
+    const userCategory = formData.get('userCategory') as string;
+
+    if (userCategory === 'entrepreneur') {
+      redirect('/onboarding/2'); // Goes to Step2EntrepreneurRoleDetails
+    } else if (userCategory === 'politician') {
+      redirect('/onboarding/2'); // Goes to Step2PoliticalRoleDetails
+    }
+  }
+  // If there are errors, they will be handled by the form
+}
 
 export const Step1PathDecision = () => {
-  const { nextStep } = useOnboardingNavigation();
-
-  const handleSubmit = async (data: {
-    userCategory: 'entrepreneur' | 'politician';
-  }) => {
-    // Create FormData for server action
-    const formData = new FormData();
-    formData.append('userCategory', data.userCategory);
-
-    // Call server action
-    const result = await updatePathDecision(formData);
-
-    if (result.success) {
-      // Navigate to next step
-      nextStep();
-    } else if (result.fieldErrors) {
-      // Handle server validation errors - could show toast or other UI feedback
-      // For now, the form will handle validation on the client side
-    }
-  };
-
   return (
     <Card className="w-full max-w-2xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Tell us about yourself</CardTitle>
-          <CardDescription className="text-lg">
-            Help us personalize your OpenEU experience
-          </CardDescription>
-        </CardHeader>
-      </motion.div>
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl">Tell us about yourself</CardTitle>
+        <CardDescription className="text-lg">
+          Help us personalize your OpenEU experience
+        </CardDescription>
+      </CardHeader>
 
-      <PathDecisionForm onSubmit={handleSubmit} />
+      <PathDecisionForm action={submitPathDecision} />
     </Card>
   );
 };

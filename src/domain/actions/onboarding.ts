@@ -14,14 +14,10 @@ import {
   pathDecisionSchema,
   type PoliticianCompleteData,
   politicianRoleSchema,
-  registrationSchema,
   validateStep,
 } from '@/domain/schemas/OnboardingForm';
 import { createClient } from '@/lib/supabase/server';
 
-// Step-specific server actions for React Hook Form integration
-
-// Step 2: Update path decision
 export async function updatePathDecision(
   formData: FormData,
 ): Promise<ActionResult<z.infer<typeof pathDecisionSchema>>> {
@@ -237,110 +233,6 @@ export type ActionResult<T = void> = {
   fieldErrors?: Record<string, string>;
 };
 
-// Step 1: Register user with email and password
-export async function registerUser(
-  formData: FormData,
-): Promise<ActionResult<{ userId: string }>> {
-  try {
-    const rawData = {
-      name: formData.get('name') as string,
-      surname: formData.get('surname') as string,
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
-    };
-
-    // Validate the registration data
-    const validationResult = registrationSchema.safeParse(rawData);
-    if (!validationResult.success) {
-      const fieldErrors = validationResult.error.issues.reduce(
-        (acc, issue) => {
-          const field = issue.path.join('.');
-          acc[field] = issue.message;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
-      return {
-        success: false,
-        fieldErrors,
-        error: 'Please fix the validation errors',
-      };
-    }
-
-    const { name, surname, email, password } = validationResult.data;
-    const supabase = await createClient();
-
-    // Check if user already exists
-    const { data: existingUser } = await supabase
-      .from('profiles')
-      .select('email')
-      .eq('email', email)
-      .single();
-
-    if (existingUser) {
-      return {
-        success: false,
-        error: 'A user with this email already exists',
-      };
-    }
-
-    // Create auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name,
-          surname,
-        },
-      },
-    });
-
-    if (authError) {
-      return {
-        success: false,
-        error: authError.message,
-      };
-    }
-
-    if (!authData.user) {
-      return {
-        success: false,
-        error: 'Failed to create user account',
-      };
-    }
-
-    // Create initial profile record
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: authData.user.id,
-      name,
-      surname,
-      email,
-      onboarding_completed: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
-
-    if (profileError) {
-      return {
-        success: false,
-        error: 'Failed to create user profile',
-      };
-    }
-
-    return {
-      success: true,
-      data: { userId: authData.user.id },
-    };
-  } catch (_error) {
-    return {
-      success: false,
-      error: 'An unexpected error occurred during registration',
-    };
-  }
-}
-
 // Update profile data during onboarding
 export async function updateOnboardingProfile(
   profileData: Partial<ProfileData>,
@@ -466,7 +358,7 @@ export async function completeOnboarding(
 
     if (!validationResult.success) {
       const fieldErrors = validationResult.error.issues.reduce(
-        (acc, issue) => {
+        (acc: Record<string, string>, issue: z.ZodIssue) => {
           const field = issue.path.join('.');
           acc[field] = issue.message;
           return acc;
@@ -602,7 +494,7 @@ export async function validateOnboardingStep(
     }
 
     const errors = result.error.issues.reduce(
-      (acc, issue) => {
+      (acc: Record<string, string>, issue: z.ZodIssue) => {
         const field = issue.path.join('.');
         acc[field] = issue.message;
         return acc;

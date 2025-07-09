@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { motion } from 'framer-motion';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -28,20 +29,14 @@ import { entrepreneurRoleSchema } from '@/domain/schemas/OnboardingForm';
 import { INDUSTRIES } from '@/operations/onboarding/OnboardingOperations';
 
 interface EntrepreneurRoleFormProps {
-  onSubmit: (data: z.infer<typeof entrepreneurRoleSchema>) => Promise<void>;
-  onBack?: () => void;
-  isSubmitting?: boolean;
-  submitButtonText?: string;
-  showBackButton?: boolean;
+  action: (formData: FormData) => Promise<void>;
+  backAction?: () => Promise<void>;
 }
 
-export const EntrepreneurRoleForm = ({
-  onSubmit,
-  onBack,
-  isSubmitting = false,
-  submitButtonText = 'Continue',
-  showBackButton = true,
-}: EntrepreneurRoleFormProps) => {
+export function EntrepreneurRoleForm({
+  action,
+  backAction,
+}: EntrepreneurRoleFormProps) {
   const form = useForm<z.infer<typeof entrepreneurRoleSchema>>({
     resolver: zodResolver(entrepreneurRoleSchema),
     defaultValues: {
@@ -56,14 +51,11 @@ export const EntrepreneurRoleForm = ({
     mode: 'onSubmit',
   });
 
-  const handleSubmit = async (data: z.infer<typeof entrepreneurRoleSchema>) => {
-    await onSubmit(data);
-  };
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <form action={action}>
         <CardContent className="space-y-6">
+          {/* Form fields */}
           <FormField
             control={form.control}
             name="userType"
@@ -120,7 +112,7 @@ export const EntrepreneurRoleForm = ({
                       <SelectItem value="series_a">Series A</SelectItem>
                       <SelectItem value="series_b">Series B</SelectItem>
                       <SelectItem value="growth">Growth</SelectItem>
-                      <SelectItem value="established">Established</SelectItem>
+                      <SelectItem value="mature">Mature</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -144,9 +136,10 @@ export const EntrepreneurRoleForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="1">Just me</SelectItem>
-                      <SelectItem value="2-10">2-10 employees</SelectItem>
-                      <SelectItem value="11-50">11-50 employees</SelectItem>
+                      <SelectItem value="1">1 (Solo founder)</SelectItem>
+                      <SelectItem value="2-5">2-5 employees</SelectItem>
+                      <SelectItem value="6-20">6-20 employees</SelectItem>
+                      <SelectItem value="21-50">21-50 employees</SelectItem>
                       <SelectItem value="51-200">51-200 employees</SelectItem>
                       <SelectItem value="200+">200+ employees</SelectItem>
                     </SelectContent>
@@ -169,7 +162,7 @@ export const EntrepreneurRoleForm = ({
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your industry" />
+                      <SelectValue placeholder="Select your primary industry" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -185,16 +178,78 @@ export const EntrepreneurRoleForm = ({
             )}
           />
 
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="businessModel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Business Model</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select model" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="b2b">B2B</SelectItem>
+                      <SelectItem value="b2c">B2C</SelectItem>
+                      <SelectItem value="b2b2c">B2B2C</SelectItem>
+                      <SelectItem value="marketplace">Marketplace</SelectItem>
+                      <SelectItem value="saas">SaaS</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="regulatoryComplexity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Regulatory Complexity</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select complexity" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <FormField
             control={form.control}
             name="companyDescription"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Brief Company Description</FormLabel>
+                <FormLabel>
+                  Company Description{' '}
+                  <span className="text-sm text-muted-foreground">
+                    (optional)
+                  </span>
+                </FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Tell us about your company, what you do, and your goals..."
-                    rows={4}
+                    placeholder="Briefly describe your company or business idea..."
+                    className="min-h-[100px]"
                     {...field}
                   />
                 </FormControl>
@@ -203,27 +258,21 @@ export const EntrepreneurRoleForm = ({
             )}
           />
 
-          <div className="flex justify-between pt-6">
-            {showBackButton && onBack && (
-              <Button variant="outline" onClick={onBack} type="button">
-                Back
-              </Button>
-            )}
-            <Button
-              type="submit"
-              disabled={isSubmitting || form.formState.isSubmitting}
-              className="px-8"
-              style={{
-                marginLeft: !showBackButton || !onBack ? 'auto' : undefined,
-              }}
-            >
-              {isSubmitting || form.formState.isSubmitting
-                ? 'Validating...'
-                : submitButtonText}
+          <motion.div
+            className="flex justify-between pt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+          >
+            <Button variant="outline" onClick={backAction}>
+              Back
             </Button>
-          </div>
+            <Button type="submit" className="px-8">
+              Next
+            </Button>
+          </motion.div>
         </CardContent>
       </form>
     </Form>
   );
-};
+}

@@ -1,10 +1,7 @@
-'use client';
-
-import { motion } from 'framer-motion';
+import { redirect } from 'next/navigation';
 import React from 'react';
-import { z } from 'zod';
 
-import { FocusAreaForm } from '@/components/forms/FocusAreaFormInner';
+import { FocusAreaForm } from '@/components/forms/FocusAreaForm';
 import {
   Card,
   CardDescription,
@@ -12,50 +9,42 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { updateFocusArea } from '@/domain/actions/onboarding';
-import { useOnboardingNavigation } from '@/domain/hooks/useOnboardingNavigation';
-import { focusAreaSchema } from '@/domain/schemas/OnboardingForm';
+import { ToastOperations } from '@/operations/toast/toastOperations';
+
+async function submitFocusArea(formData: FormData) {
+  'use server';
+
+  // Call the existing server action
+  const result = await updateFocusArea(formData);
+
+  if (result.success) {
+    redirect('/onboarding/4');
+  }
+  // If there are errors, they will be handled by the form
+  else {
+    ToastOperations.showError({
+      title: 'Focus Area Update Failed',
+      message: 'Failed to update your focus areas. Please try again.',
+    });
+  }
+}
+
+async function goBack() {
+  'use server';
+  redirect('/onboarding/2');
+}
 
 export const Step3FocusArea = () => {
-  const { nextStep, prevStep } = useOnboardingNavigation();
-
-  const handleSubmit = async (data: z.infer<typeof focusAreaSchema>) => {
-    // Create FormData for server action
-    const formData = new FormData();
-    data.topicList.forEach((topic) => formData.append('topicList', topic));
-    data.geographicFocus.forEach((focus) =>
-      formData.append('geographicFocus', focus),
-    );
-    data.keyRegulatoryAreas.forEach((area) =>
-      formData.append('keyRegulatoryAreas', area),
-    );
-
-    // Call server action
-    const result = await updateFocusArea(formData);
-
-    if (result.success) {
-      nextStep();
-    } else if (result.fieldErrors) {
-      // Handle server validation errors - could show toast or other UI feedback
-      // For now, the form will handle validation on the client side
-    }
-  };
-
   return (
     <Card className="w-full max-w-2xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Focus Areas</CardTitle>
-          <CardDescription className="text-lg">
-            Tell us what topics and regions you&apos;re most interested in
-          </CardDescription>
-        </CardHeader>
-      </motion.div>
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl">Focus Areas</CardTitle>
+        <CardDescription className="text-lg">
+          Tell us what topics and regions you&apos;re most interested in
+        </CardDescription>
+      </CardHeader>
 
-      <FocusAreaForm onSubmit={handleSubmit} onBack={prevStep} />
+      <FocusAreaForm action={submitFocusArea} backAction={goBack} />
     </Card>
   );
 };

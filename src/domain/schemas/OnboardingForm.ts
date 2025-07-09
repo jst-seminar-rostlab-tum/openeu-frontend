@@ -1,28 +1,13 @@
 import { z } from 'zod';
 
-// Base field validations
-const emailSchema = z.string().email('Please enter a valid email address');
-const passwordSchema = z
-  .string()
-  .min(8, 'Password must be at least 8 characters long');
-const nameSchema = z.string().min(2, 'Name must be at least 2 characters long');
-
-// Step 1: Registration Schema
-export const registrationSchema = z.object({
-  name: nameSchema,
-  surname: nameSchema,
-  email: emailSchema,
-  password: passwordSchema,
-});
-
-// Step 2: Path Decision Schema
+// Step 1: Path Decision Schema
 export const pathDecisionSchema = z.object({
   userCategory: z.enum(['entrepreneur', 'politician'], {
     required_error: 'Please select your user category',
   }),
 });
 
-// Step 3: Role Details Schemas (split by user category)
+// Step 2: Role Details Schemas (split by user category)
 export const entrepreneurRoleSchema = z.object({
   userType: z
     .array(
@@ -91,7 +76,7 @@ export const politicianRoleSchema = z.object({
     .min(10, 'Please provide a description of at least 10 characters'),
 });
 
-// Step 4: Focus Area Schema
+// Step 3: Focus Area Schema
 export const focusAreaSchema = z.object({
   topicList: z
     .array(z.string())
@@ -112,8 +97,7 @@ export const completionSchema = z.object({
 });
 
 // Combined schemas for different user paths
-export const entrepreneurCompleteSchema = registrationSchema
-  .merge(pathDecisionSchema)
+export const entrepreneurCompleteSchema = pathDecisionSchema
   .merge(entrepreneurRoleSchema)
   .merge(focusAreaSchema)
   .merge(completionSchema)
@@ -136,8 +120,7 @@ export const entrepreneurCompleteSchema = registrationSchema
     areaOfExpertise: z.array(z.string()).optional(),
   });
 
-export const politicianCompleteSchema = registrationSchema
-  .merge(pathDecisionSchema)
+export const politicianCompleteSchema = pathDecisionSchema
   .merge(politicianRoleSchema)
   .merge(focusAreaSchema)
   .merge(completionSchema)
@@ -192,19 +175,17 @@ export const validateStep = (
 ) => {
   switch (step) {
     case 1:
-      return registrationSchema.safeParse(data);
-    case 2:
       return pathDecisionSchema.safeParse(data);
-    case 3:
+    case 2:
       if (!userCategory) {
-        throw new Error('User category is required for step 3 validation');
+        throw new Error('User category is required for step 2 validation');
       }
       return userCategory === 'entrepreneur'
         ? entrepreneurRoleSchema.safeParse(data)
         : politicianRoleSchema.safeParse(data);
-    case 4:
+    case 3:
       return focusAreaSchema.safeParse(data);
-    case 5:
+    case 4:
       return completionSchema.safeParse(data);
     default:
       return {
@@ -223,7 +204,6 @@ export const validateStep = (
 };
 
 // Type inference helpers
-export type RegistrationData = z.infer<typeof registrationSchema>;
 export type PathDecisionData = z.infer<typeof pathDecisionSchema>;
 export type EntrepreneurRoleData = z.infer<typeof entrepreneurRoleSchema>;
 export type PoliticianRoleData = z.infer<typeof politicianRoleSchema>;
@@ -243,7 +223,7 @@ export const getStepErrors = (
   const result = validateStep(step, data, userCategory);
   if (!result.success) {
     return result.error.issues.reduce(
-      (acc, issue) => {
+      (acc: Record<string, string>, issue: z.ZodIssue) => {
         const field = issue.path.join('.');
         acc[field] = issue.message;
         return acc;

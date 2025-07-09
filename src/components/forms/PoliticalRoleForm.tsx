@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { motion } from 'framer-motion';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -25,20 +26,14 @@ import {
 } from '@/operations/onboarding/OnboardingOperations';
 
 interface PoliticalRoleFormProps {
-  onSubmit: (data: z.infer<typeof politicianRoleSchema>) => Promise<void>;
-  onBack?: () => void;
-  isSubmitting?: boolean;
-  submitButtonText?: string;
-  showBackButton?: boolean;
+  action?: (formData: FormData) => Promise<void>;
+  backAction?: () => Promise<void>;
 }
 
-export const PoliticalRoleForm = ({
-  onSubmit,
-  onBack,
-  isSubmitting = false,
-  submitButtonText = 'Continue',
-  showBackButton = true,
-}: PoliticalRoleFormProps) => {
+export function PoliticalRoleForm({
+  action,
+  backAction,
+}: PoliticalRoleFormProps) {
   const form = useForm<z.infer<typeof politicianRoleSchema>>({
     resolver: zodResolver(politicianRoleSchema),
     defaultValues: {
@@ -51,13 +46,9 @@ export const PoliticalRoleForm = ({
     mode: 'onSubmit',
   });
 
-  const handleSubmit = async (data: z.infer<typeof politicianRoleSchema>) => {
-    await onSubmit(data);
-  };
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <form action={action}>
         <CardContent className="space-y-6">
           <FormField
             control={form.control}
@@ -139,27 +130,21 @@ export const PoliticalRoleForm = ({
             )}
           />
 
-          <div className="flex justify-between pt-6">
-            {showBackButton && onBack && (
-              <Button variant="outline" onClick={onBack} type="button">
-                Back
-              </Button>
-            )}
-            <Button
-              type="submit"
-              disabled={isSubmitting || form.formState.isSubmitting}
-              className="px-8"
-              style={{
-                marginLeft: !showBackButton || !onBack ? 'auto' : undefined,
-              }}
-            >
-              {isSubmitting || form.formState.isSubmitting
-                ? 'Validating...'
-                : submitButtonText}
+          <motion.div
+            className="flex justify-between gap-4 p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <Button variant="outline" type="button" onClick={backAction}>
+              Back
             </Button>
-          </div>
+            <Button type="submit" className="px-8">
+              Next
+            </Button>
+          </motion.div>
         </CardContent>
       </form>
     </Form>
   );
-};
+}
