@@ -3,11 +3,9 @@
 import { ReactNode, useState } from 'react';
 
 import { AlertTableItem } from '@/app/inbox/alertTypes';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -81,11 +79,6 @@ export function AlertDetailsDialog({
             <ViewAlertMeetingsDialog alert={alert} triggerStyle="button" />
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Close
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
