@@ -18,7 +18,6 @@ export async function fetchBackendAlerts(userId: string): Promise<Alert[]> {
       `${API_URL}?user_id=${userId}&include_inactive=true`,
       {
         method: 'GET',
-        credentials: 'include',
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +48,6 @@ export async function getMeetingsForAlert(alertId: string): Promise<Meeting[]> {
   const token = getCookie('token');
   const response = await fetch(`${API_URL}/${alertId}/meetings`, {
     method: 'GET',
-    credentials: 'include',
     mode: 'cors',
     headers: {
       'Content-Type': 'application/json',

@@ -14,7 +14,6 @@ export async function createNewAlert(params: {
   const token = (await cookies()).get('token')?.value;
   const response = await fetch(`${API_URL}`, {
     method: 'POST',
-    credentials: 'include',
     mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
@@ -36,7 +35,6 @@ export async function deleteAlert(alertId: string): Promise<void> {
   const token = (await cookies()).get('token')?.value;
   const response = await fetch(`${API_URL}/${alertId}`, {
     method: 'DELETE',
-    credentials: 'include',
     mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
@@ -59,7 +57,6 @@ export async function toggleAlertActive(
   const token = (await cookies()).get('token')?.value;
   const response = await fetch(`${API_URL}/${alertId}?active=${active}`, {
     method: 'PATCH',
-    credentials: 'include',
     mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
