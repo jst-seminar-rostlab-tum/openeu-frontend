@@ -1,3 +1,5 @@
+import { setCookie } from 'cookies-next';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 // The client you created from the Server-Side Auth instructions
@@ -16,7 +18,7 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient();
     const {
-      data: { user },
+      data: { user, session },
       error,
     } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
@@ -27,6 +29,10 @@ export async function GET(request: Request) {
 
       if (!count) {
         await supabase.auth.updateUser({ data: { incompleteProfile: true } });
+      }
+
+      if (session) {
+        setCookie('token', session.access_token, { cookies });
       }
 
       const forwardedHost = request.headers.get('x-forwarded-host'); // original origin before load balancer

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -13,7 +14,12 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/domain/hooks/useAuth';
-import { extractInitials, getDisplayName } from '@/lib/utils';
+import {
+  cn,
+  COLOR_SCHEMES,
+  extractInitials,
+  getDisplayName,
+} from '@/lib/utils';
 
 export function ProfilePopover() {
   const { user, loading, signOut } = useAuth();
@@ -65,6 +71,18 @@ export function ProfilePopover() {
             <Link href="/profile">
               <User className="h-4 w-4" />
               Profile
+              {user.user_metadata['incompleteProfile'] && (
+                <Badge
+                  className={cn(
+                    'ml-auto text-xs',
+                    COLOR_SCHEMES.orange.bg,
+                    COLOR_SCHEMES.orange.text,
+                    COLOR_SCHEMES.orange.outline,
+                  )}
+                >
+                  Incomplete
+                </Badge>
+              )}
             </Link>
           </Button>
         </div>

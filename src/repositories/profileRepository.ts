@@ -1,44 +1,29 @@
-import { ProfileData } from '@/domain/entities/profile/ProfileData';
-import { ToastOperations } from '@/operations/toast/toastOperations';
+import { getCookie } from 'cookies-next';
+
+import type { Profile } from '@/domain/entities/profile/generated-types';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/profile`;
 
 export const profileRepository = {
-  async createProfile(profileData: ProfileData): Promise<string> {
+  async getProfile(userId: string): Promise<Profile> {
+    const token = getCookie('token');
+
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
+      const res = await fetch(`${API_URL}/${userId}`, {
+        method: 'GET',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          id: profileData.id,
-          name: profileData.name,
-          surname: profileData.surname,
-          company_description: profileData.companyDescription,
-          topic_list: profileData.topicList,
-          newsletter_frequency: profileData.newsletterFrequency,
-          user_type: profileData.userType,
-          company_stage: profileData.companyStage,
-          company_size: profileData.companySize,
-          primary_industry: profileData.primaryIndustry,
-          geographic_focus: profileData.geographicFocus,
-          business_model: profileData.businessModel,
-          regulatory_complexity: profileData.regulatoryComplexity,
-          key_regulatory_areas: profileData.keyRegulatoryAreas,
-          onboarding_completed: profileData.onboardingCompleted,
-        }),
       });
       if (!res.ok) {
-        ToastOperations.showError({
-          title: 'Error fetching profile',
-          message: 'Failed to fetch profile. Please try again later.',
-        });
-        throw new Error('Failed to create profile');
+        throw new Error('Failed to get profile');
       }
-      return 'success';
+      const data = await res.json();
+      return data as Profile;
     } catch {
-      return 'error';
+      throw new Error('Failed to get profile');
     }
   },
 };

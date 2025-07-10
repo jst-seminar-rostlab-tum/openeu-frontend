@@ -16,7 +16,7 @@ import { ReactNode } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
-import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
+import { RelevanceScore } from '@/components/RelevanceScore';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -28,7 +28,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { members } from '@/domain/entities/mock/mock_members';
 import {
   formatTime,
@@ -58,7 +58,10 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <MapPin className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">Location</p>
-                <TagBadge className="max-w-full mt-1">
+                <TagBadge
+                  className="max-w-full mt-1"
+                  colorHash={event.location}
+                >
                   <span
                     className="truncate direction-rtl text-left"
                     title={

@@ -7,7 +7,7 @@ import {
 } from 'date-fns';
 
 import { MonthEventBadge } from '@/components/calendar/MonthViewCalendar/MonthEventBadge';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 
 interface IProps {
   selectedDate: Date;

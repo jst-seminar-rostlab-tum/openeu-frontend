@@ -38,6 +38,7 @@ interface MapProps {
   minZoom?: number;
   maxZoom?: number;
   countryMeetingMap: Map<string, CountryData>;
+  countryClickDisabled?: boolean;
 }
 
 export default function MapComponent({
@@ -47,6 +48,7 @@ export default function MapComponent({
   minZoom,
   maxZoom,
   countryMeetingMap,
+  countryClickDisabled = false,
 }: MapProps) {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
@@ -64,6 +66,7 @@ export default function MapComponent({
     : [];
 
   const handleCountryClick = (countryName: string) => {
+    if (countryClickDisabled) return;
     const countryData = countryMeetingMap.get(countryName);
     const meetingCount = countryData?.totalCount ?? 0;
 
@@ -260,7 +263,9 @@ export default function MapComponent({
           date={new Date()}
           events={selectedCountryMeetings}
           title={`Meetings in ${selectedCountry} (${selectedCountryMeetings.length} events)`}
+          selectedCountry={selectedCountry}
           open={dialogOpen}
+          isInCalendar={false}
           onOpenChange={setDialogOpen}
         />
       )}

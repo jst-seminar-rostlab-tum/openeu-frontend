@@ -12,8 +12,13 @@ const MapComponent = dynamic(() => import('@/components/map/MapComponent'), {
   ssr: false,
 });
 
-function MapInner() {
+function MapInner({
+  countryClickDisabled = false,
+}: {
+  countryClickDisabled?: boolean;
+}) {
   const { meetings } = useMeetingContext();
+
   const countryMeetingMap = useCountryMeetingMap(meetings);
 
   return (
@@ -23,6 +28,7 @@ function MapInner() {
       minZoom={4}
       center={[54.5452, 25.11912]}
       countryMeetingMap={countryMeetingMap}
+      countryClickDisabled={countryClickDisabled}
     />
   );
 }
