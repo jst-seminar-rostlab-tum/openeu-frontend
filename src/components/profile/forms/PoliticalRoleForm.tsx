@@ -1,12 +1,10 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { motion } from 'framer-motion';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { Button } from '@/components/ui/button';
 import { CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -19,40 +17,41 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { politicianRoleSchema } from '@/domain/schemas/OnboardingForm';
+import { Profile } from '@/domain/entities/profile/generated-types';
+import { politicianRoleSchema } from '@/domain/schemas/profile';
 import {
   POLICY_AREAS,
   POLITICAL_ROLES,
 } from '@/operations/onboarding/OnboardingOperations';
 
 interface PoliticalRoleFormProps {
-  action?: (formData: FormData) => Promise<void>;
-  backAction?: () => Promise<void>;
+  initialData?: Profile;
+  onSubmit: (data: z.infer<typeof politicianRoleSchema>) => void;
 }
 
 export function PoliticalRoleForm({
-  action,
-  backAction,
+  initialData,
+  onSubmit,
 }: PoliticalRoleFormProps) {
   const form = useForm<z.infer<typeof politicianRoleSchema>>({
     resolver: zodResolver(politicianRoleSchema),
     defaultValues: {
-      politicalRole: 'mep',
-      institution: '',
-      politicalParty: '',
-      areaOfExpertise: [],
-      companyDescription: '',
+      politician: {
+        role: initialData?.politician?.role || '',
+        institution: initialData?.politician?.institution || '',
+        area_of_expertise: initialData?.politician?.area_of_expertise || [],
+        further_information: initialData?.politician?.further_information || '',
+      },
     },
-    mode: 'onSubmit',
   });
 
   return (
     <Form {...form}>
-      <form action={action}>
+      <form id="political-role-form" onSubmit={form.handleSubmit(onSubmit)}>
         <CardContent className="space-y-6">
           <FormField
             control={form.control}
-            name="politicalRole"
+            name="politician.role"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-base font-semibold">
@@ -88,7 +87,7 @@ export function PoliticalRoleForm({
 
           <FormField
             control={form.control}
-            name="institution"
+            name="politician.institution"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Organization/Institution</FormLabel>
@@ -105,7 +104,7 @@ export function PoliticalRoleForm({
 
           <FormField
             control={form.control}
-            name="areaOfExpertise"
+            name="politician.area_of_expertise"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-base font-semibold">
@@ -129,20 +128,6 @@ export function PoliticalRoleForm({
               </FormItem>
             )}
           />
-
-          <motion.div
-            className="flex justify-between gap-4 p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <Button variant="outline" type="button" onClick={backAction}>
-              Back
-            </Button>
-            <Button type="submit" className="px-8">
-              Next
-            </Button>
-          </motion.div>
         </CardContent>
       </form>
     </Form>

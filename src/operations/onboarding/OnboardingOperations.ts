@@ -54,36 +54,45 @@ export const EU_COUNTRIES = [
 ];
 
 export const INDUSTRIES = [
-  'FinTech',
-  'HealthTech',
-  'EdTech',
-  'CleanTech',
-  'E-commerce',
-  'SaaS',
-  'AI/ML',
-  'Blockchain',
-  'IoT',
-  'Cybersecurity',
-  'Gaming',
-  'Media & Entertainment',
-  'Travel & Tourism',
-  'Food & Beverage',
-  'Fashion',
-  'Real Estate',
-  'Transportation',
-  'Energy',
-  'Manufacturing',
-  'Other',
+  { value: 'fintech', label: 'FinTech' },
+  { value: 'healthtech', label: 'HealthTech' },
+  { value: 'edtech', label: 'EdTech' },
+  { value: 'cleantech', label: 'CleanTech' },
+  { value: 'ecommerce', label: 'E-commerce' },
+  { value: 'saas', label: 'SaaS' },
+  { value: 'ai_ml', label: 'AI/ML' },
+  { value: 'blockchain', label: 'Blockchain' },
+  { value: 'iot', label: 'IoT' },
+  { value: 'cybersecurity', label: 'Cybersecurity' },
+  { value: 'gaming', label: 'Gaming' },
+  { value: 'media_entertainment', label: 'Media & Entertainment' },
+  { value: 'travel_tourism', label: 'Travel & Tourism' },
+  { value: 'food_beverage', label: 'Food & Beverage' },
+  { value: 'fashion', label: 'Fashion' },
+  { value: 'real_estate', label: 'Real Estate' },
+  { value: 'transportation', label: 'Transportation' },
+  { value: 'energy', label: 'Energy' },
+  { value: 'manufacturing', label: 'Manufacturing' },
+  { value: 'other', label: 'Other' },
 ];
 
-export const BUSINESS_MODELS: BusinessModel[] = [
-  { value: 'b2b', label: 'B2B (Business to Business)' },
-  { value: 'b2c', label: 'B2C (Business to Consumer)' },
-  { value: 'b2b2c', label: 'B2B2C (Business to Business to Consumer)' },
-  { value: 'marketplace', label: 'Marketplace' },
-  { value: 'saas', label: 'Software as a Service (SaaS)' },
-  { value: 'hardware', label: 'Hardware' },
-  { value: 'other', label: 'Other' },
+export const COMPANY_STAGES = [
+  { value: 'idea', label: 'Idea Stage' },
+  { value: 'pre_seed', label: 'Pre-Seed' },
+  { value: 'seed', label: 'Seed' },
+  { value: 'series_a', label: 'Series A' },
+  { value: 'series_b', label: 'Series B' },
+  { value: 'growth', label: 'Growth' },
+  { value: 'established', label: 'Established' },
+];
+
+export const COMPANY_SIZES = [
+  { value: '1', label: '1 (Solo founder)' },
+  { value: '2-5', label: '2-5 employees' },
+  { value: '6-20', label: '6-20 employees' },
+  { value: '21-50', label: '21-50 employees' },
+  { value: '51-200', label: '51-200 employees' },
+  { value: '200+', label: '200+ employees' },
 ];
 
 export const POLICY_AREAS = [

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import React from 'react';
 
-import { CompletionForm } from '@/components/forms/CompletionForm';
+import { CompletionForm } from '@/components/profile/forms/CompletionForm';
 import {
   Card,
   CardDescription,

@@ -2,17 +2,20 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import React from 'react';
 
-import { Step1PathDecision } from '@/components/onboarding/Step1PathDecision';
-import { Step2EntrepreneurRoleDetails } from '@/components/onboarding/Step2EntrepreneurRoleDetails';
-import { Step2PoliticalRoleDetails } from '@/components/onboarding/Step2PoliticalRoleDetails';
+import Step1PathDecision from '@/components/onboarding/Step1PathDecision';
+import Step2EntrepreneurRoleDetails from '@/components/onboarding/Step2EntrepreneurRoleDetails';
+import Step2PoliticalRoleDetails from '@/components/onboarding/Step2PoliticalRoleDetails';
 import { Step3FocusArea } from '@/components/onboarding/Step3FocusArea';
 import { Step4Completion } from '@/components/onboarding/Step4Completion';
 import { Step5Preview } from '@/components/onboarding/Step5Preview';
 import { Progress } from '@/components/ui/progress';
-import { getCurrentProfile } from '@/domain/actions/onboarding';
+import { getUser } from '@/lib/dal';
+import { profileRepository } from '@/repositories/profileRepository';
+
 export const metadata: Metadata = {
-  title: 'Onboarding - OpenEU',
+  title: 'Onboarding',
   description: 'Complete your OpenEU profile setup',
+  keywords: ['onboarding', 'openeu', 'profile', 'setup'],
 };
 
 interface OnboardingStepPageProps {
@@ -36,21 +39,42 @@ export default async function OnboardingStepPage({
 
   const currentStep = parseInt(step, 10);
 
+  const user = await getUser();
+
+  // TODO: find a better way to handle this
+  if (!user) {
+    throw new Error('User not authenticated. Please log in to continue.');
+  }
+
+  // TODO: find a better way to handle this too
+  let profile = undefined;
+  try {
+    profile = await profileRepository.getProfile(user.id);
+  } catch (error) {
+    console.warn('Profile not found, assuming new user:', error);
+  }
+
   // Render the appropriate step component
   const renderStep = async () => {
     switch (currentStep) {
       case 1:
-        return <Step1PathDecision />;
+        return <Step1PathDecision initialData={profile} userId={user.id} />;
       case 2: {
         // Get user's profile to determine which Step2 component to show
-        const profileResult = await getCurrentProfile();
-        const userCategory = profileResult.data?.userCategory;
+        const userType = profile?.user_type;
 
-        if (userCategory === 'politician') {
-          return <Step2PoliticalRoleDetails />;
+        if (userType === 'politician') {
+          return (
+            <Step2PoliticalRoleDetails initialData={profile} userId={user.id} />
+          );
         } else {
           // Default to entrepreneur if no category set or if entrepreneur
-          return <Step2EntrepreneurRoleDetails />;
+          return (
+            <Step2EntrepreneurRoleDetails
+              initialData={profile}
+              userId={user.id}
+            />
+          );
         }
       }
       case 3:

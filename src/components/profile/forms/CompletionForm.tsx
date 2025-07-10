@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { completionSchema } from '@/domain/schemas/OnboardingForm';
+import { completionSchema } from '@/domain/schemas/profile';
 
 interface CompletionFormProps {
   action: (formData: FormData) => Promise<void>;

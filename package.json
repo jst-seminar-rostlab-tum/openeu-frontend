@@ -83,7 +83,7 @@
     "tailwind-variants": "^1.0.0",
     "tanstack": "^1.0.0",
     "xlsx": "^0.18.5",
-    "zod": "^3.25.74"
+    "zod": "^4.0.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

@@ -2,35 +2,6 @@
   "openapi": "3.1.0",
   "info": { "title": "FastAPI", "version": "0.1.0" },
   "paths": {
-    "/profile/": {
-      "post": {
-        "tags": ["profile"],
-        "summary": "Create Profile",
-        "operationId": "create_profile_profile__post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/ProfileCreate" }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
-              }
-            }
-          }
-        }
-      }
-    },
     "/profile/{user_id}": {
       "get": {
         "tags": ["profile"],
@@ -91,6 +62,35 @@
                 "schema": { "$ref": "#/components/schemas/ProfileReturn" }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/": {
+      "post": {
+        "tags": ["profile"],
+        "summary": "Create Profile",
+        "operationId": "create_profile_profile__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProfileCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
           },
           "422": {
             "description": "Validation Error",
@@ -382,26 +382,6 @@
         }
       }
     },
-    "/scheduler/tick": {
-      "get": {
-        "summary": "Run Scheduled Tasks",
-        "operationId": "run_scheduled_tasks_scheduler_tick_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": { "type": "string" },
-                  "type": "object",
-                  "title": "Response Run Scheduled Tasks Scheduler Tick Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/scheduler/run/{job_name}": {
       "post": {
         "summary": "Run Task",
@@ -600,7 +580,7 @@
             "schema": {
               "type": "integer",
               "exclusiveMinimum": 1,
-              "default": 100,
+              "default": 500,
               "title": "Limit"
             }
           },
@@ -647,6 +627,17 @@
               "title": "Rapporteur"
             },
             "description": "Filter by rapporteur name"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "User ID for personalized meeting recommendations",
+              "title": "User Id"
+            },
+            "description": "User ID for personalized meeting recommendations"
           }
         ],
         "responses": {
@@ -1074,6 +1065,82 @@
         "required": ["session_id", "message"],
         "title": "ChatMessageItem"
       },
+      "CompanyCreate": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "name": { "type": "string", "title": "Name" },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "company_stage": { "type": "string", "title": "Company Stage" },
+          "company_size": { "type": "string", "title": "Company Size" },
+          "industry": { "type": "string", "title": "Industry" }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "name",
+          "company_stage",
+          "company_size",
+          "industry"
+        ],
+        "title": "CompanyCreate"
+      },
+      "CompanyReturn": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "name": { "type": "string", "title": "Name" },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "company_stage": { "type": "string", "title": "Company Stage" },
+          "company_size": { "type": "string", "title": "Company Size" },
+          "industry": { "type": "string", "title": "Industry" },
+          "id": { "type": "string", "format": "uuid4", "title": "Id" }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "name",
+          "company_stage",
+          "company_size",
+          "industry",
+          "id"
+        ],
+        "title": "CompanyReturn"
+      },
+      "CompanyUpdate": {
+        "properties": {
+          "role": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Role"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "company_stage": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Company Stage"
+          },
+          "company_size": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Company Size"
+          },
+          "industry": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Industry"
+          }
+        },
+        "type": "object",
+        "title": "CompanyUpdate"
+      },
       "CreateAlertRequest": {
         "properties": {
           "user_id": { "type": "string", "title": "User Id" },
@@ -1388,6 +1455,16 @@
           "similarity": {
             "anyOf": [{ "type": "number" }, { "type": "null" }],
             "title": "Similarity"
+          },
+          "member": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Person" },
+              { "type": "null" }
+            ]
+          },
+          "attendees": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Attendees"
           }
         },
         "type": "object",
@@ -1480,15 +1557,139 @@
         ],
         "title": "Notification"
       },
+      "Person": {
+        "properties": {
+          "identifier": { "type": "string", "title": "Identifier" },
+          "type": { "type": "string", "title": "Type" },
+          "label": { "type": "string", "title": "Label" },
+          "familyName": { "type": "string", "title": "Familyname" },
+          "givenName": { "type": "string", "title": "Givenname" },
+          "sortLabel": { "type": "string", "title": "Sortlabel" },
+          "api:country-of-representation": {
+            "type": "string",
+            "title": "Api:Country-Of-Representation"
+          },
+          "api:political-group": {
+            "type": "string",
+            "title": "Api:Political-Group"
+          },
+          "officialFamilyName": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Officialfamilyname"
+          },
+          "officialGivenName": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Officialgivenname"
+          }
+        },
+        "type": "object",
+        "required": [
+          "identifier",
+          "type",
+          "label",
+          "familyName",
+          "givenName",
+          "sortLabel",
+          "api:country-of-representation",
+          "api:political-group"
+        ],
+        "title": "Person",
+        "description": "Model representing a Member of European Parliament (MEP).\n\nThis model contains detailed information about each MEP\nas provided by the European Parliament API."
+      },
+      "PoliticianCreate": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "further_information": {
+            "type": "string",
+            "title": "Further Information"
+          },
+          "institution": { "type": "string", "title": "Institution" },
+          "area_of_expertise": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Area Of Expertise"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "further_information",
+          "institution",
+          "area_of_expertise"
+        ],
+        "title": "PoliticianCreate"
+      },
+      "PoliticianReturn": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "further_information": {
+            "type": "string",
+            "title": "Further Information"
+          },
+          "institution": { "type": "string", "title": "Institution" },
+          "area_of_expertise": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Area Of Expertise"
+          },
+          "id": { "type": "string", "format": "uuid4", "title": "Id" }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "further_information",
+          "institution",
+          "area_of_expertise",
+          "id"
+        ],
+        "title": "PoliticianReturn"
+      },
+      "PoliticianUpdate": {
+        "properties": {
+          "role": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Role"
+          },
+          "further_information": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Further Information"
+          },
+          "institution": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Institution"
+          },
+          "area_of_expertise": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Area Of Expertise"
+          }
+        },
+        "type": "object",
+        "title": "PoliticianUpdate"
+      },
       "ProfileCreate": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
           "name": { "type": "string", "title": "Name" },
           "surname": { "type": "string", "title": "Surname" },
-          "company_name": { "type": "string", "title": "Company Name" },
-          "company_description": {
+          "user_type": {
             "type": "string",
-            "title": "Company Description"
+            "enum": ["entrepreneur", "politician"],
+            "title": "User Type"
+          },
+          "company": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CompanyCreate" },
+              { "type": "null" }
+            ]
+          },
+          "politician": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PoliticianCreate" },
+              { "type": "null" }
+            ]
           },
           "topic_ids": {
             "items": { "type": "string" },
@@ -1511,8 +1712,7 @@
           "id",
           "name",
           "surname",
-          "company_name",
-          "company_description",
+          "user_type",
           "topic_ids",
           "countries",
           "newsletter_frequency"
@@ -1524,10 +1724,22 @@
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
           "name": { "type": "string", "title": "Name" },
           "surname": { "type": "string", "title": "Surname" },
-          "company_name": { "type": "string", "title": "Company Name" },
-          "company_description": {
+          "user_type": {
             "type": "string",
-            "title": "Company Description"
+            "enum": ["entrepreneur", "politician"],
+            "title": "User Type"
+          },
+          "company": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CompanyReturn" },
+              { "type": "null" }
+            ]
+          },
+          "politician": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PoliticianReturn" },
+              { "type": "null" }
+            ]
           },
           "topic_ids": {
             "items": { "type": "string" },
@@ -1544,6 +1756,7 @@
             "enum": ["daily", "weekly", "none"],
             "title": "Newsletter Frequency"
           },
+          "embedding_input": { "type": "string", "title": "Embedding Input" },
           "embedding": {
             "items": { "type": "number" },
             "type": "array",
@@ -1555,11 +1768,11 @@
           "id",
           "name",
           "surname",
-          "company_name",
-          "company_description",
+          "user_type",
           "topic_ids",
           "countries",
           "newsletter_frequency",
+          "embedding_input",
           "embedding"
         ],
         "title": "ProfileReturn"
@@ -1574,13 +1787,24 @@
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Surname"
           },
-          "company_name": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Company Name"
+          "user_type": {
+            "anyOf": [
+              { "type": "string", "enum": ["entrepreneur", "politician"] },
+              { "type": "null" }
+            ],
+            "title": "User Type"
           },
-          "company_description": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Company Description"
+          "company": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CompanyUpdate" },
+              { "type": "null" }
+            ]
+          },
+          "politician": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PoliticianUpdate" },
+              { "type": "null" }
+            ]
           },
           "topic_ids": {
             "anyOf": [
