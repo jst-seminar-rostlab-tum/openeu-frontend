@@ -3,7 +3,6 @@
 import { ChevronDown, ChevronUp, Eye, Search } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AlertTableItem } from '@/app/inbox/alertTypes';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AlertTableItem } from '@/domain/entities/alerts/alert';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 import { getMeetingsForAlert } from '@/repositories/alertRepository';

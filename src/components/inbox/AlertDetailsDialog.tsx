@@ -2,7 +2,6 @@
 
 import { ReactNode, useState } from 'react';
 
-import { AlertTableItem } from '@/app/inbox/alertTypes';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { AlertTableItem } from '@/domain/entities/alerts/alert';
 
 import { ViewAlertMeetingsDialog } from './ViewAlertMeetingsDialog';
 
