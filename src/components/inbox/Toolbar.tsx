@@ -25,16 +25,24 @@ export function DataTableToolbar<TData>({
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
 
-  // Get country options from TanStack Table's faceted values
   const countryOptions = useMemo(() => {
-    const countryColumn = table.getColumn('country');
-    if (!countryColumn) return [];
+    const hasCountryColumn = table
+      .getAllColumns()
+      .some((col) => col.id === 'country');
+    if (!hasCountryColumn) return [];
+    try {
+      const countryColumn = table.getColumn('country');
+      if (!countryColumn) return [];
 
-    const facetedValues = countryColumn.getFacetedUniqueValues();
-    return Array.from(facetedValues.keys()).map((country) => ({
-      label: country,
-      value: country,
-    }));
+      const facetedValues = countryColumn.getFacetedUniqueValues();
+      return Array.from(facetedValues.keys()).map((country) => ({
+        label: country,
+        value: country,
+      }));
+    } catch (error) {
+      console.error('Error fetching country options:', error);
+      return [];
+    }
   }, [table]);
 
   // Show bulk actions when items are selected
@@ -69,13 +77,22 @@ export function DataTableToolbar<TData>({
           onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn('country') && (
-          <DataTableFacetedFilter
-            column={table.getColumn('country')}
-            title="Country"
-            options={countryOptions}
-          />
-        )}
+        {(() => {
+          const hasCountryColumn = table
+            .getAllColumns()
+            .some((col) => col.id === 'country');
+          if (hasCountryColumn) {
+            const countryColumn = table.getColumn('country');
+            return countryColumn && countryOptions.length > 0 ? (
+              <DataTableFacetedFilter
+                column={countryColumn}
+                title="Country"
+                options={countryOptions}
+              />
+            ) : null;
+          }
+          return null;
+        })()}
         {table.getColumn('date') && (
           <DateRangeFilter
             from={
