@@ -8,6 +8,7 @@ import Step2PoliticalRoleDetails from '@/components/onboarding/Step2PoliticalRol
 import { Step3FocusArea } from '@/components/onboarding/Step3FocusArea';
 import { Step4Completion } from '@/components/onboarding/Step4Completion';
 import { Step5Preview } from '@/components/onboarding/Step5Preview';
+import { Section } from '@/components/section';
 import { Progress } from '@/components/ui/progress';
 import { getUser } from '@/lib/dal';
 import { profileRepository } from '@/repositories/profileRepository';
@@ -89,30 +90,21 @@ export default async function OnboardingStepPage({
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Progress indicator */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-muted-foreground">
-              Step {currentStep} of {TOTAL_STEPS}
-            </span>
-            <span className="text-sm font-medium text-muted-foreground">
-              {Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete
-            </span>
-          </div>
-          <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2" />
+    <Section className="space-y-6">
+      {/* Progress indicator */}
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-medium text-muted-foreground">
+            Step {currentStep} of {TOTAL_STEPS}
+          </span>
+          <span className="text-sm font-medium text-muted-foreground">
+            {Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete
+          </span>
         </div>
-
-        {/* Step content */}
-        <div>{await renderStep()}</div>
+        <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2" />
       </div>
-    </div>
+      {/* Step content */}
+      {await renderStep()}
+    </Section>
   );
-}
-
-export function generateStaticParams() {
-  return VALID_STEPS.map((step) => ({
-    step,
-  }));
 }

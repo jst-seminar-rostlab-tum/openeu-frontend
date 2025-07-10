@@ -50,7 +50,7 @@ export default function Step1PathDecision({
     profileMutation.mutate({ userId: userId, data });
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Tell us about yourself</CardTitle>
         <CardDescription className="text-lg">
