@@ -11,14 +11,15 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddAlertDialog } from '@/components/inbox/AddAlertDialog';
+import InboxSkeleton from '@/components/inbox/InboxSkeleton';
 import { DataTablePagination } from '@/components/inbox/Pagination';
 import { DataTableToolbar } from '@/components/inbox/Toolbar';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Section } from '@/components/section';
+import { mapAlertToTableItem } from '@/domain/entities/alerts/alert';
 import { useAlerts } from '@/domain/hooks/alertHooks';
 import { toggleAlertActive } from '@/repositories/alertRepository';
 
-import { getAlertColumns } from './alertColumns';
-import { mapAlertToTableItem } from './alertTypes';
+import { getAlertColumns } from './alert-columns';
 import { DataTable } from './data-table';
 
 interface AlertsSectionProps {
@@ -75,11 +76,10 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
 
   if (isAlertsLoading) {
     return (
-      <div className="space-y-2">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-12 w-full" />
-      </div>
+      <Section>
+        <h1 className="text-2xl font-bold">Alerts</h1>
+        <InboxSkeleton />
+      </Section>
     );
   }
 

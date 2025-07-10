@@ -12,18 +12,18 @@ import {
 } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import InboxSkeleton from '@/components/inbox/InboxSkeleton';
 import { NewsletterDialog } from '@/components/inbox/NewsletterDialog';
 import { DataTablePagination } from '@/components/inbox/Pagination';
 import { DataTableToolbar } from '@/components/inbox/Toolbar';
 import { Section } from '@/components/section';
-import { Skeleton } from '@/components/ui/skeleton';
 import { InboxItem } from '@/domain/entities/inbox-item/inbox-item';
 import { useNotifications } from '@/domain/hooks/notificationsHooks';
 import { useNewsletterDialog } from '@/domain/hooks/useNewsletterDialog';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
-import { createColumns } from './columns';
 import { DataTable } from './data-table';
+import { createColumns } from './inbox-columns';
 
 interface InboxSectionProps {
   userId: string;
@@ -150,11 +150,7 @@ export function InboxSection({ userId }: InboxSectionProps) {
     return (
       <Section>
         <h1 className="text-2xl font-bold">Inbox</h1>
-        <div className="space-y-2">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="h-12 w-full" />
-        </div>
+        <InboxSkeleton />
       </Section>
     );
   }

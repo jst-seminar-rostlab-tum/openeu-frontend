@@ -1,22 +1,17 @@
-'use client';
-
-import { useState } from 'react';
-
 import { Section } from '@/components/section';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/domain/hooks/useAuth';
+import { getUser } from '@/lib/dal';
 
 import { AlertsSection } from './AlertsSection';
 import { InboxSection } from './InboxSection';
 
-export default function InboxPage() {
-  const [tab, setTab] = useState('inbox');
-  const { user } = useAuth();
+export default async function InboxPage() {
+  const user = await getUser();
 
   return (
     <Section>
-      <Tabs value={tab} onValueChange={setTab} className="mt-4">
-        <TabsList>
+      <Tabs defaultValue="inbox" className="mt-4">
+        <TabsList className="w-sm">
           <TabsTrigger value="inbox">Inbox</TabsTrigger>
           <TabsTrigger value="alerts">Alerts</TabsTrigger>
         </TabsList>

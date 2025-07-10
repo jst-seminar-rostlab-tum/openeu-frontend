@@ -16,8 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-import { AlertActions, AlertTableItem } from './alertTypes';
+import { AlertActions, AlertTableItem } from '@/domain/entities/alerts/alert';
 
 export const getAlertColumns = ({
   onToggleActive,
@@ -62,10 +61,8 @@ export const getAlertColumns = ({
   },
   {
     accessorKey: 'date',
-    header: () => (
-      <div className="flex items-center justify-center w-full">
-        Creation date
-      </div>
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Creation Date" />
     ),
     cell: ({ row }) => {
       const date = row.getValue('date') as string | null;
@@ -83,12 +80,11 @@ export const getAlertColumns = ({
       );
     },
     enableSorting: false,
-    enableHiding: false,
   },
   {
-    accessorKey: 'is_active',
-    header: () => (
-      <div className="flex items-center justify-center w-full">Active</div>
+    accessorKey: 'active',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Active" />
     ),
     cell: ({ row }) => {
       const isActive = row.getValue('is_active') as boolean;
