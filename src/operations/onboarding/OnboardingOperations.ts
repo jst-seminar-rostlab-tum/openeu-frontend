@@ -13,46 +13,6 @@ export interface ActionItem {
   insight: string;
 }
 
-export interface PoliticalRole {
-  value: string;
-  label: string;
-}
-
-export interface BusinessModel {
-  value: string;
-  label: string;
-}
-
-export const EU_COUNTRIES = [
-  'Austria',
-  'Belgium',
-  'Bulgaria',
-  'Croatia',
-  'Cyprus',
-  'Czech Republic',
-  'Denmark',
-  'Estonia',
-  'Finland',
-  'France',
-  'Germany',
-  'Greece',
-  'Hungary',
-  'Ireland',
-  'Italy',
-  'Latvia',
-  'Lithuania',
-  'Luxembourg',
-  'Malta',
-  'Netherlands',
-  'Poland',
-  'Portugal',
-  'Romania',
-  'Slovakia',
-  'Slovenia',
-  'Spain',
-  'Sweden',
-];
-
 export const INDUSTRIES = [
   { value: 'fintech', label: 'FinTech' },
   { value: 'healthtech', label: 'HealthTech' },
@@ -116,33 +76,6 @@ export const POLICY_AREAS = [
   'Regional Development',
   'Internal Market',
   'Other',
-];
-
-export const POLITICAL_ROLES: PoliticalRole[] = [
-  { value: 'mep', label: 'Member of European Parliament (MEP)' },
-  { value: 'national_mp', label: 'National Member of Parliament' },
-  { value: 'local_representative', label: 'Local Representative/Councillor' },
-  { value: 'policy_advisor', label: 'Policy Advisor' },
-  { value: 'civil_servant', label: 'Civil Servant' },
-  { value: 'other', label: 'Other' },
-];
-
-export const REGULATORY_AREAS = [
-  'GDPR & Data Protection',
-  'Financial Services (PSD2, MiFID)',
-  'Digital Services Act (DSA)',
-  'Digital Markets Act (DMA)',
-  'AI Regulation',
-  'Cybersecurity (NIS2)',
-  'Environmental Regulations',
-  'Labor & Employment Law',
-  'Tax & VAT Compliance',
-  'Medical Device Regulation (MDR)',
-  'Consumer Protection',
-  'Competition Law',
-  'Intellectual Property',
-  'Import/Export Regulations',
-  'Industry-specific regulations',
 ];
 
 export const getActionItemsForProfile = (

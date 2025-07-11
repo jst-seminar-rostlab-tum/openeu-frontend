@@ -2,6 +2,7 @@ import { getCookie } from 'cookies-next';
 
 import type {
   Profile,
+  ProfileCreate,
   ProfileUpdate,
 } from '@/domain/entities/profile/generated-types';
 
@@ -28,6 +29,28 @@ export const profileRepository = {
     } catch {
       throw new Error('Failed to get profile');
     }
+  },
+  createProfile: async (data: ProfileCreate) => {
+    const token = getCookie('token');
+
+    const response = await fetch(`${API_URL}/`, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`,
+      );
+    }
+
+    return response.json();
   },
   updateProfile: async (userId: string, data: ProfileUpdate) => {
     const token = getCookie('token');

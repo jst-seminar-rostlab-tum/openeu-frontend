@@ -1,54 +1,22 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
 import React from 'react';
+import { UseFormReturn } from 'react-hook-form';
 import z from 'zod';
 
 import { PathDecisionForm } from '@/components/profile/forms/PathDecisionForm';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Spinner } from '@/components/ui/spinner';
-import { Profile } from '@/domain/entities/profile/generated-types';
-import { useProfileUpdateMutation } from '@/domain/hooks/profileHooks';
-import { pathDecisionSchema } from '@/domain/schemas/profile';
-import { ToastOperations } from '@/operations/toast/toastOperations';
+import { onboardingSchema } from '@/domain/schemas/profile';
 
 interface Step1PathDecisionProps {
-  initialData?: Profile;
-  userId: string;
+  form: UseFormReturn<z.infer<typeof onboardingSchema>>;
 }
 
-export default function Step1PathDecision({
-  initialData,
-  userId,
-}: Step1PathDecisionProps) {
-  const router = useRouter();
-  const profileMutation = useProfileUpdateMutation({
-    onSuccess: () => {
-      ToastOperations.showSuccess({
-        title: 'Path Decision Successful',
-        message: 'Your path decision has been saved successfully.',
-      });
-      router.push('/onboarding/2');
-    },
-    onError: () => {
-      ToastOperations.showError({
-        title: 'Profile Update Failed',
-        message: 'Failed to update your profile. Please try again.',
-      });
-    },
-  });
-
-  const onSubmit = (data: z.infer<typeof pathDecisionSchema>) =>
-    profileMutation.mutate({ userId: userId, data });
-
+export default function Step1PathDecision({ form }: Step1PathDecisionProps) {
   return (
     <Card>
       <CardHeader className="text-center">
@@ -58,21 +26,8 @@ export default function Step1PathDecision({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <PathDecisionForm onSubmit={onSubmit} initialData={initialData} />
+        <PathDecisionForm form={form} />
       </CardContent>
-      <CardFooter className="justify-end">
-        <Button
-          type="submit"
-          form="path-decision-form"
-          disabled={profileMutation.isPending}
-        >
-          {profileMutation.isPending ? (
-            <Spinner className="text-white dark:text-black" size="small" />
-          ) : (
-            'Next'
-          )}
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

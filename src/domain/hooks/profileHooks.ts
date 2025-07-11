@@ -4,9 +4,16 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type {
   Profile,
+  ProfileCreate,
   ProfileUpdate,
 } from '@/domain/entities/profile/generated-types';
 import { profileRepository } from '@/repositories/profileRepository';
+
+interface UseProfileMutationOptions {
+  onSuccess?: (data: Profile) => void;
+  onError?: (error: Error) => void;
+  onSettled?: () => void;
+}
 
 export const useProfile = (userId: string, enabled = true) =>
   useQuery<Profile>({
@@ -15,14 +22,22 @@ export const useProfile = (userId: string, enabled = true) =>
     enabled: !!userId && enabled,
   });
 
-interface UseProfileUpdateMutationOptions {
-  onSuccess?: (data: Profile) => void;
-  onError?: (error: Error) => void;
-  onSettled?: () => void;
-}
+export const useProfileCreateMutation = (
+  options?: UseProfileMutationOptions,
+) => {
+  return useMutation({
+    mutationFn: (data: ProfileCreate) => profileRepository.createProfile(data),
+    onSuccess: (data) => {
+      options?.onSuccess?.(data);
+    },
+    onError: (error) => {
+      options?.onError?.(error);
+    },
+  });
+};
 
 export const useProfileUpdateMutation = (
-  options?: UseProfileUpdateMutationOptions,
+  options?: UseProfileMutationOptions,
 ) => {
   const queryClient = useQueryClient();
 

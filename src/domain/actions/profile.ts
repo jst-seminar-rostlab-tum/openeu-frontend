@@ -52,7 +52,7 @@ export async function createProfile(
 ): Promise<ProfileCreate> {
   const token = getCookie('token');
 
-  const res = await fetch(`${API_BASE_URL}/profile`, {
+  const res = await fetch(`${API_BASE_URL}/profile/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export async function createProfile(
     body: JSON.stringify(data),
   });
   if (!res.ok) {
-    throw new Error('Failed to create profile');
+    throw new Error(res.statusText);
   }
   return res.json();
 }

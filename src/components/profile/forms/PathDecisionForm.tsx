@@ -1,10 +1,9 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { Building2, Users } from 'lucide-react';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { UseFormReturn } from 'react-hook-form';
 import z from 'zod';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,25 +15,14 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Profile } from '@/domain/entities/profile/generated-types';
-import { pathDecisionSchema } from '@/domain/schemas/profile';
+import { Input } from '@/components/ui/input';
+import { onboardingSchema } from '@/domain/schemas/profile';
 
 interface PathDecisionFormProps {
-  initialData?: Profile;
-  onSubmit: (data: z.infer<typeof pathDecisionSchema>) => void;
+  form: UseFormReturn<z.infer<typeof onboardingSchema>>;
 }
 
-export function PathDecisionForm({
-  initialData,
-  onSubmit,
-}: PathDecisionFormProps) {
-  const form = useForm<z.infer<typeof pathDecisionSchema>>({
-    resolver: zodResolver(pathDecisionSchema),
-    defaultValues: {
-      user_type: initialData?.user_type || 'entrepreneur',
-    },
-  });
-
+export function PathDecisionForm({ form }: PathDecisionFormProps) {
   const options = [
     {
       value: 'entrepreneur',
@@ -52,19 +40,19 @@ export function PathDecisionForm({
 
   return (
     <Form {...form}>
-      <form id="path-decision-form" onSubmit={form.handleSubmit(onSubmit)}>
-        <CardContent className="space-y-6">
+      <form>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           <FormField
             control={form.control}
             name="user_type"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="col-span-full">
                 <FormLabel className="text-base font-semibold">
                   I am a:
                 </FormLabel>
                 <FormControl>
                   <motion.div
-                    className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.4 }}
@@ -101,6 +89,32 @@ export function PathDecisionForm({
                       );
                     })}
                   </motion.div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your name..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="surname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Surname</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your surname..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

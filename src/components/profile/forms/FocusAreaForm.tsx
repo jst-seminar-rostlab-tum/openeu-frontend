@@ -1,11 +1,11 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { UseFormReturn } from 'react-hook-form';
+import z from 'zod';
 
-import { Button } from '@/components/ui/button';
+import { europeanCountries } from '@/components/map/constants';
 import { CardContent } from '@/components/ui/card';
 import {
   Form,
@@ -17,128 +17,97 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { focusAreaSchema } from '@/domain/schemas/profile';
-import {
-  EU_COUNTRIES,
-  POLICY_AREAS,
-} from '@/operations/onboarding/OnboardingOperations';
+import { useTopics } from '@/domain/hooks/topicHook';
+import { onboardingSchema } from '@/domain/schemas/profile';
 
 interface FocusAreaFormProps {
-  action?: (formData: FormData) => Promise<void>;
-  backAction?: (formData: FormData) => Promise<void>;
+  form: UseFormReturn<z.infer<typeof onboardingSchema>>;
 }
 
-export function FocusAreaForm({ action, backAction }: FocusAreaFormProps) {
-  const form = useForm({
-    resolver: zodResolver(focusAreaSchema),
-    defaultValues: {
-      topicList: [],
-      geographicFocus: [],
-    },
-  });
+export function FocusAreaForm({ form }: FocusAreaFormProps) {
+  const { data: topics } = useTopics();
 
-  // For server actions, we use native form submission
-  if (action) {
-    return (
-      <Form {...form}>
-        <form action={action}>
-          <CardContent className="space-y-8">
-            {/* Areas of Interest (Topics) */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.4 }}
-            >
-              <FormField
-                control={form.control}
-                name="topicList"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold">
-                      Areas of Interest
-                    </FormLabel>
-                    <FormDescription>
-                      Select the topics that matter most to you
-                    </FormDescription>
-                    <FormControl>
-                      <MultiSelect
-                        options={POLICY_AREAS.map((area) => ({
-                          label: area,
-                          value: area,
-                        }))}
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        placeholder="Select areas of interest..."
-                        variant="inverted"
-                        animation={2}
-                        maxCount={3}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </motion.div>
-
-            {/* Geographic Focus */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-            >
-              <FormField
-                control={form.control}
-                name="geographicFocus"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold">
-                      Geographic Focus
-                    </FormLabel>
-                    <FormDescription>
-                      Select the countries/regions you work with
-                    </FormDescription>
-                    <FormControl>
-                      <MultiSelect
-                        options={EU_COUNTRIES.map((country) => ({
-                          label: country,
-                          value: country,
-                        }))}
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        placeholder="Select countries/regions..."
-                        variant="inverted"
-                        animation={2}
-                        maxCount={3}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </motion.div>
-
-            <motion.div
-              className="flex justify-between pt-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-            >
-              {backAction ? (
-                <Button formAction={backAction} variant="outline" type="submit">
-                  Back
-                </Button>
-              ) : (
-                <Button variant="outline" type="button">
-                  Back
-                </Button>
+  return (
+    <Form {...form}>
+      <form>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          {/* Areas of Interest (Topics) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+          >
+            <FormField
+              control={form.control}
+              name="topic_ids"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base font-semibold">
+                    Areas of Interest
+                  </FormLabel>
+                  <FormDescription>
+                    Select the topics that matter most to you
+                  </FormDescription>
+                  <FormControl>
+                    <MultiSelect
+                      options={
+                        topics?.map((topic) => ({
+                          label: topic.topic,
+                          value: topic.id,
+                        })) || []
+                      }
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      placeholder="Select areas of interest..."
+                      variant="inverted"
+                      animation={2}
+                      maxCount={3}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              <Button type="submit" className="px-8">
-                Next
-              </Button>
-            </motion.div>
-          </CardContent>
-        </form>
-      </Form>
-    );
-  }
+            />
+          </motion.div>
+
+          {/* Geographic Focus */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+          >
+            <FormField
+              control={form.control}
+              name="countries"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base font-semibold">
+                    Geographic Focus
+                  </FormLabel>
+                  <FormDescription>
+                    Select the countries/regions you work with
+                  </FormDescription>
+                  <FormControl>
+                    <MultiSelect
+                      options={europeanCountries.map((country) => ({
+                        label: country,
+                        value: country,
+                      }))}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      placeholder="Select countries/regions..."
+                      variant="inverted"
+                      animation={2}
+                      maxCount={3}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </motion.div>
+        </CardContent>
+      </form>
+    </Form>
+  );
 }

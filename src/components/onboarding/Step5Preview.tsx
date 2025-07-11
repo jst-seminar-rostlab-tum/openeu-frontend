@@ -1,8 +1,6 @@
 import { CheckCircle } from 'lucide-react';
-import { redirect } from 'next/navigation';
 import React from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -10,16 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-
-async function navigateToHome() {
-  'use server';
-  redirect('/');
-}
-
-async function navigateToPreviousStep() {
-  'use server';
-  redirect('/onboarding/4');
-}
 
 export const Step5Preview = () => {
   return (
@@ -86,19 +74,6 @@ export const Step5Preview = () => {
               <span>Receive notifications based on your preferences</span>
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-between pt-6">
-          <form action={navigateToPreviousStep}>
-            <Button variant="outline" type="submit">
-              Back
-            </Button>
-          </form>
-          <form action={navigateToHome}>
-            <Button type="submit" className="px-8">
-              Enter OpenEU
-            </Button>
-          </form>
         </div>
       </CardContent>
     </Card>
