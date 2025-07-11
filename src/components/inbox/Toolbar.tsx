@@ -8,6 +8,7 @@ import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
 import { DataTableViewOptions } from '@/components/inbox/ViewOptions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AlertTableItem } from '@/domain/entities/alerts/alert';
 import ToolbarOperations from '@/operations/inbox/ToolbarOperations';
 
 interface DataTableToolbarProps<TData> {
@@ -47,12 +48,29 @@ export function DataTableToolbar<TData>({
 
   // Show bulk actions when items are selected
   if (selectedCount > 0) {
+    let archiveLabel = 'Archive';
+    if (
+      selectedRows.length > 0 &&
+      typeof (selectedRows[0].original as AlertTableItem)?.is_active ===
+        'boolean'
+    ) {
+      const allActive = selectedRows.every(
+        (row) => (row.original as AlertTableItem).is_active === true,
+      );
+      const allInactive = selectedRows.every(
+        (row) => (row.original as AlertTableItem).is_active === false,
+      );
+      if (allInactive) archiveLabel = 'Unarchive';
+      else if (!allActive && !allInactive)
+        archiveLabel = 'Switch Archive Status';
+    }
     return (
       <div className="flex h-10 items-center justify-between">
         <DataTableBulkActions
           selectedCount={selectedCount}
           onArchive={onBulkArchive!}
           onDelete={onBulkDelete!}
+          archiveLabel={archiveLabel}
         />
         <Button
           variant="ghost"
@@ -67,7 +85,6 @@ export function DataTableToolbar<TData>({
     );
   }
 
-  // Show normal toolbar when no items are selected
   return (
     <div className="flex h-10 items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">

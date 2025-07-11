@@ -17,7 +17,8 @@ import { DataTableToolbar } from '@/components/inbox/Toolbar';
 import { Section } from '@/components/section';
 import { mapAlertToTableItem } from '@/domain/entities/alerts/alert';
 import { useAlerts } from '@/domain/hooks/alertHooks';
-import { toggleAlertActive } from '@/repositories/alertRepository';
+import { ToastOperations } from '@/operations/toast/toastOperations';
+import { deleteAlert, toggleAlertActive } from '@/repositories/alertRepository';
 
 import { getAlertColumns } from './alert-columns';
 import { DataTable } from './data-table';
@@ -74,6 +75,80 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
     },
   });
 
+  const handleBulkArchive = useCallback(async () => {
+    const selectedRows = alertTable.getFilteredSelectedRowModel().rows;
+    if (!selectedRows.length) return;
+
+    const allActive = selectedRows.every((row) => row.original.is_active);
+    const allInactive = selectedRows.every((row) => !row.original.is_active);
+
+    let archiveAction = 'updated';
+    if (allActive) archiveAction = 'archived';
+    else if (allInactive) archiveAction = 'unarchived';
+
+    const results = await Promise.allSettled(
+      selectedRows.map((row) =>
+        toggleAlertActive(row.original.id, !row.original.is_active),
+      ),
+    );
+
+    const successCount = results.filter((r) => r.status === 'fulfilled').length;
+    const failCount = results.filter((r) => r.status === 'rejected').length;
+
+    setRowSelection({});
+    queryClient.invalidateQueries({ queryKey: ['alerts', userId] });
+
+    if (failCount === 0) {
+      ToastOperations.showInfo({
+        title: 'Alerts Updated',
+        message: `${successCount} alert${successCount !== 1 ? 's' : ''} ${archiveAction}.`,
+      });
+    } else {
+      ToastOperations.showError({
+        title: 'Error',
+        message: `${failCount} alert${failCount !== 1 ? 's' : ''} failed to be ${archiveAction}.`,
+      });
+      console.error(
+        'Some alerts failed to update:',
+        results.filter((r) => r.status === 'rejected'),
+      );
+    }
+  }, [alertTable, queryClient, userId]);
+
+  const handleBulkDelete = useCallback(async () => {
+    const selectedRows = alertTable.getFilteredSelectedRowModel().rows;
+    if (!selectedRows.length) return;
+
+    const deletionResults = await Promise.allSettled(
+      selectedRows.map((row) => deleteAlert(row.original.id)),
+    );
+
+    const successfulDeletes = deletionResults.filter(
+      (result) => result.status === 'fulfilled',
+    ).length;
+
+    setRowSelection({});
+    queryClient.invalidateQueries({ queryKey: ['alerts', userId] });
+
+    if (successfulDeletes > 0) {
+      ToastOperations.showInfo({
+        title: 'Deleted',
+        message: `${successfulDeletes} alert${successfulDeletes !== 1 ? 's' : ''} deleted.`,
+      });
+    }
+
+    const failedDeletes = deletionResults.filter(
+      (result) => result.status === 'rejected',
+    );
+    if (failedDeletes.length > 0) {
+      ToastOperations.showError({
+        title: 'Error',
+        message: `Failed to delete ${failedDeletes.length} alert${failedDeletes.length !== 1 ? 's' : ''}.`,
+      });
+      console.error('Failed deletions:', failedDeletes);
+    }
+  }, [alertTable, queryClient, userId]);
+
   if (isAlertsLoading) {
     return (
       <Section>
@@ -98,7 +173,11 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
       </div>
 
       <div className="space-y-2">
-        <DataTableToolbar table={alertTable} />
+        <DataTableToolbar
+          table={alertTable}
+          onBulkArchive={handleBulkArchive}
+          onBulkDelete={handleBulkDelete}
+        />
         <DataTable table={alertTable} columns={alertColumns} />
         <DataTablePagination table={alertTable} />
       </div>

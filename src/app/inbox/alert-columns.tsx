@@ -87,7 +87,8 @@ export const getAlertColumns = ({
       <DataTableColumnHeader column={column} title="Active" />
     ),
     cell: ({ row }) => {
-      const isActive = row.getValue('is_active') as boolean;
+      console.log(row.original);
+      const isActive = row.original.is_active;
       return (
         <div className="flex items-center justify-center">
           {isActive ? (

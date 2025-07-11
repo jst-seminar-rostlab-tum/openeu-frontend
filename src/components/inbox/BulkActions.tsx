@@ -7,12 +7,14 @@ interface DataTableBulkActionsProps {
   selectedCount: number;
   onArchive: () => void;
   onDelete: () => void;
+  archiveLabel?: string;
 }
 
 export function DataTableBulkActions({
   selectedCount,
   onArchive,
   onDelete,
+  archiveLabel = 'Archive',
 }: DataTableBulkActionsProps) {
   return (
     <div className="flex items-center gap-2">
@@ -22,7 +24,7 @@ export function DataTableBulkActions({
       <Separator orientation="vertical" />
       <Button variant="outline" size="sm" onClick={onArchive}>
         <Archive className="mr-2 h-4 w-4" />
-        Archive
+        {archiveLabel}
       </Button>
       <Button variant="destructive" size="sm" onClick={onDelete}>
         <Trash2 className="mr-2 h-4 w-4" />
