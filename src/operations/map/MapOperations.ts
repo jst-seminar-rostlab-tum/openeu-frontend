@@ -29,11 +29,12 @@ export function useCountryMeetingMap(
 
     // Populate cities with meetings
     meetings.forEach((meeting) => {
+      const cityInfo = resolveCity(meeting);
+
       const country =
+        cityInfo?.country ??
         COUNTRY_MAPPINGS[meeting.location as keyof typeof COUNTRY_MAPPINGS] ??
         meeting.location;
-
-      const city = resolveCity(meeting);
 
       if (!map.has(country)) {
         map.set(country, {
@@ -42,22 +43,21 @@ export function useCountryMeetingMap(
         });
       }
 
-      const countryEntry = map.get(country)!;
+      if (cityInfo) {
+        const countryEntry = map.get(country)!;
+        const cityKey = cityInfo.city;
 
-      if (city) {
-        const key = city.city;
-
-        if (!countryEntry.cities[key]) {
-          countryEntry.cities[key] = {
-            city: city.city,
-            lat: city.lat,
-            lng: city.lng,
+        if (!countryEntry.cities[cityKey]) {
+          countryEntry.cities[cityKey] = {
+            city: cityInfo.city,
+            lat: cityInfo.lat,
+            lng: cityInfo.lng,
             totalCount: 0,
             meetings: [],
           };
         }
 
-        const cityEntry = countryEntry.cities[key];
+        const cityEntry = countryEntry.cities[cityKey];
         cityEntry.totalCount++;
         cityEntry.meetings.push(meeting);
       }

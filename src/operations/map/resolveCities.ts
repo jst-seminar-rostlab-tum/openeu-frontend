@@ -32,7 +32,7 @@ export function resolveCity(meeting: Meeting): CityInfo | null {
   const country = meeting.location;
   const raw = meeting.exact_location ?? '';
 
-  if (!country || !raw) return null;
+  if (!country) return null;
 
   const countryLower = country.toLowerCase();
   const text = raw
@@ -40,6 +40,12 @@ export function resolveCity(meeting: Meeting): CityInfo | null {
     .replace(/[|:,/\\-]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+
+  if (!text) {
+    return country === 'European Union'
+      ? getCapitalCity('Belgium')
+      : getCapitalCity(country);
+  }
 
   const firstWord = text.split(' ')[0];
   const directKey = `${countryLower}_${firstWord}`;
@@ -54,6 +60,19 @@ export function resolveCity(meeting: Meeting): CityInfo | null {
     if (allNames.some((name) => text.includes(name))) {
       return city;
     }
+  }
+
+  if (country === 'European Union') {
+    for (const city of Object.values(cityIndex)) {
+      const allNames = [
+        city.city.toLowerCase(),
+        ...(city.altNames ?? []).map((n) => n.toLowerCase()),
+      ];
+      if (allNames.some((name) => text.includes(name))) {
+        return city;
+      }
+    }
+    return getCapitalCity('Belgium');
   }
 
   return getCapitalCity(country);
