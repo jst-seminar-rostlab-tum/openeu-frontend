@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import z from 'zod';
@@ -30,7 +31,13 @@ export default function Step2EntrepreneurRoleDetails({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <EntrepreneurRoleForm form={form} />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+        >
+          <EntrepreneurRoleForm form={form} />
+        </motion.div>
       </CardContent>
     </Card>
   );

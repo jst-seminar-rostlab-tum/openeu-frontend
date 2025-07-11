@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AnimatePresence, motion } from 'framer-motion';
 import { notFound } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -88,16 +89,33 @@ export default function OnboardingLayout({ userId }: OnboardingLayoutProps) {
 
   return (
     <FormProvider {...form}>
-      <div className="space-y-4">
+      <motion.div
+        className="space-y-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         <OnboardingProgress currentStep={currentStep} />
-        {renderStep()}
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+          >
+            {renderStep()}
+          </motion.div>
+        </AnimatePresence>
+
         <OnboardingNavigation
           currentStep={currentStep}
           userId={userId}
           form={form}
           setCurrentStep={setCurrentStep}
         />
-      </div>
+      </motion.div>
     </FormProvider>
   );
 }
