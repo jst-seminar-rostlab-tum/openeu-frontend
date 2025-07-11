@@ -62,6 +62,7 @@ export default function AccountDetailsForm({
       const profileData: ProfileCreate = {
         ...values,
         id: userId,
+        user_type: 'entrepreneur',
         topic_ids: [],
         countries: [],
         newsletter_frequency: 'daily',
