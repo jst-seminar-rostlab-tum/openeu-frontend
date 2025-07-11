@@ -39,9 +39,11 @@ export default async function ProfilePage() {
 
   const name = userProfile ? userProfile.name : undefined;
   const surname = userProfile ? userProfile.surname : undefined;
-  const companyName = userProfile ? userProfile.company_name : undefined;
+  const companyName = userProfile
+    ? (userProfile.company?.name ?? undefined)
+    : undefined;
   const companyDescription = userProfile
-    ? userProfile.company_description
+    ? (userProfile.company?.description ?? undefined)
     : undefined;
   const categories: ProfileCategory[] = [
     {
