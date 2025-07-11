@@ -2,6 +2,7 @@ import { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
 import { useMemo } from 'react';
 
+import { AlertTableItem } from '@/app/inbox/alertTypes';
 import { DateRangeFilter } from '@/components/DateRangeFilter';
 import { DataTableBulkActions } from '@/components/inbox/BulkActions';
 import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
@@ -45,14 +46,30 @@ export function DataTableToolbar<TData>({
     }
   }, [table]);
 
-  // Show bulk actions when items are selected
   if (selectedCount > 0) {
+    let archiveLabel = 'Archive';
+    if (
+      selectedRows.length > 0 &&
+      typeof (selectedRows[0].original as AlertTableItem)?.is_active ===
+        'boolean'
+    ) {
+      const allActive = selectedRows.every(
+        (row) => (row.original as AlertTableItem).is_active === true,
+      );
+      const allInactive = selectedRows.every(
+        (row) => (row.original as AlertTableItem).is_active === false,
+      );
+      if (allInactive) archiveLabel = 'Unarchive';
+      else if (!allActive && !allInactive)
+        archiveLabel = 'Switch Archive Status';
+    }
     return (
       <div className="flex h-10 items-center justify-between">
         <DataTableBulkActions
           selectedCount={selectedCount}
           onArchive={onBulkArchive!}
           onDelete={onBulkDelete!}
+          archiveLabel={archiveLabel}
         />
         <Button
           variant="ghost"
