@@ -1,4 +1,4 @@
-import { Archive, Trash2 } from 'lucide-react';
+import { Archive, ArchiveRestore, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -23,7 +23,11 @@ export function DataTableBulkActions({
       </span>
       <Separator orientation="vertical" />
       <Button variant="outline" size="sm" onClick={onArchive}>
-        <Archive className="mr-2 h-4 w-4" />
+        {archiveLabel == 'Archive' ? (
+          <Archive className="mr-2 h-4 w-4" />
+        ) : (
+          <ArchiveRestore className="mr-2 h-4 w-4" />
+        )}
         {archiveLabel}
       </Button>
       <Button variant="destructive" size="sm" onClick={onDelete}>

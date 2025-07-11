@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Check, MoreVertical, Power, PowerOff, X } from 'lucide-react';
+import { Archive, ArchiveRestore, Check, MoreVertical, X } from 'lucide-react';
 
 import { AlertDetailsDialog } from '@/components/inbox/AlertDetailsDialog';
 import { DataTableColumnHeader } from '@/components/inbox/ColHeader';
@@ -134,13 +134,13 @@ export const getAlertColumns = ({
               >
                 {row.original.is_active ? (
                   <>
-                    <PowerOff className="mr-2 h-4 w-4" />
-                    Deactivate
+                    <Archive className="mr-2 h-4 w-4" />
+                    Archive
                   </>
                 ) : (
                   <>
-                    <Power className="mr-2 h-4 w-4" />
-                    Activate
+                    <ArchiveRestore className="mr-2 h-4 w-4" />
+                    Unarchive
                   </>
                 )}
               </DropdownMenuItem>
