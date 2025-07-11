@@ -25,7 +25,6 @@ export async function getLegislativeFile(
     const res = await fetch(`${API_URL}?${searchParams}`, {
       method: 'GET',
       mode: 'cors',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -68,7 +67,6 @@ export async function getLegislativeMeetings(
     const res = await fetch(`${MEETINGS_API_URL}?${searchParams}`, {
       method: 'GET',
       mode: 'cors',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
