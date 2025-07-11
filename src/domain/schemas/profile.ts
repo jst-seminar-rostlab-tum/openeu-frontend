@@ -78,6 +78,7 @@ export const completionSchema = z.object({
   newsletter_frequency: z.union([
     z.literal('daily'),
     z.literal('weekly'),
+    z.literal('monthly'),
     z.literal('none'),
   ]),
 });
