@@ -75,16 +75,16 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
     },
   });
 
-  const handleBulkArchive = useCallback(async () => {
+  const handleBulkActivationToggle = useCallback(async () => {
     const selectedRows = alertTable.getFilteredSelectedRowModel().rows;
     if (!selectedRows.length) return;
 
     const allActive = selectedRows.every((row) => row.original.is_active);
     const allInactive = selectedRows.every((row) => !row.original.is_active);
 
-    let archiveAction = 'updated';
-    if (allActive) archiveAction = 'archived';
-    else if (allInactive) archiveAction = 'unarchived';
+    let activationAction = 'updated';
+    if (allActive) activationAction = 'activated';
+    else if (allInactive) activationAction = 'deactivated';
 
     const results = await Promise.allSettled(
       selectedRows.map((row) =>
@@ -99,14 +99,14 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
     queryClient.invalidateQueries({ queryKey: ['alerts', userId] });
 
     if (failCount === 0) {
-      ToastOperations.showInfo({
+      ToastOperations.showSuccess({
         title: 'Alerts Updated',
-        message: `${successCount} alert${successCount !== 1 ? 's' : ''} ${archiveAction}.`,
+        message: `${successCount} alert${successCount !== 1 ? 's' : ''} ${activationAction}.`,
       });
     } else {
       ToastOperations.showError({
         title: 'Error',
-        message: `${failCount} alert${failCount !== 1 ? 's' : ''} failed to be ${archiveAction}.`,
+        message: `${failCount} alert${failCount !== 1 ? 's' : ''} failed to be ${activationAction}.`,
       });
       console.error(
         'Some alerts failed to update:',
@@ -131,8 +131,8 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
     queryClient.invalidateQueries({ queryKey: ['alerts', userId] });
 
     if (successfulDeletes > 0) {
-      ToastOperations.showInfo({
-        title: 'Deleted',
+      ToastOperations.showSuccess({
+        title: 'Alerts Deleted',
         message: `${successfulDeletes} alert${successfulDeletes !== 1 ? 's' : ''} deleted.`,
       });
     }
@@ -164,7 +164,8 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
         <div className="mt-1 sm:mt-0">
           <h1 className="text-2xl font-bold">Alerts</h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Stay up to date with the latest regulatory and legislative alerts.
+            Create and manage alerts to get notified about topics and
+            legislative updates that matter to you.
           </p>
         </div>
         <div className="flex items-center gap-2 mb-2 sm:mb-0">
@@ -175,7 +176,7 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
       <div className="space-y-2">
         <DataTableToolbar
           table={alertTable}
-          onBulkArchive={handleBulkArchive}
+          onBulkActivate={handleBulkActivationToggle}
           onBulkDelete={handleBulkDelete}
         />
         <DataTable table={alertTable} columns={alertColumns} />

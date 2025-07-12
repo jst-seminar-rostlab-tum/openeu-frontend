@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { DateRangeFilter } from '@/components/DateRangeFilter';
-import { DataTableBulkActions } from '@/components/inbox/BulkActions';
+import { DataTableBulkActions } from '@/components/inbox/AlertBulkActions';
 import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
 import { DataTableViewOptions } from '@/components/inbox/ViewOptions';
 import { Button } from '@/components/ui/button';
@@ -13,13 +13,13 @@ import ToolbarOperations from '@/operations/inbox/ToolbarOperations';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  onBulkArchive?: () => void;
+  onBulkActivate?: () => void;
   onBulkDelete?: () => void;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  onBulkArchive,
+  onBulkActivate,
   onBulkDelete,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
@@ -48,7 +48,7 @@ export function DataTableToolbar<TData>({
 
   // Show bulk actions when items are selected
   if (selectedCount > 0) {
-    let archiveLabel = 'Archive';
+    let activationLabel = 'Deactivate';
     if (
       selectedRows.length > 0 &&
       typeof (selectedRows[0].original as AlertTableItem)?.is_active ===
@@ -60,17 +60,17 @@ export function DataTableToolbar<TData>({
       const allInactive = selectedRows.every(
         (row) => (row.original as AlertTableItem).is_active === false,
       );
-      if (allInactive) archiveLabel = 'Unarchive';
+      if (allInactive) activationLabel = 'Activate';
       else if (!allActive && !allInactive)
-        archiveLabel = 'Switch Archive Status';
+        activationLabel = 'Switch Activation Status';
     }
     return (
       <div className="flex h-10 items-center justify-between">
         <DataTableBulkActions
           selectedCount={selectedCount}
-          onArchive={onBulkArchive!}
+          onActivate={onBulkActivate!}
           onDelete={onBulkDelete!}
-          archiveLabel={archiveLabel}
+          activationLabel={activationLabel}
         />
         <Button
           variant="ghost"

@@ -5,16 +5,16 @@ import { Separator } from '@/components/ui/separator';
 
 interface DataTableBulkActionsProps {
   selectedCount: number;
-  onArchive: () => void;
+  onActivate: () => void;
   onDelete: () => void;
-  archiveLabel?: string;
+  activationLabel?: string;
 }
 
 export function DataTableBulkActions({
   selectedCount,
-  onArchive,
+  onActivate,
   onDelete,
-  archiveLabel = 'Archive',
+  activationLabel = 'Deactivate',
 }: DataTableBulkActionsProps) {
   return (
     <div className="flex items-center gap-2">
@@ -22,13 +22,13 @@ export function DataTableBulkActions({
         {selectedCount} row{selectedCount === 1 ? '' : 's'} selected
       </span>
       <Separator orientation="vertical" />
-      <Button variant="outline" size="sm" onClick={onArchive}>
-        {archiveLabel == 'Archive' ? (
+      <Button variant="outline" size="sm" onClick={onActivate}>
+        {activationLabel == 'Deactivate' ? (
           <Archive className="mr-2 h-4 w-4" />
         ) : (
           <ArchiveRestore className="mr-2 h-4 w-4" />
         )}
-        {archiveLabel}
+        {activationLabel}
       </Button>
       <Button variant="destructive" size="sm" onClick={onDelete}>
         <Trash2 className="mr-2 h-4 w-4" />
