@@ -41,6 +41,20 @@ export function AuthProvider({
   // 🚨 DEV ONLY: Mock authenticated user for testing
   const MOCK_AUTH = process.env.NODE_ENV === 'development' && false;
 
+  const token = getCookie('token') as string | undefined;
+
+  useEffect(() => {
+    if (!token || isJwtExpired(token)) {
+      if (!sessionStorage.getItem('sessionExpiredToastShown')) {
+        handleSessionExpiration();
+        sessionStorage.setItem('sessionExpiredToastShown', 'true');
+      }
+      return;
+    } else {
+      sessionStorage.removeItem('sessionExpiredToastShown');
+    }
+  }, [token]);
+
   useEffect(() => {
     if (MOCK_AUTH) {
       setUser({
@@ -61,11 +75,7 @@ export function AuthProvider({
     // Initialize with server-side user data
     setUser(initialUser);
     setLoading(false);
-    const token = getCookie('token') as string | undefined;
-    if (!token || isJwtExpired(token)) {
-      handleSessionExpiration();
-      return; // Exit early
-    }
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -99,6 +109,7 @@ export function AuthProvider({
           }
 
           if (!isSigningOut) {
+            console.log('handle sign out');
             handleSessionExpiration();
           }
 
