@@ -1,6 +1,7 @@
 'use server';
 
 import { getCookie } from 'cookies-next';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import {
@@ -67,7 +68,8 @@ export async function createProfile(
 }
 
 export async function getProfile(profileId: string): Promise<Profile | null> {
-  const token = getCookie('token');
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
 
   const res = await fetch(`${API_BASE_URL}/profile/${profileId}`, {
     method: 'GET',
@@ -76,6 +78,7 @@ export async function getProfile(profileId: string): Promise<Profile | null> {
       Authorization: `Bearer ${token}`,
     },
   });
+
   if (!res.ok) {
     return null;
   }

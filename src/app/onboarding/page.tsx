@@ -1,8 +1,10 @@
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
 import OnboardingLayout from '@/components/onboarding/OnboardingLayout';
 import { Section } from '@/components/section';
+import { getProfile } from '@/domain/actions/profile';
 import { requireAuth } from '@/lib/dal';
 
 export const metadata: Metadata = {
@@ -13,6 +15,14 @@ export const metadata: Metadata = {
 
 export default async function OnboardingStepPage() {
   const { user } = await requireAuth();
+
+  const existingProfile = await getProfile(user.id);
+
+  console.log('existingProfile', existingProfile);
+
+  if (existingProfile) {
+    redirect('/profile');
+  }
 
   return (
     <Section>

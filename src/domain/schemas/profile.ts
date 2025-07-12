@@ -63,9 +63,13 @@ export const entrepreneurRoleSchema = z.object({
 export const politicianRoleSchema = z.object({
   politician: z.object({
     role: z.string().min(1, 'Please select at least one role'),
-    institution: z.string(),
-    area_of_expertise: z.array(z.string()),
-    further_information: z.string(),
+    institution: z.string().min(1, 'Please enter your institution'),
+    area_of_expertise: z
+      .array(z.string())
+      .min(1, 'Please select at least one area of expertise'),
+    further_information: z
+      .string()
+      .min(1, 'Please provide some additional information'),
   }),
 });
 

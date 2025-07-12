@@ -14,9 +14,8 @@ import Step2EntrepreneurRoleDetails from '@/components/onboarding/Step2Entrepren
 import Step2PoliticalRoleDetails from '@/components/onboarding/Step2PoliticalRoleDetails';
 import Step3FocusArea from '@/components/onboarding/Step3FocusArea';
 import Step4Completion from '@/components/onboarding/Step4Completion';
+import Step5Preview from '@/components/onboarding/Step5Preview';
 import { onboardingSchema } from '@/domain/schemas/profile';
-
-import { Step5Preview } from './Step5Preview';
 
 interface OnboardingLayoutProps {
   userId: string;

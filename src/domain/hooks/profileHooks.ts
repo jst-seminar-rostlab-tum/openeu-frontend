@@ -16,7 +16,7 @@ interface UseProfileMutationOptions {
 }
 
 export const useProfile = (userId: string, enabled = true) =>
-  useQuery<Profile>({
+  useQuery<Profile | null>({
     queryKey: ['profile', userId],
     queryFn: () => profileRepository.getProfile(userId),
     enabled: !!userId && enabled,
@@ -25,9 +25,15 @@ export const useProfile = (userId: string, enabled = true) =>
 export const useProfileCreateMutation = (
   options?: UseProfileMutationOptions,
 ) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (data: ProfileCreate) => profileRepository.createProfile(data),
     onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile', data.id],
+      });
+
       options?.onSuccess?.(data);
     },
     onError: (error) => {

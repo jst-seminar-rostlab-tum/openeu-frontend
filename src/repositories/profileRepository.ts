@@ -9,7 +9,7 @@ import type {
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/profile`;
 
 export const profileRepository = {
-  async getProfile(userId: string): Promise<Profile> {
+  async getProfile(userId: string): Promise<Profile | null> {
     const token = getCookie('token');
 
     try {
@@ -21,12 +21,21 @@ export const profileRepository = {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (res.status === 404) {
+        return null;
+      }
+
       if (!res.ok) {
         throw new Error('Failed to get profile');
       }
+
       const data = await res.json();
       return data as Profile;
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.message !== 'Failed to get profile') {
+        throw error;
+      }
       throw new Error('Failed to get profile');
     }
   },

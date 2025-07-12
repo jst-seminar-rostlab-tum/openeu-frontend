@@ -2,6 +2,7 @@ import { UseFormReturn } from 'react-hook-form';
 import z from 'zod';
 
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { useProfileCreateMutation } from '@/domain/hooks/profileHooks';
 import { onboardingSchema } from '@/domain/schemas/profile';
 import { cn } from '@/lib/utils';
@@ -55,6 +56,7 @@ export default function OnboardingNavigation({
             'politician.role',
             'politician.institution',
             'politician.area_of_expertise',
+            'politician.further_information',
           ];
         }
         return [];
@@ -72,12 +74,14 @@ export default function OnboardingNavigation({
     data: z.infer<typeof onboardingSchema>,
   ) => {
     createProfileMutation.mutate({ id: userId, ...data });
-    //await createProfile({ id: userId, ...data });
   };
 
   const handleNext = async () => {
     if (currentStep === 4) {
       const isValid = await form.trigger();
+      console.log('isValid', isValid);
+      console.log('Form errors:', form.formState.errors);
+      console.log('Form values:', form.getValues());
       if (isValid) {
         await form.handleSubmit(handleFinalSubmission)();
       }
@@ -98,7 +102,11 @@ export default function OnboardingNavigation({
 
   return (
     <div
-      className={cn('flex justify-between', currentStep === 1 && 'justify-end')}
+      className={cn(
+        'flex justify-between',
+        currentStep === 1 && 'justify-end',
+        currentStep === 5 && 'hidden',
+      )}
     >
       {currentStep > 1 && (
         <Button
@@ -108,8 +116,17 @@ export default function OnboardingNavigation({
           Back
         </Button>
       )}
-      <Button onClick={handleNext}>
-        {currentStep === 4 ? 'Create Profile' : 'Next'}
+      <Button onClick={handleNext} disabled={createProfileMutation.isPending}>
+        {currentStep === 4 && createProfileMutation.isPending ? (
+          <>
+            <Spinner size="xsmall" show className="invert" />
+            Creating Profile
+          </>
+        ) : currentStep === 4 ? (
+          'Create Profile'
+        ) : (
+          'Next'
+        )}
       </Button>
     </div>
   );

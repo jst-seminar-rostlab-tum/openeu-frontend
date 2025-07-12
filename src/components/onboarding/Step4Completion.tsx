@@ -39,15 +39,19 @@ export default function Step4Completion({ form }: Step4CompletionProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-primary" />
-              <span>Access your personalized dashboard</span>
+              <span>Explore relevant EU legislation</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-primary" />
-              <span>Start receiving tailored updates</span>
+              <span>Chat with AI about EU regulations</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-primary" />
-              <span>Connect with relevant stakeholders</span>
+              <span>Set up smart alerts for relevant updates</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-primary" />
+              <span>Track EU meetings and events on the calendar</span>
             </div>
           </div>
         </motion.div>

@@ -141,7 +141,11 @@ export function RegisterForm() {
           />
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? <Spinner size="small" show /> : 'Sign up'}
+            {isSubmitting ? (
+              <Spinner size="small" show className="invert" />
+            ) : (
+              'Sign up'
+            )}
           </Button>
         </form>
       </Form>

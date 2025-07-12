@@ -22,7 +22,7 @@ export default function Step2PoliticalRoleDetails({
   form,
 }: Step2PoliticalRoleDetailsProps) {
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Tell us about your role</CardTitle>
         <CardDescription className="text-lg">

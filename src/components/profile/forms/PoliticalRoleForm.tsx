@@ -27,7 +27,7 @@ export function PoliticalRoleForm({ form }: PoliticalRoleFormProps) {
   return (
     <Form {...form}>
       <form>
-        <CardContent className="space-y-6">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           <FormField
             control={form.control}
             name="politician.role"
@@ -65,10 +65,8 @@ export function PoliticalRoleForm({ form }: PoliticalRoleFormProps) {
             control={form.control}
             name="politician.area_of_expertise"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base font-semibold">
-                  Area of Expertise
-                </FormLabel>
+              <FormItem className="col-span-full">
+                <FormLabel>Area of Expertise</FormLabel>
                 <FormControl>
                   <MultiSelect
                     options={POLICY_AREAS.map((area) => ({
@@ -92,8 +90,8 @@ export function PoliticalRoleForm({ form }: PoliticalRoleFormProps) {
             control={form.control}
             name="politician.further_information"
             render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel>Company Description</FormLabel>
+              <FormItem className="col-span-full">
+                <FormLabel>Further information</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Briefly describe your company or business idea..."
