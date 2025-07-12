@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { Textarea } from '@/components/ui/textarea';
 import { onboardingSchema } from '@/domain/schemas/profile';
 import { POLICY_AREAS } from '@/operations/onboarding/OnboardingOperations';
 
@@ -80,6 +81,24 @@ export function PoliticalRoleForm({ form }: PoliticalRoleFormProps) {
                     variant="inverted"
                     animation={2}
                     maxCount={3}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="politician.further_information"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Company Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Briefly describe your company or business idea..."
+                    className="min-h-[100px]"
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
