@@ -266,6 +266,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/subscribe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Subscribe To Legislation */
+    post: operations['subscribe_to_legislation_subscribe_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/notifications/{user_id}': {
     parameters: {
       query?: never;
@@ -273,10 +290,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /**
-     * Get Notifications For User
-     * @description Retrieve all notifications for a specific user by their ID.
-     */
+    /** Get Notifications For User */
     get: operations['get_notifications_for_user_notifications__user_id__get'];
     put?: never;
     post?: never;
@@ -401,7 +415,7 @@ export interface components {
       /** Company Stage */
       company_stage: string;
       /** Company Size */
-      company_size: number;
+      company_size: string;
       /** Industry */
       industry: string;
     };
@@ -416,7 +430,7 @@ export interface components {
       /** Company Stage */
       company_stage: string;
       /** Company Size */
-      company_size: number;
+      company_size: string;
       /** Industry */
       industry: string;
       /**
@@ -436,7 +450,7 @@ export interface components {
       /** Company Stage */
       company_stage?: string | null;
       /** Company Size */
-      company_size?: number | null;
+      company_size?: string | null;
       /** Industry */
       industry?: string | null;
     };
@@ -446,6 +460,16 @@ export interface components {
       user_id: string;
       /** Description */
       description: string;
+    };
+    /** DocumentationGateway */
+    DocumentationGateway: {
+      /** Date */
+      date?: string | null;
+      /** Summary */
+      summary?: string | null;
+      reference?: components['schemas']['Reference'] | null;
+      /** Document Type */
+      document_type?: string | null;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -482,9 +506,9 @@ export interface components {
       /** Id */
       id: string;
       /** Source Table */
-      source_table: string;
+      source_table?: string | null;
       /** Source Id */
-      source_id: string;
+      source_id?: string | null;
       /** Link */
       link?: string | null;
       /** Title */
@@ -507,9 +531,7 @@ export interface components {
       key_events?: components['schemas']['KeyEvent'][] | null;
       /** Documentation Gateway */
       documentation_gateway?:
-        | {
-            [key: string]: unknown;
-          }[]
+        | components['schemas']['DocumentationGateway'][]
         | null;
       /** Similarity */
       similarity?: number | null;
@@ -534,8 +556,8 @@ export interface components {
     };
     /** LegislativeFilesResponse */
     LegislativeFilesResponse: {
-      /** Legislative Files */
-      legislative_files: components['schemas']['LegislativeFile'][];
+      /** Data */
+      data: components['schemas']['LegislativeFile'][];
     };
     /** LegislativeMeeting */
     LegislativeMeeting: {
@@ -709,7 +731,7 @@ export interface components {
       /** Institution */
       institution: string;
       /** Area Of Expertise */
-      area_of_expertise: string;
+      area_of_expertise: string[];
     };
     /** PoliticianReturn */
     PoliticianReturn: {
@@ -720,7 +742,7 @@ export interface components {
       /** Institution */
       institution: string;
       /** Area Of Expertise */
-      area_of_expertise: string;
+      area_of_expertise: string[];
       /**
        * Id
        * Format: uuid4
@@ -736,7 +758,7 @@ export interface components {
       /** Institution */
       institution?: string | null;
       /** Area Of Expertise */
-      area_of_expertise?: string | null;
+      area_of_expertise?: string[] | null;
     };
     /** ProfileCreate */
     ProfileCreate: {
@@ -837,6 +859,13 @@ export interface components {
       user_id: string;
       /** Title */
       title: string;
+    };
+    /** SubscribeRequest */
+    SubscribeRequest: {
+      /** User Id */
+      user_id: string;
+      /** Legislation Id */
+      legislation_id: string;
     };
     /** Topic */
     Topic: {
@@ -993,7 +1022,9 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['Meeting'][];
+          'application/json': {
+            [key: string]: components['schemas']['Meeting'][];
+          };
         };
       };
       /** @description Validation Error */
@@ -1289,7 +1320,9 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['Topic'][];
+          'application/json': {
+            [key: string]: components['schemas']['Topic'][];
+          };
         };
       };
     };
@@ -1388,6 +1421,39 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['LegislativeFileSuggestionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  subscribe_to_legislation_subscribe_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubscribeRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
