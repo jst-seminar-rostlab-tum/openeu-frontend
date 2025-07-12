@@ -14,6 +14,7 @@ import { notFound } from 'next/navigation';
 import { KeyEventCollapsible } from '@/components/monitor/KeyEventCollapsible';
 import { KeyPlayerCollapsible } from '@/components/monitor/KeyPlayerCollapsible';
 import { MeetingCollapsible } from '@/components/monitor/MeetingCollapsible';
+import { SubscribeButton } from '@/components/monitor/SubscribeButton';
 import { Section } from '@/components/section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -201,6 +202,7 @@ export default async function LegislationPage({
                 Chat with Legislation
               </Link>
             </Button>
+            <SubscribeButton legislationId={legislation.id} />
           </CardContent>
         </Card>
       </div>
