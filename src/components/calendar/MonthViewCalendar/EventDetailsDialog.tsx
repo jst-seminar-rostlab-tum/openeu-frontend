@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
-import { members } from '@/domain/entities/mock/mock_members';
+import { attendees, member } from '@/domain/entities/mock/mock_members';
 import {
   formatTime,
   getMeetingType,
@@ -145,7 +145,10 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <User className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div className="w-full">
                 <p className="mb-1 text-sm font-medium">Members</p>
-                <AvatarStack members={members}></AvatarStack>
+                <AvatarStack
+                  member={member}
+                  attendees={attendees}
+                ></AvatarStack>
               </div>
             </div>
           </div>

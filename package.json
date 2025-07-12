@@ -54,6 +54,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "cookies-next": "^6.0.0",
+    "csv-parser": "^3.2.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.0.0",
     "eslint-config-prettier": "^10.1.5",
@@ -82,6 +83,7 @@
     "tailwind-merge": "^3.3.0",
     "tailwind-variants": "^1.0.0",
     "tanstack": "^1.0.0",
+    "ts-node": "^10.9.2",
     "xlsx": "^0.18.5",
     "zod": "^4.0.2"
   },
@@ -91,7 +93,7 @@
     "@netlify/next": "^1.4.9",
     "@tailwindcss/postcss": "^4",
     "@types/leaflet": "^1.9.17",
-    "@types/node": "^20",
+    "@types/node": "^24.0.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/xlsx": "^0.0.36",
@@ -108,7 +110,7 @@
     "prettier": "^3.5.3",
     "tailwindcss": "^4.1.5",
     "tw-animate-css": "^1.2.9",
-    "typescript": "^5"
+    "typescript": "^5.8.3"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

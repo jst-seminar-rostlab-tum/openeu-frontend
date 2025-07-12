@@ -13,3 +13,4 @@ export type MeetingSuggestionResponse =
 export type GetMeetingsParams =
   operations['get_meetings_meetings_get']['parameters']['query'];
 export type MeetingData = components['schemas']['Meeting'];
+export type Person = components['schemas']['Person'];
