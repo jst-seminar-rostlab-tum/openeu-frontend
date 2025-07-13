@@ -1,7 +1,6 @@
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
-import { Badge } from '@/components/ui/badge';
 import {
   Collapsible,
   CollapsibleContent,
@@ -26,21 +25,14 @@ export function DocumentationGatewayCollapsible({
     <Collapsible key={index} className="border-l-2 pl-3" disabled={!hasContent}>
       <CollapsibleTrigger className="flex items-start justify-between w-full p-0 text-left group gap-2">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            {document.document_type && (
-              <Badge variant="secondary" className="text-xs">
-                {document.document_type}
-              </Badge>
-            )}
-            {document.date && (
-              <span className="text-xs text-muted-foreground">
-                {new Date(document.date).toLocaleDateString()}
-              </span>
-            )}
-          </div>
-          {document.reference?.text && (
+          {document.document_type && (
             <p className="text-sm font-medium leading-tight">
-              {document.reference.text}
+              {document.document_type}
+            </p>
+          )}
+          {document.date && (
+            <p className="text-xs text-muted-foreground">
+              {new Date(document.date).toLocaleDateString()}
             </p>
           )}
         </div>
@@ -52,21 +44,19 @@ export function DocumentationGatewayCollapsible({
           )}
         />
       </CollapsibleTrigger>
-      <CollapsibleContent className="mt-1 space-y-1">
-        <div className="flex items-center gap-2">
-          {document.summary && (
-            <p className="text-xs text-muted-foreground">{document.summary}</p>
-          )}
-          {document.reference?.link && (
-            <Link
-              href={document.reference.link}
-              className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 inline-flex items-center gap-1"
-            >
-              View Document
-              <ExternalLink className="h-3 w-3" />
-            </Link>
-          )}
-        </div>
+      <CollapsibleContent className="mt-1 flex flex-col gap-1">
+        {document.summary && (
+          <p className="text-xs text-muted-foreground">{document.summary}</p>
+        )}
+        {document.reference?.link && (
+          <Link
+            href={document.reference.link}
+            className="text-xs link-highlight inline-flex items-center font-mono"
+          >
+            {document.reference.text}
+            <ExternalLink className="h-3 w-3" />
+          </Link>
+        )}
       </CollapsibleContent>
     </Collapsible>
   );

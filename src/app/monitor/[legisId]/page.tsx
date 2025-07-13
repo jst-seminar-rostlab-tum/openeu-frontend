@@ -169,7 +169,7 @@ export default async function LegislationPage({
             <Card className="break-inside-avoid">
               <CardHeader className="flex items-center">
                 <BookOpen className="h-4 w-4" />
-                <CardTitle>Documentats</CardTitle>
+                <CardTitle>Documents</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {legislation.documentation_gateway.map((document, index) => (
