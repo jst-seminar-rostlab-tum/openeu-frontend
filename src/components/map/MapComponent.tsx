@@ -7,7 +7,13 @@ import * as geojson from 'geojson';
 import L, { LatLngExpression, Layer } from 'leaflet';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
-import { GeoJSON, MapContainer, Pane, SVGOverlay } from 'react-leaflet';
+import {
+  GeoJSON,
+  MapContainer,
+  Pane,
+  SVGOverlay,
+  useMapEvents,
+} from 'react-leaflet';
 
 import { EventListDialog } from '@/components/calendar/MonthViewCalendar/EventListDialog';
 import {
@@ -22,10 +28,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { CountryData } from '@/domain/entities/map/LocationData';
 import {
-  CountryData,
   filterNonEUCountries,
   getCapitalCoordinates,
+  getCountryMeetings,
+  getCountryTotalCount,
+  getCountryTypeMap,
   getLargestPolygon,
 } from '@/operations/map/MapOperations';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
@@ -60,15 +69,27 @@ export default function MapComponent({
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(zoom ?? 4);
+
+  const shouldShowCities = zoomLevel >= 6;
+
+  const ZoomTracker = () => {
+    useMapEvents({
+      zoomend: (e) => {
+        setZoomLevel(e.target.getZoom());
+      },
+    });
+    return null;
+  };
 
   const selectedCountryMeetings = selectedCountry
-    ? (countryMeetingMap.get(selectedCountry)?.meetings ?? [])
+    ? (getCountryMeetings(countryMeetingMap.get(selectedCountry)) ?? [])
     : [];
 
   const handleCountryClick = (countryName: string) => {
     if (countryClickDisabled) return;
     const countryData = countryMeetingMap.get(countryName);
-    const meetingCount = countryData?.totalCount ?? 0;
+    const meetingCount = getCountryTotalCount(countryData) ?? 0;
 
     if (meetingCount === 0) {
       ToastOperations.showError({
@@ -128,6 +149,7 @@ export default function MapComponent({
       maxZoom={maxZoom}
       style={{ zIndex: 0 }}
     >
+      <ZoomTracker />
       {/* Ocean */}
       <Pane name="ocean" style={{ zIndex: 1 }}>
         <SVGOverlay bounds={oceanBounds}>
@@ -177,7 +199,11 @@ export default function MapComponent({
             {(() => {
               const countryName = hoveredFeature.properties?.name;
               const countryData = countryMeetingMap.get(countryName);
-              const meetingCount = countryData?.totalCount ?? 0;
+
+              if (!countryData) return null;
+
+              const meetingCount = getCountryTotalCount(countryData);
+              const typeMap = getCountryTypeMap(countryData);
 
               return (
                 <>
@@ -187,12 +213,10 @@ export default function MapComponent({
                       <p className="text-xs text-muted-foreground mt-1">
                         Total: {meetingCount}
                       </p>
-                      {Object.entries(countryData?.meetingTypeMap ?? {})
-                        .length > 0 && (
+
+                      {Object.keys(typeMap).length > 0 && (
                         <ul className="mt-1 text-xs space-y-0.5">
-                          {Object.entries(
-                            countryData?.meetingTypeMap ?? {},
-                          ).map(([type, count]) => (
+                          {Object.entries(typeMap).map(([type, count]) => (
                             <li key={type}>
                               {getMeetingType(type)}: {count}
                             </li>
@@ -209,53 +233,74 @@ export default function MapComponent({
       )}
 
       {/* MapIndicators */}
-      {mapData.features
-        .filter(
-          (f: geojson.Feature) =>
-            f.properties && europeanCountries.includes(f.properties.name),
-        )
-        .map((feature: geojson.Feature, idx: number) => {
-          const capitalCoords = getCapitalCoordinates(
-            feature.properties?.name || '',
-          );
-          let centerLatLng: LatLngExpression;
-
-          if (capitalCoords) {
-            centerLatLng = L.latLng(capitalCoords[0], capitalCoords[1]);
-          } else {
-            const largestPolygon = getLargestPolygon(feature);
-            if (largestPolygon) {
-              const center = turf.centerOfMass(largestPolygon);
-              centerLatLng = L.latLng(
-                center.geometry.coordinates[1],
-                center.geometry.coordinates[0],
+      {shouldShowCities
+        ? Array.from(countryMeetingMap.entries()).flatMap(
+            ([countryName, data]) =>
+              Object.values(data.cities).map((city, idx) => (
+                <MapIndicator
+                  key={`${countryName}-${city.city}-${idx}`}
+                  position={[city.lat, city.lng]}
+                  count={city.totalCount}
+                  baseZoom={zoom}
+                  isHighlighted={false}
+                  label={city.city}
+                  isCity={true}
+                  onClick={() => {
+                    setSelectedCountry(countryName);
+                    setDialogOpen(true);
+                  }}
+                />
+              )),
+          )
+        : mapData.features
+            .filter(
+              (f: geojson.Feature) =>
+                f.properties && europeanCountries.includes(f.properties.name),
+            )
+            .map((feature: geojson.Feature, idx: number) => {
+              const capitalCoords = getCapitalCoordinates(
+                feature.properties?.name || '',
               );
-            } else {
-              centerLatLng = L.latLng(0, 0);
-            }
-          }
 
-          const countryName = feature.properties?.name ?? '';
-          const isHighlighted =
-            hoveredFeature?.properties?.name === countryName;
-          const countryData = countryMeetingMap.get(countryName);
-          const countForThisCountry = countryData?.totalCount ?? 0;
+              let centerLatLng: LatLngExpression;
 
-          return (
-            <MapIndicator
-              key={countryName || idx}
-              position={centerLatLng}
-              count={countForThisCountry}
-              baseZoom={zoom}
-              isHighlighted={isHighlighted}
-              onClick={
-                countForThisCountry > 0
-                  ? () => handleCountryClick(countryName)
-                  : undefined
+              if (capitalCoords) {
+                centerLatLng = L.latLng(capitalCoords[0], capitalCoords[1]);
+              } else {
+                const largestPolygon = getLargestPolygon(feature);
+                if (largestPolygon) {
+                  const center = turf.centerOfMass(largestPolygon);
+                  centerLatLng = L.latLng(
+                    center.geometry.coordinates[1],
+                    center.geometry.coordinates[0],
+                  );
+                } else {
+                  centerLatLng = L.latLng(0, 0);
+                }
               }
-            />
-          );
-        })}
+
+              const countryName = feature.properties?.name ?? '';
+              const isHighlighted =
+                hoveredFeature?.properties?.name === countryName;
+              const countryData = countryMeetingMap.get(countryName);
+              const countForThisCountry =
+                getCountryTotalCount(countryData) ?? 0;
+
+              return (
+                <MapIndicator
+                  key={countryName || idx}
+                  position={centerLatLng}
+                  count={countForThisCountry}
+                  baseZoom={zoom}
+                  isHighlighted={isHighlighted}
+                  onClick={
+                    countForThisCountry > 0
+                      ? () => handleCountryClick(countryName)
+                      : undefined
+                  }
+                />
+              );
+            })}
 
       {/* Country click dialog */}
       {selectedCountry && selectedCountryMeetings.length > 0 && (
