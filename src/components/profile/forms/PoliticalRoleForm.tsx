@@ -94,7 +94,7 @@ export function PoliticalRoleForm({ form }: PoliticalRoleFormProps) {
                 <FormLabel>Further information</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Briefly describe your company or business idea..."
+                    placeholder="Provide any additional information describing your role and expertise..."
                     className="min-h-[100px]"
                     {...field}
                   />
