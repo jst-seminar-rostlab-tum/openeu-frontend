@@ -2,7 +2,7 @@
 
 import { execSync } from 'child_process';
 import { config } from 'dotenv';
-import { existsSync,mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 
 config();
