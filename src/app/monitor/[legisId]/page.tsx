@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  BookOpen,
   CalendarCheck,
   Clock,
   Eye,
@@ -11,6 +12,7 @@ import {
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { DocumentationGatewayCollapsible } from '@/components/monitor/DocumentationGatewayCollapsible';
 import { KeyEventCollapsible } from '@/components/monitor/KeyEventCollapsible';
 import { KeyPlayerCollapsible } from '@/components/monitor/KeyPlayerCollapsible';
 import { MeetingCollapsible } from '@/components/monitor/MeetingCollapsible';
@@ -163,6 +165,24 @@ export default async function LegislationPage({
             </CardContent>
           </Card>
         )}
+        {legislation.documentation_gateway &&
+          legislation.documentation_gateway.length > 0 && (
+            <Card className="break-inside-avoid">
+              <CardHeader className="flex items-center">
+                <BookOpen className="h-4 w-4" />
+                <CardTitle>Documents</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {legislation.documentation_gateway.map((document, index) => (
+                  <DocumentationGatewayCollapsible
+                    key={index}
+                    document={document}
+                    index={index}
+                  />
+                ))}
+              </CardContent>
+            </Card>
+          )}
         {legislativeMeetings && legislativeMeetings.length > 0 && (
           <Card className="break-inside-avoid">
             <CardHeader className="flex items-center">
