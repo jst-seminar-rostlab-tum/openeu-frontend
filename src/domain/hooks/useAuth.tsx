@@ -134,6 +134,8 @@ export function AuthProvider({
   }, [supabase, MOCK_AUTH, initialUser, isSigningOut]);
 
   const signOut = useCallback(async () => {
+    if (isSigningOut) return;
+
     setIsSigningOut(true);
     setUser(null);
 
@@ -149,19 +151,22 @@ export function AuthProvider({
     } else {
       deleteCookie('token', { path: '/' });
       deleteCookie('refresh_token', { path: '/' });
+      sessionStorage.removeItem('sessionExpiredToastShown');
       router.push('/');
     }
-  }, [supabase, router, initialUser]);
+  }, [supabase, router, initialUser, isSigningOut]);
 
   const handleSessionExpiration = useCallback(() => {
-    ToastOperations.showWarning({
-      title: 'Session Expired',
-      message:
-        'Your session has expired for security reasons. You will be logged out automatically.',
-    });
-    console.log(`[${new Date().toISOString()}]: toast shown`);
-    signOut();
-  }, []);
+    if (!isSigningOut) {
+      ToastOperations.showWarning({
+        title: 'Session Expired',
+        message:
+          'Your session has expired for security reasons. You will be logged out automatically.',
+      });
+      console.log(`[${new Date().toISOString()}]: toast shown`);
+      signOut();
+    }
+  }, [isSigningOut]);
 
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),
