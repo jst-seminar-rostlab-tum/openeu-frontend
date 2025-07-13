@@ -55,7 +55,7 @@ export function AddAlertDialog({ userId }: AddAlertDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-fit" size="sm" variant="outline">
+        <Button className="w-fit" size="sm">
           {' '}
           Add new alert
         </Button>

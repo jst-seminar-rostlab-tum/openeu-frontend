@@ -13,6 +13,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
+import { useProfile } from '@/domain/hooks/profileHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 import {
   cn,
@@ -23,6 +24,10 @@ import {
 
 export function ProfilePopover() {
   const { user, loading, signOut } = useAuth();
+  const { data: profile, isLoading: profileLoading } = useProfile(
+    user?.id || '',
+    !!user?.id,
+  );
 
   if (loading) {
     return (
@@ -49,6 +54,7 @@ export function ProfilePopover() {
   };
 
   const userInitials = extractInitials(userData.name);
+  const hasIncompleteProfile = !profileLoading && profile === null;
 
   return (
     <Popover>
@@ -68,10 +74,10 @@ export function ProfilePopover() {
         <Separator />
         <div className="flex flex-col gap-1">
           <Button variant="ghost" size="sm" className="justify-start" asChild>
-            <Link href="/profile">
+            <Link href={hasIncompleteProfile ? '/onboarding' : '/profile'}>
               <User className="h-4 w-4" />
               Profile
-              {user.user_metadata['incompleteProfile'] && (
+              {hasIncompleteProfile && (
                 <Badge
                   className={cn(
                     'ml-auto text-xs',

@@ -1,63 +1,92 @@
 import * as turf from '@turf/turf';
-import { parseISO } from 'date-fns';
 import * as geojson from 'geojson';
 import { useMemo } from 'react';
 
 import { europeanCountries } from '@/components/map/constants';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
+import { CountryData } from '@/domain/entities/map/LocationData';
 import { meetingsPerCountry } from '@/domain/entities/MapIndicator/MeetingCountByCountry';
+
+import { resolveCity } from './resolveCities';
 
 const COUNTRY_MAPPINGS = {
   'European Union': 'Belgium',
 } as const;
 
-export interface CountryData {
-  totalCount: number;
-  meetings: Meeting[];
-  meetingTypeMap: Record<string, number>;
-}
-
 export function useCountryMeetingMap(
   meetings: Meeting[],
 ): Map<string, CountryData> {
   return useMemo(() => {
-    const countryMap = new Map<string, CountryData>();
+    const map = new Map<string, CountryData>();
 
-    // Initialize all European countries
+    // Initialize countries with empty city maps
     meetingsPerCountry.forEach((_, country) => {
-      countryMap.set(country, {
-        totalCount: 0,
-        meetings: [],
-        meetingTypeMap: {},
+      map.set(country, {
+        country,
+        cities: {},
       });
     });
 
-    // Process meetings in single pass
+    // Populate cities with meetings
     meetings.forEach((meeting) => {
+      const cityInfo = resolveCity(meeting);
+
       const country =
+        cityInfo?.country ??
         COUNTRY_MAPPINGS[meeting.location as keyof typeof COUNTRY_MAPPINGS] ??
         meeting.location;
 
-      if (countryMap.has(country)) {
-        const data = countryMap.get(country)!;
-        data.totalCount++;
-        data.meetings.push(meeting);
-        data.meetingTypeMap[meeting.source_table] =
-          (data.meetingTypeMap[meeting.source_table] || 0) + 1;
+      if (!map.has(country)) {
+        map.set(country, {
+          country,
+          cities: {},
+        });
+      }
+
+      if (cityInfo) {
+        const countryEntry = map.get(country)!;
+        const cityKey = cityInfo.city;
+
+        if (!countryEntry.cities[cityKey]) {
+          countryEntry.cities[cityKey] = {
+            city: cityInfo.city,
+            lat: cityInfo.lat,
+            lng: cityInfo.lng,
+            totalCount: 0,
+            meetings: [],
+          };
+        }
+
+        const cityEntry = countryEntry.cities[cityKey];
+        cityEntry.totalCount++;
+        cityEntry.meetings.push(meeting);
       }
     });
 
-    // Sort meetings by date for each country
-    countryMap.forEach((data) => {
-      data.meetings.sort(
-        (a, b) =>
-          parseISO(a.meeting_start_datetime).getTime() -
-          parseISO(b.meeting_start_datetime).getTime(),
-      );
-    });
-
-    return countryMap;
+    return map;
   }, [meetings]);
+}
+
+export function getCountryTotalCount(data?: CountryData): number {
+  return data
+    ? Object.values(data.cities).reduce((acc, c) => acc + c.totalCount, 0)
+    : 0;
+}
+
+export function getCountryMeetings(data?: CountryData): Meeting[] {
+  return data ? Object.values(data.cities).flatMap((c) => c.meetings) : [];
+}
+
+export function getCountryTypeMap(data: CountryData): Record<string, number> {
+  const map: Record<string, number> = {};
+
+  Object.values(data.cities).forEach((city) => {
+    city.meetings.forEach((meeting) => {
+      map[meeting.source_table] = (map[meeting.source_table] || 0) + 1;
+    });
+  });
+
+  return map;
 }
 
 export const filterNonEUCountries = (feature: geojson.Feature): boolean =>
@@ -69,7 +98,6 @@ export const getCapitalCoordinates = (
   const capitals: { [key: string]: [number, number] } = {
     Germany: [51.1657, 10.4515],
     France: [48.8566, 2.3522],
-    // Add more countries and their capitals as needed
   };
 
   return capitals[countryName] || null;

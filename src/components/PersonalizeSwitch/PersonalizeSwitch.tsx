@@ -42,8 +42,6 @@ export default function PersonalizeSwitch() {
   useEffect(() => {
     if (userId && profile && !isInitialized.current) {
       setHasProfile(true);
-      setChecked(true);
-      setSelectedUserId(userId);
       isInitialized.current = true;
     }
   }, [userId, profile, setSelectedUserId]);
