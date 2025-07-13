@@ -29,8 +29,6 @@ export default function OnboardingLayout({ userId }: OnboardingLayoutProps) {
     mode: 'onTouched',
     defaultValues: {
       user_type: undefined,
-      name: '',
-      surname: '',
       company: undefined,
       politician: undefined,
       topic_ids: [],

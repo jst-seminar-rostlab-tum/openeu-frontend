@@ -45,8 +45,6 @@ export const interestsSchema = z.object({
 
 export const pathDecisionSchema = z.object({
   user_type: z.union([z.literal('entrepreneur'), z.literal('politician')]),
-  name: z.string().min(1, 'Please enter your name'),
-  surname: z.string().min(1, 'Please enter your surname'),
 });
 
 export const entrepreneurRoleSchema = z.object({

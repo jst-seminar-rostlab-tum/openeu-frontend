@@ -112,7 +112,11 @@ export function LoginForm({
                   className="w-full"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? <Spinner size="small" show /> : 'Sign in'}
+                  {isSubmitting ? (
+                    <Spinner size="xsmall" show className="invert" />
+                  ) : (
+                    'Sign in'
+                  )}
                 </Button>
                 <Button onClick={loginWithGoogle}>
                   <IoLogoGoogle />

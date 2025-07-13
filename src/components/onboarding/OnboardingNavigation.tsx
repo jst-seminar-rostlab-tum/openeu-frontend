@@ -40,7 +40,7 @@ export default function OnboardingNavigation({
   const getFieldsForStep = (step: number) => {
     switch (step) {
       case 1:
-        return ['user_type', 'name', 'surname'];
+        return ['user_type'];
       case 2: {
         const userType = form.getValues().user_type;
         if (userType === 'entrepreneur') {

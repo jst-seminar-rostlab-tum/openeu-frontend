@@ -215,8 +215,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Meeting" },
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Meeting" }
+                  },
                   "title": "Response Get Meetings Meetings Get"
                 }
               }
@@ -558,8 +561,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": { "$ref": "#/components/schemas/Topic" },
-                  "type": "array",
+                  "additionalProperties": {
+                    "items": { "$ref": "#/components/schemas/Topic" },
+                    "type": "array"
+                  },
+                  "type": "object",
                   "title": "Response Get Topics Topics Get"
                 }
               }
@@ -756,11 +762,51 @@
         }
       }
     },
+    "/legislative-files/unique-values": {
+      "get": {
+        "summary": "Get Legislative Unique Values",
+        "description": "Returns unique values for year, committee, and status from legislative files.",
+        "operationId": "get_legislative_unique_values_legislative_files_unique_values_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    },
+    "/subscribe": {
+      "post": {
+        "summary": "Subscribe To Legislation",
+        "operationId": "subscribe_to_legislation_subscribe_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubscribeRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notifications/{user_id}": {
       "get": {
         "tags": ["notifications"],
         "summary": "Get Notifications For User",
-        "description": "Retrieve all notifications for a specific user by their ID.",
         "operationId": "get_notifications_for_user_notifications__user_id__get",
         "parameters": [
           {
@@ -1150,6 +1196,30 @@
         "required": ["user_id", "description"],
         "title": "CreateAlertRequest"
       },
+      "DocumentationGateway": {
+        "properties": {
+          "date": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Date"
+          },
+          "summary": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Summary"
+          },
+          "reference": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Reference" },
+              { "type": "null" }
+            ]
+          },
+          "document_type": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Document Type"
+          }
+        },
+        "type": "object",
+        "title": "DocumentationGateway"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1225,8 +1295,14 @@
       "LegislativeFile": {
         "properties": {
           "id": { "type": "string", "title": "Id" },
-          "source_table": { "type": "string", "title": "Source Table" },
-          "source_id": { "type": "string", "title": "Source Id" },
+          "source_table": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Source Table"
+          },
+          "source_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Source Id"
+          },
           "link": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Link"
@@ -1235,6 +1311,7 @@
           "lastpubdate": {
             "anyOf": [
               { "type": "string", "format": "date" },
+              { "type": "string" },
               { "type": "null" }
             ],
             "title": "Lastpubdate"
@@ -1285,7 +1362,9 @@
           "documentation_gateway": {
             "anyOf": [
               {
-                "items": { "additionalProperties": true, "type": "object" },
+                "items": {
+                  "$ref": "#/components/schemas/DocumentationGateway"
+                },
                 "type": "array"
               },
               { "type": "null" }
@@ -1298,7 +1377,7 @@
           }
         },
         "type": "object",
-        "required": ["id", "source_table", "source_id", "title"],
+        "required": ["id", "title"],
         "title": "LegislativeFile"
       },
       "LegislativeFileResponse": {
@@ -1335,14 +1414,14 @@
       },
       "LegislativeFilesResponse": {
         "properties": {
-          "legislative_files": {
+          "data": {
             "items": { "$ref": "#/components/schemas/LegislativeFile" },
             "type": "array",
-            "title": "Legislative Files"
+            "title": "Data"
           }
         },
         "type": "object",
-        "required": ["legislative_files"],
+        "required": ["data"],
         "title": "LegislativeFilesResponse"
       },
       "LegislativeMeeting": {
@@ -1672,8 +1751,6 @@
       "ProfileCreate": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
           "user_type": {
             "type": "string",
             "enum": ["entrepreneur", "politician"],
@@ -1710,8 +1787,6 @@
         "type": "object",
         "required": [
           "id",
-          "name",
-          "surname",
           "user_type",
           "topic_ids",
           "countries",
@@ -1722,8 +1797,6 @@
       "ProfileReturn": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
           "user_type": {
             "type": "string",
             "enum": ["entrepreneur", "politician"],
@@ -1756,6 +1829,8 @@
             "enum": ["daily", "weekly", "none"],
             "title": "Newsletter Frequency"
           },
+          "name": { "type": "string", "title": "Name" },
+          "surname": { "type": "string", "title": "Surname" },
           "embedding_input": { "type": "string", "title": "Embedding Input" },
           "embedding": {
             "items": { "type": "number" },
@@ -1766,12 +1841,12 @@
         "type": "object",
         "required": [
           "id",
-          "name",
-          "surname",
           "user_type",
           "topic_ids",
           "countries",
           "newsletter_frequency",
+          "name",
+          "surname",
           "embedding_input",
           "embedding"
         ],
@@ -1866,6 +1941,15 @@
         "type": "object",
         "required": ["id", "user_id", "title"],
         "title": "SessionsResponseModel"
+      },
+      "SubscribeRequest": {
+        "properties": {
+          "user_id": { "type": "string", "title": "User Id" },
+          "legislation_id": { "type": "string", "title": "Legislation Id" }
+        },
+        "type": "object",
+        "required": ["user_id", "legislation_id"],
+        "title": "SubscribeRequest"
       },
       "Topic": {
         "properties": {
