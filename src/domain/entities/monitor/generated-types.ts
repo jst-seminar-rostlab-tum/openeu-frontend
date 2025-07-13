@@ -32,3 +32,5 @@ export type KeyEvent = components['schemas']['KeyEvent'];
 export type KeyPlayer = components['schemas']['KeyPlayer'];
 export type Rapporteur = components['schemas']['Rapporteur'];
 export type LegislativeMeeting = components['schemas']['LegislativeMeeting'];
+export type LegislativeUniqueValues =
+  components['schemas']['LegislativeFileUniqueValuesResponse'];

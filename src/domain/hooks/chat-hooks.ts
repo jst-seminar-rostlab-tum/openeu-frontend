@@ -7,7 +7,7 @@ import {
   type CreateSessionRequest,
   type SendMessageRequest,
 } from '@/domain/entities/chat/generated-types';
-import { SupportedContextType } from '@/domain/entities/monitor/types';
+import { TContext } from '@/domain/entities/monitor/types';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 import { chatRepository } from '@/repositories/chatRepository';
@@ -74,7 +74,7 @@ export function useSendMessage() {
     }: {
       request: SendMessageRequest;
       onStreamUpdate?: (content: string) => void;
-      contextParams?: Partial<Record<SupportedContextType, string>>;
+      contextParams?: Partial<Record<TContext, string>>;
     }) =>
       chatRepository.sendStreamingMessage(
         request,

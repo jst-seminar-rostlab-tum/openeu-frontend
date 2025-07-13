@@ -20,3 +20,9 @@ export const useLegislativeSuggestions = (
     queryFn: () => legislationRepository.getLegislationSuggestions(params),
     enabled: params.query.length >= 2,
   });
+
+export const useLegislativeUniqueValues = () =>
+  useQuery({
+    queryKey: ['legislative-unique-values'],
+    queryFn: () => legislationRepository.getLegislativeUniqueValues(),
+  });

@@ -41,8 +41,7 @@ import {
   LegislativeFile,
   LegislativeFileSuggestion,
 } from '@/domain/entities/monitor/generated-types';
-import { LegislationStatus } from '@/domain/entities/monitor/types';
-import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import { useLegislativeUniqueValues } from '@/domain/hooks/legislative-hooks';
 import { legislationRepository } from '@/repositories/legislationRepository';
 
 import { SuggestedSearch } from '../SuggestedSearch/SuggestedSearch';
@@ -57,7 +56,7 @@ interface KanbanToolbarProps {
   selectedYear?: number;
   visibleColumns: Set<string>;
   onVisibleColumnsChange: (columns: Set<string>) => void;
-  statusColumnsWithData: LegislationStatus[];
+  statusColumnsWithData: string[];
 }
 
 export function KanbanToolbar({
@@ -81,14 +80,17 @@ export function KanbanToolbar({
     selectedYear ? String(selectedYear) : 'all',
   );
 
+  // Fetch unique values from API
+  const { data: uniqueValues } = useLegislativeUniqueValues();
+
   // Sync local search text with external search value
   useEffect(() => {
     setLocalSearchText(searchValue);
   }, [searchValue]);
 
-  const tableData = table.getRowModel().rows.map((row) => row.original);
-  const committees = ObservatoryOperations.getUniqueCommittees(tableData);
-  const years = ObservatoryOperations.getUniqueYears(tableData);
+  // Get unique values from API or fallback to empty arrays
+  const committees = uniqueValues?.committees || [];
+  const years = uniqueValues?.years || [];
 
   // Sortable columns from TanStack Table
   const sortableColumns = useMemo(() => {
