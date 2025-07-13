@@ -21,7 +21,7 @@ export function TagBadge({
     <Badge
       variant="outline"
       className={cn(
-        'text-xs font-medium border',
+        'text-xs font-medium border whitespace-pre-line',
         className,
         COLOR_SCHEMES[colorKey].bg,
         COLOR_SCHEMES[colorKey].text,
