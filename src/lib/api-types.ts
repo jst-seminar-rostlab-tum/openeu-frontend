@@ -574,6 +574,15 @@ export interface components {
       /** Data */
       data: components['schemas']['LegislativeFileSuggestion'][];
     };
+    /** LegislativeFileUniqueValuesResponse */
+    LegislativeFileUniqueValuesResponse: {
+      /** Years */
+      years: string[];
+      /** Committees */
+      committees: string[];
+      /** Statuses */
+      statuses: string[];
+    };
     /** LegislativeFilesResponse */
     LegislativeFilesResponse: {
       /** Data */
@@ -1465,7 +1474,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': unknown;
+          'application/json': components['schemas']['LegislativeFileUniqueValuesResponse'];
         };
       };
     };

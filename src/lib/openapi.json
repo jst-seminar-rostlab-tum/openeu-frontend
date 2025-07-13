@@ -770,7 +770,13 @@
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFileUniqueValuesResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -1411,6 +1417,28 @@
         "type": "object",
         "required": ["data"],
         "title": "LegislativeFileSuggestionResponse"
+      },
+      "LegislativeFileUniqueValuesResponse": {
+        "properties": {
+          "years": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Years"
+          },
+          "committees": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Committees"
+          },
+          "statuses": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Statuses"
+          }
+        },
+        "type": "object",
+        "required": ["years", "committees", "statuses"],
+        "title": "LegislativeFileUniqueValuesResponse"
       },
       "LegislativeFilesResponse": {
         "properties": {
