@@ -4,23 +4,6 @@
  */
 
 export interface paths {
-  '/profile/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create Profile */
-    post: operations['create_profile_profile__post'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/profile/{user_id}': {
     parameters: {
       query?: never;
@@ -37,6 +20,23 @@ export interface paths {
     head?: never;
     /** Update User Profile */
     patch: operations['update_user_profile_profile__user_id__patch'];
+    trace?: never;
+  };
+  '/profile/': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create Profile */
+    post: operations['create_profile_profile__post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   '/meetings': {
@@ -102,23 +102,6 @@ export interface paths {
     };
     /** Dummy Crawl */
     get: operations['dummy_crawl_crawler__get'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/scheduler/tick': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Run Scheduled Tasks */
-    get: operations['run_scheduled_tasks_scheduler_tick_get'];
     put?: never;
     post?: never;
     delete?: never;
@@ -283,6 +266,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/subscribe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Subscribe To Legislation */
+    post: operations['subscribe_to_legislation_subscribe_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/notifications/{user_id}': {
     parameters: {
       query?: never;
@@ -290,10 +290,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /**
-     * Get Notifications For User
-     * @description Retrieve all notifications for a specific user by their ID.
-     */
+    /** Get Notifications For User */
     get: operations['get_notifications_for_user_notifications__user_id__get'];
     put?: never;
     post?: never;
@@ -407,6 +404,56 @@ export interface components {
       /** Message */
       message: string;
     };
+    /** CompanyCreate */
+    CompanyCreate: {
+      /** Role */
+      role: string;
+      /** Name */
+      name: string;
+      /** Description */
+      description?: string | null;
+      /** Company Stage */
+      company_stage: string;
+      /** Company Size */
+      company_size: string;
+      /** Industry */
+      industry: string;
+    };
+    /** CompanyReturn */
+    CompanyReturn: {
+      /** Role */
+      role: string;
+      /** Name */
+      name: string;
+      /** Description */
+      description?: string | null;
+      /** Company Stage */
+      company_stage: string;
+      /** Company Size */
+      company_size: string;
+      /** Industry */
+      industry: string;
+      /**
+       * Id
+       * Format: uuid4
+       */
+      id: string;
+    };
+    /** CompanyUpdate */
+    CompanyUpdate: {
+      /** Role */
+      role?: string | null;
+      /** Name */
+      name?: string | null;
+      /** Description */
+      description?: string | null;
+      /** Company Stage */
+      company_stage?: string | null;
+      /** Company Size */
+      company_size?: string | null;
+      /** Industry */
+      industry?: string | null;
+    };
     /** CreateAlertRequest */
     CreateAlertRequest: {
       /** User Id */
@@ -449,9 +496,9 @@ export interface components {
       /** Id */
       id: string;
       /** Source Table */
-      source_table: string;
+      source_table?: string | null;
       /** Source Id */
-      source_id: string;
+      source_id?: string | null;
       /** Link */
       link?: string | null;
       /** Title */
@@ -501,8 +548,8 @@ export interface components {
     };
     /** LegislativeFilesResponse */
     LegislativeFilesResponse: {
-      /** Legislative Files */
-      legislative_files: components['schemas']['LegislativeFile'][];
+      /** Data */
+      data: components['schemas']['LegislativeFile'][];
     };
     /** LegislativeMeeting */
     LegislativeMeeting: {
@@ -573,6 +620,9 @@ export interface components {
       tags?: string[] | null;
       /** Similarity */
       similarity?: number | null;
+      member?: components['schemas']['Person'] | null;
+      /** Attendees */
+      attendees?: string | null;
     };
     /** MeetingSuggestion */
     MeetingSuggestion: {
@@ -635,6 +685,73 @@ export interface components {
       /** Relevance Score */
       relevance_score: number | null;
     };
+    /**
+     * Person
+     * @description Model representing a Member of European Parliament (MEP).
+     *
+     *     This model contains detailed information about each MEP
+     *     as provided by the European Parliament API.
+     */
+    Person: {
+      /** Identifier */
+      identifier: string;
+      /** Type */
+      type: string;
+      /** Label */
+      label: string;
+      /** Familyname */
+      familyName: string;
+      /** Givenname */
+      givenName: string;
+      /** Sortlabel */
+      sortLabel: string;
+      /** Api:Country-Of-Representation */
+      'api:country-of-representation': string;
+      /** Api:Political-Group */
+      'api:political-group': string;
+      /** Officialfamilyname */
+      officialFamilyName?: string | null;
+      /** Officialgivenname */
+      officialGivenName?: string | null;
+    };
+    /** PoliticianCreate */
+    PoliticianCreate: {
+      /** Role */
+      role: string;
+      /** Further Information */
+      further_information: string;
+      /** Institution */
+      institution: string;
+      /** Area Of Expertise */
+      area_of_expertise: string[];
+    };
+    /** PoliticianReturn */
+    PoliticianReturn: {
+      /** Role */
+      role: string;
+      /** Further Information */
+      further_information: string;
+      /** Institution */
+      institution: string;
+      /** Area Of Expertise */
+      area_of_expertise: string[];
+      /**
+       * Id
+       * Format: uuid4
+       */
+      id: string;
+    };
+    /** PoliticianUpdate */
+    PoliticianUpdate: {
+      /** Role */
+      role?: string | null;
+      /** Further Information */
+      further_information?: string | null;
+      /** Institution */
+      institution?: string | null;
+      /** Area Of Expertise */
+      area_of_expertise?: string[] | null;
+    };
     /** ProfileCreate */
     ProfileCreate: {
       /**
@@ -646,10 +763,13 @@ export interface components {
       name: string;
       /** Surname */
       surname: string;
-      /** Company Name */
-      company_name: string;
-      /** Company Description */
-      company_description: string;
+      /**
+       * User Type
+       * @enum {string}
+       */
+      user_type: 'entrepreneur' | 'politician';
+      company?: components['schemas']['CompanyCreate'] | null;
+      politician?: components['schemas']['PoliticianCreate'] | null;
       /** Topic Ids */
       topic_ids: string[];
       /** Countries */
@@ -671,10 +791,13 @@ export interface components {
       name: string;
       /** Surname */
       surname: string;
-      /** Company Name */
-      company_name: string;
-      /** Company Description */
-      company_description: string;
+      /**
+       * User Type
+       * @enum {string}
+       */
+      user_type: 'entrepreneur' | 'politician';
+      company?: components['schemas']['CompanyReturn'] | null;
+      politician?: components['schemas']['PoliticianReturn'] | null;
       /** Topic Ids */
       topic_ids: string[];
       /** Countries */
@@ -684,6 +807,8 @@ export interface components {
        * @enum {string}
        */
       newsletter_frequency: 'daily' | 'weekly' | 'none';
+      /** Embedding Input */
+      embedding_input: string;
       /** Embedding */
       embedding: number[];
     };
@@ -693,10 +818,10 @@ export interface components {
       name?: string | null;
       /** Surname */
       surname?: string | null;
-      /** Company Name */
-      company_name?: string | null;
-      /** Company Description */
-      company_description?: string | null;
+      /** User Type */
+      user_type?: ('entrepreneur' | 'politician') | null;
+      company?: components['schemas']['CompanyUpdate'] | null;
+      politician?: components['schemas']['PoliticianUpdate'] | null;
       /** Topic Ids */
       topic_ids?: string[] | null;
       /** Countries */
@@ -727,6 +852,13 @@ export interface components {
       /** Title */
       title: string;
     };
+    /** SubscribeRequest */
+    SubscribeRequest: {
+      /** User Id */
+      user_id: string;
+      /** Legislation Id */
+      legislation_id: string;
+    };
     /** Topic */
     Topic: {
       /** Topic */
@@ -752,39 +884,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  create_profile_profile__post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ProfileCreate'];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HTTPValidationError'];
-        };
-      };
-    };
-  };
   get_user_profile_profile__user_id__get: {
     parameters: {
       query?: never;
@@ -851,6 +950,39 @@ export interface operations {
       };
     };
   };
+  create_profile_profile__post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProfileCreate'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
   get_meetings_meetings_get: {
     parameters: {
       query?: {
@@ -882,7 +1014,9 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['Meeting'][];
+          'application/json': {
+            [key: string]: components['schemas']['Meeting'][];
+          };
         };
       };
       /** @description Validation Error */
@@ -1000,28 +1134,6 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HTTPValidationError'];
-        };
-      };
-    };
-  };
-  run_scheduled_tasks_scheduler_tick_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            [key: string]: string;
-          };
         };
       };
     };
@@ -1200,7 +1312,9 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['Topic'][];
+          'application/json': {
+            [key: string]: components['schemas']['Topic'][];
+          };
         };
       };
     };
@@ -1217,6 +1331,8 @@ export interface operations {
         committee?: string | null;
         /** @description Filter by rapporteur name */
         rapporteur?: string | null;
+        /** @description User ID for personalized meeting recommendations */
+        user_id?: string | null;
       };
       header?: never;
       path?: never;
@@ -1297,6 +1413,39 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['LegislativeFileSuggestionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  subscribe_to_legislation_subscribe_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubscribeRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import PersonalizeLegislationSwitch from '@/components/PersonalizeSwitch/PersonalizeLegislationSwitch';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -52,9 +53,11 @@ interface KanbanToolbarProps {
   onSearchChange?: (search: string) => void;
   onCommitteeChange?: (committee: string | undefined) => void;
   onYearChange?: (year: number | undefined) => void;
+  onUserIdChange?: (userId: string | undefined) => void;
   searchValue?: string;
   selectedCommittee?: string;
   selectedYear?: number;
+  selectedUserId?: string;
   visibleColumns: Set<string>;
   onVisibleColumnsChange: (columns: Set<string>) => void;
   statusColumnsWithData: LegislationStatus[];
@@ -65,9 +68,11 @@ export function KanbanToolbar({
   onSearchChange,
   onCommitteeChange,
   onYearChange,
+  onUserIdChange,
   searchValue = '',
   selectedCommittee,
   selectedYear,
+  selectedUserId,
   visibleColumns,
   onVisibleColumnsChange,
   statusColumnsWithData,
@@ -177,6 +182,12 @@ export function KanbanToolbar({
 
   const ControlsContent = () => (
     <>
+      {/* Personalize Switch */}
+      <PersonalizeLegislationSwitch
+        onUserIdChange={onUserIdChange}
+        selectedUserId={selectedUserId}
+      />
+
       {/* Clear All Filters */}
       {hasAnyFilters && (
         <Button

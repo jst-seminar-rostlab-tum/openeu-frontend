@@ -9,12 +9,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useProfile } from '@/domain/hooks/profileHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 
-export default function PersonalizeSwitch() {
-  const { setSelectedUserId } = useMeetingContext();
+interface PersonalizeLegislationSwitchProps {
+  onUserIdChange?: (userId: string | undefined) => void;
+  selectedUserId?: string;
+}
+
+export default function PersonalizeLegislationSwitch({
+  onUserIdChange,
+}: PersonalizeLegislationSwitchProps) {
   const { user } = useAuth();
 
   const [checked, setChecked] = useState(false);
@@ -27,9 +32,9 @@ export default function PersonalizeSwitch() {
   const handleSwitch = (isChecked: boolean) => {
     setChecked(isChecked);
     if (isChecked && hasProfile) {
-      setSelectedUserId(userId);
+      onUserIdChange?.(userId);
     } else {
-      setSelectedUserId('');
+      onUserIdChange?.(undefined);
     }
   };
 
@@ -43,10 +48,10 @@ export default function PersonalizeSwitch() {
     if (userId && profile && !isInitialized.current) {
       setHasProfile(true);
       setChecked(true);
-      setSelectedUserId(userId);
+      onUserIdChange?.(userId);
       isInitialized.current = true;
     }
-  }, [userId, profile, setSelectedUserId]);
+  }, [userId, profile, onUserIdChange]);
 
   return (
     <div className="flex items-center space-x-2">
