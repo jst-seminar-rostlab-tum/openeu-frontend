@@ -45,12 +45,20 @@ export function AuthProvider({
 
   useEffect(() => {
     if (!token || isJwtExpired(token)) {
-      if (!sessionStorage.getItem('sessionExpiredToastShown')) {
+      // Only show toast if user had a valid session before (sessionStorage has 'hadValidSession' flag)
+      const hadValidSession =
+        sessionStorage.getItem('hadValidSession') === 'true';
+      const toastAlreadyShown =
+        sessionStorage.getItem('sessionExpiredToastShown') === 'true';
+
+      if (hadValidSession && !toastAlreadyShown) {
         handleSessionExpiration();
         sessionStorage.setItem('sessionExpiredToastShown', 'true');
       }
       return;
     } else {
+      // User has valid token, mark that they had a valid session
+      sessionStorage.setItem('hadValidSession', 'true');
       sessionStorage.removeItem('sessionExpiredToastShown');
     }
   }, [token]);
@@ -152,7 +160,21 @@ export function AuthProvider({
       deleteCookie('token', { path: '/' });
       deleteCookie('refresh_token', { path: '/' });
       sessionStorage.removeItem('sessionExpiredToastShown');
-      router.push('/');
+      sessionStorage.removeItem('hadValidSession');
+
+      const currentPath = window.location.pathname;
+      const publicPages = [
+        '/privacy',
+        '/',
+        '/login',
+        '/register',
+        '/forgot-password',
+      ];
+      const isPublicPage = publicPages.includes(currentPath);
+
+      if (!isPublicPage) {
+        router.push('/');
+      }
     }
   }, [supabase, router, initialUser, isSigningOut]);
 
