@@ -266,6 +266,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/legislative-files/unique-values': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Legislative Unique Values
+     * @description Returns unique values for year, committee, and status from legislative files.
+     */
+    get: operations['get_legislative_unique_values_legislative_files_unique_values_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/subscribe': {
     parameters: {
       query?: never;
@@ -554,6 +574,15 @@ export interface components {
       /** Data */
       data: components['schemas']['LegislativeFileSuggestion'][];
     };
+    /** LegislativeFileUniqueValuesResponse */
+    LegislativeFileUniqueValuesResponse: {
+      /** Years */
+      years: string[];
+      /** Committees */
+      committees: string[];
+      /** Statuses */
+      statuses: string[];
+    };
     /** LegislativeFilesResponse */
     LegislativeFilesResponse: {
       /** Data */
@@ -767,10 +796,6 @@ export interface components {
        * Format: uuid4
        */
       id: string;
-      /** Name */
-      name: string;
-      /** Surname */
-      surname: string;
       /**
        * User Type
        * @enum {string}
@@ -795,10 +820,6 @@ export interface components {
        * Format: uuid4
        */
       id: string;
-      /** Name */
-      name: string;
-      /** Surname */
-      surname: string;
       /**
        * User Type
        * @enum {string}
@@ -815,6 +836,10 @@ export interface components {
        * @enum {string}
        */
       newsletter_frequency: 'daily' | 'weekly' | 'none';
+      /** Name */
+      name: string;
+      /** Surname */
+      surname: string;
       /** Embedding Input */
       embedding_input: string;
       /** Embedding */
@@ -1430,6 +1455,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_legislative_unique_values_legislative_files_unique_values_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LegislativeFileUniqueValuesResponse'];
         };
       };
     };

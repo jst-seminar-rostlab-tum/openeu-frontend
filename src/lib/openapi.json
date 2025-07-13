@@ -762,6 +762,25 @@
         }
       }
     },
+    "/legislative-files/unique-values": {
+      "get": {
+        "summary": "Get Legislative Unique Values",
+        "description": "Returns unique values for year, committee, and status from legislative files.",
+        "operationId": "get_legislative_unique_values_legislative_files_unique_values_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFileUniqueValuesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/subscribe": {
       "post": {
         "summary": "Subscribe To Legislation",
@@ -1399,6 +1418,28 @@
         "required": ["data"],
         "title": "LegislativeFileSuggestionResponse"
       },
+      "LegislativeFileUniqueValuesResponse": {
+        "properties": {
+          "years": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Years"
+          },
+          "committees": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Committees"
+          },
+          "statuses": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Statuses"
+          }
+        },
+        "type": "object",
+        "required": ["years", "committees", "statuses"],
+        "title": "LegislativeFileUniqueValuesResponse"
+      },
       "LegislativeFilesResponse": {
         "properties": {
           "data": {
@@ -1738,8 +1779,6 @@
       "ProfileCreate": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
           "user_type": {
             "type": "string",
             "enum": ["entrepreneur", "politician"],
@@ -1776,8 +1815,6 @@
         "type": "object",
         "required": [
           "id",
-          "name",
-          "surname",
           "user_type",
           "topic_ids",
           "countries",
@@ -1788,8 +1825,6 @@
       "ProfileReturn": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
           "user_type": {
             "type": "string",
             "enum": ["entrepreneur", "politician"],
@@ -1822,6 +1857,8 @@
             "enum": ["daily", "weekly", "none"],
             "title": "Newsletter Frequency"
           },
+          "name": { "type": "string", "title": "Name" },
+          "surname": { "type": "string", "title": "Surname" },
           "embedding_input": { "type": "string", "title": "Embedding Input" },
           "embedding": {
             "items": { "type": "number" },
@@ -1832,12 +1869,12 @@
         "type": "object",
         "required": [
           "id",
-          "name",
-          "surname",
           "user_type",
           "topic_ids",
           "countries",
           "newsletter_frequency",
+          "name",
+          "surname",
           "embedding_input",
           "embedding"
         ],
