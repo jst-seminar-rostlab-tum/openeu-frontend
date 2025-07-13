@@ -18,8 +18,6 @@ export default async function OnboardingStepPage() {
 
   const existingProfile = await getProfile(user.id);
 
-  console.log('existingProfile', existingProfile);
-
   if (existingProfile) {
     redirect('/profile');
   }
