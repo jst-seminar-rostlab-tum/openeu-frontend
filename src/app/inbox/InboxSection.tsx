@@ -7,10 +7,9 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  RowSelectionState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import InboxSkeleton from '@/components/inbox/InboxSkeleton';
 import { NewsletterDialog } from '@/components/inbox/NewsletterDialog';
@@ -30,8 +29,6 @@ interface InboxSectionProps {
 }
 
 export function InboxSection({ userId }: InboxSectionProps) {
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-
   const {
     data: notifications,
     error,
@@ -83,29 +80,12 @@ export function InboxSection({ userId }: InboxSectionProps) {
     [openDialog],
   );
 
-  const handleArchive = useCallback((itemId: string) => {
-    ToastOperations.showInfo({
-      title: 'Info',
-      message: `Archiving item: ${itemId}`,
-    });
-  }, []);
-
-  const handleDelete = useCallback((itemId: string) => {
-    ToastOperations.showInfo({
-      title: 'Info',
-      message: `Deleting item: ${itemId}`,
-    });
-    // TODO: Implement actual delete API call
-  }, []);
-
   const columns = useMemo(
     () =>
       createColumns({
         onView: handleView,
-        onArchive: handleArchive,
-        onDelete: handleDelete,
       }),
-    [handleView, handleArchive, handleDelete],
+    [handleView],
   );
 
   const table = useReactTable({
@@ -117,34 +97,8 @@ export function InboxSection({ userId }: InboxSectionProps) {
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    onRowSelectionChange: setRowSelection,
     autoResetPageIndex: false,
-    state: {
-      rowSelection,
-    },
   });
-
-  const handleBulkArchive = useCallback(() => {
-    const selectedItems = table
-      .getFilteredSelectedRowModel()
-      .rows.map((row) => row.original.id);
-    ToastOperations.showInfo({
-      title: 'Info',
-      message: `Archiving ${selectedItems.length} items`,
-    });
-    setRowSelection({});
-  }, [table]);
-
-  const handleBulkDelete = useCallback(() => {
-    const selectedIds = table
-      .getFilteredSelectedRowModel()
-      .rows.map((row) => row.original.id);
-    ToastOperations.showInfo({
-      title: 'Info',
-      message: `Deleting ${selectedIds.length} items`,
-    });
-    setRowSelection({});
-  }, [table]);
 
   if (isLoading) {
     return (
@@ -166,11 +120,7 @@ export function InboxSection({ userId }: InboxSectionProps) {
       </div>
 
       <div className="space-y-2">
-        <DataTableToolbar
-          table={table}
-          onBulkArchive={handleBulkArchive}
-          onBulkDelete={handleBulkDelete}
-        />
+        <DataTableToolbar table={table} />
         <DataTable table={table} columns={columns} />
         <DataTablePagination table={table} />
       </div>

@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import ToolbarOperations from '@/operations/inbox/ToolbarOperations';
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
@@ -49,7 +50,7 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {ToolbarOperations.formatColumnDisplayName(column.id)}
               </DropdownMenuCheckboxItem>
             );
           })}

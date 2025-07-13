@@ -3,22 +3,23 @@ import { X } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { DateRangeFilter } from '@/components/DateRangeFilter';
-import { DataTableBulkActions } from '@/components/inbox/BulkActions';
+import { DataTableBulkActions } from '@/components/inbox/AlertBulkActions';
 import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
 import { DataTableViewOptions } from '@/components/inbox/ViewOptions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AlertTableItem } from '@/domain/entities/alerts/alert';
 import ToolbarOperations from '@/operations/inbox/ToolbarOperations';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  onBulkArchive?: () => void;
+  onBulkActivate?: () => void;
   onBulkDelete?: () => void;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  onBulkArchive,
+  onBulkActivate,
   onBulkDelete,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
@@ -47,12 +48,29 @@ export function DataTableToolbar<TData>({
 
   // Show bulk actions when items are selected
   if (selectedCount > 0) {
+    let activationLabel = 'Deactivate';
+    if (
+      selectedRows.length > 0 &&
+      typeof (selectedRows[0].original as AlertTableItem)?.is_active ===
+        'boolean'
+    ) {
+      const allActive = selectedRows.every(
+        (row) => (row.original as AlertTableItem).is_active === true,
+      );
+      const allInactive = selectedRows.every(
+        (row) => (row.original as AlertTableItem).is_active === false,
+      );
+      if (allInactive) activationLabel = 'Activate';
+      else if (!allActive && !allInactive)
+        activationLabel = 'Switch Activation Status';
+    }
     return (
       <div className="flex h-10 items-center justify-between">
         <DataTableBulkActions
           selectedCount={selectedCount}
-          onArchive={onBulkArchive!}
+          onActivate={onBulkActivate!}
           onDelete={onBulkDelete!}
+          activationLabel={activationLabel}
         />
         <Button
           variant="ghost"
@@ -67,7 +85,6 @@ export function DataTableToolbar<TData>({
     );
   }
 
-  // Show normal toolbar when no items are selected
   return (
     <div className="flex h-10 items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
