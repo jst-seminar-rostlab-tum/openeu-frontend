@@ -40,8 +40,6 @@ export default function AccountDetailsForm({
   email,
   name,
   surname,
-  company_name,
-  company_description,
 }: AccountDetailsFormProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -51,8 +49,6 @@ export default function AccountDetailsForm({
     defaultValues: {
       name,
       surname,
-      company_name,
-      company_description,
     },
   });
 
