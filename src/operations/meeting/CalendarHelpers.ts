@@ -270,7 +270,8 @@ export const MEETING_TYPE_MAPPING: Record<string, string> = {
   mec_summit_ministerial_meeting: 'MEC Summit/Ministerial',
   polish_presidency_meeting: 'Polish Presidency',
   spanish_commission_meetings: 'Spanish Commission',
-  weekly_agenda: 'Weekly Agenda',
+  weekly_agenda: 'EP Weekly Agenda',
+  ec_res_inno_meetings: 'European Commission Research and Innovation',
 };
 
 /**
@@ -301,7 +302,8 @@ export function getMeetingTypeShort(sourceTable?: string): string {
     mec_summit_ministerial_meeting: 'MEC Summit',
     polish_presidency_meeting: 'PL Presidency',
     spanish_commission_meetings: 'ES Commission',
-    weekly_agenda: 'Weekly',
+    weekly_agenda: 'EP Weekly',
+    ec_res_inno_meetings: 'EC Res Inno',
   };
 
   return (
