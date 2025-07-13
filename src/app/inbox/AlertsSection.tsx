@@ -83,8 +83,8 @@ export function AlertsSection({ userId }: AlertsSectionProps) {
     const allInactive = selectedRows.every((row) => !row.original.is_active);
 
     let activationAction = 'updated';
-    if (allActive) activationAction = 'activated';
-    else if (allInactive) activationAction = 'deactivated';
+    if (allActive) activationAction = 'deactivated';
+    else if (allInactive) activationAction = 'activated';
 
     const results = await Promise.allSettled(
       selectedRows.map((row) =>
