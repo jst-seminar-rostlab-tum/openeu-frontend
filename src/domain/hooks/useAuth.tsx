@@ -161,7 +161,20 @@ export function AuthProvider({
       deleteCookie('refresh_token', { path: '/' });
       sessionStorage.removeItem('sessionExpiredToastShown');
       sessionStorage.removeItem('hadValidSession');
-      router.push('/');
+
+      const currentPath = window.location.pathname;
+      const publicPages = [
+        '/privacy',
+        '/',
+        '/login',
+        '/register',
+        '/forgot-password',
+      ];
+      const isPublicPage = publicPages.includes(currentPath);
+
+      if (!isPublicPage) {
+        router.push('/');
+      }
     }
   }, [supabase, router, initialUser, isSigningOut]);
 
