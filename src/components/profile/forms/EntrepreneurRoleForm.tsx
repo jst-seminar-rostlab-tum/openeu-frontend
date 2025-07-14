@@ -37,7 +37,7 @@ export function EntrepreneurRoleForm({ form }: EntrepreneurRoleFormProps) {
   return (
     <Form {...form}>
       <form>
-        <CardContent className="grid grid-cols-2 gap-4 items-start">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           <FormField
             control={form.control}
             name="company.name"
@@ -153,7 +153,7 @@ export function EntrepreneurRoleForm({ form }: EntrepreneurRoleFormProps) {
             control={form.control}
             name="company.description"
             render={({ field }) => (
-              <FormItem className="col-span-2">
+              <FormItem className="col-span-full">
                 <FormLabel>Company Description</FormLabel>
                 <FormControl>
                   <Textarea
