@@ -12,4 +12,11 @@ export default class ToolbarOperations {
       }
     };
   }
+
+  static formatColumnDisplayName(columnId: string): string {
+    return columnId
+      .replace(/^is_([a-z])/, (_, firstLetter) => firstLetter.toUpperCase())
+      .replace(/_([a-z])/g, (_, letter) => ` ${letter.toUpperCase()}`)
+      .replace(/^[a-z]/, (letter) => letter.toUpperCase());
+  }
 }

@@ -34,3 +34,4 @@ export type Rapporteur = components['schemas']['Rapporteur'];
 export type LegislativeMeeting = components['schemas']['LegislativeMeeting'];
 export type LegislativeUniqueValues =
   components['schemas']['LegislativeFileUniqueValuesResponse'];
+export type DocumentData = components['schemas']['DocumentationGateway'];

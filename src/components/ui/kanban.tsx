@@ -153,7 +153,7 @@ export const KanbanProvider = ({
       onDragEnd={dragDisabled ? undefined : onDragEnd}
     >
       <div
-        className={cn('flex w-full gap-4 overflow-x-auto scrollbar-custom', className)}
+        className={cn('flex w-full gap-3 overflow-x-auto scrollbar-custom', className)}
       >
         {children}
       </div>

@@ -110,6 +110,40 @@ export const legislationRepository = {
     }
   },
 
+  async subscribeToLegislation(
+    userId: string,
+    legislationId: string,
+  ): Promise<void> {
+    const token = getCookie('token');
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscribe`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          legislation_id: legislationId,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to subscribe to legislation: ${res.status}`);
+      }
+    } catch (err) {
+      ToastOperations.showError({
+        title: 'Subscription failed',
+        message: 'Failed to subscribe to legislation. Please try again later.',
+      });
+      throw new Error('Failed to subscribe to legislation', {
+        cause: err,
+      });
+    }
+  },
+
   async getLegislativeUniqueValues(): Promise<LegislativeUniqueValues> {
     const token = getCookie('token');
 
