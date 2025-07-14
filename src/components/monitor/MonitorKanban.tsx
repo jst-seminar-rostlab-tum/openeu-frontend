@@ -11,16 +11,14 @@ import {
   KanbanProvider,
 } from '@/components/ui/kanban';
 import { LegislativeFile } from '@/domain/entities/monitor/generated-types';
-import { LegislationStatus } from '@/domain/entities/monitor/types';
-import { cn } from '@/lib/utils';
-import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import { cn, COLOR_SCHEMES, getColorKeyByHash } from '@/lib/utils';
 import MonitorOperations from '@/operations/monitor/MonitorOperations';
 
 interface TanStackKanbanProps {
-  groupedData: Record<LegislationStatus, LegislativeFile[]>;
+  groupedData: Record<string, LegislativeFile[]>;
   className?: string;
   visibleColumns: Set<string>;
-  statusColumnsWithData: LegislationStatus[];
+  statusColumnsWithData: string[];
 }
 
 export function TanStackKanban({
@@ -29,8 +27,6 @@ export function TanStackKanban({
   visibleColumns,
   statusColumnsWithData,
 }: TanStackKanbanProps) {
-  const statusConfig = ObservatoryOperations.statusConfig;
-
   const visibleStatusColumns = statusColumnsWithData.filter((status) =>
     visibleColumns.has(status),
   );
@@ -39,7 +35,8 @@ export function TanStackKanban({
     <KanbanProvider dragDisabled={true} className={cn('flex-1', className)}>
       {visibleStatusColumns.map((status) => {
         const items = groupedData[status] || [];
-        const config = statusConfig[status];
+        const colorKey = getColorKeyByHash(status);
+        const dotColor = COLOR_SCHEMES[colorKey].dot;
 
         return (
           <KanbanBoard key={status} id={status}>
@@ -47,8 +44,10 @@ export function TanStackKanban({
               <div className="flex shrink-0 items-start gap-2 justify-between">
                 <div className="flex items-start gap-2">
                   <div
-                    className="h-2 w-2 rounded-full shrink-0 mt-1.5"
-                    style={{ backgroundColor: config.color }}
+                    className={cn(
+                      'h-2 w-2 rounded-full shrink-0 mt-1.5',
+                      dotColor,
+                    )}
                   />
                   <p className="font-semibold text-sm">{status}</p>
                 </div>

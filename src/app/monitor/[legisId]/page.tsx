@@ -26,8 +26,7 @@ import {
   getLegislativeFile,
   getLegislativeMeetings,
 } from '@/domain/actions/monitor';
-import { LegislationStatus } from '@/domain/entities/monitor/types';
-import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import { cn, COLOR_SCHEMES, getColorKeyByHash } from '@/lib/utils';
 import MonitorOperations from '@/operations/monitor/MonitorOperations';
 
 export default async function LegislationPage({
@@ -47,6 +46,10 @@ export default async function LegislationPage({
     notFound();
   }
 
+  const status = legislation.status || 'Other';
+  const colorKey = getColorKeyByHash(status);
+  const dotColor = COLOR_SCHEMES[colorKey].dot;
+
   return (
     <Section className="space-y-4">
       <div className="space-y-1">
@@ -58,20 +61,8 @@ export default async function LegislationPage({
         </Button>
         <div className="flex flex-row items-center gap-2">
           <div className="flex items-center gap-2">
-            {(() => {
-              const status = (legislation.status ||
-                'Other') as LegislationStatus;
-              const config = ObservatoryOperations.statusConfig[status];
-              return (
-                <>
-                  <div
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: config.color }}
-                  />
-                  <span className="font-medium">{status}</span>
-                </>
-              );
-            })()}
+            <div className={cn('h-2 w-2 rounded-full', dotColor)} />
+            <span className="font-medium">{status}</span>
           </div>
 
           <Separator orientation="vertical" className="!h-5 hidden md:block" />

@@ -12,7 +12,7 @@ import {
 } from 'react';
 
 import { Message } from '@/domain/entities/chat/generated-types';
-import { SupportedContextType } from '@/domain/entities/monitor/types';
+import { TContext } from '@/domain/entities/monitor/types';
 import {
   useChatMessages,
   useCreateChatSession,
@@ -23,7 +23,7 @@ import { SUPPORTED_CONTEXT_TYPES } from '@/operations/chat/ChatOperations';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface ChatContext {
-  type: SupportedContextType;
+  type: TContext;
   id: string;
 }
 
@@ -116,7 +116,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       setMessages((prev) => [...prev, userMessage]);
 
       // Build context parameters for the API call
-      const contextParams: Partial<Record<SupportedContextType, string>> = {};
+      const contextParams: Partial<Record<TContext, string>> = {};
       if (context) {
         contextParams[context.type] = context.id;
       }
