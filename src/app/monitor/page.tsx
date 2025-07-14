@@ -25,6 +25,7 @@ export default function ObservatoryPage() {
     string | undefined
   >();
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
+  const [selectedUserId, setSelectedUserId] = useState<string | undefined>();
 
   const {
     data: legislationData = [],
@@ -34,6 +35,7 @@ export default function ObservatoryPage() {
     query: searchValue || undefined,
     committee: selectedCommittee,
     year: selectedYear,
+    user_id: selectedUserId,
   });
 
   const { data: uniqueValues } = useLegislativeUniqueValues();
@@ -93,9 +95,11 @@ export default function ObservatoryPage() {
           onSearchChange={setSearchValue}
           onCommitteeChange={setSelectedCommittee}
           onYearChange={setSelectedYear}
+          onUserIdChange={setSelectedUserId}
           searchValue={searchValue}
           selectedCommittee={selectedCommittee}
           selectedYear={selectedYear}
+          selectedUserId={selectedUserId}
           visibleColumns={visibleColumns}
           onVisibleColumnsChange={setVisibleColumns}
           statusColumnsWithData={statusColumnsWithData}

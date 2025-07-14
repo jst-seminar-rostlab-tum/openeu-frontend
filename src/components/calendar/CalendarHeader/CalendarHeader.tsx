@@ -8,7 +8,7 @@ import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigato
 import { TodayButton } from '@/components/calendar/CalendarHeader/TodayButton';
 import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
-import PersonalizeSwitch from '@/components/PersonalizeSwitch/PersonalizeSwitch';
+import PersonalizeMeetingSwitch from '@/components/PersonalizeSwitch/PersonalizeMeetingSwitch';
 import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
 import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
 import { Badge } from '@/components/ui/badge';
@@ -119,7 +119,7 @@ export function CalendarHeader() {
               );
             })()}
           </div>
-          <PersonalizeSwitch />
+          <PersonalizeMeetingSwitch />
           <FilterModal showDateDropdown={false} topics={topicLabels} />
           <Tooltip>
             <TooltipTrigger asChild>

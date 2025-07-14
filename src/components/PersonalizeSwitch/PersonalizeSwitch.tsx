@@ -9,17 +9,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useProfile } from '@/domain/hooks/profileHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 
-export default function PersonalizeSwitch() {
-  const { setSelectedUserId } = useMeetingContext();
-  const { user } = useAuth();
+export interface PersonalizeSwitchProps {
+  onCheckedChange: (userId: string | undefined) => void;
+  selectedUserId?: string;
+  label?: string;
+}
 
-  const [checked, setChecked] = useState(false);
+export default function PersonalizeSwitch({
+  onCheckedChange,
+  selectedUserId,
+  label = 'Personalized',
+}: PersonalizeSwitchProps) {
+  const { user } = useAuth();
   const [hasProfile, setHasProfile] = useState(false);
   const [userId, setUserId] = useState('');
+  const [checked, setChecked] = useState(false);
   const isInitialized = useRef(false);
 
   const { data: profile } = useProfile(userId);
@@ -27,9 +34,9 @@ export default function PersonalizeSwitch() {
   const handleSwitch = (isChecked: boolean) => {
     setChecked(isChecked);
     if (isChecked && hasProfile) {
-      setSelectedUserId(userId);
+      onCheckedChange(userId);
     } else {
-      setSelectedUserId('');
+      onCheckedChange(undefined);
     }
   };
 
@@ -40,11 +47,20 @@ export default function PersonalizeSwitch() {
   }, [user]);
 
   useEffect(() => {
-    if (userId && profile && !isInitialized.current) {
+    setChecked(!!selectedUserId && selectedUserId === userId);
+  }, [selectedUserId, userId]);
+
+  useEffect(() => {
+    if (
+      userId &&
+      profile &&
+      !isInitialized.current &&
+      profile.embedding_input
+    ) {
       setHasProfile(true);
       isInitialized.current = true;
     }
-  }, [userId, profile, setSelectedUserId]);
+  }, [userId, profile]);
 
   return (
     <div className="flex items-center space-x-2">
@@ -66,7 +82,7 @@ export default function PersonalizeSwitch() {
           )}
         </Tooltip>
       </TooltipProvider>
-      <Label>Personalized</Label>
+      <Label>{label}</Label>
     </div>
   );
 }

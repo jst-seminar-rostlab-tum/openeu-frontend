@@ -809,6 +809,34 @@
         }
       }
     },
+    "/subscribe": {
+      "post": {
+        "summary": "Subscribe To Legislation",
+        "operationId": "subscribe_to_legislation_subscribe_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubscribeRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notifications/{user_id}": {
       "get": {
         "tags": ["notifications"],
