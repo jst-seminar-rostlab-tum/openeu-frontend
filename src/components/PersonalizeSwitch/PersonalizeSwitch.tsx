@@ -51,7 +51,12 @@ export default function PersonalizeSwitch({
   }, [selectedUserId, userId]);
 
   useEffect(() => {
-    if (userId && profile && !isInitialized.current) {
+    if (
+      userId &&
+      profile &&
+      !isInitialized.current &&
+      profile.embedding_input
+    ) {
       setHasProfile(true);
       isInitialized.current = true;
     }
