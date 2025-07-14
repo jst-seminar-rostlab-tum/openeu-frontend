@@ -762,6 +762,53 @@
         }
       }
     },
+    "/legislative-files/unique-values": {
+      "get": {
+        "summary": "Get Legislative Unique Values",
+        "description": "Returns unique values for year, committee, and status from legislative files.",
+        "operationId": "get_legislative_unique_values_legislative_files_unique_values_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFileUniqueValuesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscribe": {
+      "post": {
+        "summary": "Subscribe To Legislation",
+        "operationId": "subscribe_to_legislation_subscribe_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubscribeRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/subscribe": {
       "post": {
         "summary": "Subscribe To Legislation",
@@ -1183,6 +1230,30 @@
         "required": ["user_id", "description"],
         "title": "CreateAlertRequest"
       },
+      "DocumentationGateway": {
+        "properties": {
+          "date": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Date"
+          },
+          "summary": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Summary"
+          },
+          "reference": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Reference" },
+              { "type": "null" }
+            ]
+          },
+          "document_type": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Document Type"
+          }
+        },
+        "type": "object",
+        "title": "DocumentationGateway"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1325,7 +1396,9 @@
           "documentation_gateway": {
             "anyOf": [
               {
-                "items": { "additionalProperties": true, "type": "object" },
+                "items": {
+                  "$ref": "#/components/schemas/DocumentationGateway"
+                },
                 "type": "array"
               },
               { "type": "null" }
@@ -1372,6 +1445,28 @@
         "type": "object",
         "required": ["data"],
         "title": "LegislativeFileSuggestionResponse"
+      },
+      "LegislativeFileUniqueValuesResponse": {
+        "properties": {
+          "years": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Years"
+          },
+          "committees": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Committees"
+          },
+          "statuses": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Statuses"
+          }
+        },
+        "type": "object",
+        "required": ["years", "committees", "statuses"],
+        "title": "LegislativeFileUniqueValuesResponse"
       },
       "LegislativeFilesResponse": {
         "properties": {
@@ -1712,8 +1807,6 @@
       "ProfileCreate": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
           "user_type": {
             "type": "string",
             "enum": ["entrepreneur", "politician"],
@@ -1750,8 +1843,6 @@
         "type": "object",
         "required": [
           "id",
-          "name",
-          "surname",
           "user_type",
           "topic_ids",
           "countries",
@@ -1762,8 +1853,6 @@
       "ProfileReturn": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
           "user_type": {
             "type": "string",
             "enum": ["entrepreneur", "politician"],
@@ -1796,6 +1885,8 @@
             "enum": ["daily", "weekly", "none"],
             "title": "Newsletter Frequency"
           },
+          "name": { "type": "string", "title": "Name" },
+          "surname": { "type": "string", "title": "Surname" },
           "embedding_input": { "type": "string", "title": "Embedding Input" },
           "embedding": {
             "items": { "type": "number" },
@@ -1806,12 +1897,12 @@
         "type": "object",
         "required": [
           "id",
-          "name",
-          "surname",
           "user_type",
           "topic_ids",
           "countries",
           "newsletter_frequency",
+          "name",
+          "surname",
           "embedding_input",
           "embedding"
         ],

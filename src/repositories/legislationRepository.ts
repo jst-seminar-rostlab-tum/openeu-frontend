@@ -7,6 +7,7 @@ import {
   LegislativeFileSuggestion,
   LegislativeFileSuggestionResponse,
   LegislativeSuggestionsParams,
+  LegislativeUniqueValues,
 } from '@/domain/entities/monitor/generated-types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -106,6 +107,70 @@ export const legislationRepository = {
     } catch (err) {
       console.warn('Failed to fetch from API, returning empty array:', err);
       return [];
+    }
+  },
+
+  async subscribeToLegislation(
+    userId: string,
+    legislationId: string,
+  ): Promise<void> {
+    const token = getCookie('token');
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscribe`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          legislation_id: legislationId,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to subscribe to legislation: ${res.status}`);
+      }
+    } catch (err) {
+      ToastOperations.showError({
+        title: 'Subscription failed',
+        message: 'Failed to subscribe to legislation. Please try again later.',
+      });
+      throw new Error('Failed to subscribe to legislation', {
+        cause: err,
+      });
+    }
+  },
+
+  async getLegislativeUniqueValues(): Promise<LegislativeUniqueValues> {
+    const token = getCookie('token');
+
+    try {
+      const res = await fetch(`${API_URL}/unique-values`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch unique values: ${res.status}`);
+      }
+
+      const response: LegislativeUniqueValues = await res.json();
+      return response;
+    } catch (err) {
+      ToastOperations.showError({
+        title: 'Error fetching unique values',
+        message: 'Failed to fetch unique values. Please try again later.',
+      });
+      throw new Error('Failed to fetch unique values', {
+        cause: err,
+      });
     }
   },
 };

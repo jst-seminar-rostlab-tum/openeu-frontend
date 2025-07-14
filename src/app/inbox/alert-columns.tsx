@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Check, MoreVertical, Power, PowerOff, X } from 'lucide-react';
+import { Archive, ArchiveRestore, Check, MoreVertical, X } from 'lucide-react';
 
 import { AlertDetailsDialog } from '@/components/inbox/AlertDetailsDialog';
 import { DataTableColumnHeader } from '@/components/inbox/ColHeader';
@@ -49,14 +49,16 @@ export const getAlertColumns = ({
       <DataTableColumnHeader column={column} title="Title" />
     ),
     cell: ({ row }) => (
-      <AlertDetailsDialog
-        alert={row.original}
-        trigger={
-          <div className="font-medium cursor-pointer hover:text-blue-800 underline">
-            {row.getValue('title')}
-          </div>
-        }
-      />
+      <div className="text-left">
+        <AlertDetailsDialog
+          alert={row.original}
+          trigger={
+            <div className="font-medium cursor-pointer hover:text-blue-800 underline">
+              {row.getValue('title')}
+            </div>
+          }
+        />
+      </div>
     ),
   },
   {
@@ -68,13 +70,13 @@ export const getAlertColumns = ({
       const date = row.getValue('date') as string | null;
       if (date === null) {
         return (
-          <div className="flex items-center justify-end gap-2">
+          <div className="px-4 py-2 flex items-center">
             <span>-</span>
           </div>
         );
       }
       return (
-        <div className="flex items-center justify-center gap-2">
+        <div className="px-4 py-2 flex items-center">
           <span>{new Date(date).toLocaleDateString()}</span>
         </div>
       );
@@ -82,16 +84,17 @@ export const getAlertColumns = ({
     enableSorting: false,
   },
   {
-    accessorKey: 'active',
+    accessorKey: 'is_active',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Active" />
     ),
     cell: ({ row }) => {
-      const isActive = row.getValue('is_active') as boolean;
+      console.log(row.original);
+      const isActive = row.original.is_active;
       return (
-        <div className="flex items-center justify-center">
+        <div className="flex items-center px-8">
           {isActive ? (
-            <Check className="white w-5 h-5" />
+            <Check className="w-5 h-5" />
           ) : (
             <X className="text-red-600 w-5 h-5" />
           )}
@@ -133,12 +136,12 @@ export const getAlertColumns = ({
               >
                 {row.original.is_active ? (
                   <>
-                    <PowerOff className="mr-2 h-4 w-4" />
+                    <Archive className="mr-2 h-4 w-4 text-destructive" />
                     Deactivate
                   </>
                 ) : (
                   <>
-                    <Power className="mr-2 h-4 w-4" />
+                    <ArchiveRestore className="mr-2 h-4 w-4" />
                     Activate
                   </>
                 )}

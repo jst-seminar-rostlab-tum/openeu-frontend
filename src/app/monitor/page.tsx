@@ -6,14 +6,16 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { kanbanColumns } from '@/app/monitor/columns';
 import { KanbanSkeleton } from '@/components/monitor/KanbanSkeleton';
 import { TanStackKanban } from '@/components/monitor/MonitorKanban';
 import { KanbanToolbar } from '@/components/monitor/MonitorToolbar';
-import { LegislationStatus } from '@/domain/entities/monitor/types';
-import { useLegislativeFiles } from '@/domain/hooks/legislative-hooks';
+import {
+  useLegislativeFiles,
+  useLegislativeUniqueValues,
+} from '@/domain/hooks/legislative-hooks';
 import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
 
 export default function ObservatoryPage() {
@@ -36,6 +38,8 @@ export default function ObservatoryPage() {
     user_id: selectedUserId,
   });
 
+  const { data: uniqueValues } = useLegislativeUniqueValues();
+
   const table = useReactTable({
     data: legislationData,
     columns: kanbanColumns,
@@ -54,15 +58,33 @@ export default function ObservatoryPage() {
   const { groupedData, statusColumnsWithData } = useMemo(() => {
     const groupedData =
       ObservatoryOperations.groupLegislationByStatus(processedData);
-    const statusColumnsWithData = (
-      Object.keys(ObservatoryOperations.statusConfig) as LegislationStatus[]
-    ).filter((status) => (groupedData[status]?.length || 0) > 0);
-    return { groupedData, statusColumnsWithData };
-  }, [processedData]);
 
-  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
-    () => new Set(Object.keys(ObservatoryOperations.statusConfig)),
-  );
+    let orderedStatuses: string[] = [];
+
+    if (uniqueValues?.statuses) {
+      orderedStatuses = [...uniqueValues.statuses];
+
+      if (groupedData['Other'] && !orderedStatuses.includes('Other')) {
+        orderedStatuses.push('Other');
+      }
+    } else {
+      orderedStatuses = Object.keys(groupedData).sort();
+    }
+
+    const statusColumnsWithData = orderedStatuses.filter(
+      (status) => (groupedData[status]?.length || 0) > 0,
+    );
+
+    return { groupedData, statusColumnsWithData };
+  }, [processedData, uniqueValues]);
+
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (statusColumnsWithData.length > 0 && visibleColumns.size === 0) {
+      setVisibleColumns(new Set(statusColumnsWithData));
+    }
+  }, [statusColumnsWithData, visibleColumns.size]);
 
   return (
     <div className="h-[calc(100vh-3rem)] flex flex-col gap-3 p-4">

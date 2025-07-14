@@ -41,6 +41,28 @@ export function AuthProvider({
   // 🚨 DEV ONLY: Mock authenticated user for testing
   const MOCK_AUTH = process.env.NODE_ENV === 'development' && false;
 
+  const token = getCookie('token') as string | undefined;
+
+  useEffect(() => {
+    if (!token || isJwtExpired(token)) {
+      // Only show toast if user had a valid session before (sessionStorage has 'hadValidSession' flag)
+      const hadValidSession =
+        sessionStorage.getItem('hadValidSession') === 'true';
+      const toastAlreadyShown =
+        sessionStorage.getItem('sessionExpiredToastShown') === 'true';
+
+      if (hadValidSession && !toastAlreadyShown) {
+        handleSessionExpiration();
+        sessionStorage.setItem('sessionExpiredToastShown', 'true');
+      }
+      return;
+    } else {
+      // User has valid token, mark that they had a valid session
+      sessionStorage.setItem('hadValidSession', 'true');
+      sessionStorage.removeItem('sessionExpiredToastShown');
+    }
+  }, [token]);
+
   useEffect(() => {
     if (MOCK_AUTH) {
       setUser({
@@ -61,11 +83,7 @@ export function AuthProvider({
     // Initialize with server-side user data
     setUser(initialUser);
     setLoading(false);
-    const token = getCookie('token') as string | undefined;
-    if (!token || isJwtExpired(token)) {
-      handleSessionExpiration();
-      return; // Exit early
-    }
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -99,6 +117,7 @@ export function AuthProvider({
           }
 
           if (!isSigningOut) {
+            console.log('handle sign out');
             handleSessionExpiration();
           }
 
@@ -123,6 +142,8 @@ export function AuthProvider({
   }, [supabase, MOCK_AUTH, initialUser, isSigningOut]);
 
   const signOut = useCallback(async () => {
+    if (isSigningOut) return;
+
     setIsSigningOut(true);
     setUser(null);
 
@@ -138,19 +159,36 @@ export function AuthProvider({
     } else {
       deleteCookie('token', { path: '/' });
       deleteCookie('refresh_token', { path: '/' });
-      router.push('/');
+      sessionStorage.removeItem('sessionExpiredToastShown');
+      sessionStorage.removeItem('hadValidSession');
+
+      const currentPath = window.location.pathname;
+      const publicPages = [
+        '/privacy',
+        '/',
+        '/login',
+        '/register',
+        '/forgot-password',
+      ];
+      const isPublicPage = publicPages.includes(currentPath);
+
+      if (!isPublicPage) {
+        router.push('/');
+      }
     }
-  }, [supabase, router, initialUser]);
+  }, [supabase, router, initialUser, isSigningOut]);
 
   const handleSessionExpiration = useCallback(() => {
-    ToastOperations.showWarning({
-      title: 'Session Expired',
-      message:
-        'Your session has expired for security reasons. You will be logged out automatically.',
-    });
-    console.log(`[${new Date().toISOString()}]: toast shown`);
-    signOut();
-  }, []);
+    if (!isSigningOut) {
+      ToastOperations.showWarning({
+        title: 'Session Expired',
+        message:
+          'Your session has expired for security reasons. You will be logged out automatically.',
+      });
+      console.log(`[${new Date().toISOString()}]: toast shown`);
+      signOut();
+    }
+  }, [isSigningOut]);
 
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),

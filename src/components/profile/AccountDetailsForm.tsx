@@ -40,8 +40,6 @@ export default function AccountDetailsForm({
   email,
   name,
   surname,
-  company_name,
-  company_description,
 }: AccountDetailsFormProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -51,8 +49,6 @@ export default function AccountDetailsForm({
     defaultValues: {
       name,
       surname,
-      company_name,
-      company_description,
     },
   });
 
@@ -62,6 +58,7 @@ export default function AccountDetailsForm({
       const profileData: ProfileCreate = {
         ...values,
         id: userId,
+        user_type: 'entrepreneur',
         topic_ids: [],
         countries: [],
         newsletter_frequency: 'daily',

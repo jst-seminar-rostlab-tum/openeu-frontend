@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  BookOpen,
   CalendarCheck,
   Clock,
   Eye,
@@ -11,9 +12,11 @@ import {
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { DocumentationGatewayCollapsible } from '@/components/monitor/DocumentationGatewayCollapsible';
 import { KeyEventCollapsible } from '@/components/monitor/KeyEventCollapsible';
 import { KeyPlayerCollapsible } from '@/components/monitor/KeyPlayerCollapsible';
 import { MeetingCollapsible } from '@/components/monitor/MeetingCollapsible';
+import { SubscribeButton } from '@/components/monitor/SubscribeButton';
 import { Section } from '@/components/section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,8 +26,7 @@ import {
   getLegislativeFile,
   getLegislativeMeetings,
 } from '@/domain/actions/monitor';
-import { LegislationStatus } from '@/domain/entities/monitor/types';
-import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import { cn, COLOR_SCHEMES, getColorKeyByHash } from '@/lib/utils';
 import MonitorOperations from '@/operations/monitor/MonitorOperations';
 
 export default async function LegislationPage({
@@ -44,6 +46,10 @@ export default async function LegislationPage({
     notFound();
   }
 
+  const status = legislation.status || 'Other';
+  const colorKey = getColorKeyByHash(status);
+  const dotColor = COLOR_SCHEMES[colorKey].dot;
+
   return (
     <Section className="space-y-4">
       <div className="space-y-1">
@@ -55,20 +61,8 @@ export default async function LegislationPage({
         </Button>
         <div className="flex flex-row items-center gap-2">
           <div className="flex items-center gap-2">
-            {(() => {
-              const status = (legislation.status ||
-                'Other') as LegislationStatus;
-              const config = ObservatoryOperations.statusConfig[status];
-              return (
-                <>
-                  <div
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: config.color }}
-                  />
-                  <span className="font-medium">{status}</span>
-                </>
-              );
-            })()}
+            <div className={cn('h-2 w-2 rounded-full', dotColor)} />
+            <span className="font-medium">{status}</span>
           </div>
 
           <Separator orientation="vertical" className="!h-5 hidden md:block" />
@@ -162,6 +156,24 @@ export default async function LegislationPage({
             </CardContent>
           </Card>
         )}
+        {legislation.documentation_gateway &&
+          legislation.documentation_gateway.length > 0 && (
+            <Card className="break-inside-avoid">
+              <CardHeader className="flex items-center">
+                <BookOpen className="h-4 w-4" />
+                <CardTitle>Documents</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {legislation.documentation_gateway.map((document, index) => (
+                  <DocumentationGatewayCollapsible
+                    key={index}
+                    document={document}
+                    index={index}
+                  />
+                ))}
+              </CardContent>
+            </Card>
+          )}
         {legislativeMeetings && legislativeMeetings.length > 0 && (
           <Card className="break-inside-avoid">
             <CardHeader className="flex items-center">
@@ -201,6 +213,7 @@ export default async function LegislationPage({
                 Chat with Legislation
               </Link>
             </Button>
+            <SubscribeButton legislationId={legislation.id} />
           </CardContent>
         </Card>
       </div>

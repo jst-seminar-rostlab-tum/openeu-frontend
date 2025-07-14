@@ -5,7 +5,7 @@ import {
   type Message,
   type SendMessageRequest,
 } from '@/domain/entities/chat/generated-types';
-import { SupportedContextType } from '@/domain/entities/monitor/types';
+import { TContext } from '@/domain/entities/monitor/types';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend-1.onrender.com';
@@ -77,7 +77,7 @@ export const chatRepository = {
   async sendStreamingMessage(
     request: SendMessageRequest,
     onStreamUpdate?: (content: string) => void,
-    contextParams?: Partial<Record<SupportedContextType, string>>,
+    contextParams?: Partial<Record<TContext, string>>,
   ): Promise<string> {
     const token = getCookie('token');
 
