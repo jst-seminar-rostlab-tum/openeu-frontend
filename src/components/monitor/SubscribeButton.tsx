@@ -38,11 +38,8 @@ export function SubscribeButton({ legislationId }: SubscribeButtonProps) {
       disabled={subscribeToLegislation.isPending}
     >
       <Rss className="h-3 w-3" />
-      {subscribeToLegislation.isPending ? (
-        <Spinner size="small" show />
-      ) : (
-        'Subscribe to Legislation'
-      )}
+      Subscribe to Legislation
+      {subscribeToLegislation.isPending && <Spinner size="xsmall" show />}
     </Button>
   );
 }
