@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -19,13 +19,13 @@ interface PersonalizeLegislationSwitchProps {
 
 export default function PersonalizeLegislationSwitch({
   onUserIdChange,
+  selectedUserId,
 }: PersonalizeLegislationSwitchProps) {
   const { user } = useAuth();
-
-  const [checked, setChecked] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [userId, setUserId] = useState('');
-  const isInitialized = useRef(false);
+
+  const [checked, setChecked] = useState(false);
 
   const { data: profile } = useProfile(userId);
 
@@ -45,11 +45,12 @@ export default function PersonalizeLegislationSwitch({
   }, [user]);
 
   useEffect(() => {
-    if (userId && profile && !isInitialized.current) {
+    setChecked(!!selectedUserId && selectedUserId === userId);
+  }, [selectedUserId, userId]);
+
+  useEffect(() => {
+    if (userId && profile) {
       setHasProfile(true);
-      setChecked(true);
-      onUserIdChange?.(userId);
-      isInitialized.current = true;
     }
   }, [userId, profile, onUserIdChange]);
 
