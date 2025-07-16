@@ -27,6 +27,10 @@ export default function Page() {
             these linked pages rests solely with their operators and not with
             Center for Software Engineering Excellence gGmbH.
           </p>
+          <p className="mb-1">
+            We do not pass this data on to third parties, not even for purposes
+            other than those stated.
+          </p>
         </div>
         <div className="space-y-4">
           <h2 className="text-2xl font-medium">
@@ -136,7 +140,10 @@ export default function Page() {
               We process personal data of our users primarily only to the extent
               necessary to provide a functional website as well as the content
               and services offered. Personal data is processed only based on the
-              currently applicable legal foundations.
+              currently applicable legal foundations. When signing in with
+              Google, we do not process any other information than your E-Mail
+              address and name in order to provide login functionalities. Your
+              calendar data will not be processed by us.
             </p>
           </div>
           <div className="space-y-2 pl-6">
