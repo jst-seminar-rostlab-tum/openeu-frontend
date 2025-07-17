@@ -115,7 +115,7 @@
             "schema": {
               "type": "integer",
               "exclusiveMinimum": 1,
-              "default": 500,
+              "default": 800,
               "title": "Limit"
             }
           },
@@ -177,7 +177,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "anyOf": [
+                { "type": "array", "items": { "type": "string" } },
+                { "type": "null" }
+              ],
               "description": "Filter by country (e.g., 'Austria', 'European Union')",
               "title": "Country"
             },
@@ -796,7 +799,13 @@
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionResponse"
+                }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -809,10 +818,10 @@
         }
       }
     },
-    "/subscribe": {
+    "/unsubscribe": {
       "post": {
-        "summary": "Subscribe To Legislation",
-        "operationId": "subscribe_to_legislation_subscribe_post",
+        "summary": "Unsubscribe From Legislation",
+        "operationId": "unsubscribe_from_legislation_unsubscribe_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -824,7 +833,49 @@
         "responses": {
           "200": {
             "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{user_id}": {
+      "get": {
+        "summary": "Get User Subscriptions",
+        "operationId": "get_user_subscriptions_subscriptions__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "User Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Subscription" },
+                  "title": "Response Get User Subscriptions Subscriptions  User Id  Get"
+                }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -2006,6 +2057,26 @@
         "type": "object",
         "required": ["user_id", "legislation_id"],
         "title": "SubscribeRequest"
+      },
+      "Subscription": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "user_id": { "type": "string", "title": "User Id" },
+          "legislation_id": { "type": "string", "title": "Legislation Id" },
+          "created_at": { "type": "string", "title": "Created At" }
+        },
+        "type": "object",
+        "required": ["id", "user_id", "legislation_id", "created_at"],
+        "title": "Subscription"
+      },
+      "SubscriptionResponse": {
+        "properties": {
+          "success": { "type": "boolean", "title": "Success" },
+          "message": { "type": "string", "title": "Message" }
+        },
+        "type": "object",
+        "required": ["success", "message"],
+        "title": "SubscriptionResponse"
       },
       "Topic": {
         "properties": {

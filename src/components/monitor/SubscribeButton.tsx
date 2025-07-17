@@ -14,8 +14,10 @@ interface SubscribeButtonProps {
 }
 
 export function SubscribeButton({ legislationId }: SubscribeButtonProps) {
-  const { user } = useAuth();
   const router = useRouter();
+
+  const { user } = useAuth();
+
   const subscribeToLegislation = useSubscribeToLegislationMutation();
 
   const handleSubscribe = async () => {

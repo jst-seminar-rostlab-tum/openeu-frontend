@@ -28,6 +28,7 @@ import {
 } from '@/domain/actions/monitor';
 import { cn, COLOR_SCHEMES, getColorKeyByHash } from '@/lib/utils';
 import MonitorOperations from '@/operations/monitor/MonitorOperations';
+// import { requireAuth } from '@/lib/dal';
 
 export default async function LegislationPage({
   params,
@@ -36,6 +37,8 @@ export default async function LegislationPage({
 }) {
   const { legisId } = await params;
   const decodedLegisId = decodeURIComponent(legisId);
+
+  // const user = await requireAuth();
 
   const legislation = await getLegislativeFile({ id: decodedLegisId });
   const legislativeMeetings = await getLegislativeMeetings({

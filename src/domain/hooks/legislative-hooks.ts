@@ -51,3 +51,27 @@ export const useSubscribeToLegislationMutation = () =>
       });
     },
   });
+
+export const useUnsubscribeToLegislationMutation = () =>
+  useMutation({
+    mutationFn: ({
+      userId,
+      legislationId,
+    }: {
+      userId: string;
+      legislationId: string;
+    }) => legislationRepository.unsubscribeToLegislation(userId, legislationId),
+    onSuccess: () => {
+      ToastOperations.showSuccess({
+        title: 'Unsubscription successful',
+        message: 'You have successfully unsubscribed to this legislation.',
+      });
+    },
+    onError: () => {
+      ToastOperations.showError({
+        title: 'Unsubscription failed',
+        message:
+          'Failed to unsubscribe to legislation. Please try again later.',
+      });
+    },
+  });
