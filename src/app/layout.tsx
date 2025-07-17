@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   title: 'OpenEU',
   description:
     'The Transparency Backbone for the European Union using Agentic AI',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+    shortcut: '/favicon.png',
+  },
 };
 
 export default async function RootLayout({
@@ -29,6 +34,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="shortcut icon" href="/favicon.png" />
+      </head>
+
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
