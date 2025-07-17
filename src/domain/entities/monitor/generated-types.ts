@@ -24,6 +24,8 @@ export type LegislativeFileSuggestionResponse =
   components['schemas']['LegislativeFileSuggestionResponse'];
 export type LegislativeMeetingsResponse =
   components['schemas']['LegislativeMeetingsResponse'];
+export type SubscriptionResponse =
+  components['schemas']['SubscriptionResponse'];
 
 export type LegislativeFile = components['schemas']['LegislativeFile'];
 export type LegislativeFileSuggestion =

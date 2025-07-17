@@ -8,6 +8,7 @@ import {
   LegislativeFileSuggestionResponse,
   LegislativeSuggestionsParams,
   LegislativeUniqueValues,
+  SubscriptionResponse,
 } from '@/domain/entities/monitor/generated-types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -113,7 +114,7 @@ export const legislationRepository = {
   async subscribeToLegislation(
     userId: string,
     legislationId: string,
-  ): Promise<void> {
+  ): Promise<SubscriptionResponse> {
     const token = getCookie('token');
 
     try {
@@ -133,11 +134,10 @@ export const legislationRepository = {
       if (!res.ok) {
         throw new Error(`Failed to subscribe to legislation: ${res.status}`);
       }
+
+      const data: SubscriptionResponse = await res.json();
+      return data;
     } catch (err) {
-      ToastOperations.showError({
-        title: 'Subscription failed',
-        message: 'Failed to subscribe to legislation. Please try again later.',
-      });
       throw new Error('Failed to subscribe to legislation', {
         cause: err,
       });
@@ -147,7 +147,7 @@ export const legislationRepository = {
   async unsubscribeToLegislation(
     userId: string,
     legislationId: string,
-  ): Promise<void> {
+  ): Promise<SubscriptionResponse> {
     const token = getCookie('token');
 
     try {
@@ -170,12 +170,10 @@ export const legislationRepository = {
       if (!res.ok) {
         throw new Error(`Failed to unsubscribe to legislation: ${res.status}`);
       }
+
+      const data: SubscriptionResponse = await res.json();
+      return data;
     } catch (err) {
-      ToastOperations.showError({
-        title: 'Unsubscription failed',
-        message:
-          'Failed to unsubscribe to legislation. Please try again later.',
-      });
       throw new Error('Failed to unsubscribe to legislation', {
         cause: err,
       });

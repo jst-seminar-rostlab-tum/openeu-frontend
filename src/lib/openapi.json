@@ -687,6 +687,17 @@
               "title": "Id"
             },
             "description": "Legislative file ID"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "User ID to check subscription status",
+              "title": "User Id"
+            },
+            "description": "User ID to check subscription status"
           }
         ],
         "responses": {
@@ -1190,7 +1201,11 @@
       "ChatMessageItem": {
         "properties": {
           "session_id": { "type": "string", "title": "Session Id" },
-          "message": { "type": "string", "title": "Message" }
+          "message": { "type": "string", "title": "Message" },
+          "legislation_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Legislation Id"
+          }
         },
         "type": "object",
         "required": ["session_id", "message"],
@@ -1459,6 +1474,10 @@
           "similarity": {
             "anyOf": [{ "type": "number" }, { "type": "null" }],
             "title": "Similarity"
+          },
+          "subscribed": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Subscribed"
           }
         },
         "type": "object",

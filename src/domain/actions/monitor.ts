@@ -21,7 +21,11 @@ export async function getLegislativeFile(
   try {
     const token = (await cookies()).get('token')?.value;
 
-    const searchParams = new URLSearchParams({ id: params.id });
+    const searchParams = new URLSearchParams({
+      id: params.id,
+      ...(params.user_id && { user_id: params.user_id }),
+    });
+
     const res = await fetch(`${API_URL}?${searchParams}`, {
       method: 'GET',
       mode: 'cors',

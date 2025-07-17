@@ -26,9 +26,9 @@ import {
   getLegislativeFile,
   getLegislativeMeetings,
 } from '@/domain/actions/monitor';
+import { requireAuth } from '@/lib/dal';
 import { cn, COLOR_SCHEMES, getColorKeyByHash } from '@/lib/utils';
 import MonitorOperations from '@/operations/monitor/MonitorOperations';
-// import { requireAuth } from '@/lib/dal';
 
 export default async function LegislationPage({
   params,
@@ -38,9 +38,13 @@ export default async function LegislationPage({
   const { legisId } = await params;
   const decodedLegisId = decodeURIComponent(legisId);
 
-  // const user = await requireAuth();
+  const { user } = await requireAuth();
 
-  const legislation = await getLegislativeFile({ id: decodedLegisId });
+  const legislation = await getLegislativeFile({
+    id: decodedLegisId,
+    user_id: user.id,
+  });
+
   const legislativeMeetings = await getLegislativeMeetings({
     legislative_id: decodedLegisId,
   });
@@ -216,7 +220,10 @@ export default async function LegislationPage({
                 Chat with Legislation
               </Link>
             </Button>
-            <SubscribeButton legislationId={legislation.id} />
+            <SubscribeButton
+              legislationId={legislation.id}
+              subscribed={legislation.subscribed || false}
+            />
           </CardContent>
         </Card>
       </div>

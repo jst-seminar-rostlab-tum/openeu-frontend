@@ -457,6 +457,8 @@ export interface components {
       session_id: string;
       /** Message */
       message: string;
+      /** Legislation Id */
+      legislation_id?: string | null;
     };
     /** CompanyCreate */
     CompanyCreate: {
@@ -589,6 +591,8 @@ export interface components {
         | null;
       /** Similarity */
       similarity?: number | null;
+      /** Subscribed */
+      subscribed?: boolean | null;
     };
     /** LegislativeFileResponse */
     LegislativeFileResponse: {
@@ -1450,6 +1454,8 @@ export interface operations {
       query: {
         /** @description Legislative file ID */
         id: string;
+        /** @description User ID to check subscription status */
+        user_id?: string | null;
       };
       header?: never;
       path?: never;

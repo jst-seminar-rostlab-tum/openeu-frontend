@@ -29,8 +29,8 @@ export const useLegislativeUniqueValues = () =>
     queryFn: () => legislationRepository.getLegislativeUniqueValues(),
   });
 
-export const useSubscribeToLegislationMutation = () =>
-  useMutation({
+export const useSubscribeToLegislationMutation = () => {
+  return useMutation({
     mutationFn: ({
       userId,
       legislationId,
@@ -38,11 +38,19 @@ export const useSubscribeToLegislationMutation = () =>
       userId: string;
       legislationId: string;
     }) => legislationRepository.subscribeToLegislation(userId, legislationId),
-    onSuccess: () => {
-      ToastOperations.showSuccess({
-        title: 'Subscription successful',
-        message: 'You have successfully subscribed to this legislation.',
-      });
+    onSuccess: (data) => {
+      if (data.success) {
+        ToastOperations.showSuccess({
+          title: 'Subscription successful',
+          message: 'You have successfully subscribed to this legislation.',
+        });
+      } else {
+        ToastOperations.showError({
+          title: 'Subscription failed',
+          message:
+            'Failed to subscribe to legislation. Please try again later.',
+        });
+      }
     },
     onError: () => {
       ToastOperations.showError({
@@ -51,9 +59,10 @@ export const useSubscribeToLegislationMutation = () =>
       });
     },
   });
+};
 
-export const useUnsubscribeToLegislationMutation = () =>
-  useMutation({
+export const useUnsubscribeToLegislationMutation = () => {
+  return useMutation({
     mutationFn: ({
       userId,
       legislationId,
@@ -61,11 +70,19 @@ export const useUnsubscribeToLegislationMutation = () =>
       userId: string;
       legislationId: string;
     }) => legislationRepository.unsubscribeToLegislation(userId, legislationId),
-    onSuccess: () => {
-      ToastOperations.showSuccess({
-        title: 'Unsubscription successful',
-        message: 'You have successfully unsubscribed to this legislation.',
-      });
+    onSuccess: (data) => {
+      if (data.success) {
+        ToastOperations.showSuccess({
+          title: 'Unsubscription successful',
+          message: 'You have successfully unsubscribed from this legislation.',
+        });
+      } else {
+        ToastOperations.showError({
+          title: 'Unsubscription failed',
+          message:
+            'Failed to unsubscribe from legislation. Please try again later.',
+        });
+      }
     },
     onError: () => {
       ToastOperations.showError({
@@ -75,3 +92,4 @@ export const useUnsubscribeToLegislationMutation = () =>
       });
     },
   });
+};
