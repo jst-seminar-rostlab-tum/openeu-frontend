@@ -65,7 +65,7 @@ export function LoginForm({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>E-Mail</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
@@ -118,7 +118,7 @@ export function LoginForm({
                     'Sign in'
                   )}
                 </Button>
-                <Button onClick={loginWithGoogle}>
+                <Button onClick={loginWithGoogle} type="button">
                   <IoLogoGoogle />
                   Sign In with Google
                 </Button>
