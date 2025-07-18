@@ -18,8 +18,6 @@ export const useMeetings = (props: GetMeetingsQueryParams, enabled = true) =>
     queryKey: ['meetings', props],
     queryFn: () => meetingRepository.getMeetings(props),
     enabled,
-    staleTime: 0,
-    gcTime: 0,
   });
 
 export function useMeetingContext(): IMeetingContext {
