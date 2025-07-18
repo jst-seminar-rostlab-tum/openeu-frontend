@@ -1,20 +1,33 @@
 import {
   ArrowLeft,
-  Building,
-  Calendar,
-  ExternalLink,
+  BookOpen,
+  CalendarCheck,
+  Clock,
+  Eye,
   FileText,
+  MessageSquare,
   Users,
+  Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { DocumentationGatewayCollapsible } from '@/components/monitor/DocumentationGatewayCollapsible';
+import { KeyEventCollapsible } from '@/components/monitor/KeyEventCollapsible';
+import { KeyPlayerCollapsible } from '@/components/monitor/KeyPlayerCollapsible';
+import { MeetingCollapsible } from '@/components/monitor/MeetingCollapsible';
+import { SubscribeButton } from '@/components/monitor/SubscribeButton';
 import { Section } from '@/components/section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import {
+  getLegislativeFile,
+  getLegislativeMeetings,
+} from '@/domain/actions/monitor';
+import { cn, COLOR_SCHEMES, getColorKeyByHash } from '@/lib/utils';
+import MonitorOperations from '@/operations/monitor/MonitorOperations';
 
 export default async function LegislationPage({
   params,
@@ -23,11 +36,19 @@ export default async function LegislationPage({
 }) {
   const { legisId } = await params;
   const decodedLegisId = decodeURIComponent(legisId);
-  const legislation = ObservatoryOperations.getLegislationById(decodedLegisId);
+
+  const legislation = await getLegislativeFile({ id: decodedLegisId });
+  const legislativeMeetings = await getLegislativeMeetings({
+    legislative_id: decodedLegisId,
+  });
 
   if (!legislation) {
     notFound();
   }
+
+  const status = legislation.status || 'Other';
+  const colorKey = getColorKeyByHash(status);
+  const dotColor = COLOR_SCHEMES[colorKey].dot;
 
   return (
     <Section className="space-y-4">
@@ -40,24 +61,17 @@ export default async function LegislationPage({
         </Button>
         <div className="flex flex-row items-center gap-2">
           <div className="flex items-center gap-2">
-            <div
-              className="h-2 w-2 rounded-full"
-              style={{
-                backgroundColor:
-                  ObservatoryOperations.getStatusConfig()[legislation.status]
-                    .color,
-              }}
-            />
-            <span className="font-medium">
-              {ObservatoryOperations.getStatusConfig()[legislation.status].name}
-            </span>
+            <div className={cn('h-2 w-2 rounded-full', dotColor)} />
+            <span className="font-medium">{status}</span>
           </div>
 
           <Separator orientation="vertical" className="!h-5 hidden md:block" />
           <Badge className="font-mono" variant="secondary">
             {legislation.id}
           </Badge>
-          <Badge variant="outline">{legislation.year}</Badge>
+          <Badge variant="outline">
+            {MonitorOperations.extractYearFromId(legislation.id)}
+          </Badge>
         </div>
         <h1 className="text-2xl font-bold leading-tight">
           {legislation.title}
@@ -66,99 +80,140 @@ export default async function LegislationPage({
       <div className="columns-1 md:columns-2 gap-4 space-y-4">
         <Card className="break-inside-avoid">
           <CardHeader className="flex items-center">
-            <Calendar className="h-4 w-4" />
-            <CardTitle>Timeline & Procedure</CardTitle>
+            <FileText className="h-4 w-4" />
+            <CardTitle>Overview</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">Submitted</span>
+              <span className="text-muted-foreground">Last Publication</span>
               <span className="font-medium">
-                {legislation.submissionDate?.toLocaleDateString() || 'N/A'}
+                {legislation.lastpubdate || 'N/A'}
               </span>
             </div>
 
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">Last Update</span>
-              <span className="font-medium">
-                {legislation.lastUpdate?.toLocaleDateString() || 'N/A'}
-              </span>
-            </div>
+            {legislation.committee && (
+              <>
+                <Separator />
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Committee</span>
+                  <span className="font-medium">{legislation.committee}</span>
+                </div>
+              </>
+            )}
 
-            <Separator />
+            {legislation.rapporteur && (
+              <>
+                <Separator />
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Rapporteur</span>
+                  <span className="font-medium">{legislation.rapporteur}</span>
+                </div>
+              </>
+            )}
 
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">Procedure Type</span>
-              <Badge variant="outline" className="font-mono text-xs">
-                {legislation.procedureType}
-              </Badge>
-            </div>
+            {legislation.subjects && legislation.subjects.length > 0 && (
+              <>
+                <Separator />
+                <div className="flex justify-between items-start text-sm gap-2">
+                  <span className="text-muted-foreground">Subjects</span>
+                  <span className="font-medium text-right">
+                    {legislation.subjects
+                      .map((subject) => subject.replace(/^\d+(\.\d+)*\s+/, ''))
+                      .join(', ')}
+                  </span>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
-        {legislation.committee && (
+        {legislation.key_players && legislation.key_players.length > 0 && (
           <Card className="break-inside-avoid">
             <CardHeader className="flex items-center">
-              <Building className="h-4 w-4" />
-              <CardTitle>Committee</CardTitle>
+              <Users className="h-4 w-4" />
+              <CardTitle>Key Players</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                {legislation.committee}
-              </p>
+            <CardContent className="space-y-2">
+              {legislation.key_players.map((player, index) => (
+                <KeyPlayerCollapsible
+                  key={index}
+                  player={player}
+                  index={index}
+                />
+              ))}
             </CardContent>
           </Card>
         )}
-        {legislation.rapporteurs.length > 0 && (
+        {legislation.key_events && legislation.key_events.length > 0 && (
           <Card className="break-inside-avoid">
-            <CardHeader className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <CardTitle>Rapporteurs</CardTitle>
-              </div>
-              <Badge>{legislation.rapporteurs.length}</Badge>
+            <CardHeader className="flex items-center">
+              <CalendarCheck className="h-4 w-4" />
+              <CardTitle>Key Events</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-1">
-                {legislation.rapporteurs.map((rapporteur, index) => (
-                  <div
+            <CardContent className="space-y-2">
+              {legislation.key_events.map((event, index) => (
+                <KeyEventCollapsible key={index} event={event} index={index} />
+              ))}
+            </CardContent>
+          </Card>
+        )}
+        {legislation.documentation_gateway &&
+          legislation.documentation_gateway.length > 0 && (
+            <Card className="break-inside-avoid">
+              <CardHeader className="flex items-center">
+                <BookOpen className="h-4 w-4" />
+                <CardTitle>Documents</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {legislation.documentation_gateway.map((document, index) => (
+                  <DocumentationGatewayCollapsible
                     key={index}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <span className="font-medium truncate">
-                      {rapporteur.name}
-                    </span>
-                    <Badge variant="secondary" className="text-xs ml-2">
-                      {rapporteur.group}
-                    </Badge>
-                  </div>
+                    document={document}
+                    index={index}
+                  />
                 ))}
-              </div>
+              </CardContent>
+            </Card>
+          )}
+        {legislativeMeetings && legislativeMeetings.length > 0 && (
+          <Card className="break-inside-avoid">
+            <CardHeader className="flex items-center">
+              <Clock className="h-4 w-4" />
+              <CardTitle>Related Meetings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {legislativeMeetings.map((meeting, index) => (
+                <MeetingCollapsible
+                  key={index}
+                  meeting={meeting}
+                  index={index}
+                />
+              ))}
             </CardContent>
           </Card>
         )}
         <Card className="break-inside-avoid">
           <CardHeader className="flex items-center">
-            <ExternalLink className="h-4 w-4" />
+            <Zap className="h-4 w-4" />
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
+            {legislation.link && (
+              <Button variant="outline" size="sm" asChild>
+                <Link href={legislation.link}>
+                  <Eye className="h-3 w-3" />
+                  View Details
+                </Link>
+              </Button>
+            )}
             <Button variant="outline" size="sm" asChild>
-              <Link href="#">
-                <FileText className="h-3 w-3" />
-                View Full Text
+              <Link
+                href={`/chat?legislation_id=${encodeURIComponent(legislation.id)}`}
+              >
+                <MessageSquare className="h-3 w-3" />
+                Chat with Legislation
               </Link>
             </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link href="#">
-                <Calendar className="h-3 w-3" />
-                View Schedule
-              </Link>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link href="#">
-                <ExternalLink className="h-3 w-3" />
-                EU Parliament Page
-              </Link>
-            </Button>
+            <SubscribeButton legislationId={legislation.id} />
           </CardContent>
         </Card>
       </div>

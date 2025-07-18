@@ -1,3 +1,5 @@
+import { setCookie } from 'cookies-next';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 // The client you created from the Server-Side Auth instructions
@@ -36,6 +38,7 @@ export async function GET(request: Request) {
             oauthAccessToken: session.provider_token,
           },
         });
+        setCookie('token', session.access_token, { cookies });
       }
 
       const forwardedHost = request.headers.get('x-forwarded-host'); // original origin before load balancer

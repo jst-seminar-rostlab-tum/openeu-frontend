@@ -2,35 +2,6 @@
   "openapi": "3.1.0",
   "info": { "title": "FastAPI", "version": "0.1.0" },
   "paths": {
-    "/profile/": {
-      "post": {
-        "tags": ["profile"],
-        "summary": "Create Profile",
-        "operationId": "create_profile_profile__post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/ProfileCreate" }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
-              }
-            }
-          }
-        }
-      }
-    },
     "/profile/{user_id}": {
       "get": {
         "tags": ["profile"],
@@ -91,6 +62,35 @@
                 "schema": { "$ref": "#/components/schemas/ProfileReturn" }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/": {
+      "post": {
+        "tags": ["profile"],
+        "summary": "Create Profile",
+        "operationId": "create_profile_profile__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProfileCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
           },
           "422": {
             "description": "Validation Error",
@@ -215,8 +215,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Meeting" },
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Meeting" }
+                  },
                   "title": "Response Get Meetings Meetings Get"
                 }
               }
@@ -287,6 +290,60 @@
         }
       }
     },
+    "/legislative-files/meetings": {
+      "get": {
+        "summary": "Get Meetings By Legislative Id",
+        "description": "Returns all meetings from the mep_meetings table that reference the given legislative (procedure_reference) ID",
+        "operationId": "get_meetings_by_legislative_id_legislative_files_meetings_get",
+        "parameters": [
+          {
+            "name": "legislative_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Legislative procedure reference ID to filter meetings",
+              "title": "Legislative Id"
+            },
+            "description": "Legislative procedure reference ID to filter meetings"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "exclusiveMinimum": 0,
+              "description": "Maximum number of meetings to return",
+              "default": 500,
+              "title": "Limit"
+            },
+            "description": "Maximum number of meetings to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeMeetingsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/crawler/": {
       "get": {
         "tags": ["crawler"],
@@ -322,26 +379,6 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/scheduler/tick": {
-      "get": {
-        "summary": "Run Scheduled Tasks",
-        "operationId": "run_scheduled_tasks_scheduler_tick_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": { "type": "string" },
-                  "type": "object",
-                  "title": "Response Run Scheduled Tasks Scheduler Tick Get"
-                }
               }
             }
           }
@@ -524,8 +561,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": { "$ref": "#/components/schemas/Topic" },
-                  "type": "array",
+                  "additionalProperties": {
+                    "items": { "$ref": "#/components/schemas/Topic" },
+                    "type": "array"
+                  },
+                  "type": "object",
                   "title": "Response Get Topics Topics Get"
                 }
               }
@@ -546,7 +586,7 @@
             "schema": {
               "type": "integer",
               "exclusiveMinimum": 1,
-              "default": 100,
+              "default": 500,
               "title": "Limit"
             }
           },
@@ -593,6 +633,17 @@
               "title": "Rapporteur"
             },
             "description": "Filter by rapporteur name"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "description": "User ID for personalized meeting recommendations",
+              "title": "User Id"
+            },
+            "description": "User ID for personalized meeting recommendations"
           }
         ],
         "responses": {
@@ -602,6 +653,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LegislativeFilesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/legislative-file": {
+      "get": {
+        "summary": "Get Legislative File",
+        "description": "Get a single legislative file by ID",
+        "operationId": "get_legislative_file_legislative_file_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Legislative file ID",
+              "title": "Id"
+            },
+            "description": "Legislative file ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFileResponse"
                 }
               }
             }
@@ -671,11 +762,85 @@
         }
       }
     },
+    "/legislative-files/unique-values": {
+      "get": {
+        "summary": "Get Legislative Unique Values",
+        "description": "Returns unique values for year, committee, and status from legislative files.",
+        "operationId": "get_legislative_unique_values_legislative_files_unique_values_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegislativeFileUniqueValuesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscribe": {
+      "post": {
+        "summary": "Subscribe To Legislation",
+        "operationId": "subscribe_to_legislation_subscribe_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubscribeRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscribe": {
+      "post": {
+        "summary": "Subscribe To Legislation",
+        "operationId": "subscribe_to_legislation_subscribe_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubscribeRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notifications/{user_id}": {
       "get": {
         "tags": ["notifications"],
         "summary": "Get Notifications For User",
-        "description": "Retrieve all notifications for a specific user by their ID.",
         "operationId": "get_notifications_for_user_notifications__user_id__get",
         "parameters": [
           {
@@ -720,6 +885,188 @@
         }
       }
     },
+    "/alerts": {
+      "post": {
+        "summary": "Create Alert Endpoint",
+        "operationId": "create_alert_endpoint_alerts_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateAlertRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AlertResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Alerts Endpoint",
+        "operationId": "get_alerts_endpoint_alerts_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User ID for retrieving alerts",
+              "title": "User Id"
+            },
+            "description": "User ID for retrieving alerts"
+          },
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+              "description": "Include inactive alerts",
+              "default": false,
+              "title": "Include Inactive"
+            },
+            "description": "Include inactive alerts"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AlertResponse" },
+                  "title": "Response Get Alerts Endpoint Alerts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/{alert_id}": {
+      "patch": {
+        "summary": "Set Alert Active Endpoint",
+        "operationId": "set_alert_active_endpoint_alerts__alert_id__patch",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Alert Id" }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "description": "Set alert active/inactive",
+              "title": "Active"
+            },
+            "description": "Set alert active/inactive"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Alert Endpoint",
+        "operationId": "delete_alert_endpoint_alerts__alert_id__delete",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Alert Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alerts/{alert_id}/meetings": {
+      "get": {
+        "summary": "Get Relevant Meetings Endpoint",
+        "operationId": "get_relevant_meetings_endpoint_alerts__alert_id__meetings_get",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Alert Id" }
+          },
+          {
+            "name": "k",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 50, "title": "K" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "summary": "Root",
@@ -745,6 +1092,50 @@
   },
   "components": {
     "schemas": {
+      "AlertResponse": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "user_id": { "type": "string", "title": "User Id" },
+          "description": { "type": "string", "title": "Description" },
+          "embedding": {
+            "items": { "type": "number" },
+            "type": "array",
+            "title": "Embedding"
+          },
+          "title": { "type": "string", "title": "Title" },
+          "relevancy_threshold": {
+            "type": "number",
+            "title": "Relevancy Threshold"
+          },
+          "last_run_at": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Last Run At"
+          },
+          "is_active": { "type": "boolean", "title": "Is Active" },
+          "created_at": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "description",
+          "embedding",
+          "title",
+          "relevancy_threshold",
+          "last_run_at",
+          "is_active",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "AlertResponse"
+      },
       "ChatMessageItem": {
         "properties": {
           "session_id": { "type": "string", "title": "Session Id" },
@@ -753,6 +1144,115 @@
         "type": "object",
         "required": ["session_id", "message"],
         "title": "ChatMessageItem"
+      },
+      "CompanyCreate": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "name": { "type": "string", "title": "Name" },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "company_stage": { "type": "string", "title": "Company Stage" },
+          "company_size": { "type": "string", "title": "Company Size" },
+          "industry": { "type": "string", "title": "Industry" }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "name",
+          "company_stage",
+          "company_size",
+          "industry"
+        ],
+        "title": "CompanyCreate"
+      },
+      "CompanyReturn": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "name": { "type": "string", "title": "Name" },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "company_stage": { "type": "string", "title": "Company Stage" },
+          "company_size": { "type": "string", "title": "Company Size" },
+          "industry": { "type": "string", "title": "Industry" },
+          "id": { "type": "string", "format": "uuid4", "title": "Id" }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "name",
+          "company_stage",
+          "company_size",
+          "industry",
+          "id"
+        ],
+        "title": "CompanyReturn"
+      },
+      "CompanyUpdate": {
+        "properties": {
+          "role": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Role"
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "company_stage": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Company Stage"
+          },
+          "company_size": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Company Size"
+          },
+          "industry": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Industry"
+          }
+        },
+        "type": "object",
+        "title": "CompanyUpdate"
+      },
+      "CreateAlertRequest": {
+        "properties": {
+          "user_id": { "type": "string", "title": "User Id" },
+          "description": { "type": "string", "title": "Description" }
+        },
+        "type": "object",
+        "required": ["user_id", "description"],
+        "title": "CreateAlertRequest"
+      },
+      "DocumentationGateway": {
+        "properties": {
+          "date": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Date"
+          },
+          "summary": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Summary"
+          },
+          "reference": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Reference" },
+              { "type": "null" }
+            ]
+          },
+          "document_type": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Document Type"
+          }
+        },
+        "type": "object",
+        "title": "DocumentationGateway"
       },
       "HTTPValidationError": {
         "properties": {
@@ -765,11 +1265,78 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "KeyEvent": {
+        "properties": {
+          "date": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Date"
+          },
+          "event": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Event"
+          },
+          "summary": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Summary"
+          },
+          "reference": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Reference" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "KeyEvent"
+      },
+      "KeyPlayer": {
+        "properties": {
+          "institution": { "type": "string", "title": "Institution" },
+          "committee": { "type": "string", "title": "Committee" },
+          "committee_full": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Committee Full"
+          },
+          "committee_link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Committee Link"
+          },
+          "rapporteurs": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/Rapporteur" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Rapporteurs"
+          },
+          "shadow_rapporteurs": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/Rapporteur" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Shadow Rapporteurs"
+          }
+        },
+        "type": "object",
+        "required": ["institution", "committee"],
+        "title": "KeyPlayer"
+      },
       "LegislativeFile": {
         "properties": {
           "id": { "type": "string", "title": "Id" },
-          "source_table": { "type": "string", "title": "Source Table" },
-          "source_id": { "type": "string", "title": "Source Id" },
+          "source_table": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Source Table"
+          },
+          "source_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Source Id"
+          },
           "link": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Link"
@@ -778,9 +1345,14 @@
           "lastpubdate": {
             "anyOf": [
               { "type": "string", "format": "date" },
+              { "type": "string" },
               { "type": "null" }
             ],
             "title": "Lastpubdate"
+          },
+          "details_link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Details Link"
           },
           "committee": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
@@ -790,14 +1362,65 @@
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Rapporteur"
           },
+          "status": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Status"
+          },
+          "subjects": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Subjects"
+          },
+          "key_players": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/KeyPlayer" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Key Players"
+          },
+          "key_events": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/KeyEvent" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Key Events"
+          },
+          "documentation_gateway": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DocumentationGateway"
+                },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Documentation Gateway"
+          },
           "similarity": {
             "anyOf": [{ "type": "number" }, { "type": "null" }],
             "title": "Similarity"
           }
         },
         "type": "object",
-        "required": ["id", "source_table", "source_id", "title"],
+        "required": ["id", "title"],
         "title": "LegislativeFile"
+      },
+      "LegislativeFileResponse": {
+        "properties": {
+          "legislative_file": { "$ref": "#/components/schemas/LegislativeFile" }
+        },
+        "type": "object",
+        "required": ["legislative_file"],
+        "title": "LegislativeFileResponse"
       },
       "LegislativeFileSuggestion": {
         "properties": {
@@ -823,17 +1446,97 @@
         "required": ["data"],
         "title": "LegislativeFileSuggestionResponse"
       },
-      "LegislativeFilesResponse": {
+      "LegislativeFileUniqueValuesResponse": {
         "properties": {
-          "legislative_files": {
-            "items": { "$ref": "#/components/schemas/LegislativeFile" },
+          "years": {
+            "items": { "type": "string" },
             "type": "array",
-            "title": "Legislative Files"
+            "title": "Years"
+          },
+          "committees": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Committees"
+          },
+          "statuses": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Statuses"
           }
         },
         "type": "object",
-        "required": ["legislative_files"],
+        "required": ["years", "committees", "statuses"],
+        "title": "LegislativeFileUniqueValuesResponse"
+      },
+      "LegislativeFilesResponse": {
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/LegislativeFile" },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": ["data"],
         "title": "LegislativeFilesResponse"
+      },
+      "LegislativeMeeting": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "title": { "type": "string", "title": "Title" },
+          "member_name": { "type": "string", "title": "Member Name" },
+          "meeting_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Meeting Date"
+          },
+          "meeting_location": { "type": "string", "title": "Meeting Location" },
+          "member_capacity": { "type": "string", "title": "Member Capacity" },
+          "procedure_reference": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Procedure Reference"
+          },
+          "associated_committee_or_delegation_code": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Associated Committee Or Delegation Code"
+          },
+          "associated_committee_or_delegation_name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Associated Committee Or Delegation Name"
+          },
+          "embedding_input": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Embedding Input"
+          },
+          "scraped_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Scraped At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "member_name",
+          "meeting_date",
+          "meeting_location",
+          "member_capacity",
+          "scraped_at"
+        ],
+        "title": "LegislativeMeeting"
+      },
+      "LegislativeMeetingsResponse": {
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/LegislativeMeeting" },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "LegislativeMeetingsResponse"
       },
       "Meeting": {
         "properties": {
@@ -887,6 +1590,16 @@
           "similarity": {
             "anyOf": [{ "type": "number" }, { "type": "null" }],
             "title": "Similarity"
+          },
+          "member": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Person" },
+              { "type": "null" }
+            ]
+          },
+          "attendees": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Attendees"
           }
         },
         "type": "object",
@@ -979,15 +1692,137 @@
         ],
         "title": "Notification"
       },
+      "Person": {
+        "properties": {
+          "identifier": { "type": "string", "title": "Identifier" },
+          "type": { "type": "string", "title": "Type" },
+          "label": { "type": "string", "title": "Label" },
+          "familyName": { "type": "string", "title": "Familyname" },
+          "givenName": { "type": "string", "title": "Givenname" },
+          "sortLabel": { "type": "string", "title": "Sortlabel" },
+          "api:country-of-representation": {
+            "type": "string",
+            "title": "Api:Country-Of-Representation"
+          },
+          "api:political-group": {
+            "type": "string",
+            "title": "Api:Political-Group"
+          },
+          "officialFamilyName": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Officialfamilyname"
+          },
+          "officialGivenName": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Officialgivenname"
+          }
+        },
+        "type": "object",
+        "required": [
+          "identifier",
+          "type",
+          "label",
+          "familyName",
+          "givenName",
+          "sortLabel",
+          "api:country-of-representation",
+          "api:political-group"
+        ],
+        "title": "Person",
+        "description": "Model representing a Member of European Parliament (MEP).\n\nThis model contains detailed information about each MEP\nas provided by the European Parliament API."
+      },
+      "PoliticianCreate": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "further_information": {
+            "type": "string",
+            "title": "Further Information"
+          },
+          "institution": { "type": "string", "title": "Institution" },
+          "area_of_expertise": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Area Of Expertise"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "further_information",
+          "institution",
+          "area_of_expertise"
+        ],
+        "title": "PoliticianCreate"
+      },
+      "PoliticianReturn": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "further_information": {
+            "type": "string",
+            "title": "Further Information"
+          },
+          "institution": { "type": "string", "title": "Institution" },
+          "area_of_expertise": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Area Of Expertise"
+          },
+          "id": { "type": "string", "format": "uuid4", "title": "Id" }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "further_information",
+          "institution",
+          "area_of_expertise",
+          "id"
+        ],
+        "title": "PoliticianReturn"
+      },
+      "PoliticianUpdate": {
+        "properties": {
+          "role": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Role"
+          },
+          "further_information": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Further Information"
+          },
+          "institution": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Institution"
+          },
+          "area_of_expertise": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Area Of Expertise"
+          }
+        },
+        "type": "object",
+        "title": "PoliticianUpdate"
+      },
       "ProfileCreate": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
-          "company_name": { "type": "string", "title": "Company Name" },
-          "company_description": {
+          "user_type": {
             "type": "string",
-            "title": "Company Description"
+            "enum": ["entrepreneur", "politician"],
+            "title": "User Type"
+          },
+          "company": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CompanyCreate" },
+              { "type": "null" }
+            ]
+          },
+          "politician": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PoliticianCreate" },
+              { "type": "null" }
+            ]
           },
           "topic_ids": {
             "items": { "type": "string" },
@@ -1008,10 +1843,7 @@
         "type": "object",
         "required": [
           "id",
-          "name",
-          "surname",
-          "company_name",
-          "company_description",
+          "user_type",
           "topic_ids",
           "countries",
           "newsletter_frequency"
@@ -1021,12 +1853,22 @@
       "ProfileReturn": {
         "properties": {
           "id": { "type": "string", "format": "uuid4", "title": "Id" },
-          "name": { "type": "string", "title": "Name" },
-          "surname": { "type": "string", "title": "Surname" },
-          "company_name": { "type": "string", "title": "Company Name" },
-          "company_description": {
+          "user_type": {
             "type": "string",
-            "title": "Company Description"
+            "enum": ["entrepreneur", "politician"],
+            "title": "User Type"
+          },
+          "company": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CompanyReturn" },
+              { "type": "null" }
+            ]
+          },
+          "politician": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PoliticianReturn" },
+              { "type": "null" }
+            ]
           },
           "topic_ids": {
             "items": { "type": "string" },
@@ -1043,6 +1885,9 @@
             "enum": ["daily", "weekly", "none"],
             "title": "Newsletter Frequency"
           },
+          "name": { "type": "string", "title": "Name" },
+          "surname": { "type": "string", "title": "Surname" },
+          "embedding_input": { "type": "string", "title": "Embedding Input" },
           "embedding": {
             "items": { "type": "number" },
             "type": "array",
@@ -1052,13 +1897,13 @@
         "type": "object",
         "required": [
           "id",
-          "name",
-          "surname",
-          "company_name",
-          "company_description",
+          "user_type",
           "topic_ids",
           "countries",
           "newsletter_frequency",
+          "name",
+          "surname",
+          "embedding_input",
           "embedding"
         ],
         "title": "ProfileReturn"
@@ -1073,13 +1918,24 @@
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Surname"
           },
-          "company_name": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Company Name"
+          "user_type": {
+            "anyOf": [
+              { "type": "string", "enum": ["entrepreneur", "politician"] },
+              { "type": "null" }
+            ],
+            "title": "User Type"
           },
-          "company_description": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Company Description"
+          "company": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CompanyUpdate" },
+              { "type": "null" }
+            ]
+          },
+          "politician": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PoliticianUpdate" },
+              { "type": "null" }
+            ]
           },
           "topic_ids": {
             "anyOf": [
@@ -1106,6 +1962,32 @@
         "type": "object",
         "title": "ProfileUpdate"
       },
+      "Rapporteur": {
+        "properties": {
+          "name": { "type": "string", "title": "Name" },
+          "link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Link"
+          }
+        },
+        "type": "object",
+        "required": ["name"],
+        "title": "Rapporteur"
+      },
+      "Reference": {
+        "properties": {
+          "text": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Text"
+          },
+          "link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Link"
+          }
+        },
+        "type": "object",
+        "title": "Reference"
+      },
       "SessionsResponseModel": {
         "properties": {
           "id": { "type": "string", "title": "Id" },
@@ -1115,6 +1997,15 @@
         "type": "object",
         "required": ["id", "user_id", "title"],
         "title": "SessionsResponseModel"
+      },
+      "SubscribeRequest": {
+        "properties": {
+          "user_id": { "type": "string", "title": "User Id" },
+          "legislation_id": { "type": "string", "title": "Legislation Id" }
+        },
+        "type": "object",
+        "required": ["user_id", "legislation_id"],
+        "title": "SubscribeRequest"
       },
       "Topic": {
         "properties": {

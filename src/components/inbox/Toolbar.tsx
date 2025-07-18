@@ -3,48 +3,74 @@ import { X } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { DateRangeFilter } from '@/components/DateRangeFilter';
-import { DataTableBulkActions } from '@/components/inbox/BulkActions';
+import { DataTableBulkActions } from '@/components/inbox/AlertBulkActions';
 import { DataTableFacetedFilter } from '@/components/inbox/FacetedFilter';
 import { DataTableViewOptions } from '@/components/inbox/ViewOptions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AlertTableItem } from '@/domain/entities/alerts/alert';
 import ToolbarOperations from '@/operations/inbox/ToolbarOperations';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  onBulkArchive?: () => void;
+  onBulkActivate?: () => void;
   onBulkDelete?: () => void;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  onBulkArchive,
+  onBulkActivate,
   onBulkDelete,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
 
-  // Get country options from TanStack Table's faceted values
   const countryOptions = useMemo(() => {
-    const countryColumn = table.getColumn('country');
-    if (!countryColumn) return [];
+    const hasCountryColumn = table
+      .getAllColumns()
+      .some((col) => col.id === 'country');
+    if (!hasCountryColumn) return [];
+    try {
+      const countryColumn = table.getColumn('country');
+      if (!countryColumn) return [];
 
-    const facetedValues = countryColumn.getFacetedUniqueValues();
-    return Array.from(facetedValues.keys()).map((country) => ({
-      label: country,
-      value: country,
-    }));
+      const facetedValues = countryColumn.getFacetedUniqueValues();
+      return Array.from(facetedValues.keys()).map((country) => ({
+        label: country,
+        value: country,
+      }));
+    } catch (error) {
+      console.error('Error fetching country options:', error);
+      return [];
+    }
   }, [table]);
 
   // Show bulk actions when items are selected
   if (selectedCount > 0) {
+    let activationLabel = 'Deactivate';
+    if (
+      selectedRows.length > 0 &&
+      typeof (selectedRows[0].original as AlertTableItem)?.is_active ===
+        'boolean'
+    ) {
+      const allActive = selectedRows.every(
+        (row) => (row.original as AlertTableItem).is_active === true,
+      );
+      const allInactive = selectedRows.every(
+        (row) => (row.original as AlertTableItem).is_active === false,
+      );
+      if (allInactive) activationLabel = 'Activate';
+      else if (!allActive && !allInactive)
+        activationLabel = 'Switch Activation Status';
+    }
     return (
       <div className="flex h-10 items-center justify-between">
         <DataTableBulkActions
           selectedCount={selectedCount}
-          onArchive={onBulkArchive!}
+          onActivate={onBulkActivate!}
           onDelete={onBulkDelete!}
+          activationLabel={activationLabel}
         />
         <Button
           variant="ghost"
@@ -59,7 +85,6 @@ export function DataTableToolbar<TData>({
     );
   }
 
-  // Show normal toolbar when no items are selected
   return (
     <div className="flex h-10 items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
@@ -69,13 +94,22 @@ export function DataTableToolbar<TData>({
           onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn('country') && (
-          <DataTableFacetedFilter
-            column={table.getColumn('country')}
-            title="Country"
-            options={countryOptions}
-          />
-        )}
+        {(() => {
+          const hasCountryColumn = table
+            .getAllColumns()
+            .some((col) => col.id === 'country');
+          if (hasCountryColumn) {
+            const countryColumn = table.getColumn('country');
+            return countryColumn && countryOptions.length > 0 ? (
+              <DataTableFacetedFilter
+                column={countryColumn}
+                title="Country"
+                options={countryOptions}
+              />
+            ) : null;
+          }
+          return null;
+        })()}
         {table.getColumn('date') && (
           <DateRangeFilter
             from={

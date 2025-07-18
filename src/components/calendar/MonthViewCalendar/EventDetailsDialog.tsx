@@ -17,7 +17,7 @@ import { ReactNode, useState } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
-import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
+import { RelevanceScore } from '@/components/RelevanceScore';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,7 +32,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Spinner } from '@/components/ui/spinner';
 import { saveToCalendar } from '@/domain/actions/save-to-calendar';
 import { Meeting } from '@/domain/entities/calendar/generated-types';
-import { members } from '@/domain/entities/mock/mock_members';
+import { attendees, member } from '@/domain/entities/mock/mock_members';
 import { createClient } from '@/lib/supabase/client';
 import {
   formatTime,
@@ -154,7 +154,10 @@ export function EventDetailsDialog({ event, children }: IProps) {
               <User className="mt-1 size-4 shrink-0 text-muted-foreground" />
               <div className="w-full">
                 <p className="mb-1 text-sm font-medium">Members</p>
-                <AvatarStack members={members}></AvatarStack>
+                <AvatarStack
+                  member={member}
+                  attendees={attendees}
+                ></AvatarStack>
               </div>
             </div>
           </div>
@@ -179,7 +182,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
               setCalendarLoading(true);
               saveToCalendar(
                 `${event.title} (${getMeetingType(event.source_table)})`,
-                event.description +
+                (event.description ? event.description : '') +
                   (event.meeting_url ? ` (${event.meeting_url})` : ''),
                 event.location ? event.location : '',
                 event.meeting_start_datetime,

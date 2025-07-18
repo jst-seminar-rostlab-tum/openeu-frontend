@@ -20,7 +20,7 @@ import {
 } from '@/domain/hooks/meetingHooks';
 import { useUrlSync } from '@/domain/hooks/useCalendarUrlSync';
 import { getCurrentWeekRange } from '@/lib/formatters';
-import { getColor } from '@/lib/utils';
+import { getColorKeyByHash } from '@/lib/utils';
 import {
   calculateEndDate,
   calculateStartDate,
@@ -41,11 +41,13 @@ export interface IMeetingContext {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedCountry: string;
+  selectedUserId: string;
   selectedTopics: string[];
   selectedInstitutions: string[];
   setSelectedTopics: (topics: string[]) => void;
   setSelectedCountry: (country: string) => void;
   setSelectedInstitutions: (institutions: string[]) => void;
+  setSelectedUserId: (user_id: string) => void;
   meetings: Meeting[];
   isLoading: boolean;
   isFetching: boolean;
@@ -99,6 +101,9 @@ export function MeetingProvider({
   const [selectedCountry, setSelectedCountry] = useState<string>(
     urlState.selectedCountry,
   );
+  const [selectedUserId, setSelectedUserId] = useState<string>(
+    urlState.selectedUserId,
+  );
   const [selectedTopics, setSelectedTopics] = useState<string[]>(
     urlState.selectedTopics || [],
   );
@@ -125,21 +130,21 @@ export function MeetingProvider({
       // Use custom date range from FilterModal
       start = customStart;
       end = customEnd;
-    } else if (urlState.startDate && urlState.endDate) {
-      // Use URL dates if available
-      start = urlState.startDate.toISOString();
-      end = urlState.endDate.toISOString();
-    } else {
-      // Use default range based on context configuration
-      if (useWeekDefault) {
-        const { startDate: weekStart, endDate: weekEnd } =
-          getCurrentWeekRange();
-        start = weekStart.toISOString();
-        end = weekEnd.toISOString();
+    } else if (useWeekDefault) {
+      if (urlState.startDate && urlState.endDate) {
+        // Use URL dates if available
+        start = urlState.startDate.toISOString();
+        end = urlState.endDate.toISOString();
       } else {
-        start = calculateStartDate(selectedDate, currentView).toISOString();
-        end = calculateEndDate(selectedDate, currentView).toISOString();
+        // Use default range
+        const { startDate, endDate } = getCurrentWeekRange();
+        start = startDate.toISOString();
+        end = endDate.toISOString();
       }
+    } else {
+      // Use calculated range based on selected date and view
+      start = calculateStartDate(selectedDate, currentView).toISOString();
+      end = calculateEndDate(selectedDate, currentView).toISOString();
     }
 
     return {
@@ -152,17 +157,17 @@ export function MeetingProvider({
         selectedInstitutions.length > 0
           ? selectedInstitutions.map(getSourceTableFromInstitution)
           : undefined,
+      user_id: selectedUserId || undefined,
     };
   }, [
     selectedDate,
     currentView,
     searchQuery,
     selectedCountry,
+    selectedUserId,
     isCustomRange,
     customStart,
     customEnd,
-    urlState.startDate,
-    urlState.endDate,
     useWeekDefault,
   ]);
 
@@ -197,7 +202,7 @@ export function MeetingProvider({
       // Assign color using unified system
       return {
         ...processedMeeting,
-        color: getColor(meeting.meeting_id),
+        color: getColorKeyByHash(meeting.meeting_id),
       };
     });
   }, [rawMeetings]);
@@ -228,6 +233,10 @@ export function MeetingProvider({
     setSelectedCountry(country);
   };
 
+  const handleSetSelectedUserId = (userId: string) => {
+    setSelectedUserId(userId);
+  };
+
   const handleSetSelectedTopics = (topics: string[]) => {
     setSelectedTopics(topics);
   };
@@ -245,6 +254,9 @@ export function MeetingProvider({
     }
     if (newFilters.country !== undefined) {
       setSelectedCountry(newFilters.country || '');
+    }
+    if (newFilters.user_id !== undefined) {
+      setSelectedUserId(newFilters.user_id || '');
     }
     if (newFilters.start) {
       setSelectedDate(new Date(newFilters.start));
@@ -296,6 +308,8 @@ export function MeetingProvider({
     setSearchQuery: handleSetSearchQuery,
     selectedCountry,
     setSelectedCountry: handleSetSelectedCountry,
+    selectedUserId,
+    setSelectedUserId: handleSetSelectedUserId,
     selectedTopics,
     setSelectedTopics: handleSetSelectedTopics,
     selectedInstitutions,

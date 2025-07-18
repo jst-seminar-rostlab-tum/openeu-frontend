@@ -1,8 +1,6 @@
 'use client';
 
-import { Table as ReactTable } from '@tanstack/react-table';
 import Link from 'next/link';
-import { useMemo } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -12,56 +10,52 @@ import {
   KanbanHeader,
   KanbanProvider,
 } from '@/components/ui/kanban';
-import { Legislation } from '@/domain/entities/monitor/types';
-import { cn } from '@/lib/utils';
-import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import { LegislativeFile } from '@/domain/entities/monitor/generated-types';
+import { cn, COLOR_SCHEMES, getColorKeyByHash } from '@/lib/utils';
+import MonitorOperations from '@/operations/monitor/MonitorOperations';
 
 interface TanStackKanbanProps {
-  table: ReactTable<Legislation>;
+  groupedData: Record<string, LegislativeFile[]>;
   className?: string;
   visibleColumns: Set<string>;
+  statusColumnsWithData: string[];
 }
 
 export function TanStackKanban({
-  table,
+  groupedData,
   className,
   visibleColumns,
+  statusColumnsWithData,
 }: TanStackKanbanProps) {
-  const processedData = table.getRowModel().rows.map((row) => row.original);
-
-  const groupedData = useMemo(
-    () => ObservatoryOperations.groupLegislationByStatus(processedData),
-    [processedData],
+  const visibleStatusColumns = statusColumnsWithData.filter((status) =>
+    visibleColumns.has(status),
   );
-
-  const statusConfig = ObservatoryOperations.getStatusConfig();
-
-  const visibleStatusColumns = (
-    Object.keys(statusConfig) as Array<keyof typeof statusConfig>
-  ).filter((status) => visibleColumns.has(status));
 
   return (
     <KanbanProvider dragDisabled={true} className={cn('flex-1', className)}>
       {visibleStatusColumns.map((status) => {
         const items = groupedData[status] || [];
-        const config = statusConfig[status];
+        const colorKey = getColorKeyByHash(status);
+        const dotColor = COLOR_SCHEMES[colorKey].dot;
 
         return (
           <KanbanBoard key={status} id={status}>
             <KanbanHeader>
-              <div className="flex shrink-0 items-center gap-2 justify-between">
-                <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-start gap-2 justify-between">
+                <div className="flex items-start gap-2">
                   <div
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: config.color }}
+                    className={cn(
+                      'h-2 w-2 rounded-full shrink-0 mt-1.5',
+                      dotColor,
+                    )}
                   />
-                  <p className="font-semibold text-sm">{config.name}</p>
+                  <p className="font-semibold text-sm">{status}</p>
                 </div>
                 <Badge>{items.length}</Badge>
               </div>
             </KanbanHeader>
             <KanbanCards>
-              {items.map((item: Legislation, index: number) => {
+              {items.map((item: LegislativeFile, index: number) => {
                 const legislationUrl = `/monitor/${encodeURIComponent(item.id)}`;
 
                 return (
@@ -78,7 +72,9 @@ export function TanStackKanban({
                           <Badge className="font-mono" variant="secondary">
                             {item.id}
                           </Badge>
-                          <span>{item.year}</span>
+                          <span>
+                            {MonitorOperations.extractYearFromId(item.id)}
+                          </span>
                         </div>
 
                         <h3

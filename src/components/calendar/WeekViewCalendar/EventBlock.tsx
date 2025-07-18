@@ -3,12 +3,11 @@ import { Building, MapPin } from 'lucide-react';
 import React, { HTMLAttributes } from 'react';
 
 import { EventDetailsDialog } from '@/components/calendar/MonthViewCalendar/EventDetailsDialog';
-import { RelevanceScore } from '@/components/RelevanceScore/RelevanceScore';
+import { RelevanceScore } from '@/components/RelevanceScore';
 import { Badge } from '@/components/ui/badge';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
-import { cn } from '@/lib/utils';
-import { getColor } from '@/lib/utils';
+import { cn, COLOR_SCHEMES } from '@/lib/utils';
 import {
   formatTime,
   getMeetingTypeShort,
@@ -26,14 +25,11 @@ export function EventBlock({ event, className }: IProps) {
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
-  const colorClasses = getColor(
-    event.meeting_id,
-    badgeVariant === 'dot' ? 'dot' : 'bg',
-  );
-
   const calendarWeekEventCardClasses = cn(
     'flex select-none flex-col gap-0.5 truncate whitespace-nowrap rounded-md border px-2 py-1.5 text-xs focus-visible:outline-offset-2 cursor-pointer',
-    colorClasses,
+    COLOR_SCHEMES[event.color].bg,
+    COLOR_SCHEMES[event.color].text,
+    COLOR_SCHEMES[event.color].outline,
     durationInMinutes < 35 && 'py-0 justify-center',
     className,
   );
@@ -70,13 +66,7 @@ export function EventBlock({ event, className }: IProps) {
             )}
           </div>
           {event.similarity && (
-            <div id="score" className="flex-none w-6 h-6">
-              <RelevanceScore
-                meeting={event}
-                type={'circle'}
-                textClassName="text-slate-800 dark:text-slate-50"
-              />
-            </div>
+            <RelevanceScore meeting={event} type={'circle'} />
           )}
         </div>
         <Badge variant="outline" className="dark:text-white">

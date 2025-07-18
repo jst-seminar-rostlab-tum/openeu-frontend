@@ -1,36 +1,86 @@
-import { ProfileData } from '@/domain/entities/profile/ProfileData';
-import { ToastOperations } from '@/operations/toast/toastOperations';
+import { getCookie } from 'cookies-next';
+
+import type {
+  Profile,
+  ProfileCreate,
+  ProfileUpdate,
+} from '@/domain/entities/profile/generated-types';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/profile`;
 
 export const profileRepository = {
-  async createProfile(profileData: ProfileData): Promise<string> {
+  async getProfile(userId: string): Promise<Profile | null> {
+    const token = getCookie('token');
+
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
+      const res = await fetch(`${API_URL}/${userId}`, {
+        method: 'GET',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          id: profileData.id,
-          name: profileData.name,
-          surname: profileData.surname,
-          company_name: profileData.companyName,
-          company_description: profileData.companyDescription,
-          topic_list: profileData.topicList,
-          newsletter_frequency: profileData.newsletterFrequency,
-        }),
       });
-      if (!res.ok) {
-        ToastOperations.showError({
-          title: 'Error fetching profile',
-          message: 'Failed to fetch profile. Please try again later.',
-        });
-        throw new Error('Failed to create profile');
+
+      if (res.status === 404) {
+        return null;
       }
-      return 'success';
-    } catch {
-      return 'error';
+
+      if (!res.ok) {
+        throw new Error('Failed to get profile');
+      }
+
+      const data = await res.json();
+      return data as Profile;
+    } catch (error) {
+      if (error instanceof Error && error.message !== 'Failed to get profile') {
+        throw error;
+      }
+      throw new Error('Failed to get profile');
     }
+  },
+  createProfile: async (data: ProfileCreate) => {
+    const token = getCookie('token');
+
+    const response = await fetch(`${API_URL}/`, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`,
+      );
+    }
+
+    return response.json();
+  },
+  updateProfile: async (userId: string, data: ProfileUpdate) => {
+    const token = getCookie('token');
+
+    const response = await fetch(`${API_URL}/${userId}`, {
+      method: 'PATCH',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`,
+      );
+    }
+
+    return response.json();
   },
 };

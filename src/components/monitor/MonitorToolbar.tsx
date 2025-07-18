@@ -9,8 +9,9 @@ import {
   Settings2,
   X,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import PersonalizeLegislationSwitch from '@/components/PersonalizeSwitch/PersonalizeLegislationSwitch';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -37,23 +38,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { LegislativeFileSuggestion } from '@/domain/entities/monitor/generated-types';
-import { Legislation } from '@/domain/entities/monitor/types';
-import ObservatoryOperations from '@/operations/monitor/MonitorOperations';
+import {
+  LegislativeFile,
+  LegislativeFileSuggestion,
+} from '@/domain/entities/monitor/generated-types';
+import { useLegislativeUniqueValues } from '@/domain/hooks/legislative-hooks';
 import { legislationRepository } from '@/repositories/legislationRepository';
 
 import { SuggestedSearch } from '../SuggestedSearch/SuggestedSearch';
 
 interface KanbanToolbarProps {
-  table: ReactTable<Legislation>;
+  table: ReactTable<LegislativeFile>;
   onSearchChange?: (search: string) => void;
   onCommitteeChange?: (committee: string | undefined) => void;
   onYearChange?: (year: number | undefined) => void;
+  onUserIdChange?: (userId: string | undefined) => void;
   searchValue?: string;
   selectedCommittee?: string;
   selectedYear?: number;
+  selectedUserId?: string;
   visibleColumns: Set<string>;
   onVisibleColumnsChange: (columns: Set<string>) => void;
+  statusColumnsWithData: string[];
 }
 
 export function KanbanToolbar({
@@ -61,14 +67,17 @@ export function KanbanToolbar({
   onSearchChange,
   onCommitteeChange,
   onYearChange,
+  onUserIdChange,
   searchValue = '',
   selectedCommittee,
   selectedYear,
+  selectedUserId,
   visibleColumns,
   onVisibleColumnsChange,
+  statusColumnsWithData,
 }: KanbanToolbarProps) {
   // Local filter state
-  const [searchInput, setSearchInput] = useState(searchValue);
+  const [localSearchText, setLocalSearchText] = useState(searchValue);
   const [committeeInput, setCommitteeInput] = useState(
     selectedCommittee || 'all',
   );
@@ -76,10 +85,17 @@ export function KanbanToolbar({
     selectedYear ? String(selectedYear) : 'all',
   );
 
-  const committees = ObservatoryOperations.getUniqueCommittees();
-  const years = ObservatoryOperations.getUniqueYears();
+  // Fetch unique values from API
+  const { data: uniqueValues } = useLegislativeUniqueValues();
 
-  const statusColumns = ObservatoryOperations.getStatusColumns();
+  // Sync local search text with external search value
+  useEffect(() => {
+    setLocalSearchText(searchValue);
+  }, [searchValue]);
+
+  // Get unique values from API or fallback to empty arrays
+  const committees = uniqueValues?.committees || [];
+  const years = uniqueValues?.years || [];
 
   // Sortable columns from TanStack Table
   const sortableColumns = useMemo(() => {
@@ -94,7 +110,6 @@ export function KanbanToolbar({
 
   // Local filter handlers
   const handleSearchChange = (value: string) => {
-    setSearchInput(value);
     onSearchChange?.(value);
   };
 
@@ -135,8 +150,7 @@ export function KanbanToolbar({
     }
   };
 
-  const handleColumnToggle = (columnId: string, event?: Event) => {
-    event?.preventDefault();
+  const handleColumnToggle = (columnId: string) => {
     const newVisibleColumns = new Set(visibleColumns);
     if (newVisibleColumns.has(columnId)) {
       newVisibleColumns.delete(columnId);
@@ -147,33 +161,35 @@ export function KanbanToolbar({
   };
 
   const clearAllFilters = () => {
-    // Clear local filters
-    setSearchInput('');
+    // Clear local filters (excluding search)
     setCommitteeInput('all');
     setYearInput('all');
-    onSearchChange?.('');
     onCommitteeChange?.(undefined);
     onYearChange?.(undefined);
 
     table.resetSorting();
 
-    const allColumns = new Set(statusColumns.map((col) => col.id));
+    const allColumns = new Set(statusColumnsWithData);
     onVisibleColumnsChange(allColumns);
   };
 
-  const hasLocalFilters = !!(
-    searchInput ||
-    committeeInput !== 'all' ||
-    yearInput !== 'all'
-  );
+  const hasLocalFilters = !!(committeeInput !== 'all' || yearInput !== 'all');
 
   const sorting = table.getState().sorting;
   const hasSorting = sorting.length > 0;
-  const hasHiddenColumns = statusColumns.length !== visibleColumns.size;
+  const hasHiddenColumns = statusColumnsWithData.some(
+    (status) => !visibleColumns.has(status),
+  );
   const hasAnyFilters = hasLocalFilters || hasSorting || hasHiddenColumns;
 
   const ControlsContent = () => (
     <>
+      {/* Personalize Switch */}
+      <PersonalizeLegislationSwitch
+        onUserIdChange={onUserIdChange}
+        selectedUserId={selectedUserId}
+      />
+
       {/* Clear All Filters */}
       {hasAnyFilters && (
         <Button
@@ -248,14 +264,14 @@ export function KanbanToolbar({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-60">
-          {statusColumns.map((column) => (
+          {statusColumnsWithData.map((column) => (
             <DropdownMenuCheckboxItem
-              key={column.id}
+              key={column}
               className="capitalize"
-              checked={visibleColumns.has(column.id)}
-              onSelect={(event) => handleColumnToggle(column.id, event)}
+              checked={visibleColumns.has(column)}
+              onCheckedChange={() => handleColumnToggle(column)}
             >
-              {column.label}
+              {column}
             </DropdownMenuCheckboxItem>
           ))}
         </DropdownMenuContent>
@@ -298,10 +314,12 @@ export function KanbanToolbar({
       {/* Search - always visible */}
       <SuggestedSearch<LegislativeFileSuggestion>
         placeholder="Search legislation..."
-        value={searchInput}
-        onValueChange={handleSearchChange}
+        value={localSearchText}
+        onValueChange={setLocalSearchText}
         onSearch={handleSearchChange}
-        fetchSuggestions={legislationRepository.getLegislationSuggestions}
+        fetchSuggestions={(query) =>
+          legislationRepository.getLegislationSuggestions({ query, limit: 5 })
+        }
         getDisplayText={(legislation) => legislation.title}
         getSelectValue={(legislation) => legislation.title}
         onSelect={(legislation) => handleSearchChange(legislation.title)}

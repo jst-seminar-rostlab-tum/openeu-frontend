@@ -49,7 +49,7 @@ export function ForgotPasswordForm({
           <form onSubmit={(e: FormEvent) => sendResetLink(e)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">E-Mail</Label>
                 <Input
                   id="email"
                   type="email"

@@ -27,6 +27,10 @@ export default function Page() {
             these linked pages rests solely with their operators and not with
             Center for Software Engineering Excellence gGmbH.
           </p>
+          <p className="mb-1">
+            We do not pass this data on to third parties, not even for purposes
+            other than those stated.
+          </p>
         </div>
         <div className="space-y-4">
           <h2 className="text-2xl font-medium">
@@ -138,6 +142,40 @@ export default function Page() {
               and services offered. Personal data is processed only based on the
               currently applicable legal foundations.
             </p>
+            <h4 className="text-sm font-bold">
+              5.1.1. Use of Google User Data
+            </h4>
+            <p className="text-base mb-2">
+              Our application uses Google Sign-In (OAuth 2.0) to allow users to
+              authenticate securely.
+            </p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>
+                We access your Google email address and name for the sole
+                purpose of providing login functionality.
+              </li>
+              <li>
+                We do not access, process, or store your Google Calendar data or
+                any other Google user data beyond your name and email address.
+              </li>
+              <li>
+                This data is not stored on our servers beyond what is required
+                for session management, and it is not shared with any third
+                parties.
+              </li>
+              <li>
+                You can revoke access at any time by visiting your Google
+                Account&#39;s app permissions page:
+                <a
+                  href="https://myaccount.google.com/permissions"
+                  className="underline"
+                  target="_blank"
+                >
+                  https://myaccount.google.com/permissions
+                </a>
+                .
+              </li>
+            </ul>
           </div>
           <div className="space-y-2 pl-6">
             <h3 className="font-bold">5.2. PURPOSES OF PROCESSING</h3>
