@@ -3,12 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { useProfile } from '@/domain/hooks/profileHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 
@@ -62,26 +56,15 @@ export default function PersonalizeSwitch({
     }
   }, [userId, profile]);
 
+  // TODO: Add tooltip for profile not found
+
   return (
-    <div className="flex items-center space-x-2">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span tabIndex={0}>
-              <Switch
-                checked={checked}
-                onCheckedChange={handleSwitch}
-                disabled={!hasProfile}
-              />
-            </span>
-          </TooltipTrigger>
-          {!hasProfile && (
-            <TooltipContent>
-              <p>Profile not found</p>
-            </TooltipContent>
-          )}
-        </Tooltip>
-      </TooltipProvider>
+    <div className="flex items-center justify-center space-x-2">
+      <Switch
+        checked={checked}
+        onCheckedChange={handleSwitch}
+        disabled={!hasProfile}
+      />
       <Label>{label}</Label>
     </div>
   );
