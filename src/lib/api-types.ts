@@ -303,6 +303,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/unsubscribe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Unsubscribe From Legislation */
+    post: operations['unsubscribe_from_legislation_unsubscribe_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/subscriptions/{user_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get User Subscriptions */
+    get: operations['get_user_subscriptions_subscriptions__user_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/notifications/{user_id}': {
     parameters: {
       query?: never;
@@ -423,6 +457,8 @@ export interface components {
       session_id: string;
       /** Message */
       message: string;
+      /** Legislation Id */
+      legislation_id?: string | null;
     };
     /** CompanyCreate */
     CompanyCreate: {
@@ -555,6 +591,8 @@ export interface components {
         | null;
       /** Similarity */
       similarity?: number | null;
+      /** Subscribed */
+      subscribed?: boolean | null;
     };
     /** LegislativeFileResponse */
     LegislativeFileResponse: {
@@ -892,6 +930,24 @@ export interface components {
       /** Legislation Id */
       legislation_id: string;
     };
+    /** Subscription */
+    Subscription: {
+      /** Id */
+      id: string;
+      /** User Id */
+      user_id: string;
+      /** Legislation Id */
+      legislation_id: string;
+      /** Created At */
+      created_at: string;
+    };
+    /** SubscriptionResponse */
+    SubscriptionResponse: {
+      /** Success */
+      success: boolean;
+      /** Message */
+      message: string;
+    };
     /** Topic */
     Topic: {
       /** Topic */
@@ -1029,7 +1085,7 @@ export interface operations {
         /** @description List of topic names (repeat or comma-separated) */
         topics?: string[] | null;
         /** @description Filter by country (e.g., 'Austria', 'European Union') */
-        country?: string | null;
+        country?: string[] | null;
         /** @description User ID for personalized meeting recommendations */
         user_id?: string | null;
         /** @description Filter by source table(s) (repeat or comma-separated) */
@@ -1398,6 +1454,8 @@ export interface operations {
       query: {
         /** @description Legislative file ID */
         id: string;
+        /** @description User ID to check subscription status */
+        user_id?: string | null;
       };
       header?: never;
       path?: never;
@@ -1498,7 +1556,71 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': unknown;
+          'application/json': components['schemas']['SubscriptionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  unsubscribe_from_legislation_unsubscribe_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubscribeRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SubscriptionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_user_subscriptions_subscriptions__user_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Subscription'][];
         };
       };
       /** @description Validation Error */

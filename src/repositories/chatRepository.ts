@@ -5,7 +5,6 @@ import {
   type Message,
   type SendMessageRequest,
 } from '@/domain/entities/chat/generated-types';
-import { TContext } from '@/domain/entities/monitor/types';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'https://openeu-backend-1.onrender.com';
@@ -77,23 +76,11 @@ export const chatRepository = {
   async sendStreamingMessage(
     request: SendMessageRequest,
     onStreamUpdate?: (content: string) => void,
-    contextParams?: Partial<Record<TContext, string>>,
   ): Promise<string> {
     const token = getCookie('token');
 
     try {
-      // Build URL with context query parameters
-      let url = `${API_BASE_URL}/chat/`;
-      if (contextParams && Object.keys(contextParams).length > 0) {
-        const stringParams: Record<string, string> = {};
-        Object.entries(contextParams).forEach(([key, value]) => {
-          if (value) {
-            stringParams[`${key}_id`] = value;
-          }
-        });
-        const queryParams = new URLSearchParams(stringParams);
-        url = `${url}?${queryParams}`;
-      }
+      const url = `${API_BASE_URL}/chat/`;
 
       const response = await fetch(url, {
         method: 'POST',
