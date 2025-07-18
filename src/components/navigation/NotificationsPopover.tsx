@@ -14,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { useNotifications } from '@/domain/hooks/notificationsHooks';
 import { useAuth } from '@/domain/hooks/useAuth';
+import NotificationOperations from '@/operations/home/NotificationOperations';
 
 export function NotificationsPopover() {
   const { user } = useAuth();
@@ -66,7 +67,9 @@ export function NotificationsPopover() {
                   <div className="flex items-center justify-between py-1">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">
-                        {notification.type ?? 'No title'}
+                        {NotificationOperations.mapNotificationType(
+                          notification.type,
+                        )}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(notification.sent_at).toLocaleDateString()}
