@@ -31,7 +31,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Spinner } from '@/components/ui/spinner';
 import { saveToCalendar } from '@/domain/actions/save-to-calendar';
-import { Meeting } from '@/domain/entities/calendar/generated-types';
+import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { attendees, member } from '@/domain/entities/mock/mock_members';
 import { createClient } from '@/lib/supabase/client';
 import {
