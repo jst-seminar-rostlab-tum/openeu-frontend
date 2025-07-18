@@ -5,9 +5,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createChatSession } from '@/domain/actions/chat-actions';
 import {
   type CreateSessionRequest,
+  type Message,
   type SendMessageRequest,
 } from '@/domain/entities/chat/generated-types';
-import { TContext } from '@/domain/entities/monitor/types';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 import { chatRepository } from '@/repositories/chatRepository';
@@ -70,26 +70,83 @@ export function useSendMessage() {
     mutationFn: ({
       request,
       onStreamUpdate,
-      contextParams,
     }: {
       request: SendMessageRequest;
       onStreamUpdate?: (content: string) => void;
-      contextParams?: Partial<Record<TContext, string>>;
-    }) =>
-      chatRepository.sendStreamingMessage(
-        request,
-        onStreamUpdate,
-        contextParams,
-      ),
-    onSuccess: (_, variables) => {
+    }) => chatRepository.sendStreamingMessage(request, onStreamUpdate),
+
+    onMutate: async ({ request }) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({
+        queryKey: chatQueryKeys.messages(request.session_id),
+      });
+
+      // Snapshot the previous value
+      const previousMessages =
+        queryClient.getQueryData<Message[]>(
+          chatQueryKeys.messages(request.session_id),
+        ) || [];
+
+      // Optimistically update to the new value
+      const optimisticUserMessage: Message = {
+        id: `temp-${Date.now()}`,
+        content: request.message,
+        chat_session: request.session_id,
+        author: 'user',
+        date: new Date().toISOString(),
+      };
+
+      queryClient.setQueryData(chatQueryKeys.messages(request.session_id), [
+        ...previousMessages,
+        optimisticUserMessage,
+      ]);
+
+      // Return context object with the snapshotted value
+      return { previousMessages, optimisticUserMessage };
+    },
+
+    onSuccess: (aiResponse, variables) => {
+      // Get current messages from cache
+      const currentMessages =
+        queryClient.getQueryData<Message[]>(
+          chatQueryKeys.messages(variables.request.session_id),
+        ) || [];
+
+      // Add AI response to the conversation
+      const aiMessage: Message = {
+        id: `ai-${Date.now()}`,
+        content: aiResponse,
+        chat_session: variables.request.session_id,
+        author: 'assistant',
+        date: new Date().toISOString(),
+      };
+
+      queryClient.setQueryData(
+        chatQueryKeys.messages(variables.request.session_id),
+        [...currentMessages, aiMessage],
+      );
+    },
+
+    onError: (error, variables, context) => {
+      // If the mutation fails, use the context to roll back
+      if (context?.previousMessages) {
+        queryClient.setQueryData(
+          chatQueryKeys.messages(variables.request.session_id),
+          context.previousMessages,
+        );
+      }
+
+      ToastOperations.showError({
+        title: 'Message Failed',
+        message: 'Failed to send your message. Please try again.',
+      });
+    },
+
+    onSettled: (data, error, variables) => {
+      // Always refetch after error or success
       queryClient.invalidateQueries({
         queryKey: chatQueryKeys.messages(variables.request.session_id),
       });
     },
-    onError: () =>
-      ToastOperations.showError({
-        title: 'Message Failed',
-        message: 'Failed to send your message. Please try again.',
-      }),
   });
 }
