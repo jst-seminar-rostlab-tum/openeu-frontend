@@ -1,14 +1,9 @@
 'use server';
 
-import { getCookie } from 'cookies-next';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import {
-  Profile,
-  ProfileCreate,
-  ProfileUpdate,
-} from '@/domain/entities/profile/generated-types';
+import { Profile } from '@/domain/entities/profile/generated-types';
 import { createClient } from '@/lib/supabase/server';
 
 const API_BASE_URL =
@@ -62,26 +57,6 @@ export async function getProfile(profileId: string): Promise<Profile | null> {
 
   if (!res.ok) {
     return null;
-  }
-  return await res.json();
-}
-
-export async function updateProfile(
-  profileId: string,
-  data: ProfileUpdate,
-): Promise<ProfileCreate> {
-  const token = getCookie('token');
-
-  const res = await fetch(`${API_BASE_URL}/profile/${profileId}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    throw new Error('Failed to get profile');
   }
   return await res.json();
 }

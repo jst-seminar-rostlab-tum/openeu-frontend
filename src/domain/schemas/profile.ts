@@ -28,19 +28,6 @@ export const securitySchema = z
     path: ['confirm_new_password'],
   });
 
-export const notificationSchema = z.object({
-  newsletter_frequency: z.union([
-    z.literal('daily'),
-    z.literal('weekly'),
-    z.literal('none'),
-  ]),
-});
-
-export const interestsSchema = z.object({
-  countries: z.array(z.string()),
-  topic_ids: z.array(z.string()),
-});
-
 export const pathDecisionSchema = z.object({
   user_type: z.union([z.literal('entrepreneur'), z.literal('politician')]),
 });
@@ -95,7 +82,3 @@ export const onboardingSchema = pathDecisionSchema
   .extend({
     newsletter_frequency: completionSchema.shape.newsletter_frequency,
   });
-
-export const profileUpdateSchema = onboardingSchema.extend(
-  accountDetailsSchema.shape,
-);
