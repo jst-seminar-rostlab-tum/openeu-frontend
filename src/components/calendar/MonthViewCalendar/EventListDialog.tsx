@@ -147,7 +147,7 @@ export function EventListDialog({
                 <AvatarStack
                   member={event.member}
                   attendees={event.attendees}
-                ></AvatarStack>
+                />
               )}
             </div>
           </div>
