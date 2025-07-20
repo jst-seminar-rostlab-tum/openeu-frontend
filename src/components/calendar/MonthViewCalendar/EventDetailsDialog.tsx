@@ -5,6 +5,7 @@ import {
   Building,
   Calendar,
   CalendarOff,
+  CalendarPlus,
   ExternalLink,
   MapPin,
   Scale,
@@ -12,7 +13,7 @@ import {
   Text,
   User,
 } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
@@ -28,12 +29,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Spinner } from '@/components/ui/spinner';
+import { saveToCalendar } from '@/domain/actions/save-to-calendar';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { attendees, member } from '@/domain/entities/mock/mock_members';
+import { createClient } from '@/lib/supabase/client';
 import {
   formatTime,
   getMeetingType,
 } from '@/operations/meeting/CalendarHelpers';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface IProps {
   event: Meeting;
@@ -43,6 +48,10 @@ interface IProps {
 export function EventDetailsDialog({ event, children }: IProps) {
   const startDate = parseISO(event.meeting_start_datetime);
   const endDate = parseISO(event.meeting_end_datetime);
+
+  const [calendarLoading, setCalendarLoading] = useState(false);
+
+  const supabase = createClient();
 
   return (
     <Dialog>
@@ -166,6 +175,58 @@ export function EventDetailsDialog({ event, children }: IProps) {
               </a>
             </Button>
           )}
+          <Button
+            variant="default"
+            asChild
+            onClick={() => {
+              setCalendarLoading(true);
+              saveToCalendar(
+                `${event.title} (${getMeetingType(event.source_table)})`,
+                (event.description ? event.description : '') +
+                  (event.meeting_url ? ` (${event.meeting_url})` : ''),
+                event.location ? event.location : '',
+                event.meeting_start_datetime,
+                event.meeting_end_datetime,
+              ).then(async (needsGoogleAuth: boolean) => {
+                if (needsGoogleAuth) {
+                  ToastOperations.showError({
+                    title: 'Error',
+                    message:
+                      'Please link your Google account to save events to your calendar.',
+                  });
+                  await supabase.auth.linkIdentity({
+                    provider: 'google',
+                    options: {
+                      redirectTo: `${window.location.origin}/auth/callback`,
+                      queryParams: {
+                        access_type: 'offline',
+                        prompt: 'consent',
+                      },
+                      scopes: 'https://www.googleapis.com/auth/calendar',
+                    },
+                  });
+                  setCalendarLoading(false);
+                } else {
+                  ToastOperations.showSuccess({
+                    title: 'Success',
+                    message: 'Event saved to your calendar.',
+                  });
+                  setCalendarLoading(false);
+                }
+              });
+            }}
+            disabled={calendarLoading}
+          >
+            <p>
+              {calendarLoading
+                ? Spinner({
+                    size: 'xsmall',
+                    className: 'text-white dark:text-black',
+                  })
+                : 'Add to calendar'}
+              <CalendarPlus className="size-4" />
+            </p>
+          </Button>
           <DialogClose asChild>
             <Button variant="outline">Close</Button>
           </DialogClose>

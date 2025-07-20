@@ -174,6 +174,8 @@ export function AuthProvider({
 
       if (!isPublicPage) {
         router.push('/');
+      } else if (currentPath === '/') {
+        router.refresh();
       }
     }
   }, [supabase, router, initialUser, isSigningOut]);
