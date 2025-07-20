@@ -3,8 +3,6 @@ import { z } from 'zod';
 export const accountDetailsSchema = z.object({
   name: z.string().min(2),
   surname: z.string().min(2),
-  company_name: z.string().min(2),
-  company_description: z.string().min(2),
 });
 
 const passwordTooShortError = {
@@ -97,3 +95,7 @@ export const onboardingSchema = pathDecisionSchema
   .extend({
     newsletter_frequency: completionSchema.shape.newsletter_frequency,
   });
+
+export const profileUpdateSchema = onboardingSchema.extend(
+  accountDetailsSchema.shape,
+);

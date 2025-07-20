@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { onboardingSchema } from '@/domain/schemas/profile';
+import { entrepreneurRoleSchema } from '@/domain/schemas/profile';
 import {
   COMPANY_SIZES,
   COMPANY_STAGES,
@@ -30,7 +30,7 @@ import {
 } from '@/operations/onboarding/OnboardingOperations';
 
 interface EntrepreneurRoleFormProps {
-  form: UseFormReturn<z.infer<typeof onboardingSchema>>;
+  form: UseFormReturn<z.infer<typeof entrepreneurRoleSchema>>;
 }
 
 export function EntrepreneurRoleForm({ form }: EntrepreneurRoleFormProps) {

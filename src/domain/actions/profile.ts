@@ -48,25 +48,6 @@ export async function unlinkGoogleAccount() {
   }
 }
 
-export async function createProfile(
-  data: ProfileCreate,
-): Promise<ProfileCreate> {
-  const token = getCookie('token');
-
-  const res = await fetch(`${API_BASE_URL}/profile/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    throw new Error(res.statusText);
-  }
-  return res.json();
-}
-
 export async function getProfile(profileId: string): Promise<Profile | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;

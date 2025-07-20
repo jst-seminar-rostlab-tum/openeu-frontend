@@ -12,7 +12,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { onboardingSchema } from '@/domain/schemas/profile';
+import {
+  onboardingSchema,
+  politicianRoleSchema,
+} from '@/domain/schemas/profile';
 
 interface Step2PoliticalRoleDetailsProps {
   form: UseFormReturn<z.infer<typeof onboardingSchema>>;
@@ -30,7 +33,13 @@ export default function Step2PoliticalRoleDetails({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <PoliticalRoleForm form={form} />
+        <PoliticalRoleForm
+          form={
+            form as unknown as UseFormReturn<
+              z.infer<typeof politicianRoleSchema>
+            >
+          }
+        />
       </CardContent>
     </Card>
   );
