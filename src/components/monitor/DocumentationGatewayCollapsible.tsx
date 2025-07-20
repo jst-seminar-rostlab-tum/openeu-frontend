@@ -44,16 +44,22 @@ export function DocumentationGatewayCollapsible({
           )}
         />
       </CollapsibleTrigger>
-      <CollapsibleContent className="mt-1 flex flex-col gap-1">
+      <CollapsibleContent className="mt-1 flex gap-2">
         {document.summary && (
-          <p className="text-xs text-muted-foreground">{document.summary}</p>
+          <Link
+            href={document.summary}
+            className="text-xs link-highlight inline-flex items-center font-mono gap-1"
+          >
+            Summary
+            <ExternalLink className="h-3 w-3" />
+          </Link>
         )}
         {document.reference?.link && (
           <Link
             href={document.reference.link}
-            className="text-xs link-highlight inline-flex items-center font-mono"
+            className="text-xs link-highlight inline-flex items-center font-mono gap-1"
           >
-            {document.reference.text}
+            {document.reference.text || 'View'}
             <ExternalLink className="h-3 w-3" />
           </Link>
         )}
