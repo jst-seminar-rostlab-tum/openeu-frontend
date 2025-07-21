@@ -45,20 +45,16 @@ export default function ProfileContent({
   const [loading, setLoading] = useState(false);
 
   const updateProfileMutation = useProfileUpdateMutation({
-    onSuccess: () => {
+    onSuccess: () =>
       ToastOperations.showSuccess({
         title: 'Profile updated',
         message: 'Your profile was updated successfully.',
-      });
-      setLoading(false);
-    },
-    onError: (error) => {
+      }),
+    onError: (error) =>
       ToastOperations.showError({
         title: 'Error creating profile',
         message: `${error.message}. Please try again later.`,
-      });
-      setLoading(false);
-    },
+      }),
   });
 
   const profile = updateProfileMutation.data ?? userProfile;
@@ -66,7 +62,9 @@ export default function ProfileContent({
 
   const updateProfile = (userId: string, data: ProfileUpdate) => {
     setLoading(true);
-    updateProfileMutation.mutate({ userId, data });
+    updateProfileMutation
+      .mutateAsync({ userId, data })
+      .finally(() => setLoading(false));
   };
 
   const categories: ProfileCategory[] = [
