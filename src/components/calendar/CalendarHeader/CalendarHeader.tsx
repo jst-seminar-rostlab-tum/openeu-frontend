@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CalendarRange, Columns, Grid2X2, Grid3X3 } from 'lucide-react';
+import { Columns, Grid2X2, Grid3X3 } from 'lucide-react';
 import * as React from 'react';
 
 import { DateNavigator } from '@/components/calendar/CalendarHeader/DateNavigator';
@@ -10,15 +10,10 @@ import ExportModal from '@/components/ExportModal/ExportModal';
 import FilterModal from '@/components/FilterModal/FilterModal';
 import PersonalizeMeetingSwitch from '@/components/PersonalizeSwitch/PersonalizeMeetingSwitch';
 import { SuggestedSearch } from '@/components/SuggestedSearch/SuggestedSearch';
-import { MotionButton, TooltipButton } from '@/components/TooltipMotionButton';
+import { TooltipButton } from '@/components/TooltipMotionButton';
 import { Badge } from '@/components/ui/badge';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Toggle } from '@/components/ui/toggle';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import {
   buttonHover,
   slideFromLeft,
@@ -127,32 +122,6 @@ export function CalendarHeader() {
           />
           <FilterModal showDateDropdown={false} topics={topicLabels} />
           <PersonalizeMeetingSwitch />
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <MotionButton
-                variant="outline"
-                onClick={() => setView('agenda')}
-                asChild
-                variants={buttonHover}
-                whileHover="hover"
-                whileTap="tap"
-              >
-                <Toggle className="relative">
-                  {view === 'agenda' ? (
-                    <>
-                      <CalendarRange />
-                      <span className="absolute -top-1 -right-1 size-3 rounded-full bg-green-400" />
-                    </>
-                  ) : (
-                    <CalendarRange />
-                  )}
-                </Toggle>
-              </MotionButton>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Agenda View</p>
-            </TooltipContent>
-          </Tooltip>
 
           <ButtonGroup>
             <TooltipButton

@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
-import { attendees, member } from '@/domain/entities/mock/mock_members';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { cn, COLOR_SCHEMES } from '@/lib/utils';
 import { getMeetingTypeShort } from '@/operations/meeting/CalendarHelpers';
@@ -144,7 +143,12 @@ export function EventListDialog({
                   {event.location && getMeetingTypeShort(event.location)}
                 </span>
               </Badge>
-              <AvatarStack member={member} attendees={attendees}></AvatarStack>
+              {(event.member || event.attendees) && (
+                <AvatarStack
+                  member={event.member}
+                  attendees={event.attendees}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -15,7 +15,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function extractInitials(name?: string): string {
   if (!name || name.trim() === '') {
-    return 'NA'; // Default for empty or undefined names
+    return 'N/A'; // Default for empty or undefined names
   }
 
   const nameParts = name.trim().split(/\s+/);
