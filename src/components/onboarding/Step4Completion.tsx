@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { onboardingSchema } from '@/domain/schemas/profile';
+import { completionSchema, onboardingSchema } from '@/domain/schemas/profile';
 
 interface Step4CompletionProps {
   form: UseFormReturn<z.infer<typeof onboardingSchema>>;
@@ -28,7 +28,11 @@ export default function Step4Completion({ form }: Step4CompletionProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <CompletionForm form={form} />
+        <CompletionForm
+          form={
+            form as unknown as UseFormReturn<z.infer<typeof completionSchema>>
+          }
+        />
         <motion.div
           className="text-center p-6 bg-muted rounded-lg px-auto"
           initial={{ opacity: 0, scale: 0.95 }}
