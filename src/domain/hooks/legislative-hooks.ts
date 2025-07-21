@@ -1,11 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMutation } from '@tanstack/react-query';
 
 import {
   LegislativeFilesParams,
   LegislativeSuggestionsParams,
 } from '@/domain/entities/monitor/generated-types';
-import { ToastOperations } from '@/operations/toast/toastOperations';
 import { legislationRepository } from '@/repositories/legislationRepository';
 
 export const useLegislativeFiles = (params?: LegislativeFilesParams) =>
@@ -28,68 +26,3 @@ export const useLegislativeUniqueValues = () =>
     queryKey: ['legislative-unique-values'],
     queryFn: () => legislationRepository.getLegislativeUniqueValues(),
   });
-
-export const useSubscribeToLegislationMutation = () => {
-  return useMutation({
-    mutationFn: ({
-      userId,
-      legislationId,
-    }: {
-      userId: string;
-      legislationId: string;
-    }) => legislationRepository.subscribeToLegislation(userId, legislationId),
-    onSuccess: (data) => {
-      if (data.success) {
-        ToastOperations.showSuccess({
-          title: 'Subscription successful',
-          message: 'You have successfully subscribed to this legislation.',
-        });
-      } else {
-        ToastOperations.showError({
-          title: 'Subscription failed',
-          message:
-            'Failed to subscribe to legislation. Please try again later.',
-        });
-      }
-    },
-    onError: () => {
-      ToastOperations.showError({
-        title: 'Subscription failed',
-        message: 'Failed to subscribe to legislation. Please try again later.',
-      });
-    },
-  });
-};
-
-export const useUnsubscribeToLegislationMutation = () => {
-  return useMutation({
-    mutationFn: ({
-      userId,
-      legislationId,
-    }: {
-      userId: string;
-      legislationId: string;
-    }) => legislationRepository.unsubscribeToLegislation(userId, legislationId),
-    onSuccess: (data) => {
-      if (data.success) {
-        ToastOperations.showSuccess({
-          title: 'Unsubscription successful',
-          message: 'You have successfully unsubscribed from this legislation.',
-        });
-      } else {
-        ToastOperations.showError({
-          title: 'Unsubscription failed',
-          message:
-            'Failed to unsubscribe from legislation. Please try again later.',
-        });
-      }
-    },
-    onError: () => {
-      ToastOperations.showError({
-        title: 'Unsubscription failed',
-        message:
-          'Failed to unsubscribe to legislation. Please try again later.',
-      });
-    },
-  });
-};

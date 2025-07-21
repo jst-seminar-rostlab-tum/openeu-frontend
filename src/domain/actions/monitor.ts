@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
 import {
@@ -10,6 +11,8 @@ import {
   LegislativeMeetingsParams,
   LegislativeMeetingsResponse,
 } from '@/domain/entities/monitor/generated-types';
+import { requireAuth } from '@/lib/dal';
+import { createClient } from '@/lib/supabase/server';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/legislative-file`;
@@ -99,4 +102,45 @@ export async function getLegislativeMeetings(
     });
     throw error;
   }
+}
+
+export async function subscribeToLegislation(
+  legislationId: string,
+): Promise<void> {
+  const supabase = await createClient();
+  const { user } = await requireAuth();
+
+  const { error } = await supabase
+    .from('subscriptions')
+    .insert({ user_id: user.id, legislation_id: legislationId });
+
+  if (error) {
+    throw new Error(`Failed to subscribe to legislation: ${error.message}`);
+  }
+
+  revalidatePath(`/monitor/${encodeURIComponent(legislationId)}`);
+}
+
+export async function unsubscribeFromLegislation(
+  legislationId: string,
+): Promise<void> {
+  const supabase = await createClient();
+  const { user } = await requireAuth();
+
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('legislation_id', legislationId)
+    .select();
+
+  if (error) {
+    throw new Error(`Failed to unsubscribe from legislation: ${error.message}`);
+  }
+
+  if (!data || data.length === 0) {
+    throw new Error('Subscription not found');
+  }
+
+  revalidatePath(`/monitor/${encodeURIComponent(legislationId)}`);
 }

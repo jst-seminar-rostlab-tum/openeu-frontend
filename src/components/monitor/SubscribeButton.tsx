@@ -1,59 +1,69 @@
 'use client';
 
 import { CheckCircle2, Rss } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
-  useSubscribeToLegislationMutation,
-  useUnsubscribeToLegislationMutation,
-} from '@/domain/hooks/legislative-hooks';
-import { useAuth } from '@/domain/hooks/useAuth';
+  subscribeToLegislation,
+  unsubscribeFromLegislation,
+} from '@/domain/actions/monitor';
+import { ToastOperations } from '@/operations/toast/toastOperations';
 
 import { Spinner } from '../ui/spinner';
 
 interface SubscribeButtonProps {
   legislationId: string;
-  subscribed?: boolean;
+  subscribed: boolean;
 }
 
 export function SubscribeButton({
   legislationId,
   subscribed,
 }: SubscribeButtonProps) {
-  const router = useRouter();
-
-  const { user } = useAuth();
-
-  const subscribeToLegislation = useSubscribeToLegislationMutation();
-  const unsubscribeToLegislation = useUnsubscribeToLegislationMutation();
+  const [isPending, setIsPending] = useState(false);
 
   const handleSubscribe = async () => {
-    if (!user) {
-      router.push('/login');
-      return;
+    setIsPending(true);
+    try {
+      await subscribeToLegislation(legislationId);
+      ToastOperations.showSuccess({
+        title: 'Subscription Successful',
+        message: `You have successfully subscribed to legislation ${legislationId}.`,
+      });
+    } catch (error) {
+      ToastOperations.showError({
+        title: 'Subscription Failed',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred',
+      });
+    } finally {
+      setIsPending(false);
     }
-
-    subscribeToLegislation.mutate({
-      userId: user.id,
-      legislationId,
-    });
   };
 
   const handleUnsubscribe = async () => {
-    if (!user) {
-      router.push('/login');
-      return;
+    setIsPending(true);
+    try {
+      await unsubscribeFromLegislation(legislationId);
+      ToastOperations.showSuccess({
+        title: 'Unsubscription Successful',
+        message: `You have successfully unsubscribed from legislation ${legislationId}.`,
+      });
+    } catch (error) {
+      ToastOperations.showError({
+        title: 'Unsubscription Failed',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred',
+      });
+    } finally {
+      setIsPending(false);
     }
-
-    unsubscribeToLegislation.mutate({
-      userId: user.id,
-      legislationId,
-    });
   };
-
-  const isPending =
-    subscribeToLegislation.isPending || unsubscribeToLegislation.isPending;
 
   return (
     <Button

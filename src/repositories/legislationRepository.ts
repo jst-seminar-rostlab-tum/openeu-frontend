@@ -8,7 +8,6 @@ import {
   LegislativeFileSuggestionResponse,
   LegislativeSuggestionsParams,
   LegislativeUniqueValues,
-  SubscriptionResponse,
 } from '@/domain/entities/monitor/generated-types';
 import { ToastOperations } from '@/operations/toast/toastOperations';
 
@@ -108,75 +107,6 @@ export const legislationRepository = {
     } catch (err) {
       console.warn('Failed to fetch from API, returning empty array:', err);
       return [];
-    }
-  },
-
-  async subscribeToLegislation(
-    userId: string,
-    legislationId: string,
-  ): Promise<SubscriptionResponse> {
-    const token = getCookie('token');
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscribe`, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          legislation_id: legislationId,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error(`Failed to subscribe to legislation: ${res.status}`);
-      }
-
-      const data: SubscriptionResponse = await res.json();
-      return data;
-    } catch (err) {
-      throw new Error('Failed to subscribe to legislation', {
-        cause: err,
-      });
-    }
-  },
-
-  async unsubscribeToLegislation(
-    userId: string,
-    legislationId: string,
-  ): Promise<SubscriptionResponse> {
-    const token = getCookie('token');
-
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/unsubscribe`,
-        {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            user_id: userId,
-            legislation_id: legislationId,
-          }),
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error(`Failed to unsubscribe to legislation: ${res.status}`);
-      }
-
-      const data: SubscriptionResponse = await res.json();
-      return data;
-    } catch (err) {
-      throw new Error('Failed to unsubscribe to legislation', {
-        cause: err,
-      });
     }
   },
 
