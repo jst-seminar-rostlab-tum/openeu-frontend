@@ -7,7 +7,6 @@ import { ChatToolbar } from '@/components/Chat/ChatToolbar';
 import { ContextBadge } from '@/components/Chat/ContextBadge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import ChatOperations from '@/operations/chat/ToolbarOperations';
 
 export default function ChatInputCard() {
   const [input, setInput] = useState('');
@@ -45,11 +44,7 @@ export default function ChatInputCard() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <ChatToolbar
-          onSubmit={handleSubmit}
-          disabled={!input.trim()}
-          onSettings={ChatOperations.handleSettings}
-        />
+        <ChatToolbar onSubmit={handleSubmit} disabled={!input.trim()} />
       </CardContent>
     </Card>
   );
