@@ -40,12 +40,12 @@ export interface IMeetingContext {
   setSelectedDate: (date: Date | undefined) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  selectedCountry: string;
+  selectedCountries: string[];
   selectedUserId: string;
   selectedTopics: string[];
   selectedInstitutions: string[];
   setSelectedTopics: (topics: string[]) => void;
-  setSelectedCountry: (country: string) => void;
+  setSelectedCountries: (countries: string[]) => void;
   setSelectedInstitutions: (institutions: string[]) => void;
   setSelectedUserId: (user_id: string) => void;
   meetings: Meeting[];
@@ -98,8 +98,8 @@ export function MeetingProvider({
   });
 
   const [searchQuery, setSearchQuery] = useState<string>(urlState.searchQuery);
-  const [selectedCountry, setSelectedCountry] = useState<string>(
-    urlState.selectedCountry,
+  const [selectedCountries, setSelectedCountries] = useState<string[]>(
+    urlState.selectedCountries || [],
   );
   const [selectedUserId, setSelectedUserId] = useState<string>(
     urlState.selectedUserId,
@@ -151,7 +151,7 @@ export function MeetingProvider({
       start,
       end,
       query: searchQuery || undefined,
-      country: selectedCountry || undefined,
+      country: selectedCountries.length > 0 ? selectedCountries : undefined,
       topics: selectedTopics.length > 0 ? selectedTopics : undefined,
       source_table:
         selectedInstitutions.length > 0
@@ -163,7 +163,7 @@ export function MeetingProvider({
     selectedDate,
     currentView,
     searchQuery,
-    selectedCountry,
+    selectedCountries,
     selectedUserId,
     isCustomRange,
     customStart,
@@ -229,8 +229,8 @@ export function MeetingProvider({
     setSearchQuery(query);
   };
 
-  const handleSetSelectedCountry = (country: string) => {
-    setSelectedCountry(country);
+  const handleSetSelectedCountries = (countries: string[]) => {
+    setSelectedCountries(countries);
   };
 
   const handleSetSelectedUserId = (userId: string) => {
@@ -253,7 +253,7 @@ export function MeetingProvider({
       setSearchQuery(newFilters.query || '');
     }
     if (newFilters.country !== undefined) {
-      setSelectedCountry(newFilters.country || '');
+      setSelectedCountries(newFilters.country || []);
     }
     if (newFilters.user_id !== undefined) {
       setSelectedUserId(newFilters.user_id || '');
@@ -306,8 +306,8 @@ export function MeetingProvider({
     setSelectedDate: handleSelectDate,
     searchQuery,
     setSearchQuery: handleSetSearchQuery,
-    selectedCountry,
-    setSelectedCountry: handleSetSelectedCountry,
+    selectedCountries,
+    setSelectedCountries: handleSetSelectedCountries,
     selectedUserId,
     setSelectedUserId: handleSetSelectedUserId,
     selectedTopics,

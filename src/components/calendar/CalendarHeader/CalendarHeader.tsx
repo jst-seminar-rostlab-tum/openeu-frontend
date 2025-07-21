@@ -28,7 +28,7 @@ import {
 import { MeetingSuggestion } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
-import { formatTopicsForDisplay } from '@/lib/formatters';
+import { formatSelectionForDisplay } from '@/lib/formatters';
 import { getInstitutionFromSourceTable } from '@/operations/meeting/CalendarHelpers';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
@@ -65,27 +65,22 @@ export function CalendarHeader() {
         transition={transition}
       >
         <div className="options flex-wrap flex items-center gap-4 md:gap-2">
-          <SuggestedSearch<MeetingSuggestion>
-            value={localSearchText}
-            onValueChange={setLocalSearchText}
-            onSearch={(val) => setSearchQuery(val)}
-            placeholder="Search meetings..."
-            fetchSuggestions={meetingRepository.getMeetingSuggestions}
-            getDisplayText={(meeting) => meeting.title}
-            getSelectValue={(meeting) => meeting.title}
-            onSelect={(meeting) => setSearchQuery(meeting.title)}
-          />
           <div className="flex flex-wrap gap-2">
-            {filters.country && (
-              <Badge
-                variant="secondary"
-                className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
-              >
-                {filters.country}
-              </Badge>
-            )}
             {(() => {
-              const topicDisplay = formatTopicsForDisplay(filters.topics);
+              const countryDisplay = formatSelectionForDisplay(filters.country);
+              if (!countryDisplay) return null;
+
+              return (
+                <Badge
+                  variant="secondary"
+                  className="text-xs py-1 px-2 z-10 outline-1 outline-gray"
+                >
+                  {countryDisplay.displayText}
+                </Badge>
+              );
+            })()}
+            {(() => {
+              const topicDisplay = formatSelectionForDisplay(filters.topics);
               if (!topicDisplay) return null;
 
               return (
@@ -106,7 +101,8 @@ export function CalendarHeader() {
               for (const sourceTable of filters.source_table) {
                 institutions.push(getInstitutionFromSourceTable(sourceTable));
               }
-              const institutionsDisplay = formatTopicsForDisplay(institutions);
+              const institutionsDisplay =
+                formatSelectionForDisplay(institutions);
 
               if (!institutionsDisplay) return null;
               return (
@@ -119,8 +115,18 @@ export function CalendarHeader() {
               );
             })()}
           </div>
-          <PersonalizeMeetingSwitch />
+          <SuggestedSearch<MeetingSuggestion>
+            value={localSearchText}
+            onValueChange={setLocalSearchText}
+            onSearch={(val) => setSearchQuery(val)}
+            placeholder="Search meetings..."
+            fetchSuggestions={meetingRepository.getMeetingSuggestions}
+            getDisplayText={(meeting) => meeting.title}
+            getSelectValue={(meeting) => meeting.title}
+            onSelect={(meeting) => setSearchQuery(meeting.title)}
+          />
           <FilterModal showDateDropdown={false} topics={topicLabels} />
+          <PersonalizeMeetingSwitch />
           <Tooltip>
             <TooltipTrigger asChild>
               <MotionButton

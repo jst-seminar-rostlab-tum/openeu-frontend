@@ -19,13 +19,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { MultiSelect, MultiSelectRef } from '@/components/ui/multi-select';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { buttonHover } from '@/domain/animations';
 import { FilterModalState } from '@/domain/entities/FilterModalState';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
@@ -52,11 +45,11 @@ export default function FilterModal({
   useWeekDefault = false,
 }: FilterModalProps) {
   const {
-    selectedCountry,
+    selectedCountries,
     selectedTopics,
     setSelectedTopics,
     selectedInstitutions,
-    setSelectedCountry,
+    setSelectedCountries,
     setSelectedInstitutions,
     setFilters,
     filters,
@@ -65,16 +58,21 @@ export default function FilterModal({
   const [localState, setLocalState] = useState<FilterModalState>({
     startDate: now,
     endDate: now,
-    country: '',
+    countries: [],
     topics: [],
     institutions: [],
   });
   const multiSelectRef = useRef<MultiSelectRef>(null);
   const multiSelectRefInstitutions = useRef<MultiSelectRef>(null);
+  const multiSelectRefCountries = useRef<MultiSelectRef>(null);
   const countries = FilterModalOperations.getCountries();
   const topicOptions = topics!.map((topic) => ({
     label: topic,
     value: topic,
+  }));
+  const countryOptions = countries!.map((country) => ({
+    label: country,
+    value: country,
   }));
   const institutions = FilterModalOperations.getInstitutions();
 
@@ -84,14 +82,14 @@ export default function FilterModal({
       setLocalState({
         startDate: filters.start ? new Date(filters.start) : now,
         endDate: filters.end ? new Date(filters.end) : now,
-        country: selectedCountry,
+        countries: selectedCountries || [],
         topics: selectedTopics || [],
         institutions: selectedInstitutions,
       });
     }
   }, [
     dialogOpen,
-    selectedCountry,
+    selectedCountries,
     selectedInstitutions,
     selectedTopics,
     filters.start,
@@ -110,6 +108,10 @@ export default function FilterModal({
     updateLocalState({ topics: selectedTopics });
   };
 
+  const handleCountriesChange = (selectedCountries: string[]) => {
+    updateLocalState({ countries: selectedCountries });
+  };
+
   const handleInstitutionsChange = (selectedInstitutions: string[]) => {
     updateLocalState({ institutions: selectedInstitutions });
   };
@@ -117,9 +119,10 @@ export default function FilterModal({
   const handleClear = () => {
     multiSelectRef.current?.clearHandler();
     multiSelectRefInstitutions.current?.clearHandler();
+    multiSelectRefCountries.current?.clearHandler();
     const defaultState = FilterModalOperations.getDefaultState(useWeekDefault);
     setLocalState(defaultState);
-    setSelectedCountry('');
+    setSelectedCountries([]);
     setSelectedTopics([]);
     setSelectedInstitutions([]);
 
@@ -143,7 +146,8 @@ export default function FilterModal({
   };
 
   const handleApply = () => {
-    setSelectedCountry(localState.country || '');
+    setSelectedCountries(localState.countries || []);
+    console.log('selected countries: ', localState.countries);
     setSelectedTopics(localState.topics || []);
     setSelectedInstitutions(localState.institutions || []);
     // Update CalendarContext filters with new date range
@@ -152,7 +156,9 @@ export default function FilterModal({
         ...filters,
         start: localState.startDate.toISOString(),
         end: localState.endDate.toISOString(),
-        country: localState.country || undefined,
+        country: localState.countries?.length
+          ? localState.countries
+          : undefined,
         topics: localState.topics?.length ? localState.topics : undefined,
         source_table: localState.institutions?.length
           ? localState.institutions.map(getSourceTableFromInstitution)
@@ -161,7 +167,9 @@ export default function FilterModal({
     } else {
       setFilters({
         ...filters,
-        country: localState.country || undefined,
+        country: localState.countries?.length
+          ? localState.countries
+          : undefined,
         topics: localState.topics?.length ? localState.topics : undefined,
         source_table: localState.institutions?.length
           ? localState.institutions.map(getSourceTableFromInstitution)
@@ -207,21 +215,18 @@ export default function FilterModal({
           className={`grid gap-4 ${showCountryDropdown ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}
         >
           {showCountryDropdown && (
-            <Select
-              onValueChange={(value) => updateLocalState({ country: value })}
-              value={localState.country ?? ''}
-            >
-              <SelectTrigger className="w-full !h-full">
-                <SelectValue placeholder="Country" />
-              </SelectTrigger>
-              <SelectContent className="dark:bg-black dark:text-white">
-                {countries.map((country) => (
-                  <SelectItem key={country} value={country}>
-                    {country}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              ref={multiSelectRefCountries}
+              options={countryOptions}
+              value={localState.countries}
+              defaultValue={localState.countries}
+              onValueChange={handleCountriesChange}
+              placeholder="Countries"
+              variant="inverted"
+              maxCount={1}
+              className={showTopicDropdown ? '' : '!w-full'}
+              modalPopover={true}
+            />
           )}
           {showTopicDropdown && (
             <MultiSelect

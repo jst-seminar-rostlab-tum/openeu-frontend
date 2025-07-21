@@ -177,7 +177,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "anyOf": [
+                { "type": "array", "items": { "type": "string" } },
+                { "type": "null" }
+              ],
               "description": "Filter by country (e.g., 'Austria', 'European Union')",
               "title": "Country"
             },
@@ -1738,6 +1741,10 @@
             "format": "date-time",
             "title": "Sent At"
           },
+          "message_subject": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Message Subject"
+          },
           "type": { "type": "string", "title": "Type" },
           "message": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
@@ -1753,6 +1760,7 @@
           "id",
           "user_id",
           "sent_at",
+          "message_subject",
           "type",
           "message",
           "relevance_score"
