@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { onboardingSchema } from '@/domain/schemas/profile';
+import { focusAreaSchema, onboardingSchema } from '@/domain/schemas/profile';
 
 interface Step3FocusAreaProps {
   form: UseFormReturn<z.infer<typeof onboardingSchema>>;
@@ -26,7 +26,11 @@ export default function Step3FocusArea({ form }: Step3FocusAreaProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <FocusAreaForm form={form} />
+        <FocusAreaForm
+          form={
+            form as unknown as UseFormReturn<z.infer<typeof focusAreaSchema>>
+          }
+        />
       </CardContent>
     </Card>
   );

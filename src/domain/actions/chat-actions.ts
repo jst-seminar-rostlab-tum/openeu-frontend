@@ -1,6 +1,5 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 
 import { requireAuth } from '@/lib/dal';
@@ -51,9 +50,6 @@ export async function createChatSession(
     }
 
     const session = await response.json();
-
-    // Revalidate the sessions cache
-    revalidateTag(`chat-sessions-${user.id}`);
 
     return session;
   } catch (error) {

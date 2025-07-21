@@ -41,10 +41,13 @@ export async function updateSession(request: NextRequest) {
     '/',
     '/login',
     '/register',
+    '/forgot-password',
     '/auth/confirm',
     '/auth/callback',
     '/auth/error',
     '/privacy',
+    '/project-europe.png',
+    '/project-europe-no-bg.png',
   ];
 
   const isPublicRoute = publicRoutes.some((route) => {

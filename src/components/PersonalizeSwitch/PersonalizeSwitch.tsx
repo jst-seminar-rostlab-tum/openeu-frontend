@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -6,7 +7,6 @@ import { Switch } from '@/components/ui/switch';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useProfile } from '@/domain/hooks/profileHooks';
@@ -63,26 +63,26 @@ export default function PersonalizeSwitch({
   }, [userId, profile]);
 
   return (
-    <div className="flex items-center space-x-2">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span tabIndex={0}>
-              <Switch
-                checked={checked}
-                onCheckedChange={handleSwitch}
-                disabled={!hasProfile}
-              />
-            </span>
-          </TooltipTrigger>
-          {!hasProfile && (
-            <TooltipContent>
-              <p>Profile not found</p>
-            </TooltipContent>
-          )}
-        </Tooltip>
-      </TooltipProvider>
-      <Label>{label}</Label>
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="flex items-center justify-center gap-1">
+          <Switch
+            checked={checked}
+            onCheckedChange={handleSwitch}
+            disabled={!hasProfile}
+          />
+          <Label>{label}</Label>
+        </div>
+      </TooltipTrigger>
+      {!hasProfile && (
+        <TooltipContent>
+          Complete{' '}
+          <Link href="/profile" className="underline">
+            profile
+          </Link>{' '}
+          to enable personalization
+        </TooltipContent>
+      )}
+    </Tooltip>
   );
 }

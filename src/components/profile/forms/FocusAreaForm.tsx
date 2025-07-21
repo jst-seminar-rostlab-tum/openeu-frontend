@@ -18,10 +18,10 @@ import {
 } from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { useTopics } from '@/domain/hooks/topicHook';
-import { onboardingSchema } from '@/domain/schemas/profile';
+import { focusAreaSchema } from '@/domain/schemas/profile';
 
 interface FocusAreaFormProps {
-  form: UseFormReturn<z.infer<typeof onboardingSchema>>;
+  form: UseFormReturn<z.infer<typeof focusAreaSchema>>;
 }
 
 export function FocusAreaForm({ form }: FocusAreaFormProps) {
