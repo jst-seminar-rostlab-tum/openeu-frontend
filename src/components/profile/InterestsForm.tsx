@@ -44,7 +44,7 @@ export default function InterestsForm({
 
   return (
     <Form {...form}>
-      <div className="grid gap-5 pt-3">
+      <div className="grid gap-5">
         <Card>
           <CardHeader>
             <div className="flex flex-row gap-2 align-text-center">

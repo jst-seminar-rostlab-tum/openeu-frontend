@@ -48,7 +48,7 @@ export default function EntrepreneurProfileForm({
   }
 
   return (
-    <>
+    <div className="grid gap-5 pt-3">
       <Card>
         <CardHeader>
           <CardTitle>
@@ -72,6 +72,6 @@ export default function EntrepreneurProfileForm({
           {loading ? <LoadingSpinner /> : 'Save changes'}
         </Button>
       </div>
-    </>
+    </div>
   );
 }

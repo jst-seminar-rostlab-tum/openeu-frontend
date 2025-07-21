@@ -46,7 +46,7 @@ export default function PoliticianProfileForm({
   }
 
   return (
-    <>
+    <div className="grid gap-5 pt-3">
       <Card>
         <CardHeader>
           <CardTitle>
@@ -70,6 +70,6 @@ export default function PoliticianProfileForm({
           {loading ? <LoadingSpinner /> : 'Save changes'}
         </Button>
       </div>
-    </>
+    </div>
   );
 }
