@@ -49,7 +49,7 @@ export function KeyEventCollapsible({
               <ExternalLink className="h-3 w-3" />
             </Link>
           )}
-          {event.reference?.link && (
+          {event.reference?.link && event.reference.text && (
             <Link
               href={event.reference.link}
               className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 inline-flex items-center gap-1 font-mono"
