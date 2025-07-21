@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bell } from 'lucide-react';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -20,18 +19,16 @@ import { completionSchema } from '@/domain/schemas/profile';
 interface NotificationsFormProps {
   profile: Profile;
   updateProfile: (userId: string, data: ProfileUpdate) => void;
+  loading: boolean;
 }
 
 export default function NotificationsForm({
   profile,
   updateProfile,
+  loading,
 }: NotificationsFormProps) {
-  const [loading, setLoading] = useState(false);
-
   function onSubmit(values: z.infer<typeof completionSchema>) {
-    setLoading(true);
     updateProfile(profile.id, { ...values });
-    setLoading(false);
   }
 
   const form = useForm<z.infer<typeof completionSchema>>({

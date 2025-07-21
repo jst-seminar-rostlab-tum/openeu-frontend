@@ -8,7 +8,7 @@ import {
   Lock,
   User as UserIcon,
 } from 'lucide-react';
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
 
 import EntrepreneurProfileForm from '@/components/profile/EntrepreneurProfileForm';
 import PoliticianProfileForm from '@/components/profile/PoliticsProfileForm';
@@ -42,23 +42,30 @@ export default function ProfileContent({
   user,
   userProfile,
 }: ProfileContentProps) {
+  const [loading, setLoading] = useState(false);
+
   const updateProfileMutation = useProfileUpdateMutation({
-    onSuccess: () =>
+    onSuccess: () => {
       ToastOperations.showSuccess({
         title: 'Profile updated',
         message: 'Your profile was updated successfully.',
-      }),
-    onError: (error) =>
+      });
+      setLoading(false);
+    },
+    onError: (error) => {
       ToastOperations.showError({
         title: 'Error creating profile',
         message: `${error.message}. Please try again later.`,
-      }),
+      });
+      setLoading(false);
+    },
   });
 
   const profile = updateProfileMutation.data ?? userProfile;
   const isEntrepreneur = profile.user_type === 'entrepreneur';
 
   const updateProfile = (userId: string, data: ProfileUpdate) => {
+    setLoading(true);
     updateProfileMutation.mutate({ userId, data });
   };
 
@@ -72,6 +79,7 @@ export default function ProfileContent({
           profile={profile}
           email={user.email ?? 'no@mail.wtf'}
           updateProfile={updateProfile}
+          loading={loading}
         />
       ),
     },
@@ -84,12 +92,14 @@ export default function ProfileContent({
           profileId={profile.id}
           company={profile.company!}
           updateProfile={updateProfile}
+          loading={loading}
         />
       ) : (
         <PoliticianProfileForm
           profileId={profile.id}
           politician={profile.politician!}
           updateProfile={updateProfile}
+          loading={loading}
         />
       ),
     },
@@ -98,7 +108,11 @@ export default function ProfileContent({
       id: 'focus',
       icon: <Compass />,
       component: (
-        <InterestsForm profile={profile} updateProfile={updateProfile} />
+        <InterestsForm
+          profile={profile}
+          updateProfile={updateProfile}
+          loading={loading}
+        />
       ),
     },
     {
@@ -112,7 +126,11 @@ export default function ProfileContent({
       id: 'notifications',
       icon: <Bell />,
       component: (
-        <NotificationsForm profile={profile} updateProfile={updateProfile} />
+        <NotificationsForm
+          profile={profile}
+          updateProfile={updateProfile}
+          loading={loading}
+        />
       ),
     },
   ];

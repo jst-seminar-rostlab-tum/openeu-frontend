@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User as UserIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -28,15 +28,15 @@ export interface AccountDetailsFormProps {
   email: string;
   profile: Profile;
   updateProfile: (userId: string, data: ProfileUpdate) => void;
+  loading: boolean;
 }
 
 export default function AccountDetailsForm({
   profile,
   email,
   updateProfile,
+  loading,
 }: AccountDetailsFormProps) {
-  const [loading, setLoading] = useState(false);
-
   const form = useForm<z.infer<typeof accountDetailsSchema>>({
     resolver: zodResolver(accountDetailsSchema),
     defaultValues: {
@@ -46,9 +46,7 @@ export default function AccountDetailsForm({
   });
 
   function onSubmit(values: z.infer<typeof accountDetailsSchema>) {
-    setLoading(true);
     updateProfile(profile.id, { ...values });
-    setLoading(false);
   }
 
   return (

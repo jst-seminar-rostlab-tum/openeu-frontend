@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User as UserIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -18,15 +18,15 @@ export interface EntrepreneurFormProps {
   profileId: string;
   company: Company;
   updateProfile: (userId: string, data: ProfileUpdate) => void;
+  loading: boolean;
 }
 
 export default function EntrepreneurProfileForm({
   profileId,
   company,
   updateProfile,
+  loading,
 }: EntrepreneurFormProps) {
-  const [loading, setLoading] = useState(false);
-
   const form = useForm<z.infer<typeof entrepreneurRoleSchema>>({
     resolver: zodResolver(entrepreneurRoleSchema),
     defaultValues: {
@@ -42,9 +42,7 @@ export default function EntrepreneurProfileForm({
   });
 
   function onSubmit(values: z.infer<typeof entrepreneurRoleSchema>) {
-    setLoading(true);
     updateProfile(profileId, { ...values });
-    setLoading(false);
   }
 
   return (

@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Compass } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -20,14 +20,14 @@ import { focusAreaSchema } from '@/domain/schemas/profile';
 export interface InterestsFormProps {
   profile: Profile;
   updateProfile: (userId: string, data: ProfileUpdate) => void;
+  loading: boolean;
 }
 
 export default function InterestsForm({
   profile,
   updateProfile,
+  loading,
 }: InterestsFormProps) {
-  const [loading, setLoading] = useState(false);
-
   const form = useForm<z.infer<typeof focusAreaSchema>>({
     resolver: zodResolver(focusAreaSchema),
     defaultValues: {
@@ -37,9 +37,7 @@ export default function InterestsForm({
   });
 
   function onSubmit(values: z.infer<typeof focusAreaSchema>) {
-    setLoading(true);
     updateProfile(profile.id, { ...values });
-    setLoading(false);
   }
 
   return (
