@@ -455,6 +455,8 @@ export interface components {
     ChatMessageItem: {
       /** Session Id */
       session_id: string;
+      /** User Id */
+      user_id?: string | null;
       /** Message */
       message: string;
       /** Legislation Id */
@@ -753,6 +755,8 @@ export interface components {
        * Format: date-time
        */
       sent_at: string;
+      /** Message Subject */
+      message_subject: string | null;
       /** Type */
       type: string;
       /** Message */
@@ -1085,7 +1089,7 @@ export interface operations {
         /** @description List of topic names (repeat or comma-separated) */
         topics?: string[] | null;
         /** @description Filter by country (e.g., 'Austria', 'European Union') */
-        country?: string | null;
+        country?: string[] | null;
         /** @description User ID for personalized meeting recommendations */
         user_id?: string | null;
         /** @description Filter by source table(s) (repeat or comma-separated) */

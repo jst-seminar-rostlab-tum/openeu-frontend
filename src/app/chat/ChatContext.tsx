@@ -97,6 +97,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       await sendMessageMutation.mutateAsync({
         request: {
           session_id: targetSessionId,
+          user_id: user.id,
           message: content,
           legislation_id: context?.type === 'legislation' ? context.id : null,
         },
