@@ -66,27 +66,27 @@ export function dateRangeToString(from?: Date, to?: Date): string {
 }
 
 /**
- * Formats topic filters for display, showing first topic + count if multiple
- * @param topics Array of topic strings
- * @returns Object with display text and whether there are multiple topics
+ * Formats topic or countries filters for display, showing first selected value + count if multiple
+ * @param selection Array of selection strings
+ * @returns Object with display text and whether there are multiple selections
  */
-export function formatTopicsForDisplay(topics?: string[] | null): {
+export function formatSelectionForDisplay(selection?: string[] | null): {
   displayText: string;
   hasMultiple: boolean;
 } | null {
-  if (!topics || topics.length === 0) {
+  if (!selection || selection.length === 0) {
     return null;
   }
 
-  if (topics.length === 1) {
+  if (selection.length === 1) {
     return {
-      displayText: topics[0],
+      displayText: selection[0],
       hasMultiple: false,
     };
   }
 
   return {
-    displayText: `${topics[0]} + ${topics.length - 1}`,
+    displayText: `${selection[0]} + ${selection.length - 1}`,
     hasMultiple: true,
   };
 }

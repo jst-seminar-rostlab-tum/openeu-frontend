@@ -45,7 +45,7 @@ export default class FilterModalOperations {
     return {
       startDate: useWeekDefault ? startDate : now,
       endDate: useWeekDefault ? endDate : now,
-      country: '',
+      countries: [],
       topics: [],
       institutions: [],
     };

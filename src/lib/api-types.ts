@@ -1087,7 +1087,7 @@ export interface operations {
         /** @description List of topic names (repeat or comma-separated) */
         topics?: string[] | null;
         /** @description Filter by country (e.g., 'Austria', 'European Union') */
-        country?: string | null;
+        country?: string[] | null;
         /** @description User ID for personalized meeting recommendations */
         user_id?: string | null;
         /** @description Filter by source table(s) (repeat or comma-separated) */

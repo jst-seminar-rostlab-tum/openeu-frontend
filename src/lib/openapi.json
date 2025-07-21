@@ -177,7 +177,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "anyOf": [
+                { "type": "array", "items": { "type": "string" } },
+                { "type": "null" }
+              ],
               "description": "Filter by country (e.g., 'Austria', 'European Union')",
               "title": "Country"
             },
