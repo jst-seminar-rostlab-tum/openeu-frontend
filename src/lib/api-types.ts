@@ -753,6 +753,8 @@ export interface components {
        * Format: date-time
        */
       sent_at: string;
+      /** Message Subject */
+      message_subject: string | null;
       /** Type */
       type: string;
       /** Message */

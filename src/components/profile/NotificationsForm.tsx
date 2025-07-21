@@ -2,67 +2,41 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bell } from 'lucide-react';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { CompletionForm } from '@/components/profile/forms/CompletionForm';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Form } from '@/components/ui/form';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { updateProfile } from '@/domain/actions/profile';
-import { notificationSchema } from '@/domain/schemas/profile';
-import { ToastOperations } from '@/operations/toast/toastOperations';
+  Profile,
+  ProfileUpdate,
+} from '@/domain/entities/profile/generated-types';
+import { completionSchema } from '@/domain/schemas/profile';
 
-export interface NotificationsFormProps {
-  userId: string;
-  newsletter_frequency: 'daily' | 'weekly' | 'none';
+interface NotificationsFormProps {
+  profile: Profile;
+  updateProfile: (userId: string, data: ProfileUpdate) => void;
+  loading: boolean;
 }
 
 export default function NotificationsForm({
-  userId,
-  newsletter_frequency,
+  profile,
+  updateProfile,
+  loading,
 }: NotificationsFormProps) {
-  const [loading, setLoading] = useState(false);
+  function onSubmit(values: z.infer<typeof completionSchema>) {
+    updateProfile(profile.id, { ...values });
+  }
 
-  const form = useForm<z.infer<typeof notificationSchema>>({
-    resolver: zodResolver(notificationSchema),
+  const form = useForm<z.infer<typeof completionSchema>>({
+    resolver: zodResolver(completionSchema),
     defaultValues: {
-      newsletter_frequency,
+      newsletter_frequency: profile.newsletter_frequency,
     },
   });
-
-  function onSubmit(values: z.infer<typeof notificationSchema>) {
-    setLoading(true);
-    updateProfile(userId, { ...values })
-      .then(() =>
-        ToastOperations.showSuccess({
-          title: 'Profile updated',
-          message: 'Your profile was updated successfully.',
-        }),
-      )
-      .catch((e) =>
-        ToastOperations.showError({
-          title: "Profile couldn't be updated",
-          message: e.message,
-        }),
-      )
-      .finally(() => setLoading(false));
-  }
 
   return (
     <Form {...form}>
@@ -75,41 +49,7 @@ export default function NotificationsForm({
             </div>
           </CardHeader>
           <CardContent>
-            <FormField
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0">
-                    <FormLabel
-                      htmlFor="newsletter_frequency"
-                      className="text-sm font-medium"
-                    >
-                      Frequency of personalized newsletter
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        {...field}
-                        onValueChange={(value) =>
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-expect-error
-                          form.setValue('newsletter_frequency', value)
-                        }
-                      >
-                        <SelectTrigger className="w-full sm:w-[180px]">
-                          <SelectValue placeholder="Daily" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                          <SelectItem value="none">None</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-              name="newsletter_frequency"
-            />
+            <CompletionForm form={form} />
           </CardContent>
         </Card>
         <div className="flex justify-end">
