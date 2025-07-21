@@ -5,6 +5,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Person } from '@/domain/entities/calendar/generated-types';
+import { extractInitials } from '@/lib/utils';
 
 type AvatarStackProps = {
   member?: Person | null;
@@ -24,27 +25,31 @@ export function AvatarStack({ member, attendees }: AvatarStackProps) {
   const stack: StackItem[] = [];
 
   if (member) {
-    stack.push({
-      key: 'member',
-      label: `${member.givenName} ${member.familyName}`,
-      initials:
-        `${member.givenName[0] ?? ''}${member.familyName[0] ?? ''}`.toUpperCase(),
-      role: 'Member',
-    });
+    const memberName =
+      `${member.givenName || ''} ${member.familyName || ''}`.trim();
+
+    if (memberName) {
+      stack.push({
+        key: 'member',
+        label: memberName,
+        initials: extractInitials(memberName),
+        role: 'Member',
+      });
+    }
   }
 
   attendeeList.forEach((name, idx) => {
-    stack.push({
-      key: `attendee-${idx}`,
-      label: name,
-      initials: name
-        .split(/\s+/)
-        .map((part) => part[0])
-        .join('')
-        .slice(0, 2)
-        .toUpperCase(),
-      role: 'Attendee',
-    });
+    if (!name || typeof name !== 'string') return;
+
+    const trimmedName = name.trim();
+    if (trimmedName) {
+      stack.push({
+        key: `attendee-${idx}`,
+        label: trimmedName,
+        initials: extractInitials(trimmedName),
+        role: 'Attendee',
+      });
+    }
   });
 
   const visible = stack.slice(0, 3);

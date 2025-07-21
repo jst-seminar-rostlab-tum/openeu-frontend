@@ -67,6 +67,19 @@ export default class NotificationOperations {
       info: notifications.filter((n) => n.type === 'info').length,
     };
   }
+
+  static mapNotificationType(type: string): string {
+    switch (type) {
+      case 'newsletter':
+        return 'Newsletter';
+      case 'smart_alerts':
+        return 'Smart Alerts';
+      case 'status_change':
+        return 'Legislation Change';
+      default:
+        return 'No title';
+    }
+  }
 }
 
 export type { Notification };

@@ -32,6 +32,12 @@ export async function GET(request: Request) {
       }
 
       if (session) {
+        await supabase.auth.updateUser({
+          data: {
+            oauthRefreshToken: session.provider_refresh_token,
+            oauthAccessToken: session.provider_token,
+          },
+        });
         setCookie('token', session.access_token, { cookies });
       }
 

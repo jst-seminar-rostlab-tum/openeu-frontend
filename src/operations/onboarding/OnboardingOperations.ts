@@ -2,6 +2,7 @@ export const INDUSTRIES = [
   { value: 'fintech', label: 'FinTech' },
   { value: 'healthtech', label: 'HealthTech' },
   { value: 'edtech', label: 'EdTech' },
+  { value: 'defence', label: 'Defence' },
   { value: 'cleantech', label: 'CleanTech' },
   { value: 'ecommerce', label: 'E-commerce' },
   { value: 'saas', label: 'SaaS' },

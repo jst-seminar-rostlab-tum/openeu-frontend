@@ -20,7 +20,6 @@ import {
 } from '@/domain/hooks/chat-hooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { SUPPORTED_CONTEXT_TYPES } from '@/operations/chat/ChatOperations';
-import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface ChatContext {
   type: TContext;
@@ -54,7 +53,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const currentSessionId = (params?.sessionId as string) || null;
 
-  const [messages, setMessages] = useState<Message[]>([]);
   const [streamingMessage, setStreamingMessage] = useState('');
   const [context, setContextState] = useState<ChatContext | null>(null);
 
@@ -69,20 +67,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   }, [searchParams]);
 
-  // Load messages for current session
-  const { data: sessionMessages } = useChatMessages(currentSessionId);
+  const { data: messages = [] } = useChatMessages(currentSessionId);
 
   const sendMessageMutation = useSendMessage();
   const createSession = useCreateChatSession();
-
-  // Update messages when session data changes
-  useEffect(() => {
-    if (sessionMessages) {
-      setMessages(sessionMessages);
-    } else if (!currentSessionId) {
-      setMessages([]);
-    }
-  }, [sessionMessages, currentSessionId]);
 
   const sendMessage = async (content: string) => {
     if (!user) return;
@@ -105,49 +93,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         throw new Error('Failed to create or get session ID');
       }
 
-      // Optimistic update
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        content,
-        chat_session: targetSessionId,
-        author: 'user',
-        date: new Date().toISOString(),
-      };
-      setMessages((prev) => [...prev, userMessage]);
-
-      // Build context parameters for the API call
-      const contextParams: Partial<Record<TContext, string>> = {};
-      if (context) {
-        contextParams[context.type] = context.id;
-      }
-
-      // Send message with streaming
       setStreamingMessage('');
-      const aiResponse = await sendMessageMutation.mutateAsync({
+      await sendMessageMutation.mutateAsync({
         request: {
           session_id: targetSessionId,
           message: content,
+          legislation_id: context?.type === 'legislation' ? context.id : null,
         },
         onStreamUpdate: setStreamingMessage,
-        contextParams,
       });
 
-      // Add AI response
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: aiResponse,
-        chat_session: targetSessionId,
-        author: 'assistant',
-        date: new Date().toISOString(),
-      };
-      setMessages((prev) => [...prev, aiMessage]);
       setStreamingMessage('');
     } catch {
-      ToastOperations.showError({
-        title: 'Message Failed',
-        message: 'Failed to send your message. Please try again.',
-      });
-      setMessages((prev) => prev.slice(0, -1));
       setStreamingMessage('');
     }
   };
