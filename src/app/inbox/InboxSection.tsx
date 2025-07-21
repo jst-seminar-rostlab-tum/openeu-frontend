@@ -59,10 +59,7 @@ export function InboxSection({ userId }: InboxSectionProps) {
     // Map notifications with index
     return sortedNotifications.map((notification) => ({
       id: notification.id.toString(),
-      title:
-        notification.type === 'smart_alert'
-          ? 'Smart Alert'
-          : 'Meeting Newsletter',
+      title: notification.message_subject ?? 'Newsletter',
       date: notification.sent_at,
       country: 'EU wide', // Backend doesn't provide country info yet
       relevanceScore: notification.relevance_score ?? undefined,
