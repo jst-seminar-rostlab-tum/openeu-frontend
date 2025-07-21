@@ -6,16 +6,13 @@ import { Button } from '@/components/ui/button';
 interface ChatToolbarProps {
   onSubmit: () => void;
   disabled: boolean;
-  onSettings?: () => void;
 }
 
 export function ChatToolbar({ onSubmit, disabled }: ChatToolbarProps) {
   return (
     <div className="flex justify-between items-center pt-2">
       {/* Left side - Action buttons */}
-      <div className="flex items-center gap-1">
-        <ManageChatContextDialog />
-      </div>
+      <ManageChatContextDialog />
 
       {/* Right side - Send button */}
       <Button
