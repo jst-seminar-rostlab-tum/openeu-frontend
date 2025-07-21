@@ -42,7 +42,6 @@ export default function ProfileContent({
   user,
   userProfile,
 }: ProfileContentProps) {
-  const isEntrepreneur = userProfile.user_type === 'entrepreneur';
   const updateProfileMutation = useProfileUpdateMutation({
     onSuccess: () =>
       ToastOperations.showSuccess({
@@ -56,6 +55,9 @@ export default function ProfileContent({
       }),
   });
 
+  const profile = updateProfileMutation.data ?? userProfile;
+  const isEntrepreneur = profile.user_type === 'entrepreneur';
+
   const updateProfile = (userId: string, data: ProfileUpdate) => {
     updateProfileMutation.mutate({ userId, data });
   };
@@ -67,7 +69,7 @@ export default function ProfileContent({
       icon: <UserIcon />,
       component: (
         <AccountDetailsForm
-          profile={userProfile}
+          profile={profile}
           email={user.email ?? 'no@mail.wtf'}
           updateProfile={updateProfile}
         />
@@ -79,14 +81,14 @@ export default function ProfileContent({
       icon: <BriefcaseBusinessIcon />,
       component: isEntrepreneur ? (
         <EntrepreneurProfileForm
-          profileId={userProfile.id}
-          company={userProfile.company!}
+          profileId={profile.id}
+          company={profile.company!}
           updateProfile={updateProfile}
         />
       ) : (
         <PoliticianProfileForm
-          profileId={userProfile.id}
-          politician={userProfile.politician!}
+          profileId={profile.id}
+          politician={profile.politician!}
           updateProfile={updateProfile}
         />
       ),
@@ -96,7 +98,7 @@ export default function ProfileContent({
       id: 'focus',
       icon: <Compass />,
       component: (
-        <InterestsForm profile={userProfile} updateProfile={updateProfile} />
+        <InterestsForm profile={profile} updateProfile={updateProfile} />
       ),
     },
     {
@@ -110,10 +112,7 @@ export default function ProfileContent({
       id: 'notifications',
       icon: <Bell />,
       component: (
-        <NotificationsForm
-          profile={userProfile}
-          updateProfile={updateProfile}
-        />
+        <NotificationsForm profile={profile} updateProfile={updateProfile} />
       ),
     },
   ];

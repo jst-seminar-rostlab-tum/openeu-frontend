@@ -64,7 +64,7 @@ export default function AccountDetailsForm({
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-3">
                   <FormField
@@ -136,7 +136,12 @@ export default function AccountDetailsForm({
         </CardContent>
       </Card>
       <div className="flex justify-end">
-        <Button type="submit" className="w-full sm:w-[8rem]" disabled={loading}>
+        <Button
+          type="submit"
+          className="w-full sm:w-[8rem]"
+          disabled={loading}
+          onClick={form.handleSubmit(onSubmit)}
+        >
           {loading ? <LoadingSpinner /> : 'Save changes'}
         </Button>
       </div>
