@@ -56,19 +56,12 @@ export async function saveToCalendar(
         timeZone: 'Europe/Berlin',
       },
     };
-    calendar.events.insert(
-      {
-        auth: oauth2Client,
-        calendarId: 'primary',
-        // @ts-expect-error: is like the docs
-        resource: event,
-      },
-      function (err: never) {
-        if (err) {
-          throw new Error(`Error when creating calendar event: ${err}`);
-        }
-      },
-    );
+    // @ts-expect-error like the docs
+    await calendar.events.insert({
+      auth: oauth2Client,
+      calendarId: 'primary',
+      resource: event,
+    });
 
     return false;
   } catch (_) {
