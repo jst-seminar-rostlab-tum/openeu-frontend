@@ -4,6 +4,7 @@ import { format, parseISO } from 'date-fns';
 import {
   Building,
   Calendar,
+  CalendarCheck2,
   CalendarOff,
   CalendarPlus,
   ExternalLink,
@@ -13,7 +14,7 @@ import {
   Text,
   User,
 } from 'lucide-react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import { AvatarStack } from '@/components/calendar/AvatarStack';
 import { TagBadge } from '@/components/calendar/TagBadge';
@@ -30,9 +31,10 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Spinner } from '@/components/ui/spinner';
-import { saveToCalendar } from '@/domain/actions/save-to-calendar';
+import { getEvents, saveToCalendar } from '@/domain/actions/google-calendar';
 import { Meeting } from '@/domain/entities/calendar/CalendarTypes';
 import { createClient } from '@/lib/supabase/client';
+import { b64EncodeUnicode } from '@/lib/utils';
 import {
   formatTime,
   getMeetingType,
@@ -48,12 +50,40 @@ export function EventDetailsDialog({ event, children }: IProps) {
   const startDate = parseISO(event.meeting_start_datetime);
   const endDate = parseISO(event.meeting_end_datetime);
 
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [calendarLoading, setCalendarLoading] = useState(false);
+  const [calendarButtonLoading, setCalendarButtonLoading] = useState(true);
+  const [alreadyInCalendar, setAlreadyInCalendar] = useState(false);
+  const [eventCalendarId, setEventCalendarId] = useState('');
+  const [fetchedEvents, setFetchedEvents] = useState(false);
 
   const supabase = createClient();
 
+  useEffect(() => {
+    if (dialogOpen && !fetchedEvents) {
+      setCalendarButtonLoading(true);
+      setFetchedEvents(true);
+      getEvents(startDate, endDate).then((response) => {
+        setCalendarButtonLoading(false);
+        if (response) {
+          response.forEach((item) => {
+            if (
+              item.summary &&
+              item.summary.split(' (')[0] === event.title.split(' (')[0]
+            ) {
+              setAlreadyInCalendar(true);
+              if (item.id) {
+                setEventCalendarId(item.id);
+              }
+            }
+          });
+        }
+      });
+    }
+  }, [dialogOpen, startDate, endDate, event.title, fetchedEvents]);
+
   return (
-    <Dialog>
+    <Dialog onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -177,58 +207,88 @@ export function EventDetailsDialog({ event, children }: IProps) {
               </a>
             </Button>
           )}
-          <Button
-            variant="default"
-            asChild
-            onClick={() => {
-              setCalendarLoading(true);
-              saveToCalendar(
-                `${event.title} (${getMeetingType(event.source_table)})`,
-                (event.description ? event.description : '') +
-                  (event.meeting_url ? ` (${event.meeting_url})` : ''),
-                event.location ? event.location : '',
-                event.meeting_start_datetime,
-                event.meeting_end_datetime,
-              ).then(async (needsGoogleAuth: boolean) => {
-                if (needsGoogleAuth) {
-                  ToastOperations.showError({
-                    title: 'Error',
-                    message:
-                      'Please link your Google account to save events to your calendar.',
-                  });
-                  await supabase.auth.linkIdentity({
-                    provider: 'google',
-                    options: {
-                      redirectTo: `${window.location.origin}/auth/callback`,
-                      queryParams: {
-                        access_type: 'offline',
-                        prompt: 'consent',
-                      },
-                      scopes: 'https://www.googleapis.com/auth/calendar',
-                    },
-                  });
-                  setCalendarLoading(false);
-                } else {
-                  ToastOperations.showSuccess({
-                    title: 'Success',
-                    message: 'Event saved to your calendar.',
-                  });
-                  setCalendarLoading(false);
-                }
-              });
-            }}
-            disabled={calendarLoading}
-          >
-            <p>
-              {calendarLoading
-                ? Spinner({
-                    size: 'xsmall',
-                    className: 'text-white dark:text-black',
-                  })
-                : 'Add to calendar'}
-              <CalendarPlus className="size-4" />
-            </p>
-          </Button>
+          {!calendarButtonLoading && (
+            <div>
+              {!alreadyInCalendar && (
+                <Button
+                  variant="default"
+                  asChild
+                  onClick={() => {
+                    setCalendarLoading(true);
+                    saveToCalendar(
+                      `${event.title} (${getMeetingType(event.source_table)})`,
+                      (event.description ? event.description : '') +
+                        (event.meeting_url ? ` (${event.meeting_url})` : ''),
+                      event.location ? event.location : '',
+                      event.meeting_start_datetime,
+                      event.meeting_end_datetime,
+                    ).then(async (needsGoogleAuth: boolean) => {
+                      if (needsGoogleAuth) {
+                        ToastOperations.showError({
+                          title: 'Error',
+                          message:
+                            'Please link your Google account to save events to your calendar.',
+                        });
+                        await supabase.auth.linkIdentity({
+                          provider: 'google',
+                          options: {
+                            redirectTo: `${window.location.origin}/auth/callback`,
+                            queryParams: {
+                              access_type: 'offline',
+                              prompt: 'consent',
+                            },
+                            scopes: 'https://www.googleapis.com/auth/calendar',
+                          },
+                        });
+                        setCalendarLoading(false);
+                      } else {
+                        ToastOperations.showSuccess({
+                          title: 'Success',
+                          message: 'Event saved to your calendar.',
+                        });
+                        setCalendarLoading(false);
+                        setFetchedEvents(false);
+                      }
+                    });
+                  }}
+                  disabled={calendarLoading}
+                >
+                  <p>
+                    {calendarLoading
+                      ? Spinner({
+                          size: 'xsmall',
+                          className: 'text-white dark:text-black',
+                        })
+                      : 'Add to calendar'}
+                    <CalendarPlus className="size-4" />
+                  </p>
+                </Button>
+              )}
+              {alreadyInCalendar && (
+                <Button
+                  onClick={() => {
+                    const b64Id = b64EncodeUnicode(
+                      eventCalendarId + ' primary',
+                    );
+                    window.open(
+                      'https://www.google.com/calendar/event?eid=' +
+                        b64Id.slice(0, -2),
+                      '_blank',
+                    );
+                  }}
+                >
+                  Show in calendar
+                  <CalendarCheck2 className="size-4" />
+                </Button>
+              )}
+            </div>
+          )}
+          {calendarButtonLoading && (
+            <Button>
+              <Spinner size="xsmall" className="text-white dark:text-black" />
+              <Calendar className="size-4" />
+            </Button>
+          )}
           <DialogClose asChild>
             <Button variant="outline">Close</Button>
           </DialogClose>
