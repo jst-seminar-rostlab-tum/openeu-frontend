@@ -35,6 +35,7 @@ export function extractInitials(name?: string): string {
 export const COLOR_SCHEMES = {
   blue: {
     bg: 'bg-blue-50 dark:bg-blue-950',
+    accent: 'bg-blue-100 dark:bg-blue-900',
     text: 'text-blue-700 dark:text-blue-300',
     outline: 'border-blue-200 dark:border-blue-800',
     dot: 'bg-blue-600 dark:bg-blue-500',
@@ -42,6 +43,7 @@ export const COLOR_SCHEMES = {
   },
   green: {
     bg: 'bg-green-50 dark:bg-green-950',
+    accent: 'bg-green-100 dark:bg-green-900',
     text: 'text-green-700 dark:text-green-300',
     outline: 'border-green-200 dark:border-green-800',
     dot: 'bg-green-600 dark:bg-green-500',
@@ -49,6 +51,7 @@ export const COLOR_SCHEMES = {
   },
   purple: {
     bg: 'bg-purple-50 dark:bg-purple-950',
+    accent: 'bg-purple-100 dark:bg-purple-900',
     text: 'text-purple-700 dark:text-purple-300',
     outline: 'border-purple-200 dark:border-purple-800',
     dot: 'bg-purple-600 dark:bg-purple-500',
@@ -56,6 +59,7 @@ export const COLOR_SCHEMES = {
   },
   yellow: {
     bg: 'bg-yellow-50 dark:bg-yellow-950',
+    accent: 'bg-yellow-100 dark:bg-yellow-900',
     text: 'text-yellow-700 dark:text-yellow-300',
     outline: 'border-yellow-200 dark:border-yellow-800',
     dot: 'bg-yellow-600 dark:bg-yellow-500',
@@ -63,6 +67,7 @@ export const COLOR_SCHEMES = {
   },
   red: {
     bg: 'bg-red-50 dark:bg-red-950',
+    accent: 'bg-red-100 dark:bg-red-900',
     text: 'text-red-700 dark:text-red-300',
     outline: 'border-red-200 dark:border-red-800',
     dot: 'bg-red-600 dark:bg-red-500',
@@ -70,6 +75,7 @@ export const COLOR_SCHEMES = {
   },
   indigo: {
     bg: 'bg-indigo-50 dark:bg-indigo-950',
+    accent: 'bg-indigo-100 dark:bg-indigo-900',
     text: 'text-indigo-700 dark:text-indigo-300',
     outline: 'border-indigo-200 dark:border-indigo-800',
     dot: 'bg-indigo-600 dark:bg-indigo-500',
@@ -77,6 +83,7 @@ export const COLOR_SCHEMES = {
   },
   pink: {
     bg: 'bg-pink-50 dark:bg-pink-950',
+    accent: 'bg-pink-100 dark:bg-pink-900',
     text: 'text-pink-700 dark:text-pink-300',
     outline: 'border-pink-200 dark:border-pink-800',
     dot: 'bg-pink-600 dark:bg-pink-500',
@@ -84,6 +91,7 @@ export const COLOR_SCHEMES = {
   },
   orange: {
     bg: 'bg-orange-50 dark:bg-orange-950',
+    accent: 'bg-orange-100 dark:bg-orange-900',
     text: 'text-orange-700 dark:text-orange-300',
     outline: 'border-orange-200 dark:border-orange-800',
     dot: 'bg-orange-600 dark:bg-orange-500',
@@ -91,6 +99,7 @@ export const COLOR_SCHEMES = {
   },
   teal: {
     bg: 'bg-teal-50 dark:bg-teal-950',
+    accent: 'bg-teal-100 dark:bg-teal-900',
     text: 'text-teal-700 dark:text-teal-300',
     outline: 'border-teal-200 dark:border-teal-800',
     dot: 'bg-teal-600 dark:bg-teal-500',
@@ -98,6 +107,7 @@ export const COLOR_SCHEMES = {
   },
   cyan: {
     bg: 'bg-cyan-50 dark:bg-cyan-950',
+    accent: 'bg-cyan-100 dark:bg-cyan-900',
     text: 'text-cyan-700 dark:text-cyan-300',
     outline: 'border-cyan-200 dark:border-cyan-800',
     dot: 'bg-cyan-600 dark:bg-cyan-500',
@@ -105,6 +115,7 @@ export const COLOR_SCHEMES = {
   },
   violet: {
     bg: 'bg-violet-50 dark:bg-violet-950',
+    accent: 'bg-violet-100 dark:bg-violet-900',
     text: 'text-violet-700 dark:text-violet-300',
     outline: 'border-violet-200 dark:border-violet-800',
     dot: 'bg-violet-600 dark:bg-violet-500',
@@ -112,6 +123,7 @@ export const COLOR_SCHEMES = {
   },
   fuchsia: {
     bg: 'bg-fuchsia-50 dark:bg-fuchsia-950',
+    accent: 'bg-fuchsia-100 dark:bg-fuchsia-900',
     text: 'text-fuchsia-700 dark:text-fuchsia-300',
     outline: 'border-fuchsia-200 dark:border-fuchsia-800',
     dot: 'bg-fuchsia-600 dark:bg-fuchsia-500',
@@ -119,6 +131,7 @@ export const COLOR_SCHEMES = {
   },
   rose: {
     bg: 'bg-rose-50 dark:bg-rose-950',
+    accent: 'bg-rose-100 dark:bg-rose-900',
     text: 'text-rose-700 dark:text-rose-300',
     outline: 'border-rose-200 dark:border-rose-800',
     dot: 'bg-rose-600 dark:bg-rose-500',
@@ -126,6 +139,7 @@ export const COLOR_SCHEMES = {
   },
   amber: {
     bg: 'bg-amber-50 dark:bg-amber-950',
+    accent: 'bg-amber-100 dark:bg-amber-900',
     text: 'text-amber-700 dark:text-amber-300',
     outline: 'border-amber-200 dark:border-amber-800',
     dot: 'bg-amber-600 dark:bg-amber-500',
@@ -133,6 +147,7 @@ export const COLOR_SCHEMES = {
   },
   emerald: {
     bg: 'bg-emerald-50 dark:bg-emerald-950',
+    accent: 'bg-emerald-100 dark:bg-emerald-900',
     text: 'text-emerald-700 dark:text-emerald-300',
     outline: 'border-emerald-200 dark:border-emerald-800',
     dot: 'bg-emerald-600 dark:bg-emerald-500',
@@ -140,6 +155,7 @@ export const COLOR_SCHEMES = {
   },
   sky: {
     bg: 'bg-sky-50 dark:bg-sky-950',
+    accent: 'bg-sky-100 dark:bg-sky-900',
     text: 'text-sky-700 dark:text-sky-300',
     outline: 'border-sky-200 dark:border-sky-800',
     dot: 'bg-sky-600 dark:bg-sky-500',
@@ -147,6 +163,7 @@ export const COLOR_SCHEMES = {
   },
   lime: {
     bg: 'bg-lime-50 dark:bg-lime-950',
+    accent: 'bg-lime-100 dark:bg-lime-900',
     text: 'text-lime-700 dark:text-lime-300',
     outline: 'border-lime-200 dark:border-lime-800',
     dot: 'bg-lime-600 dark:bg-lime-500',
