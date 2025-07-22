@@ -24,9 +24,9 @@ function MapInner({
   return (
     <MapComponent
       mapData={MapData as GeoJSON.FeatureCollection}
-      zoom={4.25}
+      zoom={5}
       minZoom={4}
-      center={[54.5452, 25.11912]}
+      center={[53.067626642387374, 7.316894531250001]}
       countryMeetingMap={countryMeetingMap}
       countryClickDisabled={countryClickDisabled}
     />
