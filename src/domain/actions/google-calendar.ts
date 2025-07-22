@@ -36,55 +36,63 @@ export async function saveToCalendar(
   meetingStart: string,
   meetingEnd: string,
 ) {
-  const oauth2Client = await getOAuthClient();
-  if (typeof oauth2Client === 'boolean') {
+  try {
+    const oauth2Client = await getOAuthClient();
+    if (typeof oauth2Client === 'boolean') {
+      return true;
+    }
+
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    const event = {
+      summary: title,
+      location: location,
+      description: description,
+      start: {
+        dateTime: meetingStart,
+        timeZone: 'Europe/Berlin',
+      },
+      end: {
+        dateTime: meetingEnd,
+        timeZone: 'Europe/Berlin',
+      },
+    };
+    calendar.events.insert(
+      {
+        auth: oauth2Client,
+        calendarId: 'primary',
+        // @ts-expect-error: is like the docs
+        resource: event,
+      },
+      function (err: never) {
+        if (err) {
+          throw new Error(`Error when creating calendar event: ${err}`);
+        }
+      },
+    );
+
+    return false;
+  } catch (_) {
     return true;
   }
-
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-  const event = {
-    summary: title,
-    location: location,
-    description: description,
-    start: {
-      dateTime: meetingStart,
-      timeZone: 'Europe/Berlin',
-    },
-    end: {
-      dateTime: meetingEnd,
-      timeZone: 'Europe/Berlin',
-    },
-  };
-  calendar.events.insert(
-    {
-      auth: oauth2Client,
-      calendarId: 'primary',
-      // @ts-expect-error: is like the docs
-      resource: event,
-    },
-    function (err: never) {
-      if (err) {
-        throw new Error(`Error when creating calendar event: ${err}`);
-      }
-    },
-  );
-
-  return false;
 }
 
 export async function getEvents(startDate: Date, endDate: Date) {
-  const oauth2Client = await getOAuthClient();
-  if (typeof oauth2Client === 'boolean') {
-    return true;
-  }
+  try {
+    const oauth2Client = await getOAuthClient();
+    if (typeof oauth2Client === 'boolean') {
+      return undefined;
+    }
 
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-  const events = await calendar.events.list({
-    calendarId: 'primary',
-    timeMin: startDate.toISOString(),
-    timeMax: endDate.toISOString(),
-  });
-  if (events.data.items !== undefined && events.data.items.length > 0) {
-    return events.data.items;
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    const events = await calendar.events.list({
+      calendarId: 'primary',
+      timeMin: startDate.toISOString(),
+      timeMax: endDate.toISOString(),
+    });
+    if (events.data.items !== undefined && events.data.items.length > 0) {
+      return events.data.items;
+    }
+  } catch (_) {
+    return undefined;
   }
 }
