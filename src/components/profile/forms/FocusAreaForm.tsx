@@ -5,7 +5,6 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import z from 'zod';
 
-import { europeanCountries } from '@/components/map/constants';
 import { CardContent } from '@/components/ui/card';
 import {
   Form,
@@ -17,6 +16,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { useCountries } from '@/domain/hooks/countriesHook';
 import { useTopics } from '@/domain/hooks/topicHook';
 import { focusAreaSchema } from '@/domain/schemas/profile';
 
@@ -25,6 +25,7 @@ interface FocusAreaFormProps {
 }
 
 export function FocusAreaForm({ form }: FocusAreaFormProps) {
+  const { data: countries } = useCountries();
   const { data: topics } = useTopics();
 
   return (
@@ -89,10 +90,12 @@ export function FocusAreaForm({ form }: FocusAreaFormProps) {
                   </FormDescription>
                   <FormControl>
                     <MultiSelect
-                      options={europeanCountries.map((country) => ({
-                        label: country,
-                        value: country,
-                      }))}
+                      options={
+                        countries?.map((country) => ({
+                          label: country,
+                          value: country,
+                        })) || []
+                      }
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       placeholder="Select countries/regions..."
