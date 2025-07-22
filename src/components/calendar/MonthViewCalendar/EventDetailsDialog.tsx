@@ -146,18 +146,6 @@ export function EventDetailsDialog({ event, children }: IProps) {
               </div>
             </div>
 
-            {event.description && (
-              <div className="flex items-start gap-2 col-span-full">
-                <Text className="mt-1 size-4 shrink-0 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-medium">Description</p>
-                  <p className="text-sm text-muted-foreground">
-                    {event.description}
-                  </p>
-                </div>
-              </div>
-            )}
-
             {event?.topic && (
               <div className="flex items-start gap-2">
                 <Tag className="mt-1 size-4 shrink-0 text-muted-foreground" />
@@ -166,16 +154,6 @@ export function EventDetailsDialog({ event, children }: IProps) {
                   <div className="flex flex-wrap gap-2 mt-2">
                     <TagBadge>{event.topic}</TagBadge>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {event.similarity && (
-              <div className="flex items-start gap-2 col-span-full">
-                <Scale className="mt-1 size-4 shrink-0 text-muted-foreground" />
-                <div className="w-full">
-                  <p className="text-sm font-medium">Relevance</p>
-                  <RelevanceScore meeting={event} type={'bar'} />
                 </div>
               </div>
             )}
@@ -189,6 +167,28 @@ export function EventDetailsDialog({ event, children }: IProps) {
                     member={event.member}
                     attendees={event.attendees}
                   />
+                </div>
+              </div>
+            )}
+
+            {event.description && (
+              <div className="flex items-start gap-2 col-span-full">
+                <Text className="mt-1 size-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Description</p>
+                  <p className="text-sm text-muted-foreground">
+                    {event.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {event.similarity && (
+              <div className="flex items-start gap-2 col-span-full">
+                <Scale className="mt-1 size-4 shrink-0 text-muted-foreground" />
+                <div className="w-full">
+                  <p className="text-sm font-medium">Relevance</p>
+                  <RelevanceScore meeting={event} type={'bar'} />
                 </div>
               </div>
             )}
