@@ -1,16 +1,10 @@
 'use server';
 
-import { google } from 'googleapis';
+import { Auth, google } from 'googleapis';
 
 import { createClient } from '@/lib/supabase/server';
 
-export async function saveToCalendar(
-  title: string,
-  description: string,
-  location: string,
-  meetingStart: string,
-  meetingEnd: string,
-) {
+async function getOAuthClient(): Promise<boolean | Auth.OAuth2Client> {
   const supabase = await createClient();
   const userData = await supabase.auth.getUser();
   if (!userData.data.user) {
@@ -31,6 +25,21 @@ export async function saveToCalendar(
   );
   oauth2Client.credentials.refresh_token = userMetadata['oauthRefreshToken'];
   await oauth2Client.refreshAccessToken();
+
+  return oauth2Client;
+}
+
+export async function saveToCalendar(
+  title: string,
+  description: string,
+  location: string,
+  meetingStart: string,
+  meetingEnd: string,
+) {
+  const oauth2Client = await getOAuthClient();
+  if (typeof oauth2Client === 'boolean') {
+    return true;
+  }
 
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
   const event = {
@@ -64,19 +73,10 @@ export async function saveToCalendar(
 }
 
 export async function getEvents(startDate: Date, endDate: Date) {
-  const supabase = await createClient();
-  const userData = await supabase.auth.getUser();
-  if (!userData.data.user) {
-    throw new Error('No user data provided');
+  const oauth2Client = await getOAuthClient();
+  if (typeof oauth2Client === 'boolean') {
+    return true;
   }
-  const userMetadata = userData.data.user.user_metadata;
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URI,
-  );
-  oauth2Client.credentials.refresh_token = userMetadata['oauthRefreshToken'];
-  await oauth2Client.refreshAccessToken();
 
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
   const events = await calendar.events.list({

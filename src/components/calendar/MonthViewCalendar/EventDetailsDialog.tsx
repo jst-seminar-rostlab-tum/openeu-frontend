@@ -65,7 +65,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
       setFetchedEvents(true);
       getEvents(startDate, endDate).then((response) => {
         setCalendarButtonLoading(false);
-        if (response) {
+        if (response && response !== true) {
           response.forEach((item) => {
             if (
               item.summary &&
