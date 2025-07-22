@@ -34,12 +34,12 @@ export default function Step4Completion({ form }: Step4CompletionProps) {
           }
         />
         <motion.div
-          className="text-center p-6 bg-muted rounded-lg px-auto"
+          className="p-6 bg-muted rounded-lg px-auto"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3, duration: 0.4 }}
         >
-          <h3 className="font-semibold mb-4">What&apos;s next?</h3>
+          <h3 className="font-semibold mb-2">What&apos;s next?</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-primary" />
