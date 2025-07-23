@@ -91,17 +91,32 @@ export default function MapComponent({
   console.log(selectedCountryMeetings);
   const handleCountryClick = (countryName: string) => {
     if (countryClickDisabled) return;
-    const countryData = countryMeetingMap.get(countryName);
+    // const countryData = countryMeetingMap.get(countryName);
+    const countryData: CountryData = {
+      country: countryMeetingMap.get(countryName)!.country,
+      cities: Object.fromEntries(
+        Object.entries(countryMeetingMap.get(countryName)!.cities).map(
+          ([cityKey, city]) => [
+            cityKey,
+            {
+              city: city.city,
+              lat: city.lat,
+              lng: city.lng,
+              totalCount: city.totalCount,
+              meetings: city.meetings.map((m) => ({ ...m })),
+            },
+          ],
+        ),
+      ),
+      meetingCount: countryMeetingMap.get(countryName)!.meetingCount,
+    };
+    const countForThisCountry = getCountryTotalCount(countryData) ?? 0;
     // const meetingCount = getCountryTotalCount(countryData) ?? 0;
     console.log('countryName: ', countryName);
-    console.log('meetingCount: ', countryData?.meetingCount);
-    console.log(
-      'selectedCountryMeetings.length: ',
-      selectedCountryMeetings.length,
-    );
+    console.log('meetingCount: ', countForThisCountry);
     console.log(countryData);
 
-    if (countryData?.meetingCount === 0) {
+    if (countForThisCountry === 0) {
       ToastOperations.showError({
         title: 'No meetings found',
         message: `There are no meetings scheduled in ${countryName}.`,
