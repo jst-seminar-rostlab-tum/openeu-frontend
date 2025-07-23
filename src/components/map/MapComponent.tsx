@@ -85,13 +85,15 @@ export default function MapComponent({
   };
 
   const selectedCountryMeetings = selectedCountry
-    ? (getCountryMeetings(countryMeetingMap.get(selectedCountry)) ?? [])
+    ? (getCountryMeetings(
+        structuredClone(countryMeetingMap.get(selectedCountry)),
+      ) ?? [])
     : [];
   console.log('selectedCountryMeetings');
   console.log(selectedCountryMeetings);
   const handleCountryClick = (countryName: string) => {
     if (countryClickDisabled) return;
-    const countryData = countryMeetingMap.get(countryName);
+    const countryData = structuredClone(countryMeetingMap.get(countryName));
     const meetingCount = getCountryTotalCount(countryData) ?? 0;
     console.log('countryName: ', countryName);
     console.log('meetingCount: ', meetingCount);
@@ -101,7 +103,7 @@ export default function MapComponent({
     );
     console.log(countryData);
 
-    if (selectedCountryMeetings.length === 0) {
+    if (meetingCount === 0) {
       ToastOperations.showError({
         title: 'No meetings found',
         message: `There are no meetings scheduled in ${countryName}.`,
@@ -208,7 +210,9 @@ export default function MapComponent({
           >
             {(() => {
               const countryName = hoveredFeature.properties?.name;
-              const countryData = countryMeetingMap.get(countryName);
+              const countryData = structuredClone(
+                countryMeetingMap.get(countryName),
+              );
 
               if (!countryData) return null;
 
@@ -292,7 +296,9 @@ export default function MapComponent({
               const countryName = feature.properties?.name ?? '';
               const isHighlighted =
                 hoveredFeature?.properties?.name === countryName;
-              const countryData = countryMeetingMap.get(countryName);
+              const countryData = structuredClone(
+                countryMeetingMap.get(countryName),
+              );
               const countForThisCountry =
                 getCountryTotalCount(countryData) ?? 0;
 
