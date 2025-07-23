@@ -159,7 +159,7 @@ export default function MapComponent({
 
       {/* Country Area */}
       <GeoJSON
-        interactive={false}
+        interactive={true}
         data={mapData}
         style={{
           ...countryBaseStyle,
