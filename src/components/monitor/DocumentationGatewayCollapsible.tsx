@@ -37,7 +37,8 @@ export function DocumentationGatewayCollapsible({
                 document.date,
                 'dd/MM/yyyy',
                 new Date(),
-              ).toLocaleDateString()}
+              ).toLocaleDateString()}{' '}
+              ({document.date})
             </p>
           )}
         </div>
