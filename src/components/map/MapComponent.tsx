@@ -35,6 +35,7 @@ import {
   getCountryMeetings,
   getCountryTotalCount,
   getCountryTypeMap,
+  getDeepClonedCountryData,
   getLargestPolygon,
 } from '@/operations/map/MapOperations';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
@@ -86,14 +87,17 @@ export default function MapComponent({
 
   const selectedCountryMeetings = selectedCountry
     ? (getCountryMeetings(
-        structuredClone(countryMeetingMap.get(selectedCountry)),
+        getDeepClonedCountryData(countryMeetingMap, selectedCountry),
       ) ?? [])
     : [];
   console.log('selectedCountryMeetings');
   console.log(selectedCountryMeetings);
   const handleCountryClick = (countryName: string) => {
     if (countryClickDisabled) return;
-    const countryData = structuredClone(countryMeetingMap.get(countryName));
+    const countryData = getDeepClonedCountryData(
+      countryMeetingMap,
+      countryName,
+    );
     const meetingCount = getCountryTotalCount(countryData) ?? 0;
     console.log('countryName: ', countryName);
     console.log('meetingCount: ', meetingCount);
@@ -210,8 +214,9 @@ export default function MapComponent({
           >
             {(() => {
               const countryName = hoveredFeature.properties?.name;
-              const countryData = structuredClone(
-                countryMeetingMap.get(countryName),
+              const countryData = getDeepClonedCountryData(
+                countryMeetingMap,
+                countryName,
               );
 
               if (!countryData) return null;
@@ -296,8 +301,9 @@ export default function MapComponent({
               const countryName = feature.properties?.name ?? '';
               const isHighlighted =
                 hoveredFeature?.properties?.name === countryName;
-              const countryData = structuredClone(
-                countryMeetingMap.get(countryName),
+              const countryData = getDeepClonedCountryData(
+                countryMeetingMap,
+                countryName,
               );
               const countForThisCountry =
                 getCountryTotalCount(countryData) ?? 0;

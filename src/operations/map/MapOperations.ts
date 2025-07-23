@@ -73,6 +73,30 @@ export function getCountryTotalCount(data?: CountryData): number {
     : 0;
 }
 
+export function getDeepClonedCountryData(
+  map: Map<string, CountryData>,
+  countryName: string,
+): CountryData | undefined {
+  const original = map.get(countryName);
+  if (!original) return undefined;
+
+  return {
+    country: original.country,
+    cities: Object.fromEntries(
+      Object.entries(original.cities).map(([cityKey, city]) => [
+        cityKey,
+        {
+          city: city.city,
+          lat: city.lat,
+          lng: city.lng,
+          totalCount: city.totalCount,
+          meetings: city.meetings.map((m) => ({ ...m })),
+        },
+      ]),
+    ),
+  };
+}
+
 export function getCountryMeetings(data?: CountryData): Meeting[] {
   return data ? Object.values(data.cities).flatMap((c) => c.meetings) : [];
 }
