@@ -1,7 +1,7 @@
 'use client';
 
 import { format, isSameDay, isSameWeek, parseISO, startOfDay } from 'date-fns';
-import { Building, Calendar, MapPin } from 'lucide-react';
+import { Building, Calendar, MapPin, Tag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
@@ -127,12 +127,18 @@ export function EventListDialog({
                 <RelevanceScore meeting={event} type={'circle'} />
               )}
             </div>
-            <div className="flex items-center gap-1">
-              <Badge variant="subtle" className="text-foreground">
+            <div className="flex items-center gap-1 flex-wrap">
+              <Badge
+                variant="secondary"
+                className={COLOR_SCHEMES[event.color].accent}
+              >
                 <Building className="shrink-0" />
                 {getMeetingTypeShort(event.source_table)}
               </Badge>
-              <Badge variant="subtle" className="text-foreground max-w-40">
+              <Badge
+                variant="secondary"
+                className={COLOR_SCHEMES[event.color].accent}
+              >
                 <MapPin className="shrink-0 w-3 h-3" />
                 <span
                   className="truncate min-w-0 direction-rtl text-left"
@@ -143,6 +149,17 @@ export function EventListDialog({
                   {event.location && getMeetingTypeShort(event.location)}
                 </span>
               </Badge>
+              {event.topic && (
+                <Badge
+                  variant="secondary"
+                  className={COLOR_SCHEMES[event.color].accent}
+                >
+                  <Tag className="shrink-0 w-3 h-3" />
+                  <span className="truncate" title={event.topic}>
+                    {event.topic}
+                  </span>
+                </Badge>
+              )}
               {(event.member || event.attendees) && (
                 <AvatarStack
                   member={event.member}

@@ -77,7 +77,7 @@ yarn lint:fix
 
 ## Deployment
 
-Website is deployed at: https://openeu.netlify.app/
+Website is deployed at: https://openeu.csee.tech/
 
 ## Development guidelines
 
@@ -109,10 +109,11 @@ To maintain a clean and consistent codebase, follow these best practices:
        components/
        config/
        domain/
-       infrastructure/
+       lib/
        operations/
-       utils/
+       repositories/
        styles/
+       utils/
      ```
 
 4. **Code Comments**:
@@ -122,10 +123,6 @@ To maintain a clean and consistent codebase, follow these best practices:
 5. **Error Handling**:
 
    - Always handle errors gracefully, especially in API calls or asynchronous operations.
-
-6. **Testing**:
-   - Write unit tests for all components and utility functions.
-   - Use integration tests for critical workflows.
 
 ### Git and GitHub
 
@@ -168,14 +165,3 @@ After you're done with your task, create a Pull Request and share it with your t
 ### Project Structure
 
 Each component should have their own file, where the file name is the name of the component. The app directory is for pages and layouts, all other components should go to the components directory. Try to group components to sub-directories based on their function. Code that doesn't belong to a specific component should be placed in a different file, in directories like utils, config, types, etc.
-
-### Domain Driven Design
-
-DDD is a software design approach that is against the idea of having a single unified model; instead it divides a large system into bounded contexts, each of which have their own model.
-
-What this means for a React application, is that instead of using one global state with, for example Redux, we will have a React context for each of our entities that will store all the data and offer all the methods related to that domain.
-
-- The domain folder contains all the entities and repositories. (Types, Interfaces, etc.)
-- The infrastructure folder contains the implementations of the interfaces. (API calls, etc.)
-- The operations folder contains the business logic that is not related to a specific entity.
-- Bigger files and functions should be placed in the operations folder
