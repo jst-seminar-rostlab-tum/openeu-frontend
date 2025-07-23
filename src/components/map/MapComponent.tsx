@@ -73,6 +73,8 @@ export default function MapComponent({
 
   const shouldShowCities = zoomLevel >= 6;
 
+  console.log('countryMeetingMap');
+  console.log(countryMeetingMap);
   const ZoomTracker = () => {
     useMapEvents({
       zoomend: (e) => {
