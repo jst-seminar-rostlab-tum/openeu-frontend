@@ -1,5 +1,7 @@
 import { Message } from '@/domain/entities/chat/generated-types';
 
+import { StreamingMarkdown } from './StreamingMarkdown';
+
 interface ChatMessageProps {
   message: Message;
 }
@@ -16,8 +18,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
   }
 
   return (
-    <p className="whitespace-pre-wrap text-sm leading-relaxed break-words overflow-wrap-anywhere">
-      {message.content}
-    </p>
+    <div className="max-w-none">
+      <StreamingMarkdown content={message.content} />
+    </div>
   );
 }
