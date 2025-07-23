@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
@@ -29,27 +30,25 @@ export function StreamingMarkdown({
   }
 
   return (
-    <div className={cn('text-sm', className)}>
+    <div className={cn('text-sm leading-relaxed break-words', className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks]}
         components={{
           p: ({ children }) => (
-            <p className="whitespace-pre-wrap leading-relaxed break-words overflow-wrap-anywhere mb-2 last:mb-0">
-              {children}
-            </p>
+            <p className="whitespace-pre-wrap mb-2 last:mb-0">{children}</p>
           ),
           h1: ({ children }) => (
-            <h1 className=" font-bold mt-4 mb-2 first:mt-0 text-xl">
+            <h1 className="font-bold text-xl mt-4 mb-2 first:mt-0">
               {children}
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className=" font-semibold mt-3 mb-2 first:mt-0 text-lg">
+            <h2 className="font-semibold text-lg mt-3 mb-2 first:mt-0">
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className=" font-semibold mt-3 mb-1 first:mt-0 text-md">
+            <h3 className="font-semibold text-base mt-3 mb-1 first:mt-0">
               {children}
             </h3>
           ),
@@ -57,26 +56,26 @@ export function StreamingMarkdown({
             const isInline = !className;
             if (isInline) {
               return (
-                <code className="bg-muted px-1 py-0.5 rounded  font-mono">
+                <code className="bg-muted px-1 py-0.5 rounded font-mono text-xs">
                   {children}
                 </code>
               );
             }
             return (
-              <code className="block bg-muted p-3 rounded  font-mono overflow-x-auto">
+              <code className="block bg-muted p-3 rounded font-mono text-xs overflow-x-auto">
                 {children}
               </code>
             );
           },
           a: ({ children, href }) => (
-            <a
-              href={href}
-              className="text-primary underline hover:no-underline"
+            <Link
+              href={href || '#'}
+              className="text-primary underline"
               target="_blank"
               rel="noopener noreferrer"
             >
               {children}
-            </a>
+            </Link>
           ),
           ul: ({ children }) => (
             <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>

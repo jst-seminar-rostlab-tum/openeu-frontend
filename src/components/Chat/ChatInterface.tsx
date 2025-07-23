@@ -35,14 +35,14 @@ export default function ChatInterface() {
 
       {/* Show skeleton when loading but no streaming message yet */}
       {isLoading && !streamingMessage && (
-        <div className="max-w-none opacity-70">
+        <div className="max-w-none bg-muted/30 rounded-lg p-3 opacity-70">
           <AIResponseSkeleton />
         </div>
       )}
 
       {/* Show streaming message when it exists */}
       {streamingMessage && (
-        <div className="max-w-none opacity-70">
+        <div className="max-w-none bg-muted/30 rounded-lg p-3 opacity-70">
           <StreamingMarkdown content={streamingMessage} isStreaming={true} />
         </div>
       )}
