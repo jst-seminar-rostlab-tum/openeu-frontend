@@ -39,13 +39,19 @@ export function StreamingMarkdown({
             </p>
           ),
           h1: ({ children }) => (
-            <h1 className=" font-bold mt-4 mb-2 first:mt-0">{children}</h1>
+            <h1 className=" font-bold mt-4 mb-2 first:mt-0 text-xl">
+              {children}
+            </h1>
           ),
           h2: ({ children }) => (
-            <h2 className=" font-semibold mt-3 mb-2 first:mt-0">{children}</h2>
+            <h2 className=" font-semibold mt-3 mb-2 first:mt-0 text-lg">
+              {children}
+            </h2>
           ),
           h3: ({ children }) => (
-            <h3 className=" font-semibold mt-3 mb-1 first:mt-0">{children}</h3>
+            <h3 className=" font-semibold mt-3 mb-1 first:mt-0 text-md">
+              {children}
+            </h3>
           ),
           code: ({ children, className }) => {
             const isInline = !className;
