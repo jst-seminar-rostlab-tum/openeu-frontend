@@ -73,8 +73,6 @@ export default function MapComponent({
 
   const shouldShowCities = zoomLevel >= 6;
 
-  console.log('countryMeetingMap');
-  console.log(countryMeetingMap);
   const ZoomTracker = () => {
     useMapEvents({
       zoomend: (e) => {
@@ -87,27 +85,9 @@ export default function MapComponent({
   const selectedCountryMeetings = selectedCountry
     ? (getCountryMeetings(countryMeetingMap.get(selectedCountry)) ?? [])
     : [];
-  console.log('selectedCountryMeetings');
-  console.log(selectedCountryMeetings);
   const handleCountryClick = (countryName: string) => {
     if (countryClickDisabled) return;
 
-    const countryData = countryMeetingMap.get(countryName);
-    const countForThisCountry = countryData?.meetingCount ?? 0;
-
-    console.log('countryName: ', countryName);
-    console.log('meetingCount: ', countForThisCountry);
-    console.log(countryData);
-
-    // if (countForThisCountry === 0) {
-    //   ToastOperations.showError({
-    //     title: 'No meetings found',
-    //     message: `There are no meetings scheduled in ${countryName}.`,
-    //   });
-    // } else {
-    //   setSelectedCountry(countryName);
-    //   setDialogOpen(true);
-    // }
     setSelectedCountry(countryName);
     setDialogOpen(true);
   };

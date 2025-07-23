@@ -147,7 +147,6 @@ export default function FilterModal({
 
   const handleApply = () => {
     setSelectedCountries(localState.countries || []);
-    console.log('selected countries: ', localState.countries);
     setSelectedTopics(localState.topics || []);
     setSelectedInstitutions(localState.institutions || []);
     // Update CalendarContext filters with new date range

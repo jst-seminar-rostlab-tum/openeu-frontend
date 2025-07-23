@@ -14,7 +14,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -30,7 +29,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -46,7 +44,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -62,7 +59,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -78,7 +74,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -94,7 +89,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -110,7 +104,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -126,7 +119,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -142,7 +134,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -158,7 +149,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -174,7 +164,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -190,7 +179,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -206,7 +194,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -222,7 +209,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -238,7 +224,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -254,7 +239,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -270,7 +254,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -286,7 +269,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -302,7 +284,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -318,7 +299,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -334,7 +314,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -350,7 +329,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -366,7 +344,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -382,7 +359,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -398,7 +374,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -414,7 +389,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
   [
@@ -430,7 +404,6 @@ const MOCK_COUNTRY_MEETING_MAP = new Map<string, CountryData>([
           meetings: [],
         },
       },
-      meetingCount: 1,
     },
   ],
 ]);
