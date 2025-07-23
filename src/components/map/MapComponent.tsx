@@ -85,11 +85,15 @@ export default function MapComponent({
   const selectedCountryMeetings = selectedCountry
     ? (getCountryMeetings(countryMeetingMap.get(selectedCountry)) ?? [])
     : [];
-
+  console.log('selectedCountryMeetings');
+  console.log(selectedCountryMeetings);
   const handleCountryClick = (countryName: string) => {
     if (countryClickDisabled) return;
     const countryData = countryMeetingMap.get(countryName);
     const meetingCount = getCountryTotalCount(countryData) ?? 0;
+    console.log('countryName: ', countryName);
+    console.log('meetingCount: ', meetingCount);
+    console.log(countryData);
 
     if (meetingCount === 0) {
       ToastOperations.showError({
@@ -159,7 +163,7 @@ export default function MapComponent({
 
       {/* Country Area */}
       <GeoJSON
-        interactive={true}
+        interactive={false}
         data={mapData}
         style={{
           ...countryBaseStyle,
