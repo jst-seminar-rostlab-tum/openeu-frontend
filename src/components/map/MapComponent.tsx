@@ -35,7 +35,6 @@ import {
   getCountryMeetings,
   getCountryTotalCount,
   getCountryTypeMap,
-  getDeepClonedCountryData,
   getLargestPolygon,
 } from '@/operations/map/MapOperations';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
@@ -86,28 +85,23 @@ export default function MapComponent({
   };
 
   const selectedCountryMeetings = selectedCountry
-    ? (getCountryMeetings(
-        getDeepClonedCountryData(countryMeetingMap, selectedCountry),
-      ) ?? [])
+    ? (getCountryMeetings(countryMeetingMap.get(selectedCountry)) ?? [])
     : [];
   console.log('selectedCountryMeetings');
   console.log(selectedCountryMeetings);
   const handleCountryClick = (countryName: string) => {
     if (countryClickDisabled) return;
-    const countryData = getDeepClonedCountryData(
-      countryMeetingMap,
-      countryName,
-    );
-    const meetingCount = getCountryTotalCount(countryData) ?? 0;
+    const countryData = countryMeetingMap.get(countryName);
+    // const meetingCount = getCountryTotalCount(countryData) ?? 0;
     console.log('countryName: ', countryName);
-    console.log('meetingCount: ', meetingCount);
+    console.log('meetingCount: ', countryData?.meetingCount);
     console.log(
       'selectedCountryMeetings.length: ',
       selectedCountryMeetings.length,
     );
     console.log(countryData);
 
-    if (meetingCount === 0) {
+    if (countryData?.meetingCount === 0) {
       ToastOperations.showError({
         title: 'No meetings found',
         message: `There are no meetings scheduled in ${countryName}.`,
@@ -214,10 +208,7 @@ export default function MapComponent({
           >
             {(() => {
               const countryName = hoveredFeature.properties?.name;
-              const countryData = getDeepClonedCountryData(
-                countryMeetingMap,
-                countryName,
-              );
+              const countryData = countryMeetingMap.get(countryName);
 
               if (!countryData) return null;
 
@@ -301,10 +292,7 @@ export default function MapComponent({
               const countryName = feature.properties?.name ?? '';
               const isHighlighted =
                 hoveredFeature?.properties?.name === countryName;
-              const countryData = getDeepClonedCountryData(
-                countryMeetingMap,
-                countryName,
-              );
+              const countryData = countryMeetingMap.get(countryName);
               const countForThisCountry =
                 getCountryTotalCount(countryData) ?? 0;
 

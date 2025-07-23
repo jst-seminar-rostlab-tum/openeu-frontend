@@ -24,6 +24,7 @@ export function useCountryMeetingMap(
       map.set(country, {
         country,
         cities: {},
+        meetingCount: 0,
       });
     });
 
@@ -40,8 +41,11 @@ export function useCountryMeetingMap(
         map.set(country, {
           country,
           cities: {},
+          meetingCount: 0,
         });
       }
+
+      const countryEntry = map.get(country)!;
 
       if (cityInfo) {
         const countryEntry = map.get(country)!;
@@ -61,6 +65,7 @@ export function useCountryMeetingMap(
         cityEntry.totalCount++;
         cityEntry.meetings.push(meeting);
       }
+      countryEntry.meetingCount++;
     });
 
     return map;
@@ -73,29 +78,30 @@ export function getCountryTotalCount(data?: CountryData): number {
     : 0;
 }
 
-export function getDeepClonedCountryData(
-  map: Map<string, CountryData>,
-  countryName: string,
-): CountryData | undefined {
-  const original = map.get(countryName);
-  if (!original) return undefined;
+// export function getDeepClonedCountryData(
+//   map: Map<string, CountryData>,
+//   countryName: string,
+// ): CountryData | undefined {
+//   const original = map.get(countryName);
+//   if (!original) return undefined;
 
-  return {
-    country: original.country,
-    cities: Object.fromEntries(
-      Object.entries(original.cities).map(([cityKey, city]) => [
-        cityKey,
-        {
-          city: city.city,
-          lat: city.lat,
-          lng: city.lng,
-          totalCount: city.totalCount,
-          meetings: city.meetings.map((m) => ({ ...m })),
-        },
-      ]),
-    ),
-  };
-}
+//   return {
+//     country: original.country,
+//     cities: Object.fromEntries(
+//       Object.entries(original.cities).map(([cityKey, city]) => [
+//         cityKey,
+//         {
+//           city: city.city,
+//           lat: city.lat,
+//           lng: city.lng,
+//           totalCount: city.totalCount,
+//           meetings: city.meetings.map((m) => ({ ...m })),
+//         },
+//       ]),
+//     ),
+//     meetingCount:
+//   };
+// }
 
 export function getCountryMeetings(data?: CountryData): Meeting[] {
   return data ? Object.values(data.cities).flatMap((c) => c.meetings) : [];

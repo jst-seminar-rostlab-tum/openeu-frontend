@@ -12,4 +12,5 @@ export interface CityData {
 export interface CountryData {
   country: string;
   cities: Record<string, CityData>;
+  meetingCount: number;
 }
