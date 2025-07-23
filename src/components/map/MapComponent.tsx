@@ -95,9 +95,13 @@ export default function MapComponent({
     const meetingCount = getCountryTotalCount(countryData) ?? 0;
     console.log('countryName: ', countryName);
     console.log('meetingCount: ', meetingCount);
+    console.log(
+      'selectedCountryMeetings.length: ',
+      selectedCountryMeetings.length,
+    );
     console.log(countryData);
 
-    if (meetingCount === 0) {
+    if (selectedCountryMeetings.length === 0) {
       ToastOperations.showError({
         title: 'No meetings found',
         message: `There are no meetings scheduled in ${countryName}.`,
