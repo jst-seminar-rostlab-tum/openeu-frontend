@@ -1,3 +1,4 @@
+import { parse } from 'date-fns';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,9 +27,11 @@ export function KeyEventCollapsible({
       <CollapsibleTrigger className="flex items-start justify-between w-full p-0 text-left group gap-2">
         <div className="flex-1">
           <p className="text-sm font-medium leading-tight">{event.event}</p>
-          <p className="text-xs text-muted-foreground">
-            {event.date && new Date(event.date).toLocaleDateString()}
-          </p>
+          {event.date && event.date.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {parse(event.date, 'dd/MM/yyyy', new Date()).toLocaleDateString()}
+            </p>
+          )}
         </div>
 
         <ChevronDown

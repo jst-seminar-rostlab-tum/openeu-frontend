@@ -1,3 +1,4 @@
+import { parse } from 'date-fns';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
@@ -30,9 +31,13 @@ export function DocumentationGatewayCollapsible({
               {document.document_type}
             </p>
           )}
-          {document.date && (
+          {document.date && document.date.length > 0 && (
             <p className="text-xs text-muted-foreground">
-              {new Date(document.date).toLocaleDateString()}
+              {parse(
+                document.date,
+                'dd/MM/yyyy',
+                new Date(),
+              ).toLocaleDateString()}
             </p>
           )}
         </div>
