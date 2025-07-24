@@ -38,7 +38,7 @@ import {
   getLargestPolygon,
 } from '@/operations/map/MapOperations';
 import { getMeetingType } from '@/operations/meeting/CalendarHelpers';
-import { ToastOperations } from '@/operations/toast/toastOperations';
+// import { ToastOperations } from '@/operations/toast/toastOperations';
 
 interface MapProps {
   mapData: geojson.FeatureCollection;
@@ -85,21 +85,11 @@ export default function MapComponent({
   const selectedCountryMeetings = selectedCountry
     ? (getCountryMeetings(countryMeetingMap.get(selectedCountry)) ?? [])
     : [];
-
   const handleCountryClick = (countryName: string) => {
     if (countryClickDisabled) return;
-    const countryData = countryMeetingMap.get(countryName);
-    const meetingCount = getCountryTotalCount(countryData) ?? 0;
 
-    if (meetingCount === 0) {
-      ToastOperations.showError({
-        title: 'No meetings found',
-        message: `There are no meetings scheduled in ${countryName}.`,
-      });
-    } else {
-      setSelectedCountry(countryName);
-      setDialogOpen(true);
-    }
+    setSelectedCountry(countryName);
+    setDialogOpen(true);
   };
 
   const onEachFeature = (feature: geojson.Feature, layer: Layer) => {
