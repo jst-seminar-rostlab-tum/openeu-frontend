@@ -13,7 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { onboardingSchema } from '@/domain/schemas/profile';
+import {
+  entrepreneurRoleSchema,
+  onboardingSchema,
+} from '@/domain/schemas/profile';
 
 interface Step2EntrepreneurRoleDetailsProps {
   form: UseFormReturn<z.infer<typeof onboardingSchema>>;
@@ -36,7 +39,13 @@ export default function Step2EntrepreneurRoleDetails({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <EntrepreneurRoleForm form={form} />
+          <EntrepreneurRoleForm
+            form={
+              form as unknown as UseFormReturn<
+                z.infer<typeof entrepreneurRoleSchema>
+              >
+            }
+          />
         </motion.div>
       </CardContent>
     </Card>

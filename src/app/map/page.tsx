@@ -11,7 +11,7 @@ import { Card } from '@/components/ui/card';
 import { MeetingSuggestion } from '@/domain/entities/calendar/generated-types';
 import { useMeetingContext } from '@/domain/hooks/meetingHooks';
 import { useTopics } from '@/domain/hooks/topicHook';
-import { dateRangeToString, formatTopicsForDisplay } from '@/lib/formatters';
+import { dateRangeToString, formatSelectionForDisplay } from '@/lib/formatters';
 import { getInstitutionFromSourceTable } from '@/operations/meeting/CalendarHelpers';
 import { meetingRepository } from '@/repositories/meetingRepository';
 
@@ -29,7 +29,7 @@ export default function MapPage() {
       <div className="absolute right-4 top-16 z-10 flex flex-col-reverse items-end md:flex-row md:items-center gap-2">
         <div className="flex flex-wrap gap-2">
           {(() => {
-            const topicDisplay = formatTopicsForDisplay(filters.topics);
+            const topicDisplay = formatSelectionForDisplay(filters.topics);
             if (!topicDisplay) return null;
 
             return (
@@ -50,7 +50,7 @@ export default function MapPage() {
             for (const sourceTable of filters.source_table) {
               institutions.push(getInstitutionFromSourceTable(sourceTable));
             }
-            const institutionsDisplay = formatTopicsForDisplay(institutions);
+            const institutionsDisplay = formatSelectionForDisplay(institutions);
 
             if (!institutionsDisplay) return null;
             return (

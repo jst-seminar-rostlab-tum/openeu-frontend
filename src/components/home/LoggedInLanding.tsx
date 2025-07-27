@@ -2,13 +2,14 @@
 
 import { User } from '@supabase/supabase-js';
 import { motion } from 'framer-motion';
-import { Shield } from 'lucide-react';
+import { MoveUpRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { Section } from '@/components/section';
 import { Button } from '@/components/ui/button';
 import { useIncompleteProfile } from '@/domain/hooks/use-incomplete-profile';
 import { getFirstName } from '@/lib/utils';
+import HomeOperations from '@/operations/home/HomeOperations';
 
 interface LoggedInLandingProps {
   user: User;
@@ -16,6 +17,7 @@ interface LoggedInLandingProps {
 
 export default function LoggedInLanding({ user }: LoggedInLandingProps) {
   const firstName = getFirstName(user);
+  const features = HomeOperations.getFeatures();
 
   useIncompleteProfile(user);
 
@@ -45,12 +47,19 @@ export default function LoggedInLanding({ user }: LoggedInLandingProps) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            <Button asChild variant="outline">
-              <Link href="/privacy">
-                <Shield className="w-4 h-4" />
-                Privacy Policy
-              </Link>
-            </Button>
+            {features.map((feature) => (
+              <Button
+                key={feature.title}
+                asChild
+                variant="link"
+                className="underline text-base p-2"
+              >
+                <Link href={feature.href} className="flex items-center gap-1.5">
+                  {feature.title}
+                  <MoveUpRight className="w-5 h-5" />
+                </Link>
+              </Button>
+            ))}
           </motion.div>
         </motion.div>
       </Section>

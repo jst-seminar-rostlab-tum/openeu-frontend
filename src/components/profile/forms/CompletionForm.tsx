@@ -19,10 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { onboardingSchema } from '@/domain/schemas/profile';
+import { completionSchema } from '@/domain/schemas/profile';
 
 interface CompletionFormProps {
-  form: UseFormReturn<z.infer<typeof onboardingSchema>>;
+  form: UseFormReturn<z.infer<typeof completionSchema>>;
 }
 
 export function CompletionForm({ form }: CompletionFormProps) {

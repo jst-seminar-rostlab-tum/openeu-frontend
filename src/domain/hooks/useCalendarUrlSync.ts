@@ -30,7 +30,7 @@ function validateCalendarView(viewParam: string | null): TCalendarView {
 interface UrlState {
   selectedTopics: string[];
   searchQuery: string;
-  selectedCountry: string;
+  selectedCountries: string[];
   selectedUserId: string;
   selectedInstitutions: string[];
   startDate: Date | null;
@@ -56,7 +56,9 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
   // Reactive URL state parsing with validation (Medium article pattern)
   const urlState = useMemo((): UrlState => {
     const searchQuery = searchParams.get('q') || '';
-    const selectedCountry = searchParams.get('country') || '';
+    const selectedCountries = searchParams.get('country')
+      ? searchParams.get('country')!.split(',').filter(Boolean)
+      : [];
     const selectedUserId = searchParams.get('userId') || '';
     const selectedTopics = searchParams.get('topics')
       ? searchParams.get('topics')!.split(',').filter(Boolean)
@@ -95,7 +97,7 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
 
     return {
       searchQuery,
-      selectedCountry,
+      selectedCountries,
       startDate,
       endDate,
       selectedTopics,
@@ -112,7 +114,10 @@ export function useUrlSync(options: UrlSyncOptions = {}) {
       // Batch all parameter updates into single operation
       const updates: Record<string, string | null> = {
         q: filters.query || null,
-        country: filters.country || null,
+        country:
+          filters.country && filters.country.length > 0
+            ? filters.country.join(',')
+            : null,
         start: filters.start || null,
         end: filters.end || null,
         view: view || null,

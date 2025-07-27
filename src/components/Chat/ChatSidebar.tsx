@@ -1,6 +1,5 @@
 'use client';
 
-import { Trash } from 'lucide-react';
 import { type ComponentProps, useMemo, useState } from 'react';
 
 import { useChatContext } from '@/app/chat/ChatContext';
@@ -8,7 +7,6 @@ import { SearchBar } from '@/components/SearchBar/SearchBar';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -21,7 +19,6 @@ import { useChatSessions } from '@/domain/hooks/chat-hooks';
 import { useAuth } from '@/domain/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import ChatSidebarOperations from '@/operations/chat/ChatSidebarOperations';
-import { ToastOperations } from '@/operations/toast/toastOperations';
 
 export default function ChatSidebar({
   ...props
@@ -132,24 +129,6 @@ export default function ChatSidebar({
         )}
       </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => {
-                // TODO: Implement clear conversations
-                ToastOperations.showInfo({
-                  title: 'Clear Conversations',
-                  message: 'This feature is coming soon!',
-                });
-              }}
-            >
-              <Trash />
-              Clear conversations
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

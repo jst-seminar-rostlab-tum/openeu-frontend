@@ -16,11 +16,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
-import { onboardingSchema } from '@/domain/schemas/profile';
+import { politicianRoleSchema } from '@/domain/schemas/profile';
 import { POLICY_AREAS } from '@/operations/onboarding/OnboardingOperations';
 
 interface PoliticalRoleFormProps {
-  form: UseFormReturn<z.infer<typeof onboardingSchema>>;
+  form: UseFormReturn<z.infer<typeof politicianRoleSchema>>;
 }
 
 export function PoliticalRoleForm({ form }: PoliticalRoleFormProps) {
