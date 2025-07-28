@@ -43,6 +43,37 @@ export function AuthProvider({
 
   const token = getCookie('token') as string | undefined;
 
+  // --- Cross-tab sign out sync ---
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === 'isGloballySigningOut' && event.newValue === 'true') {
+        // Another tab triggered sign out, so do local cleanup
+        setIsSigningOut(true);
+        setUser(null);
+        sessionStorage.removeItem('sessionExpiredToastShown');
+        sessionStorage.removeItem('hadValidSession');
+        // Optionally, redirect or refresh if on protected page
+        const currentPath = window.location.pathname;
+        const publicPages = [
+          '/privacy',
+          '/',
+          '/login',
+          '/register',
+          '/forgot-password',
+        ];
+        const isPublicPage = publicPages.includes(currentPath);
+        if (!isPublicPage) {
+          router.push('/');
+        } else if (currentPath === '/') {
+          router.refresh();
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, [router]);
+  // --- End cross-tab sign out sync ---
+
   useEffect(() => {
     if (!token || isJwtExpired(token)) {
       // Only show toast if user had a valid session before (sessionStorage has 'hadValidSession' flag)
@@ -50,8 +81,10 @@ export function AuthProvider({
         sessionStorage.getItem('hadValidSession') === 'true';
       const toastAlreadyShown =
         sessionStorage.getItem('sessionExpiredToastShown') === 'true';
+      const isGloballySigningOut =
+        localStorage.getItem('isGloballySigningOut') === 'true';
 
-      if (hadValidSession && !toastAlreadyShown) {
+      if (hadValidSession && !toastAlreadyShown && !isGloballySigningOut) {
         handleSessionExpiration();
         sessionStorage.setItem('sessionExpiredToastShown', 'true');
       }
@@ -142,10 +175,12 @@ export function AuthProvider({
   }, [supabase, MOCK_AUTH, initialUser, isSigningOut]);
 
   const signOut = useCallback(async () => {
-    if (isSigningOut) return;
+    if (isSigningOut || localStorage.getItem('isGloballySigningOut') === 'true')
+      return;
 
     setIsSigningOut(true);
     setUser(null);
+    localStorage.setItem('isGloballySigningOut', 'true');
 
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -156,11 +191,16 @@ export function AuthProvider({
       });
       setUser(initialUser);
       setIsSigningOut(false);
+      localStorage.removeItem('isGloballySigningOut');
     } else {
       deleteCookie('token', { path: '/' });
       deleteCookie('refresh_token', { path: '/' });
       sessionStorage.removeItem('sessionExpiredToastShown');
       sessionStorage.removeItem('hadValidSession');
+      // Remove global sign out flag after a short delay to allow other tabs to sync
+      setTimeout(() => {
+        localStorage.removeItem('isGloballySigningOut');
+      }, 500);
 
       const currentPath = window.location.pathname;
       const publicPages = [
@@ -181,7 +221,9 @@ export function AuthProvider({
   }, [supabase, router, initialUser, isSigningOut]);
 
   const handleSessionExpiration = useCallback(() => {
-    if (!isSigningOut) {
+    const isGloballySigningOut =
+      localStorage.getItem('isGloballySigningOut') === 'true';
+    if (!isSigningOut && !isGloballySigningOut) {
       ToastOperations.showWarning({
         title: 'Session Expired',
         message:
@@ -190,7 +232,7 @@ export function AuthProvider({
       console.log(`[${new Date().toISOString()}]: toast shown`);
       signOut();
     }
-  }, [isSigningOut]);
+  }, [isSigningOut, signOut]);
 
   const contextValue = useMemo(
     () => ({ user, loading, signOut }),
