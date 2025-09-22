@@ -272,6 +272,7 @@ export const MEETING_TYPE_MAPPING: Record<string, string> = {
   spanish_commission_meetings: 'Spanish Commission',
   weekly_agenda: 'EP Weekly Agenda',
   ec_res_inno_meetings: 'European Commission Research and Innovation',
+  nl_twka_meetings: 'Dutch House of Representatives',
 };
 
 /**
